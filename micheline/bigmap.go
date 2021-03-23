@@ -52,11 +52,10 @@ type BigMapDiffElem struct {
 }
 
 func (e *BigMapDiffElem) Encoding() PrimType {
-	oc := e.KeyType.OpCode
 	if e.Key != nil {
-		oc = e.Key.OpCode
+		return PrimTypeFromTypeCode(e.Key.OpCode)
 	}
-	return PrimTypeFromTypeCode(oc)
+	return PrimTypeFromTypeCode(e.KeyType.OpCode)
 }
 
 func (e *BigMapDiffElem) MapKeyAs(typ *Prim) *BigMapKey {
