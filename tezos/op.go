@@ -130,7 +130,7 @@ func ParseOpType(s string) OpType {
 		return OpTypeDelegation
 	case "reveal":
 		return OpTypeReveal
-	case "endorsement":
+	case "endorsement", "endorsement_with_slot":
 		return OpTypeEndorsement
 	case "proposals":
 		return OpTypeProposals
