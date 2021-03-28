@@ -286,56 +286,60 @@ func (v ContractValue) Walk(path string, fn ValueWalkerFunc) error {
 }
 
 type ContractParams struct {
-	ListParams // offset, limit, cursor, order
+	Params
 }
 
 func NewContractParams() ContractParams {
-	return ContractParams{NewListParams()}
+	return ContractParams{NewParams()}
 }
 
-func (p *ContractParams) Block(v string) *ContractParams {
+func (p ContractParams) WithLimit(v uint) ContractParams {
+	p.Query.Set("limit", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p ContractParams) WithOffset(v uint) ContractParams {
+	p.Query.Set("offset", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p ContractParams) WithCursor(v uint64) ContractParams {
+	p.Query.Set("cursor", strconv.FormatUint(v, 10))
+	return p
+}
+
+func (p ContractParams) WithOrder(v OrderType) ContractParams {
+	p.Query.Set("order", string(v))
+	return p
+}
+
+func (p ContractParams) WithBlock(v string) ContractParams {
 	p.Query.Set("block", v)
 	return p
 }
 
-func (p *ContractParams) Since(v string) *ContractParams {
+func (p ContractParams) WithSince(v string) ContractParams {
 	p.Query.Set("since", v)
 	return p
 }
 
-func (p *ContractParams) Unpack(v bool) *ContractParams {
-	if v {
-		p.Query.Set("unpack", "1")
-	} else {
-		p.Query.Del("unpack")
-	}
+func (p ContractParams) WithUnpack() ContractParams {
+	p.Query.Set("unpack", "1")
 	return p
 }
 
-func (p *ContractParams) Prim(v bool) *ContractParams {
-	if v {
-		p.Query.Set("prim", "1")
-	} else {
-		p.Query.Del("prim")
-	}
+func (p ContractParams) WithPrim() ContractParams {
+	p.Query.Set("prim", "1")
 	return p
 }
 
-func (p *ContractParams) Meta(v bool) *ContractParams {
-	if v {
-		p.Query.Set("meta", "1")
-	} else {
-		p.Query.Del("meta")
-	}
+func (p ContractParams) WithMeta() ContractParams {
+	p.Query.Set("meta", "1")
 	return p
 }
 
-func (p *ContractParams) Collapse(v bool) *ContractParams {
-	if v {
-		p.Query.Set("collapse", "1")
-	} else {
-		p.Query.Del("collapse")
-	}
+func (p ContractParams) WithCollapse() ContractParams {
+	p.Query.Set("collapse", "1")
 	return p
 }
 

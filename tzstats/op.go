@@ -337,14 +337,34 @@ func (c *Client) QueryOps(ctx context.Context, filter FilterList, cols []string)
 }
 
 type OpParams struct {
-	ListParams // offset, limit, cursor, order
+	Params
 }
 
 func NewOpParams() OpParams {
-	return OpParams{NewListParams()}
+	return OpParams{NewParams()}
 }
 
-func (p *OpParams) Type(mode FilterMode, typs ...string) *OpParams {
+func (p OpParams) WithLimit(v uint) OpParams {
+	p.Query.Set("limit", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p OpParams) WithOffset(v uint) OpParams {
+	p.Query.Set("offset", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p OpParams) WithCursor(v uint64) OpParams {
+	p.Query.Set("cursor", strconv.FormatUint(v, 10))
+	return p
+}
+
+func (p OpParams) WithOrder(v OrderType) OpParams {
+	p.Query.Set("order", string(v))
+	return p
+}
+
+func (p OpParams) WithType(mode FilterMode, typs ...string) OpParams {
 	if mode != "" {
 		p.Query.Set("type."+string(mode), strings.Join(typs, ","))
 	} else {
@@ -353,58 +373,38 @@ func (p *OpParams) Type(mode FilterMode, typs ...string) *OpParams {
 	return p
 }
 
-func (p *OpParams) Block(v string) *OpParams {
+func (p OpParams) WithBlock(v string) OpParams {
 	p.Query.Set("block", v)
 	return p
 }
 
-func (p *OpParams) Since(v string) *OpParams {
+func (p OpParams) WithSince(v string) OpParams {
 	p.Query.Set("since", v)
 	return p
 }
 
-func (p *OpParams) Unpack(v bool) *OpParams {
-	if v {
-		p.Query.Set("unpack", "1")
-	} else {
-		p.Query.Del("unpack")
-	}
+func (p OpParams) WithUnpack() OpParams {
+	p.Query.Set("unpack", "1")
 	return p
 }
 
-func (p *OpParams) Prim(v bool) *OpParams {
-	if v {
-		p.Query.Set("prim", "1")
-	} else {
-		p.Query.Del("prim")
-	}
+func (p OpParams) WithPrim() OpParams {
+	p.Query.Set("prim", "1")
 	return p
 }
 
-func (p *OpParams) Meta(v bool) *OpParams {
-	if v {
-		p.Query.Set("meta", "1")
-	} else {
-		p.Query.Del("meta")
-	}
+func (p OpParams) WithMeta() OpParams {
+	p.Query.Set("meta", "1")
 	return p
 }
 
-func (p *OpParams) Rights(v bool) *OpParams {
-	if v {
-		p.Query.Set("rights", "1")
-	} else {
-		p.Query.Del("rights")
-	}
+func (p OpParams) WithRights() OpParams {
+	p.Query.Set("rights", "1")
 	return p
 }
 
-func (p *OpParams) Collapse(v bool) *OpParams {
-	if v {
-		p.Query.Set("collapse", "1")
-	} else {
-		p.Query.Del("collapse")
-	}
+func (p OpParams) WithCollapse() OpParams {
+	p.Query.Set("collapse", "1")
 	return p
 }
 

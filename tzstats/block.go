@@ -306,28 +306,40 @@ func (c *Client) QueryBlocks(ctx context.Context, filter FilterList, cols []stri
 }
 
 type BlockParams struct {
-	ListParams // offset, limit, cursor, order
+	Params
 }
 
 func NewBlockParams() BlockParams {
-	return BlockParams{NewListParams()}
+	return BlockParams{NewParams()}
 }
 
-func (p *BlockParams) Meta(v bool) *BlockParams {
-	if v {
-		p.Query.Set("meta", "1")
-	} else {
-		p.Query.Del("meta")
-	}
+func (p BlockParams) WithLimit(v uint) BlockParams {
+	p.Query.Set("limit", strconv.Itoa(int(v)))
 	return p
 }
 
-func (p *BlockParams) Rights(v bool) *BlockParams {
-	if v {
-		p.Query.Set("rights", "1")
-	} else {
-		p.Query.Del("rights")
-	}
+func (p BlockParams) WithOffset(v uint) BlockParams {
+	p.Query.Set("offset", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p BlockParams) WithCursor(v uint64) BlockParams {
+	p.Query.Set("cursor", strconv.FormatUint(v, 10))
+	return p
+}
+
+func (p BlockParams) WithOrder(v OrderType) BlockParams {
+	p.Query.Set("order", string(v))
+	return p
+}
+
+func (p BlockParams) WithMeta() BlockParams {
+	p.Query.Set("meta", "1")
+	return p
+}
+
+func (p BlockParams) WithRights() BlockParams {
+	p.Query.Set("rights", "1")
 	return p
 }
 

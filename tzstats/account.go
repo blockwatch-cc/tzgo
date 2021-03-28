@@ -331,19 +331,35 @@ func (a *Account) UnmarshalJSONBrief(data []byte) error {
 }
 
 type AccountParams struct {
-	ListParams // offset, limit, cursor, order
+	Params
 }
 
 func NewAccountParams() AccountParams {
-	return AccountParams{NewListParams()}
+	return AccountParams{NewParams()}
 }
 
-func (p *AccountParams) Meta(v bool) *AccountParams {
-	if v {
-		p.Query.Set("meta", "1")
-	} else {
-		p.Query.Del("meta")
-	}
+func (p AccountParams) WithLimit(v uint) AccountParams {
+	p.Query.Set("limit", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p AccountParams) WithOffset(v uint) AccountParams {
+	p.Query.Set("offset", strconv.Itoa(int(v)))
+	return p
+}
+
+func (p AccountParams) WithCursor(v uint64) AccountParams {
+	p.Query.Set("cursor", strconv.FormatUint(v, 10))
+	return p
+}
+
+func (p AccountParams) WithOrder(v OrderType) AccountParams {
+	p.Query.Set("order", string(v))
+	return p
+}
+
+func (p AccountParams) WithMeta() AccountParams {
+	p.Query.Set("meta", "1")
 	return p
 }
 

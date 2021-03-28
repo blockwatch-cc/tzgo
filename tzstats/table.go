@@ -81,12 +81,12 @@ func NewTableQuery(name string) TableQuery {
 	}
 }
 
-func (q *TableQuery) AddFilter(mode FilterMode, col string, val interface{}) *TableQuery {
+func (q *TableQuery) WithFilter(mode FilterMode, col string, val interface{}) *TableQuery {
 	q.Filter.Add(mode, col, val)
 	return q
 }
 
-func (q *TableQuery) SetFilter(mode FilterMode, col string, val interface{}) *TableQuery {
+func (q *TableQuery) ReplaceFilter(mode FilterMode, col string, val interface{}) *TableQuery {
 	for i, v := range q.Filter {
 		if v.Column == col {
 			q.Filter[i].Mode = mode
@@ -103,32 +103,32 @@ func (q *TableQuery) ResetFilter() *TableQuery {
 	return q
 }
 
-func (q *TableQuery) SetLimit(limit int) *TableQuery {
+func (q *TableQuery) WithLimit(limit int) *TableQuery {
 	q.Limit = limit
 	return q
 }
 
-func (q *TableQuery) SetColumns(cols ...string) *TableQuery {
+func (q *TableQuery) WithColumns(cols ...string) *TableQuery {
 	q.Columns = cols
 	return q
 }
 
-func (q *TableQuery) SetOrder(order OrderType) *TableQuery {
+func (q *TableQuery) WithOrder(order OrderType) *TableQuery {
 	q.Order = order
 	return q
 }
 
-func (q *TableQuery) SetVerbose() *TableQuery {
+func (q *TableQuery) WithVerbose() *TableQuery {
 	q.Verbose = true
 	return q
 }
 
-func (q *TableQuery) ResetVerbose() *TableQuery {
+func (q *TableQuery) WithQuiet() *TableQuery {
 	q.Verbose = false
 	return q
 }
 
-func (q *TableQuery) SetFormat(format FormatType) *TableQuery {
+func (q *TableQuery) WithFormat(format FormatType) *TableQuery {
 	q.Format = format
 	return q
 }

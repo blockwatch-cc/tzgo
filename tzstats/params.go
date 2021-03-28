@@ -6,7 +6,7 @@ package tzstats
 import (
 	"fmt"
 	"net/url"
-	"strconv"
+	// "strconv"
 	"strings"
 )
 
@@ -22,38 +22,13 @@ func NewParams() Params {
 	}
 }
 
-type ListParams struct {
-	Params
-}
+// type ListParams struct {
+// 	Params
+// }
 
-func NewListParams() ListParams {
-	return ListParams{NewParams()}
-}
-
-func (p *ListParams) Limit(v uint) *ListParams {
-	p.Query.Set("limit", strconv.Itoa(int(v)))
-	return p
-}
-
-func (p *ListParams) Offset(v uint) *ListParams {
-	p.Query.Set("offset", strconv.Itoa(int(v)))
-	return p
-}
-
-func (p *ListParams) Cursor(v uint64) *ListParams {
-	p.Query.Set("cursor", strconv.FormatUint(v, 10))
-	return p
-}
-
-func (p *ListParams) Order(v OrderType) *ListParams {
-	p.Query.Set("order", string(v))
-	return p
-}
-
-func (p *ListParams) Reset() *ListParams {
-	p.Query = url.Values{}
-	return p
-}
+// func NewListParams() ListParams {
+// 	return ListParams{NewParams()}
+// }
 
 func (p Params) Check() error {
 	if p.Server == "" {

@@ -30,7 +30,6 @@ type Metadata struct {
 	Standard string `json:"standard,omitempty"`
 	Code     string `json:"code,omitempty"`
 	Decimals int    `json:"decimals,omitempty"`
-	Utf8     bool   `json:"utf8,omitempty"`
 }
 
 func (c *Client) ListMetadata(ctx context.Context) ([]Metadata, error) {
