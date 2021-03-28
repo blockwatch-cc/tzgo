@@ -373,15 +373,7 @@ func (c *Client) QueryBigmap(ctx context.Context, filter FilterList, cols []stri
 	return q.Run(ctx)
 }
 
-type BigmapParams struct {
-	ContractParams
-}
-
-func NewBigmapParams() BigmapParams {
-	return BigmapParams{NewContractParams()}
-}
-
-func (c *Client) GetBigmap(ctx context.Context, id int64, params BigmapParams) (*Bigmap, error) {
+func (c *Client) GetBigmap(ctx context.Context, id int64, params ContractParams) (*Bigmap, error) {
 	b := &Bigmap{}
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d", id))
 	if err := c.get(ctx, u, nil, b); err != nil {
@@ -390,7 +382,7 @@ func (c *Client) GetBigmap(ctx context.Context, id int64, params BigmapParams) (
 	return b, nil
 }
 
-func (c *Client) GetBigmapType(ctx context.Context, id int64, params BigmapParams) (*BigmapType, error) {
+func (c *Client) GetBigmapType(ctx context.Context, id int64, params ContractParams) (*BigmapType, error) {
 	b := &BigmapType{}
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/type", id))
 	if err := c.get(ctx, u, nil, b); err != nil {
@@ -399,7 +391,7 @@ func (c *Client) GetBigmapType(ctx context.Context, id int64, params BigmapParam
 	return b, nil
 }
 
-func (c *Client) GetBigmapKeys(ctx context.Context, id int64, params BigmapParams) ([]BigmapKey, error) {
+func (c *Client) GetBigmapKeys(ctx context.Context, id int64, params ContractParams) ([]BigmapKey, error) {
 	keys := make([]BigmapKey, 0)
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/keys", id))
 	if err := c.get(ctx, u, nil, &keys); err != nil {
@@ -408,7 +400,7 @@ func (c *Client) GetBigmapKeys(ctx context.Context, id int64, params BigmapParam
 	return keys, nil
 }
 
-func (c *Client) GetBigmapValues(ctx context.Context, id int64, params BigmapParams) ([]BigmapValue, error) {
+func (c *Client) GetBigmapValues(ctx context.Context, id int64, params ContractParams) ([]BigmapValue, error) {
 	vals := make([]BigmapValue, 0)
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/values", id))
 	if err := c.get(ctx, u, nil, &vals); err != nil {
@@ -417,7 +409,7 @@ func (c *Client) GetBigmapValues(ctx context.Context, id int64, params BigmapPar
 	return vals, nil
 }
 
-func (c *Client) GetBigmapUpdates(ctx context.Context, id int64, params BigmapParams) ([]BigmapUpdate, error) {
+func (c *Client) GetBigmapUpdates(ctx context.Context, id int64, params ContractParams) ([]BigmapUpdate, error) {
 	upd := make([]BigmapUpdate, 0)
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/updates", id))
 	if err := c.get(ctx, u, nil, &upd); err != nil {
@@ -426,7 +418,7 @@ func (c *Client) GetBigmapUpdates(ctx context.Context, id int64, params BigmapPa
 	return upd, nil
 }
 
-func (c *Client) GetBigmapKey(ctx context.Context, id int64, key string, params BigmapParams) (*BigmapKey, error) {
+func (c *Client) GetBigmapKey(ctx context.Context, id int64, key string, params ContractParams) (*BigmapKey, error) {
 	k := &BigmapKey{}
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/%s", id, key))
 	if err := c.get(ctx, u, nil, k); err != nil {
@@ -435,7 +427,7 @@ func (c *Client) GetBigmapKey(ctx context.Context, id int64, key string, params 
 	return k, nil
 }
 
-func (c *Client) GetBigmapKeyUpdates(ctx context.Context, id int64, key string, params BigmapParams) ([]BigmapUpdate, error) {
+func (c *Client) GetBigmapKeyUpdates(ctx context.Context, id int64, key string, params ContractParams) ([]BigmapUpdate, error) {
 	upd := make([]BigmapUpdate, 0)
 	u := params.AppendQuery(fmt.Sprintf("/explorer/bigmap/%d/%s/updates", id, key))
 	if err := c.get(ctx, u, nil, &upd); err != nil {
