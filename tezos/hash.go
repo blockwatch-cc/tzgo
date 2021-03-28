@@ -21,7 +21,7 @@ var (
 	InvalidHash = Hash{Type: HashTypeInvalid, Hash: nil}
 
 	// ZeroHash
-	ZeroOpHash    = NewOperationHash(make([]byte, HashTypeOperation.Len()))
+	ZeroOpHash    = NewOpHash(make([]byte, HashTypeOperation.Len()))
 	ZeroBlockHash = NewBlockHash(make([]byte, HashTypeBlock.Len()))
 )
 
@@ -679,26 +679,26 @@ func ParseProtocolHashSafe(s string) ProtocolHash {
 	return h
 }
 
-// OperationHash
-type OperationHash struct {
+// OpHash
+type OpHash struct {
 	Hash
 }
 
-func NewOperationHash(buf []byte) OperationHash {
+func NewOpHash(buf []byte) OpHash {
 	b := make([]byte, len(buf))
 	copy(b, buf)
-	return OperationHash{Hash: NewHash(HashTypeOperation, b)}
+	return OpHash{Hash: NewHash(HashTypeOperation, b)}
 }
 
-func (h OperationHash) Clone() OperationHash {
-	return OperationHash{h.Hash.Clone()}
+func (h OpHash) Clone() OpHash {
+	return OpHash{h.Hash.Clone()}
 }
 
-func (h OperationHash) IsEqual(h2 OperationHash) bool {
+func (h OpHash) IsEqual(h2 OpHash) bool {
 	return h.Hash.IsEqual(h2.Hash)
 }
 
-func (h *OperationHash) UnmarshalText(data []byte) error {
+func (h *OpHash) UnmarshalText(data []byte) error {
 	if len(data) == 0 {
 		return nil
 	}
@@ -717,7 +717,7 @@ func (h *OperationHash) UnmarshalText(data []byte) error {
 	return nil
 }
 
-func (h *OperationHash) UnmarshalBinary(data []byte) error {
+func (h *OpHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeOperation.Len() {
 		return fmt.Errorf("invalid len %d for operation hash", len(data))
 	}
@@ -727,16 +727,16 @@ func (h *OperationHash) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func MustParseOperationHash(s string) OperationHash {
-	b, err := ParseOperationHash(s)
+func MustParseOpHash(s string) OpHash {
+	b, err := ParseOpHash(s)
 	if err != nil {
 		panic(err)
 	}
 	return b
 }
 
-func ParseOperationHash(s string) (OperationHash, error) {
-	var h OperationHash
+func ParseOpHash(s string) (OpHash, error) {
+	var h OpHash
 	if err := h.UnmarshalText([]byte(s)); err != nil {
 		return h, err
 	}

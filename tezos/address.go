@@ -326,6 +326,9 @@ func MustParseAddress(addr string) Address {
 }
 
 func ParseAddress(addr string) (Address, error) {
+	if len(addr) == 0 {
+		return InvalidAddress, nil
+	}
 	a := Address{}
 	// check for blinded address first
 	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) {
