@@ -167,7 +167,7 @@ func (p *Params) ContainsHeight(height int64) bool {
 }
 
 func (p *Params) IsMainnet() bool {
-	return p.ChainId.IsEqual(Mainnet)
+	return p.ChainId.Equal(Mainnet)
 }
 
 func (p *Params) IsPostBabylon() bool {

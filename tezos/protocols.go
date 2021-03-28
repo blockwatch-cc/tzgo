@@ -38,23 +38,23 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	*pp = *p
 	pp.ChainId = net
 	switch true {
-	case Mainnet.IsEqual(net):
+	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
-	case Alphanet.IsEqual(net):
+	case Alphanet.Equal(net):
 		pp.Network = "Alphanet"
-	case Zeronet.IsEqual(net):
+	case Zeronet.Equal(net):
 		pp.Network = "Zeronet"
-	case Babylonnet.IsEqual(net):
+	case Babylonnet.Equal(net):
 		pp.Network = "Babylonnet"
-	case Carthagenet.IsEqual(net):
+	case Carthagenet.Equal(net):
 		pp.Network = "Carthagenet"
-	case Delphinet.IsEqual(net):
+	case Delphinet.Equal(net):
 		pp.Network = "Delphinet"
-	case Edonet.IsEqual(net):
+	case Edonet.Equal(net):
 		pp.Network = "Edonet"
-	case Edonet2.IsEqual(net):
+	case Edonet2.Equal(net):
 		pp.Network = "Edonet2"
-	case Florencenet.IsEqual(net):
+	case Florencenet.Equal(net):
 		pp.Network = "Florencenet"
 	default:
 		pp.Network = "Sandbox"
@@ -68,57 +68,57 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	pp.Protocol = proto
 	pp.NumVotingPeriods = 4
 	switch true {
-	case ProtoV000.IsEqual(proto):
+	case ProtoV000.Equal(proto):
 		pp.Version = 0
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
 		pp.SilentSpendable = true
-	case ProtoV001.IsEqual(proto):
+	case ProtoV001.Equal(proto):
 		pp.Version = 1
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
 		pp.SilentSpendable = true
-	case ProtoV002.IsEqual(proto):
+	case ProtoV002.Equal(proto):
 		pp.Version = 2
 		pp.ReactivateByTx = true
 		pp.SilentSpendable = true
-	case ProtoV003.IsEqual(proto):
+	case ProtoV003.Equal(proto):
 		pp.Version = 3
 		pp.ReactivateByTx = true
 		pp.SilentSpendable = true
-	case ProtoV004.IsEqual(proto):
+	case ProtoV004.Equal(proto):
 		pp.Version = 4
 		pp.SilentSpendable = true
 		pp.Invoices = map[string]int64{
 			"tz1iSQEcaGpUn6EW5uAy3XhPiNg7BHMnRSXi": 100 * 1000000,
 		}
-	case ProtoV005_1.IsEqual(proto) || ProtoV005_2.IsEqual(proto):
+	case ProtoV005_1.Equal(proto) || ProtoV005_2.Equal(proto):
 		pp.Version = 5
 		pp.Invoices = map[string]int64{
 			"KT1DUfaMfTRZZkvZAYQT5b3byXnvqoAykc43": 500 * 1000000,
 		}
 		pp.OperationTagsVersion = 1
-	case ProtoV006_1.IsEqual(proto) || ProtoV006_2.IsEqual(proto):
+	case ProtoV006_1.Equal(proto) || ProtoV006_2.Equal(proto):
 		pp.Version = 6
 		pp.OperationTagsVersion = 1
 		// no invoice
-	case ProtoV007.IsEqual(proto):
+	case ProtoV007.Equal(proto):
 		pp.Version = 7
 		pp.OperationTagsVersion = 1
 		// no invoice
-	case ProtoV008_2.IsEqual(proto) || ProtoV008_1.IsEqual(proto):
+	case ProtoV008_2.Equal(proto) || ProtoV008_1.Equal(proto):
 		pp.Version = 8
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
-		if Mainnet.IsEqual(p.ChainId) {
+		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1343488
 		}
 		// no invoice
-	case ProtoV009.IsEqual(proto):
+	case ProtoV009.Equal(proto):
 		pp.Version = 9
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
-		if Mainnet.IsEqual(p.ChainId) {
+		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1343488
 		}
 		// invoice (will be applied as balance update from v009+)

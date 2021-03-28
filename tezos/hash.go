@@ -433,7 +433,7 @@ func (h Hash) IsValid() bool {
 	return h.Type != HashTypeInvalid && len(h.Hash) == h.Type.Len()
 }
 
-func (h Hash) IsEqual(h2 Hash) bool {
+func (h Hash) Equal(h2 Hash) bool {
 	return h.Type == h2.Type && bytes.Compare(h.Hash, h2.Hash) == 0
 }
 
@@ -492,8 +492,8 @@ func NewChainIdHash(buf []byte) ChainIdHash {
 	return ChainIdHash{Hash: NewHash(HashTypeChainId, b)}
 }
 
-func (h ChainIdHash) IsEqual(h2 ChainIdHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h ChainIdHash) Equal(h2 ChainIdHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h ChainIdHash) Clone() ChainIdHash {
@@ -560,8 +560,8 @@ func (h BlockHash) Clone() BlockHash {
 	return BlockHash{h.Hash.Clone()}
 }
 
-func (h BlockHash) IsEqual(h2 BlockHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h BlockHash) Equal(h2 BlockHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h *BlockHash) UnmarshalText(data []byte) error {
@@ -624,8 +624,8 @@ func (h ProtocolHash) Clone() ProtocolHash {
 	return ProtocolHash{h.Hash.Clone()}
 }
 
-func (h ProtocolHash) IsEqual(h2 ProtocolHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h ProtocolHash) Equal(h2 ProtocolHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h *ProtocolHash) UnmarshalText(data []byte) error {
@@ -694,8 +694,8 @@ func (h OpHash) Clone() OpHash {
 	return OpHash{h.Hash.Clone()}
 }
 
-func (h OpHash) IsEqual(h2 OpHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h OpHash) Equal(h2 OpHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h *OpHash) UnmarshalText(data []byte) error {
@@ -758,8 +758,8 @@ func (h ExprHash) Clone() ExprHash {
 	return ExprHash{h.Hash.Clone()}
 }
 
-func (h ExprHash) IsEqual(h2 ExprHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h ExprHash) Equal(h2 ExprHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h *ExprHash) UnmarshalText(data []byte) error {
@@ -822,8 +822,8 @@ func (h NonceHash) Clone() NonceHash {
 	return NonceHash{h.Hash.Clone()}
 }
 
-func (h NonceHash) IsEqual(h2 NonceHash) bool {
-	return h.Hash.IsEqual(h2.Hash)
+func (h NonceHash) Equal(h2 NonceHash) bool {
+	return h.Hash.Equal(h2.Hash)
 }
 
 func (h *NonceHash) UnmarshalText(data []byte) error {
