@@ -199,7 +199,7 @@ func (a Address) IsValid() bool {
 	return a.Type != AddressTypeInvalid && len(a.Hash) == a.Type.HashType().Len()
 }
 
-func (a Address) IsEqual(b Address) bool {
+func (a Address) Equal(b Address) bool {
 	return a.Type == b.Type && bytes.Compare(a.Hash, b.Hash) == 0
 }
 
