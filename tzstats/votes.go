@@ -10,36 +10,39 @@ import (
 )
 
 type Election struct {
-	Id                  int       `json:"election_id"`
-	NumPeriods          int       `json:"num_periods"`
-	NumProposals        int       `json:"num_proposals"`
-	StartTime           time.Time `json:"start_time"`
-	EndTime             time.Time `json:"end_time"`
-	StartHeight         int64     `json:"start_height"`
-	EndHeight           int64     `json:"end_height"`
-	IsEmpty             bool      `json:"is_empty"`
-	IsOpen              bool      `json:"is_open"`
-	IsFailed            bool      `json:"is_failed"`
-	NoQuorum            bool      `json:"no_quorum"`
-	NoMajority          bool      `json:"no_majority"`
-	NoProposal          bool      `json:"no_proposal"`
-	VotingPeriodKind    string    `json:"voting_period"`
-	ProposalPeriod      *Vote     `json:"proposal"`
-	TestingVotePeriod   *Vote     `json:"testing_vote"`
-	TestingPeriod       *Vote     `json:"testing"`
-	PromotionVotePeriod *Vote     `json:"promotion_vote"`
+	Id                int       `json:"election_id"`
+	NumPeriods        int       `json:"num_periods"`
+	NumProposals      int       `json:"num_proposals"`
+	StartTime         time.Time `json:"start_time"`
+	EndTime           time.Time `json:"end_time"`
+	StartHeight       int64     `json:"start_height"`
+	EndHeight         int64     `json:"end_height"`
+	IsEmpty           bool      `json:"is_empty"`
+	IsOpen            bool      `json:"is_open"`
+	IsFailed          bool      `json:"is_failed"`
+	NoQuorum          bool      `json:"no_quorum"`
+	NoMajority        bool      `json:"no_majority"`
+	NoProposal        bool      `json:"no_proposal"`
+	VotingPeriodKind  string    `json:"voting_period"`
+	ProposalPeriod    *Vote     `json:"proposal"`
+	ExplorationPeriod *Vote     `json:"exploration"`
+	CooldownPeriod    *Vote     `json:"cooldown"`
+	PromotionPeriod   *Vote     `json:"promotion"`
+	AdoptionPeriod    *Vote     `json:"adoption"`
 }
 
 func (e Election) Period(p string) *Vote {
 	switch p {
 	case "proposal":
 		return e.ProposalPeriod
-	case "testing_vote":
-		return e.TestingVotePeriod
-	case "testing":
-		return e.TestingPeriod
-	case "promotion_vote":
-		return e.PromotionVotePeriod
+	case "exploration":
+		return e.ExplorationPeriod
+	case "cooldown":
+		return e.CooldownPeriod
+	case "promotion":
+		return e.PromotionPeriod
+	case "adoption":
+		return e.AdoptionPeriod
 	default:
 		return nil
 	}
@@ -49,12 +52,14 @@ func PeriodNum(kind string) int {
 	switch kind {
 	case "proposal":
 		return 1
-	case "testing_vote":
+	case "exploration":
 		return 2
-	case "testing":
+	case "cooldown":
 		return 3
-	case "promotion_vote":
+	case "promotion":
 		return 4
+	case "adoption":
+		return 5
 	default:
 		return -1
 	}
