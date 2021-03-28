@@ -139,7 +139,7 @@ type RightsQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewRightsQuery() RightsQuery {
+func (c *Client) NewRightsQuery() *RightsQuery {
 	tinfo, err := GetTypeInfo(&Right{}, "")
 	if err != nil {
 		panic(err)
@@ -154,7 +154,7 @@ func (c *Client) NewRightsQuery() RightsQuery {
 		Columns: tinfo.Aliases(),
 		Filter:  make(FilterList, 0),
 	}
-	return RightsQuery{q}
+	return &RightsQuery{q}
 }
 
 func (q RightsQuery) Run(ctx context.Context) (*RightsList, error) {

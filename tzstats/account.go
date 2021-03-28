@@ -367,7 +367,7 @@ type AccountQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewAccountQuery() AccountQuery {
+func (c *Client) NewAccountQuery() *AccountQuery {
 	tinfo, err := GetTypeInfo(&Account{}, "")
 	if err != nil {
 		panic(err)
@@ -382,7 +382,7 @@ func (c *Client) NewAccountQuery() AccountQuery {
 		Columns: tinfo.Aliases(),
 		Filter:  make(FilterList, 0),
 	}
-	return AccountQuery{q}
+	return &AccountQuery{q}
 }
 
 func (q AccountQuery) Run(ctx context.Context) (*AccountList, error) {

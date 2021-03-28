@@ -266,7 +266,7 @@ type BlockQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewBlockQuery() BlockQuery {
+func (c *Client) NewBlockQuery() *BlockQuery {
 	tinfo, err := GetTypeInfo(&Block{}, "")
 	if err != nil {
 		panic(err)
@@ -281,7 +281,7 @@ func (c *Client) NewBlockQuery() BlockQuery {
 		Order:   OrderAsc,
 		Filter:  make(FilterList, 0),
 	}
-	return BlockQuery{q}
+	return &BlockQuery{q}
 }
 
 func (q BlockQuery) Run(ctx context.Context) (*BlockList, error) {
