@@ -126,7 +126,7 @@ func ParseBigMapKey(typ, val string) (*BigMapKey, error) {
 				err2 = z.UnmarshalBinary(buf)
 			}
 			if err2 != nil {
-				return nil, fmt.Errorf("micheline: decoding bigmap %s key '%s': %v", key.Type, val, err)
+				return nil, fmt.Errorf("micheline: decoding bigmap key %s '%s': %v", key.Type.Name(), val, err)
 			}
 			key.IntKey = z.Big()
 		}
@@ -137,13 +137,13 @@ func ParseBigMapKey(typ, val string) (*BigMapKey, error) {
 		key.Type.Type = PrimBytes
 		key.BytesKey, err = hex.DecodeString(val)
 		if err != nil {
-			return nil, fmt.Errorf("micheline: decoding bigmap %s key '%s': %v", key.Type, val, err)
+			return nil, fmt.Errorf("micheline: decoding bigmap key %s '%s': %v", key.Type.Name(), val, err)
 		}
 	case T_BOOL:
 		key.Type.Type = PrimNullary
 		key.BoolKey, err = strconv.ParseBool(val)
 		if err != nil {
-			return nil, fmt.Errorf("micheline: decoding bigmap %s key '%s': %v", key.Type, val, err)
+			return nil, fmt.Errorf("micheline: decoding bigmap key %s '%s': %v", key.Type.Name(), val, err)
 		}
 	case T_TIMESTAMP:
 		// either RFC3339 or UNIX seconds
@@ -157,7 +157,7 @@ func ParseBigMapKey(typ, val string) (*BigMapKey, error) {
 				err2 = z.UnmarshalBinary(buf)
 			}
 			if err2 != nil {
-				return nil, fmt.Errorf("micheline: decoding bigmap %s key '%s': %v", key.Type, val, err)
+				return nil, fmt.Errorf("micheline: decoding bigmap key %s '%s': %v", key.Type.Name(), val, err)
 			}
 			key.TimeKey = time.Unix(z.Int64(), 0).UTC()
 		}
@@ -171,7 +171,7 @@ func ParseBigMapKey(typ, val string) (*BigMapKey, error) {
 				err2 = a.UnmarshalBinary(buf)
 			}
 			if err2 != nil {
-				return nil, fmt.Errorf("micheline: decoding bigmap %s key '%s': %v", key.Type, val, err)
+				return nil, fmt.Errorf("micheline: decoding bigmap key %s '%s': %v", key.Type.Name(), val, err)
 			}
 			key.AddrKey = a
 		}
@@ -179,21 +179,21 @@ func ParseBigMapKey(typ, val string) (*BigMapKey, error) {
 		// parse comma-separated list into a pair tree
 		v := strings.SplitN(val, ",", 2)
 		if len(v) != 2 {
-			return nil, fmt.Errorf("micheline: invalid big_map %s key '%s'", key.Type.OpCode, val)
+			return nil, fmt.Errorf("micheline: invalid big_map pair key %s '%s'", key.Type.Name(), val)
 		}
 		left, err := ParseBigMapKey(InferBigMapKeyType(v[0]).String(), v[0])
 		if err != nil {
-			return nil, fmt.Errorf("micheline: decoding bigmap pair key '%s': %v", key.Type, val, err)
+			return nil, fmt.Errorf("micheline: decoding bigmap pair key %s '%s': %v", key.Type.Name(), val, err)
 		}
 		right, err := ParseBigMapKey(InferBigMapKeyType(v[1]).String(), v[1])
 		if err != nil {
-			return nil, fmt.Errorf("micheline: decoding bigmap pair key '%s': %v", key.Type, val, err)
+			return nil, fmt.Errorf("micheline: decoding bigmap pair key %s '%s': %v", key.Type.Name(), val, err)
 		}
 		key.PrimKey = dpair(left.Prim(), right.Prim())
 		key.Type.Type = PrimBinary
 
 	default:
-		return nil, fmt.Errorf("micheline: unsupported big_map key type '%s' in query", key.Type.OpCode)
+		return nil, fmt.Errorf("micheline: unsupported big_map key %s type %s", key.Type.Name(), key.Type.OpCode)
 	}
 	return key, nil
 }
@@ -298,7 +298,6 @@ func (k *BigMapKey) MarshalBinary() ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("micheline: no binary marshaller for big_map key type '%s'", k.Type.OpCode)
 	}
-	return nil, nil
 }
 
 func NewBigMapKeyAs(typ *Prim, key *Prim) (*BigMapKey, error) {

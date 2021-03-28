@@ -76,8 +76,6 @@ func (m *BootstrapMonitor) Recv(ctx context.Context) (*BootstrappedBlock, error)
 		}
 		return res, nil
 	}
-	// unreachable
-	return nil, nil
 }
 
 func (m *BootstrapMonitor) Err(err error) {
@@ -175,8 +173,6 @@ func (m *BlockHeaderMonitor) Recv(ctx context.Context) (*BlockHeaderLogEntry, er
 		}
 		return res, nil
 	}
-	// unreachable
-	return nil, nil
 }
 
 func (m *BlockHeaderMonitor) Err(err error) {
@@ -253,8 +249,6 @@ func (m *NetworkPeerMonitor) Recv(ctx context.Context) (*NetworkPeerLogEntry, er
 		}
 		return res, nil
 	}
-	// unreachable
-	return nil, nil
 }
 
 func (m *NetworkPeerMonitor) Err(err error) {
@@ -330,8 +324,6 @@ func (m *NetworkPointMonitor) Recv(ctx context.Context) (*NetworkPointLogEntry, 
 		}
 		return res, nil
 	}
-	// unreachable
-	return nil, nil
 }
 
 func (m *NetworkPointMonitor) Err(err error) {
