@@ -150,7 +150,7 @@ type SnapshotQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewSnapshotQuery() *SnapshotQuery {
+func (c *Client) NewSnapshotQuery() SnapshotQuery {
 	tinfo, err := GetTypeInfo(&Snapshot{}, "")
 	if err != nil {
 		panic(err)
@@ -165,7 +165,7 @@ func (c *Client) NewSnapshotQuery() *SnapshotQuery {
 		Order:   OrderAsc,
 		Filter:  make(FilterList, 0),
 	}
-	return &SnapshotQuery{q}
+	return SnapshotQuery{q}
 }
 
 func (q SnapshotQuery) Run(ctx context.Context) (*SnapshotList, error) {

@@ -205,7 +205,7 @@ type ChainQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewChainQuery() *ChainQuery {
+func (c *Client) NewChainQuery() ChainQuery {
 	tinfo, err := GetTypeInfo(&Chain{}, "")
 	if err != nil {
 		panic(err)
@@ -220,7 +220,7 @@ func (c *Client) NewChainQuery() *ChainQuery {
 		Columns: tinfo.Aliases(),
 		Filter:  make(FilterList, 0),
 	}
-	return &ChainQuery{q}
+	return ChainQuery{q}
 }
 
 func (q ChainQuery) Run(ctx context.Context) (*ChainList, error) {

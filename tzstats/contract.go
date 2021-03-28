@@ -347,7 +347,7 @@ type ContractQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewContractQuery() *ContractQuery {
+func (c *Client) NewContractQuery() ContractQuery {
 	tinfo, err := GetTypeInfo(&Contract{}, "")
 	if err != nil {
 		panic(err)
@@ -362,7 +362,7 @@ func (c *Client) NewContractQuery() *ContractQuery {
 		Columns: tinfo.Aliases(),
 		Filter:  make(FilterList, 0),
 	}
-	return &ContractQuery{q}
+	return ContractQuery{q}
 }
 
 func (q ContractQuery) Run(ctx context.Context) (*ContractList, error) {

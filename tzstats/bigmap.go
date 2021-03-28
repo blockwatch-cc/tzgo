@@ -334,7 +334,7 @@ type BigmapQuery struct {
 	TableQuery
 }
 
-func (c *Client) NewBigmapQuery() *BigmapQuery {
+func (c *Client) NewBigmapQuery() BigmapQuery {
 	tinfo, err := GetTypeInfo(&BigmapRow{}, "")
 	if err != nil {
 		panic(err)
@@ -349,7 +349,7 @@ func (c *Client) NewBigmapQuery() *BigmapQuery {
 		Columns: tinfo.Aliases(),
 		Filter:  make(FilterList, 0),
 	}
-	return &BigmapQuery{q}
+	return BigmapQuery{q}
 }
 
 func (q BigmapQuery) Run(ctx context.Context) (*BigmapRowList, error) {
