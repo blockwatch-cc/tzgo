@@ -6,7 +6,6 @@ package rpc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -135,7 +134,6 @@ type VotingPeriodInfo struct {
 type BlockMetadata struct {
 	Protocol               tezos.ProtocolHash     `json:"protocol"`
 	NextProtocol           tezos.ProtocolHash     `json:"next_protocol"`
-	TestChainStatus        TestChainStatus        `json:"-"`
 	MaxOperationsTTL       int                    `json:"max_operations_ttl"`
 	MaxOperationDataLength int                    `json:"max_operation_data_length"`
 	MaxBlockHeaderLength   int                    `json:"max_block_header_length"`
@@ -153,31 +151,6 @@ type BlockMetadata struct {
 	// v008
 	LevelInfo        *BlockLevel       `json:"level_info"`
 	VotingPeriodInfo *VotingPeriodInfo `json:"voting_period_info"`
-}
-
-// UnmarshalJSON unmarshals the BlockMetadata JSON
-func (bhm *BlockMetadata) UnmarshalJSON(data []byte) error {
-	type suppressJSONUnmarshaller BlockMetadata
-	if err := json.Unmarshal(data, (*suppressJSONUnmarshaller)(bhm)); err != nil {
-		return err
-	}
-
-	var tmp struct {
-		TestChainStatus json.RawMessage `json:"test_chain_status"`
-	}
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	tcs, err := unmarshalTestChainStatus(tmp.TestChainStatus)
-	if err != nil {
-		return err
-	}
-
-	bhm.TestChainStatus = tcs
-
-	return nil
 }
 
 // GetBlock returns information about a Tezos block
@@ -227,6 +200,17 @@ func (c *Client) GetTips(ctx context.Context, depth int, head tezos.BlockHash) (
 func (c *Client) GetTipHeader(ctx context.Context) (*BlockHeader, error) {
 	var head BlockHeader
 	u := fmt.Sprintf("chains/%s/blocks/head/header", c.ChainID)
+	if err := c.Get(ctx, u, &head); err != nil {
+		return nil, err
+	}
+	return &head, nil
+}
+
+// GetBlockHeader returns the main chain's block header at height.
+// https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
+func (c *Client) GetBlockHeader(ctx context.Context, height int64) (*BlockHeader, error) {
+	var head BlockHeader
+	u := fmt.Sprintf("chains/%s/blocks/%d/header", c.ChainID, height)
 	if err := c.Get(ctx, u, &head); err != nil {
 		return nil, err
 	}

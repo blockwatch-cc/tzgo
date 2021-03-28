@@ -145,6 +145,24 @@ func (c *Client) GetConstantsHeight(ctx context.Context, height int64) (Constant
 	return con, nil
 }
 
+// GetParamsByHeight returns a translated parameters structure for the current
+// network
+func (c *Client) GetParamsByHeight(ctx context.Context, height int64) (*tezos.Params, error) {
+	con, err := c.GetConstantsHeight(ctx, height)
+	if err != nil {
+		return nil, err
+	}
+	head, err := c.GetBlockHeader(ctx, height)
+	if err != nil {
+		return nil, err
+	}
+	params := con.MapToChainParams()
+	if head.ChainId == nil || head.Protocol == nil {
+		return params, nil
+	}
+	return params.ForNetwork(*head.ChainId).ForProtocol(*head.Protocol), nil
+}
+
 func (c Constants) MapToChainParams() *tezos.Params {
 	p := tezos.NewParams()
 	p.NoRewardCycles = c.NoRewardCycles
