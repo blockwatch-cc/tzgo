@@ -22,11 +22,11 @@ import (
 type Contract struct {
 	RowId         uint64              `json:"row_id"`
 	AccountId     uint64              `json:"account_id"`
-	Address       string              `json:"address"`
+	Address       tezos.Address       `json:"address"`
 	CreatorId     uint64              `json:"creator_id"`
-	Creator       string              `json:"creator"`
+	Creator       tezos.Address       `json:"creator"`
 	DelegateId    uint64              `json:"delegate_id"`
-	Delegate      string              `json:"delegate"`
+	Delegate      tezos.Address       `json:"delegate"`
 	FirstSeen     int64               `json:"first_seen"`
 	LastSeen      int64               `json:"last_seen"`
 	FirstSeenTime time.Time           `json:"first_seen_time"`
@@ -112,11 +112,11 @@ func (c *Contract) UnmarshalJSONBrief(data []byte) error {
 		case "account_id":
 			cc.AccountId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "address":
-			cc.Address = f.(string)
+			cc.Address, err = tezos.ParseAddress(f.(string))
 		case "creator_id":
 			cc.CreatorId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "creator":
-			cc.Creator = f.(string)
+			cc.Creator, err = tezos.ParseAddress(f.(string))
 		case "first_seen":
 			cc.FirstSeen, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "last_seen":

@@ -22,14 +22,6 @@ func NewParams() Params {
 	}
 }
 
-// type ListParams struct {
-// 	Params
-// }
-
-// func NewListParams() ListParams {
-// 	return ListParams{NewParams()}
-// }
-
 func (p Params) Check() error {
 	if p.Server == "" {
 		return fmt.Errorf("empty server URL")

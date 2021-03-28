@@ -7,34 +7,36 @@ import (
 	"context"
 	"strconv"
 	"time"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type BlockchainTip struct {
-	Name               string       `json:"name"`
-	Network            string       `json:"network"`
-	Symbol             string       `json:"symbol"`
-	ChainId            string       `json:"chain_id"`
-	GenesisTime        time.Time    `json:"genesis_time"`
-	BestHash           string       `json:"block_hash"`
-	Timestamp          time.Time    `json:"timestamp"`
-	Height             int64        `json:"height"`
-	Cycle              int64        `json:"cycle"`
-	TotalAccounts      int64        `json:"total_accounts"`
-	FundedAccounts     int64        `json:"funded_accounts"`
-	TotalOps           int64        `json:"total_ops"`
-	Delegators         int64        `json:"delegators"`
-	Delegates          int64        `json:"delegates"`
-	Rolls              int64        `json:"rolls"`
-	RollOwners         int64        `json:"roll_owners"`
-	NewAccounts30d     int64        `json:"new_accounts_30d"`
-	ClearedAccounts30d int64        `json:"cleared_accounts_30d"`
-	FundedAccounts30d  int64        `json:"funded_accounts_30d"`
-	Inflation1Y        float64      `json:"inflation_1y"`
-	InflationRate1Y    float64      `json:"inflation_rate_1y"`
-	Health             int          `json:"health"`
-	Supply             *Supply      `json:"supply"`
-	Deployments        []Deployment `json:"deployments"`
-	Status             Status       `json:"status"`
+	Name               string            `json:"name"`
+	Network            string            `json:"network"`
+	Symbol             string            `json:"symbol"`
+	ChainId            tezos.ChainIdHash `json:"chain_id"`
+	GenesisTime        time.Time         `json:"genesis_time"`
+	BestHash           tezos.BlockHash   `json:"block_hash"`
+	Timestamp          time.Time         `json:"timestamp"`
+	Height             int64             `json:"height"`
+	Cycle              int64             `json:"cycle"`
+	TotalAccounts      int64             `json:"total_accounts"`
+	FundedAccounts     int64             `json:"funded_accounts"`
+	TotalOps           int64             `json:"total_ops"`
+	Delegators         int64             `json:"delegators"`
+	Delegates          int64             `json:"delegates"`
+	Rolls              int64             `json:"rolls"`
+	RollOwners         int64             `json:"roll_owners"`
+	NewAccounts30d     int64             `json:"new_accounts_30d"`
+	ClearedAccounts30d int64             `json:"cleared_accounts_30d"`
+	FundedAccounts30d  int64             `json:"funded_accounts_30d"`
+	Inflation1Y        float64           `json:"inflation_1y"`
+	InflationRate1Y    float64           `json:"inflation_rate_1y"`
+	Health             int               `json:"health"`
+	Supply             *Supply           `json:"supply"`
+	Deployments        []Deployment      `json:"deployments"`
+	Status             Status            `json:"status"`
 }
 
 type Deployment struct {

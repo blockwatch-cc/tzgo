@@ -10,17 +10,19 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Account struct {
 	RowId              uint64              `json:"row_id"`
-	Address            string              `json:"address"`
-	AddressType        string              `json:"address_type"`
+	Address            tezos.Address       `json:"address"`
+	AddressType        tezos.AddressType   `json:"address_type"`
 	DelegateId         uint64              `json:"delegate_id"`
-	Delegate           string              `json:"delegate"`
+	Delegate           tezos.Address       `json:"delegate"`
 	CreatorId          uint64              `json:"creator_id"`
-	Creator            string              `json:"creator"`
-	Pubkey             string              `json:"pubkey"`
+	Creator            tezos.Address       `json:"creator"`
+	Pubkey             tezos.Key           `json:"pubkey"`
 	FirstIn            int64               `json:"first_in"`
 	FirstOut           int64               `json:"first_out"`
 	FirstSeen          int64               `json:"first_seen"`
@@ -160,19 +162,19 @@ func (a *Account) UnmarshalJSONBrief(data []byte) error {
 		case "row_id":
 			acc.RowId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "address":
-			acc.Address = f.(string)
+			acc.Address, err = tezos.ParseAddress(f.(string))
 		case "address_type":
-			acc.AddressType = f.(string)
+			acc.AddressType = tezos.ParseAddressType(f.(string))
 		case "delegate_id":
 			acc.DelegateId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "delegate":
-			acc.Delegate = f.(string)
+			acc.Delegate, err = tezos.ParseAddress(f.(string))
 		case "creator_id":
 			acc.CreatorId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "creator":
-			acc.Creator = f.(string)
+			acc.Creator, err = tezos.ParseAddress(f.(string))
 		case "pubkey":
-			acc.Pubkey = f.(string)
+			acc.Pubkey, err = tezos.ParseKey(f.(string))
 		case "first_in":
 			acc.FirstIn, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "first_out":

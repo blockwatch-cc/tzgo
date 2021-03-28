@@ -10,26 +10,28 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Right struct {
-	RowId          uint64    `json:"row_id"`
-	Height         int64     `json:"height"`
-	Cycle          int64     `json:"cycle"`
-	Timestamp      time.Time `json:"time"`
-	Type           string    `json:"type"`
-	Priority       int       `json:"priority"`
-	Slot           int       `json:"slot"`
-	AccountId      uint64    `json:"account_id"`
-	Address        string    `json:"address"`
-	IsUsed         bool      `json:"is_used"`
-	IsLost         bool      `json:"is_lost"`
-	IsStolen       bool      `json:"is_stolen"`
-	IsMissed       bool      `json:"is_missed"`
-	IsBondMiss     bool      `json:"is_bind_miss"`
-	IsSeedRequired bool      `json:"is_seed_required"`
-	IsSeedRevealed bool      `json:"is_seed_revealed"`
-	columns        []string  `json:"-"`
+	RowId          uint64          `json:"row_id"`
+	Height         int64           `json:"height"`
+	Cycle          int64           `json:"cycle"`
+	Timestamp      time.Time       `json:"time"`
+	Type           tezos.RightType `json:"type"`
+	Priority       int             `json:"priority"`
+	Slot           int             `json:"slot"`
+	AccountId      uint64          `json:"account_id"`
+	Address        tezos.Address   `json:"address"`
+	IsUsed         bool            `json:"is_used"`
+	IsLost         bool            `json:"is_lost"`
+	IsStolen       bool            `json:"is_stolen"`
+	IsMissed       bool            `json:"is_missed"`
+	IsBondMiss     bool            `json:"is_bind_miss"`
+	IsSeedRequired bool            `json:"is_seed_required"`
+	IsSeedRevealed bool            `json:"is_seed_revealed"`
+	columns        []string        `json:"-"`
 }
 
 type RightsList struct {
@@ -104,14 +106,14 @@ func (r *Right) UnmarshalJSONBrief(data []byte) error {
 				right.Timestamp = time.Unix(0, ts*1000000).UTC()
 			}
 		case "type":
-			right.Type = f.(string)
+			right.Type = tezos.ParseRightType(f.(string))
 		case "priority":
 			right.Priority, err = strconv.Atoi(f.(json.Number).String())
 			right.Slot = right.Priority
 		case "account_id":
 			right.AccountId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "address":
-			right.Address = f.(string)
+			right.Address, err = tezos.ParseAddress(f.(string))
 		case "is_used":
 			right.IsUsed, err = strconv.ParseBool(f.(json.Number).String())
 		case "is_lost":

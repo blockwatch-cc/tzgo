@@ -13,12 +13,12 @@ import (
 
 // OperationHeader represents a single operation included into a block
 type OperationHeader struct {
-	Protocol  tezos.ProtocolHash  `json:"protocol"`
-	ChainID   tezos.ChainIdHash   `json:"chain_id"`
-	Hash      tezos.OperationHash `json:"hash"`
-	Branch    tezos.BlockHash     `json:"branch"`
-	Contents  Operations          `json:"contents"`
-	Signature string              `json:"signature"`
+	Protocol  tezos.ProtocolHash `json:"protocol"`
+	ChainID   tezos.ChainIdHash  `json:"chain_id"`
+	Hash      tezos.OpHash       `json:"hash"`
+	Branch    tezos.BlockHash    `json:"branch"`
+	Contents  Operations         `json:"contents"`
+	Signature string             `json:"signature"`
 }
 
 // Operation must be implemented by all operations

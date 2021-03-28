@@ -10,28 +10,30 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Snapshot struct {
-	RowId        uint64    `json:"row_id"`
-	Height       int64     `json:"height"`
-	Cycle        int64     `json:"cycle"`
-	IsSelected   bool      `json:"is_selected"`
-	Timestamp    time.Time `json:"time"`
-	Index        int64     `json:"index"`
-	Rolls        int64     `json:"rolls"`
-	AccountId    uint64    `json:"account_id"`
-	Account      string    `json:"address"`
-	DelegateId   uint64    `json:"delegate_id"`
-	Delegate     string    `json:"delegate"`
-	IsDelegate   bool      `json:"is_delegate"`
-	IsActive     bool      `json:"is_active"`
-	Balance      float64   `json:"balance"`
-	Delegated    float64   `json:"delegated"`
-	NDelegations int64     `json:"n_delegations"`
-	Since        int64     `json:"since"`
-	SinceTime    time.Time `json:"since_time"`
-	columns      []string  `json:"-"`
+	RowId        uint64        `json:"row_id"`
+	Height       int64         `json:"height"`
+	Cycle        int64         `json:"cycle"`
+	IsSelected   bool          `json:"is_selected"`
+	Timestamp    time.Time     `json:"time"`
+	Index        int64         `json:"index"`
+	Rolls        int64         `json:"rolls"`
+	AccountId    uint64        `json:"account_id"`
+	Account      tezos.Address `json:"address"`
+	DelegateId   uint64        `json:"delegate_id"`
+	Delegate     tezos.Address `json:"delegate"`
+	IsDelegate   bool          `json:"is_delegate"`
+	IsActive     bool          `json:"is_active"`
+	Balance      float64       `json:"balance"`
+	Delegated    float64       `json:"delegated"`
+	NDelegations int64         `json:"n_delegations"`
+	Since        int64         `json:"since"`
+	SinceTime    time.Time     `json:"since_time"`
+	columns      []string      `json:"-"`
 }
 
 type SnapshotList struct {
@@ -112,11 +114,11 @@ func (s *Snapshot) UnmarshalJSONBrief(data []byte) error {
 		case "rolls":
 			snap.Rolls, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "address":
-			snap.Account = f.(string)
+			snap.Account, err = tezos.ParseAddress(f.(string))
 		case "account_id":
 			snap.AccountId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "delegate":
-			snap.Delegate = f.(string)
+			snap.Delegate, err = tezos.ParseAddress(f.(string))
 		case "delegate_id":
 			snap.DelegateId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "is_delegate":

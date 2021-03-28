@@ -18,22 +18,22 @@ import (
 )
 
 type Bigmap struct {
-	Contract        string     `json:"contract"`
-	BigMapId        int64      `json:"bigmap_id"`
-	NUpdates        int64      `json:"n_updates"`
-	NKeys           int64      `json:"n_keys"`
-	AllocatedHeight int64      `json:"alloc_height"`
-	AllocatedBlock  string     `json:"alloc_block"`
-	AllocatedTime   time.Time  `json:"alloc_time"`
-	UpdatedHeight   int64      `json:"update_height"`
-	UpdatedBlock    string     `json:"update_block"`
-	UpdatedTime     time.Time  `json:"update_time"`
-	IsRemoved       bool       `json:"is_removed"`
-	Type            BigmapType `json:"type"`
+	Contract        tezos.Address   `json:"contract"`
+	BigMapId        int64           `json:"bigmap_id"`
+	NUpdates        int64           `json:"n_updates"`
+	NKeys           int64           `json:"n_keys"`
+	AllocatedHeight int64           `json:"alloc_height"`
+	AllocatedBlock  tezos.BlockHash `json:"alloc_block"`
+	AllocatedTime   time.Time       `json:"alloc_time"`
+	UpdatedHeight   int64           `json:"update_height"`
+	UpdatedBlock    tezos.BlockHash `json:"update_block"`
+	UpdatedTime     time.Time       `json:"update_time"`
+	IsRemoved       bool            `json:"is_removed"`
+	Type            BigmapType      `json:"type"`
 }
 
 type BigmapType struct {
-	Contract    string         `json:"contract"`
+	Contract    tezos.Address  `json:"contract"`
 	BigMapId    int64          `json:"bigmap_id"`
 	KeyEncoding string         `json:"key_encoding"`
 	KeyType     interface{}    `json:"key_type"`
@@ -47,18 +47,18 @@ type BigmapTypePrim struct {
 }
 
 type BigmapMeta struct {
-	Contract     string    `json:"contract"`
-	BigMapId     int64     `json:"bigmap_id"`
-	UpdateTime   time.Time `json:"time"`
-	UpdateHeight int64     `json:"height"`
-	UpdateBlock  string    `json:"block"`
-	IsReplaced   bool      `json:"is_replaced"`
-	IsRemoved    bool      `json:"is_removed"`
+	Contract     tezos.Address   `json:"contract"`
+	BigMapId     int64           `json:"bigmap_id"`
+	UpdateTime   time.Time       `json:"time"`
+	UpdateHeight int64           `json:"height"`
+	UpdateBlock  tezos.BlockHash `json:"block"`
+	IsReplaced   bool            `json:"is_replaced"`
+	IsRemoved    bool            `json:"is_removed"`
 }
 
 type BigmapKey struct {
 	Keys         MultiKey        `json:"key"`
-	KeyHash      string          `json:"key_hash"`
+	KeyHash      tezos.ExprHash  `json:"key_hash"`
 	KeyBinary    string          `json:"key_binary"`
 	KeysUnpacked MultiKey        `json:"key_unpacked"`
 	KeyPretty    string          `json:"key_pretty"`
@@ -106,7 +106,7 @@ func (k *MultiKey) UnmarshalJSON(buf []byte) error {
 
 type BigmapValue struct {
 	Keys         MultiKey        `json:"key"`
-	KeyHash      string          `json:"key_hash"`
+	KeyHash      tezos.ExprHash  `json:"key_hash"`
 	KeyBinary    string          `json:"key_binary"`
 	KeysUnpacked MultiKey        `json:"key_unpacked"`
 	KeyPretty    string          `json:"key_pretty"`
@@ -197,25 +197,25 @@ type BigmapUpdate struct {
 }
 
 type BigmapRow struct {
-	RowId       uint64    `json:"row_id"`
-	PrevId      uint64    `json:"prev_id"`
-	Address     string    `json:"address"`
-	AccountId   uint64    `json:"account_id"`
-	ContractId  uint64    `json:"contract_id"`
-	OpId        uint64    `json:"op_id"`
-	Op          string    `json:"op"`
-	Height      int64     `json:"height"`
-	Timestamp   time.Time `json:"time"`
-	BigMapId    int64     `json:"bigmap_id"`
-	Action      string    `json:"action"`
-	KeyHash     string    `json:"key_hash,omitempty"`
-	KeyType     string    `json:"key_type,omitempty"`
-	KeyEncoding string    `json:"key_encoding,omitempty"`
-	Key         string    `json:"key,omitempty"`
-	Value       string    `json:"value,omitempty"`
-	IsReplaced  bool      `json:"is_replaced"`
-	IsDeleted   bool      `json:"is_deleted"`
-	IsCopied    bool      `json:"is_copied"`
+	RowId       uint64         `json:"row_id"`
+	PrevId      uint64         `json:"prev_id"`
+	Address     tezos.Address  `json:"address"`
+	AccountId   uint64         `json:"account_id"`
+	ContractId  uint64         `json:"contract_id"`
+	OpId        uint64         `json:"op_id"`
+	Op          tezos.OpHash   `json:"op"`
+	Height      int64          `json:"height"`
+	Timestamp   time.Time      `json:"time"`
+	BigMapId    int64          `json:"bigmap_id"`
+	Action      string         `json:"action"`
+	KeyHash     tezos.ExprHash `json:"key_hash,omitempty"`
+	KeyType     string         `json:"key_type,omitempty"`
+	KeyEncoding string         `json:"key_encoding,omitempty"`
+	Key         string         `json:"key,omitempty"`
+	Value       string         `json:"value,omitempty"`
+	IsReplaced  bool           `json:"is_replaced"`
+	IsDeleted   bool           `json:"is_deleted"`
+	IsCopied    bool           `json:"is_copied"`
 
 	columns []string `json:"-"`
 }
@@ -284,7 +284,7 @@ func (b *BigmapRow) UnmarshalJSONBrief(data []byte) error {
 		case "prev_id":
 			br.PrevId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "address":
-			br.Address = f.(string)
+			br.Address, err = tezos.ParseAddress(f.(string))
 		case "account_id":
 			br.AccountId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "contract_id":
@@ -292,7 +292,7 @@ func (b *BigmapRow) UnmarshalJSONBrief(data []byte) error {
 		case "op_id":
 			br.OpId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "op":
-			br.Op = f.(string)
+			br.Op, err = tezos.ParseOpHash(f.(string))
 		case "height":
 			br.Height, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "time":
@@ -306,7 +306,7 @@ func (b *BigmapRow) UnmarshalJSONBrief(data []byte) error {
 		case "action":
 			b.Action = f.(string)
 		case "key_hash":
-			b.KeyHash = f.(string)
+			b.KeyHash, err = tezos.ParseExprHash(f.(string))
 		case "key_type":
 			b.KeyType = f.(string)
 		case "key_encoding":

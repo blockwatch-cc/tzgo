@@ -5,26 +5,28 @@ package tzstats
 
 import (
 	"context"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Metadata struct {
-	Address     string `json:"address"`
-	Name        string `json:"name"`
-	Category    string `json:"category,omitempty"`
-	Status      string `json:"status,omitempty"`
-	Country     string `json:"country,omitempty"`
-	City        string `json:"city,omitempty"`
-	Twitter     string `json:"twitter,omitempty"`
-	HasLogo     bool   `json:"logo,omitempty"`
-	IsSponsored bool   `json:"sponsored,omitempty"`
+	Address     tezos.Address `json:"address"`
+	Name        string        `json:"name"`
+	Category    string        `json:"category,omitempty"`
+	Status      string        `json:"status,omitempty"`
+	Country     string        `json:"country,omitempty"`
+	City        string        `json:"city,omitempty"`
+	Twitter     string        `json:"twitter,omitempty"`
+	HasLogo     bool          `json:"logo,omitempty"`
+	IsSponsored bool          `json:"sponsored,omitempty"`
 
 	// baker info
-	Fee            float64  `json:"fee,omitempty"`
-	From           []string `json:"from,omitempty"`
-	PayoutDelay    bool     `json:"payout_delay,omitempty"`
-	MinPayout      float64  `json:"min_payout,omitempty"`
-	MinDelegation  float64  `json:"min_delegation,omitempty"`
-	NonDelegatable bool     `json:"non_delegatable,omitempty"`
+	Fee            float64         `json:"fee,omitempty"`
+	From           []tezos.Address `json:"from,omitempty"`
+	PayoutDelay    bool            `json:"payout_delay,omitempty"`
+	MinPayout      float64         `json:"min_payout,omitempty"`
+	MinDelegation  float64         `json:"min_delegation,omitempty"`
+	NonDelegatable bool            `json:"non_delegatable,omitempty"`
 
 	// token info, type is custom, multisig, harbinger, dexter, fa12, tzbtc, staker
 	Standard string `json:"standard,omitempty"`
@@ -54,7 +56,7 @@ func (c *Client) CreateMetadata(ctx context.Context, metadata []Metadata) error 
 
 func (c *Client) UpdateMetadata(ctx context.Context, alias Metadata) (Metadata, error) {
 	var resp Metadata
-	if err := c.put(ctx, "/explorer/metadata/"+alias.Address, nil, &alias, &resp); err != nil {
+	if err := c.put(ctx, "/explorer/metadata/"+alias.Address.String(), nil, &alias, &resp); err != nil {
 		return resp, err
 	}
 	return resp, nil

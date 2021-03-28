@@ -14,13 +14,14 @@ import (
 	"time"
 
 	"blockwatch.cc/tzgo/micheline"
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Op struct {
 	RowId        uint64              `json:"row_id"`
-	Hash         string              `json:"hash"`
-	Type         string              `json:"type"`
-	BlockHash    string              `json:"block"`
+	Hash         tezos.OpHash        `json:"hash"`
+	Type         tezos.OpType        `json:"type"`
+	BlockHash    tezos.BlockHash     `json:"block"`
 	Timestamp    time.Time           `json:"time"`
 	Height       int64               `json:"height"`
 	Cycle        int64               `json:"cycle"`
@@ -29,7 +30,7 @@ type Op struct {
 	OpP          int                 `json:"op_p"`
 	OpC          int                 `json:"op_c"`
 	OpI          int                 `json:"op_i"`
-	Status       string              `json:"status"`
+	Status       tezos.OpStatus      `json:"status"`
 	GasLimit     int64               `json:"gas_limit"`
 	GasUsed      int64               `json:"gas_used"`
 	GasPrice     float64             `json:"gas_price"`
@@ -42,13 +43,13 @@ type Op struct {
 	Deposit      float64             `json:"deposit"`
 	Burned       float64             `json:"burned"`
 	SenderId     uint64              `json:"sender_id"`
-	Sender       string              `json:"sender"`
+	Sender       tezos.Address       `json:"sender"`
 	ReceiverId   uint64              `json:"receiver_id"`
-	Receiver     string              `json:"receiver"`
+	Receiver     tezos.Address       `json:"receiver"`
 	CreatorId    uint64              `json:"creator_id"`
-	Creator      string              `json:"creator"`
+	Creator      tezos.Address       `json:"creator"`
 	DelegateId   uint64              `json:"delegate_id"`
-	Delegate     string              `json:"delegate"`
+	Delegate     tezos.Address       `json:"delegate"`
 	IsSuccess    bool                `json:"is_success"`
 	IsContract   bool                `json:"is_contract"`
 	IsInternal   bool                `json:"is_internal"`
@@ -62,7 +63,7 @@ type Op struct {
 	TDD          float64             `json:"days_destroyed"`
 	BranchHeight int64               `json:"branch_height"`
 	BranchDepth  int64               `json:"branch_depth"`
-	BranchHash   string              `json:"branch"`
+	BranchHash   tezos.BlockHash     `json:"branch"`
 	Entrypoint   int                 `json:"entrypoint_id"`
 	IsOrphan     bool                `json:"is_orphan"`
 	IsBatch      bool                `json:"is_batch"`
@@ -148,7 +149,7 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 		case "cycle":
 			op.Cycle, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "hash":
-			op.Hash = f.(string)
+			op.Hash, err = tezos.ParseOpHash(f.(string))
 		case "counter":
 			op.Counter, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "op_c":
@@ -160,9 +161,9 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 		case "op_p":
 			op.OpP, err = strconv.Atoi(f.(json.Number).String())
 		case "type":
-			op.Type = f.(string)
+			op.Type = tezos.ParseOpType(f.(string))
 		case "status":
-			op.Status = f.(string)
+			op.Status = tezos.ParseOpStatus(f.(string))
 		case "gas_limit":
 			op.GasLimit, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "gas_used":
@@ -188,19 +189,19 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 		case "sender_id":
 			op.SenderId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "sender":
-			op.Sender = f.(string)
+			op.Sender, err = tezos.ParseAddress(f.(string))
 		case "receiver_id":
 			op.ReceiverId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "receiver":
-			op.Receiver = f.(string)
+			op.Receiver, err = tezos.ParseAddress(f.(string))
 		case "creator_id":
 			op.CreatorId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "creator":
-			op.Creator = f.(string)
+			op.Creator, err = tezos.ParseAddress(f.(string))
 		case "delegate_id":
 			op.DelegateId, err = strconv.ParseUint(f.(json.Number).String(), 10, 64)
 		case "delegate":
-			op.Delegate = f.(string)
+			op.Delegate, err = tezos.ParseAddress(f.(string))
 		case "is_success":
 			op.IsSuccess, err = strconv.ParseBool(f.(json.Number).String())
 		case "is_contract":
@@ -258,7 +259,7 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 							DestId:      v.DestId,
 							BigmapValue: BigmapValue{
 								Keys:      strings.Split(key.String(), "#"),
-								KeyHash:   v.KeyHash.String(),
+								KeyHash:   v.KeyHash,
 								KeyBinary: key.Encode(),
 								Prim: BigmapValuePrim{
 									ValuePrim: v.Value,
