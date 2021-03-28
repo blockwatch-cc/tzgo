@@ -34,6 +34,24 @@ func (p *Prim) HasAnyAnno() bool {
 	return false
 }
 
+func (p *Prim) MatchesAnyAnno(anno string) bool {
+	if len(p.Anno) == 0 {
+		return false
+	}
+	if len(anno) > 0 {
+		switch string(anno[0]) {
+		case TypeAnnoPrefix, VarAnnoPrefix, FieldAnnoPrefix:
+			anno = anno[1:]
+		}
+	}
+	for _, v := range p.Anno {
+		if v[1:] == anno {
+			return true
+		}
+	}
+	return false
+}
+
 func (p *Prim) HasTypeAnno() bool {
 	for _, v := range p.Anno {
 		if strings.HasPrefix(v, TypeAnnoPrefix) {

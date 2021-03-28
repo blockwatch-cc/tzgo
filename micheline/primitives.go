@@ -1209,7 +1209,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 	return nil
 }
 
-func (p *Prim) Find(typ OpCode) ([]*Prim, bool) {
+func (p *Prim) FindByOpCode(typ OpCode) ([]*Prim, bool) {
 	if p == nil {
 		return nil, false
 	}
@@ -1218,7 +1218,7 @@ func (p *Prim) Find(typ OpCode) ([]*Prim, bool) {
 	}
 	found := make([]*Prim, 0)
 	for i := range p.Args {
-		x, ok := p.Args[i].Find(typ)
+		x, ok := p.Args[i].FindByOpCode(typ)
 		if ok {
 			found = append(found, x...)
 		}
@@ -1226,7 +1226,24 @@ func (p *Prim) Find(typ OpCode) ([]*Prim, bool) {
 	return found, len(found) > 0
 }
 
-func (p *Prim) Contains(typ OpCode) bool {
+func (p *Prim) FindByAnno(anno string) ([]*Prim, bool) {
+	if p == nil {
+		return nil, false
+	}
+	if p.MatchesAnyAnno(anno) {
+		return []*Prim{p}, true
+	}
+	found := make([]*Prim, 0)
+	for i := range p.Args {
+		x, ok := p.Args[i].FindByAnno(anno)
+		if ok {
+			found = append(found, x...)
+		}
+	}
+	return found, len(found) > 0
+}
+
+func (p *Prim) ContainsOpCode(typ OpCode) bool {
 	if p == nil {
 		return false
 	}
@@ -1234,7 +1251,7 @@ func (p *Prim) Contains(typ OpCode) bool {
 		return true
 	}
 	for i := range p.Args {
-		if p.Args[i].Contains(typ) {
+		if p.Args[i].ContainsOpCode(typ) {
 			return true
 		}
 	}
@@ -1374,7 +1391,7 @@ func (p *Prim) GetPathString(path string) (*Prim, error) {
 		case 'R', 'r', '1':
 			ipath[i] = 1
 		default:
-			return nil, fmt.Errorf("micheline: invalid path component '%s' at pos %d", v, i)
+			return nil, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
 		}
 	}
 	return p.GetPath(ipath)
