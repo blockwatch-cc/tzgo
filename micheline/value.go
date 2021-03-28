@@ -26,6 +26,46 @@ func NewValue() *Value {
 	}
 }
 
+func (e Value) Map() (map[string]interface{}, error) {
+	m := make(map[string]interface{}, 1024)
+	typ, val := e.Type, e.Value
+
+	// pre-process ticket types
+	if typ.ContainsOpCode(T_TICKET) {
+		typ = typ.Clone().ExpandTickets()
+	}
+
+	// always normalize comb pairs
+	if val.IsPair() || typ.IsPair() {
+		val = dcomb(val.FlattenComb(typ)...)
+		typ = tcomb(typ.FlattenComb(typ)...)
+	}
+
+	if err := walkTree(m, "", typ, val, 0, false); err != nil {
+		return nil, err
+	}
+
+	if len(m) == 1 {
+		for n, v := range m {
+			fields := strings.Split(n, "@")
+			oc, err := ParseOpCode(fields[len(fields)-1])
+			if err == nil || strings.HasPrefix(n, "0") {
+				switch oc {
+				case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
+				default:
+					switch vv := v.(type) {
+					case map[string]interface{}:
+						return vv, nil
+					default:
+						return map[string]interface{}{"": v}, nil
+					}
+				}
+			}
+		}
+	}
+	return m, nil
+}
+
 func (e Value) MarshalJSON() ([]byte, error) {
 	if e.Type == nil || e.Value == nil {
 		return nil, nil
@@ -38,7 +78,7 @@ func (e Value) MarshalJSON() ([]byte, error) {
 
 	typ, val := e.Type, e.Value
 	// pre-process ticket types
-	if typ.Contains(T_TICKET) {
+	if typ.ContainsOpCode(T_TICKET) {
 		typ = typ.Clone().ExpandTickets()
 	}
 
