@@ -53,7 +53,7 @@ func IsManagerTz(buf []byte) bool {
 	return len(buf) >= manager_tz_code_len && bytes.Compare(buf[:manager_tz_code_len], manager_tz[:manager_tz_code_len]) == 0
 }
 
-func (p *Prim) MigrateToBabylonStorage(managerHash []byte) *Prim {
+func (p Prim) MigrateToBabylonStorage(managerHash []byte) Prim {
 	return code(D_PAIR, pbytes(managerHash), p)
 }
 
@@ -156,7 +156,7 @@ func (s *Script) MigrateToBabylonSetDelegate(managerHash []byte) {
 }
 
 // Macros
-func DO_ENTRY() *Prim {
+func DO_ENTRY() Prim {
 	return seq(
 		// # Assert no token was sent:
 		code(I_PUSH, code(T_MUTEZ), i64(0)), // PUSH mutez 0 ;
@@ -187,7 +187,7 @@ func DO_ENTRY() *Prim {
 }
 
 // 'set_delegate'/'remove_delegate' entrypoints
-func DELEGATE_ENTRY() *Prim {
+func DELEGATE_ENTRY() Prim {
 	return seq(
 		// # Assert no token was sent:
 		code(I_PUSH, code(T_MUTEZ), i64(0)), // PUSH mutez 0 ;

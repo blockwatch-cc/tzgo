@@ -38,7 +38,7 @@ func (m Interface) Matches(e Entrypoints) bool {
 	for _, spec := range michelsonInterfaces[m] {
 		var matched bool
 		for _, ep := range e {
-			if IsEqualPrim(*spec, *ep.Prim, false) {
+			if IsEqualPrim(spec, *ep.Prim, false) {
 				matched = true
 				break
 			}
@@ -130,22 +130,22 @@ var (
 )
 
 // lists of required entrypoints (note: annotations are optional)
-var michelsonInterfaces = map[Interface][]*Prim{
+var michelsonInterfaces = map[Interface][]Prim{
 	// manager.tz
-	IManager: []*Prim{
+	IManager: []Prim{
 		// 1 (lambda %do unit (list operation))
 		code_anno(T_LAMBDA, "%do", code(T_UNIT), code(T_LIST, code(T_OPERATION))),
 		// 2 (unit %default)
 		code_anno(T_UNIT, "%default"),
 	},
 	// generic set delegate interface
-	ISetDelegate: []*Prim{
+	ISetDelegate: []Prim{
 		// option %setDelegate key_hash
 		code_anno(T_OPTION, "%setDelegate", code(T_KEY_HASH)),
 	},
 	// Tzip 5 a.k.a FA1
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-5/tzip-5.md
-	ITzip5: []*Prim{
+	ITzip5: []Prim{
 		// (address :from, (address :to, nat :value)) %transfer
 		tpair(
 			code_anno(T_ADDRESS, ":from"),
@@ -170,7 +170,7 @@ var michelsonInterfaces = map[Interface][]*Prim{
 	},
 	// Tzip 7 a.k.a FA1.2
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md
-	ITzip7: []*Prim{
+	ITzip7: []Prim{
 		// (address :from, (address :to, nat :value)) %transfer
 		tpair(
 			code_anno(T_ADDRESS, ":from"),
@@ -210,7 +210,7 @@ var michelsonInterfaces = map[Interface][]*Prim{
 	},
 	// Tzip 12 a.k.a. FA2
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md
-	ITzip12: []*Prim{
+	ITzip12: []Prim{
 		// (list %transfer
 		//   (pair
 		//     (address %from_)
@@ -318,7 +318,7 @@ var michelsonInterfaces = map[Interface][]*Prim{
 			),
 		),
 	},
-	IDexter: []*Prim{
+	IDexter: []Prim{
 		// 1 ( pair %approve
 		//     ( address :spender )
 		//     ( pair ( nat :allowance ) ( nat :currentAllowance ) ) )
@@ -438,7 +438,7 @@ var michelsonInterfaces = map[Interface][]*Prim{
 	// Note: Kolibri and wXTZ vault interfaces are ambiguous, i.e. wXTZ is a
 	// superset of Kolibri and there's little use to distinguish them, so
 	// detection is disabled until we know any better
-	// IKolibriVault: []*Prim{
+	// IKolibriVault: []Prim{
 	// 	// 0 borrow
 	// 	code_anno(T_NAT, "%borrow"),
 	// 	// 1 default

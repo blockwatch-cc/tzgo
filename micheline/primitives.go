@@ -19,7 +19,8 @@ import (
 )
 
 var (
-	EmptyPrim = &Prim{Type: PrimNullary, OpCode: 255}
+	InvalidPrim = Prim{}
+	EmptyPrim   = Prim{Type: PrimNullary, OpCode: 255}
 )
 
 type PrimType byte
@@ -66,17 +67,6 @@ func ParsePrimType(val string) (PrimType, error) {
 	}
 }
 
-func PrimTypeFromTypeCode(o OpCode) PrimType {
-	switch o {
-	case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP:
-		return PrimInt
-	case T_STRING:
-		return PrimString
-	default:
-		return PrimBytes
-	}
-}
-
 // non-normative strings, use for debugging only
 func (t PrimType) String() string {
 	switch t {
@@ -114,7 +104,7 @@ func (t PrimType) MarshalText() ([]byte, error) {
 type Prim struct {
 	Type      PrimType // primitive type
 	OpCode    OpCode   // primitive opcode (invalid on sequences, strings, bytes, int)
-	Args      []*Prim  // optional arguments
+	Args      []Prim   // optional arguments
 	Anno      []string // optional type annotations
 	Int       *big.Int // optional data
 	String    string   // optional data
@@ -122,19 +112,19 @@ type Prim struct {
 	WasPacked bool     // true when content was unpacked (and no type info is available)
 }
 
-func (p Prim) Name() string {
-	return p.GetVarAnnoAny()
+func (p Prim) IsValid() bool {
+	return p.Type.IsValid() && (p.Type > 0 || p.Int != nil)
 }
 
-func (p Prim) Clone() *Prim {
-	clone := &Prim{
+func (p Prim) Clone() Prim {
+	clone := Prim{
 		Type:      p.Type,
 		OpCode:    p.OpCode,
 		String:    p.String,
 		WasPacked: p.WasPacked,
 	}
 	if p.Args != nil {
-		clone.Args = make([]*Prim, len(p.Args))
+		clone.Args = make([]Prim, len(p.Args))
 		for i, arg := range p.Args {
 			clone.Args[i] = arg.Clone()
 		}
@@ -167,6 +157,7 @@ func (p Prim) IsEqualWithAnno(p2 Prim) bool {
 func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	// opcode
 	if p1.OpCode != p2.OpCode {
+		fmt.Printf("Opcode mismatch %s <> %s\n", p1.OpCode, p2.OpCode)
 		return false
 	}
 
@@ -183,21 +174,25 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 		}
 	}
 	if t1 != t2 {
+		fmt.Println("Prim type mismatch")
 		return false
 	}
 
 	// arg len
 	if len(p1.Args) != len(p2.Args) {
+		fmt.Println("Arg len mismatch")
 		return false
 	}
 
 	// anno
 	if withAnno {
 		if len(p1.Anno) != len(p2.Anno) {
+			fmt.Println("Anno len mismatch")
 			return false
 		}
 		for i := range p1.Anno {
 			if p1.Anno[i] != p2.Anno[i] {
+				fmt.Println("Anno mismatch")
 				return false
 			}
 		}
@@ -205,28 +200,34 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 
 	// contents
 	if p1.String != p2.String {
+		fmt.Println("String content mismatch")
 		return false
 	}
 	if (p1.Int == nil) != (p2.Int == nil) {
+		fmt.Println("Int ptr content mismatch")
 		return false
 	}
 	if p1.Int != nil {
 		if p1.Int.Cmp(p2.Int) != 0 {
+			fmt.Println("Int content mismatch")
 			return false
 		}
 	}
 	if (p1.Bytes == nil) != (p2.Bytes == nil) {
+		fmt.Println("Bytes ptr content mismatch")
 		return false
 	}
 	if p1.Bytes != nil {
 		if bytes.Compare(p1.Bytes, p2.Bytes) != 0 {
+			fmt.Println("Bytes content mismatch")
 			return false
 		}
 	}
 
 	// recurse
 	for i := range p1.Args {
-		if !IsEqualPrim(*p1.Args[i], *p2.Args[i], withAnno) {
+		if !IsEqualPrim(p1.Args[i], p2.Args[i], withAnno) {
+			fmt.Println("Nested content mismatch")
 			return false
 		}
 	}
@@ -235,12 +236,12 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	return true
 }
 
-type PrimWalker func(p *Prim) error
+type PrimWalker func(p Prim) error
 
-func (p *Prim) Walk(f PrimWalker) error {
-	if p == nil {
-		return nil
-	}
+func (p Prim) Walk(f PrimWalker) error {
+	// if p == nil {
+	// 	return nil
+	// }
 	if err := f(p); err != nil {
 		return err
 	}
@@ -257,9 +258,11 @@ func (p *Prim) Walk(f PrimWalker) error {
 // used when mapping complex big map values to JSON objects
 func (p Prim) IsScalar() bool {
 	switch p.Type {
-	case PrimInt, PrimString, PrimBytes, PrimNullary, PrimSequence:
+	case PrimInt, PrimString, PrimBytes, PrimNullary:
 		// generally ok
 		return true
+	case PrimSequence:
+		return len(p.Args) == 1 && !p.HasAnno()
 	case PrimNullaryAnno, PrimUnaryAnno, PrimBinaryAnno, PrimVariadicAnno:
 		// all annotated types become JSON properties
 		return false
@@ -292,6 +295,18 @@ func (p Prim) IsSet() bool {
 	return p.OpCode == T_SET
 }
 
+func (p Prim) IsList() bool {
+	return p.OpCode == T_LIST
+}
+
+func (p Prim) IsMap() bool {
+	return p.OpCode == T_MAP
+}
+
+func (p Prim) IsLambda() bool {
+	return p.OpCode == T_LAMBDA
+}
+
 func (p Prim) IsElt() bool {
 	return p.OpCode == D_ELT
 }
@@ -305,6 +320,10 @@ func (p Prim) IsPair() bool {
 	}
 }
 
+// Detects whether a primitive contains a regular pair or a comb pair
+// which may be converted into a flat comb sequence.
+//
+// The Michelson spec says
 // For combs, three notations are supported:
 //  - a) [Pair x1 (Pair x2 ... (Pair xn-1 xn) ...)],
 //  - b) [Pair x1 x2 ... xn-1 xn], and
@@ -314,117 +333,108 @@ func (p Prim) IsPair() bool {
 //  - for n=2, [Pair x1 x2],
 //  - for n=3, [Pair x1 (Pair x2 x3)],
 //  - for n>=4, [{x1; x2; ...; xn}].
-func (p Prim) IsComb() bool {
-	if p.Type == PrimSequence && len(p.Args) >= 4 {
+func (p Prim) IsComb(typ Type) bool {
+	// regular pairs (works for type and value trees)
+	if p.IsPair() {
+		// switch len(p.Args) {
+		// case 0, 1:
+		// 	return false
+		// default:
+		return true
+		// }
+	}
+
+	// Note: due to Tezos encoding issues, comb pairs in block receipts
+	// are naked sequences (they lack an enclosing pair wrapper), this means
+	// we have to distinquish them from other container types who also use
+	// a sequence as container, such as lists, sets, maps, lambdas (more?)
+	switch typ.OpCode {
+	case T_LIST, T_SET, T_MAP, T_LAMBDA:
+		return false
+	}
+
+	// When multiple optimized combs (i.e. naked sequences) are nested
+	// its is sometimes not possible to track the correct type in the
+	// type tree. Hence we revert to a heuristic that checks if the
+	// current primitive looks like a container type by checking its
+	// contents
+	//
+	if p.Type == PrimSequence && !p.LooksLikeContainer() {
 		return true
 	}
-	if p.IsPair() {
-		switch len(p.Args) {
-		case 0, 1:
-			return false
-		case 2:
-			return !p.Args[0].IsComb() && p.Args[1].IsComb()
-		default:
-			return true
-		}
-	}
+
 	return false
 }
 
-// WIP: recursively flatten all pair trees inside containers:
-// T_SET, T_LIST, T_MAP, T_BIGMAP, T_TICKET, T_OR, T_OPTION
-// func (p Prim) FlattenCombRecursive(typ *Prim) []*Prim {
-// 	flat := make([]*Prim, 0)
-// 	// do NOT flatten SETs and MAPs which are encoded as
-// 	// sequences, but flatten PAIRs encoded as sequences
-// 	// its impossible to distinguish SET and COMB PAIRS without type info
-// 	switch typ.OpCode {
-// 	case T_SET: // [[..],[..]]
-// 		for _, v := range p.Args {
-// 			flat = append(flat, seq(v.FlattenComb(typ.Args[0])...))
-// 		}
-// 	case T_MAP: // [ [[k],[v]], [[k],[v]] ]
-// 		for _, v := range p.Args {
-// 			key := v.Args[0].FlattenComb(typ.Args[0])
-// 			val := v.Args[1].FlattenComb(typ.Args[1])
-// 			flat = append(flat, seq(key...), seq(val...))
-// 		}
-// 	default: // [{..},{..}]
-// 		for i, v := range p.Args {
-// 			canFlatten := v.IsPair() || v.IsSequence()
-// 			// var t *Prim
-// 			t := typ.Args[0]
-// 			// if typ != nil && len(typ.Args) > i {
-// 			if len(typ.Args) > i {
-// 				t = typ.Args[i]
-// 				switch t.OpCode {
-// 				// case T_SET, T_LIST, T_MAP, T_BIG_MAP, T_TICKET, T_LAMBDA, T_OR, T_OPTION:
-// 				case T_LIST, T_BIG_MAP, T_TICKET, T_LAMBDA, T_OR, T_OPTION:
-// 					canFlatten = false
-// 				}
-// 			}
-// 			if canFlatten {
-// 				if len(v.Args) < 2 || (len(v.Args) > 0 && (v.Args[0].IsElt() || v.Args[0].OpCode.Type() == T_OPERATION)) {
-// 					flat = append(flat, v)
-// 				} else {
-// 					flat = append(flat, v.FlattenComb(t)...)
-// 				}
-// 			} else {
-// 				flat = append(flat, v)
-// 			}
-// 		}
-// 	}
-// 	return flat
-// }
-
-// var flatLevel int
-
-// flatten outer pair tree, no inner trees: does not work in all instances
-func (p Prim) FlattenComb(typ *Prim) []*Prim {
-	// flatLevel++
-	// defer func() {
-	// 	flatLevel--
-	// }()
-	// if typ != nil {
-	// 	log.Infof("%d FLAT %s %s start", flatLevel, typ.OpCode, typ.GetTypeAnnoAny())
-	// } else {
-	// 	log.Infof("%d FLAT notype start", flatLevel)
-	// }
-	flat := make([]*Prim, 0)
-	for i, v := range p.Args {
-		canFlatten := v.IsPair() || v.IsComb()
-		var t *Prim
-		// s := "--"
-		if typ != nil && len(typ.Args) > i {
-			t = typ.Args[i]
-			// s = t.OpCode.String()
-			switch t.OpCode {
-			case T_SET, T_LIST, T_MAP, T_BIG_MAP, T_TICKET, T_LAMBDA, T_OR, T_OPTION:
-				canFlatten = false
-			}
-		}
-		// log.Infof("%d [%d] %s %s typ=%s > %t", flatLevel, i, v.OpCode, v.Type, s, canFlatten)
-		if canFlatten {
-			if len(v.Args) < 2 || (len(v.Args) > 0 && (v.Args[0].IsElt() || v.Args[0].OpCode.Type() == T_OPERATION)) {
-				// log.Infof("%d DIRECT1 %s", flatLevel, v.JSONString())
-				flat = append(flat, v)
-			} else {
-				// log.Infof("%d >>>", flatLevel)
-				flat = append(flat, v.FlattenComb(t)...)
-			}
-		} else {
-			// log.Infof("%d DIRECT2 %s", flatLevel, v.JSONString())
-			flat = append(flat, v)
+// Checks if a Prim looks like an optimized (i.e. flat) comb sequence.
+func (p Prim) IsConvertedComb() bool {
+	if !p.IsSequence() {
+		return false
+	}
+	for _, v := range p.Args {
+		if v.IsPair() {
+			return false
 		}
 	}
-	return flat
+	return true
 }
 
-func (p Prim) FlattenCombNoType() []*Prim {
-	flat := make([]*Prim, 0)
-	for _, v := range p.Args {
-		if v.IsPair() { // && !v.HasAnyAnno() { // anno adds ticket :value
-			flat = append(flat, v.FlattenCombNoType()...)
+// Checks if a Prim looks like a container type. This is necessary to
+// distinguish optimized comb pairs from other container types.
+func (p Prim) LooksLikeContainer() bool {
+	// must be a sequence
+	if !p.IsSequence() {
+		return false
+	}
+
+	// empty container
+	if len(p.Args) == 0 {
+		return true
+	}
+
+	// contains Elt's
+	if p.Args[0].IsElt() {
+		return true
+	}
+
+	// contains a single scalar
+	if len(p.Args) == 1 {
+		switch p.Args[0].Type {
+		case PrimInt, PrimString, PrimBytes, PrimNullary, PrimSequence:
+			return true
+		}
+	}
+
+	// all elements have the same prim type and opcode
+	oc := p.Args[0].OpCode
+	typ := p.Args[0].Type
+	for _, v := range p.Args[1:] {
+		if v.OpCode != oc || v.Type != typ {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Converts a pair tree into a flattened sequence according to the
+// Micheline type rules defined in Edo. This function makes use of
+// a type definition to identify which contained type is a regular
+// pair, an already converted comb pair or any other container type.
+//
+// Works both on value trees and type trees.
+//
+// When called on already converted comb sequences this function is a noop.
+//
+func (p Prim) ConvertComb(typ Type) []Prim {
+	flat := make([]Prim, 0)
+	for i, v := range p.Args {
+		t := Type{}
+		if len(typ.Args) > i {
+			t = Type{typ.Args[i]}
+		}
+		if v.IsComb(t) {
+			flat = append(flat, v.ConvertComb(t)...)
 		} else {
 			flat = append(flat, v)
 		}
@@ -457,26 +467,24 @@ func (p Prim) PackedType() PrimType {
 	return PrimType(p.Bytes[1])
 }
 
-func (p Prim) Unpack() (pp *Prim, err error) {
+func (p Prim) Unpack() (pp Prim, err error) {
 	if !p.IsPacked() {
-		return nil, fmt.Errorf("prim is not packed")
+		return p, fmt.Errorf("prim is not packed")
 	}
 	defer func() {
 		if e := recover(); e != nil {
-			pp = nil
+			pp = p
 			err = fmt.Errorf("prim is not packed")
 		}
 	}()
-	pp = &Prim{WasPacked: true}
+	pp = Prim{WasPacked: true}
 	if err := pp.UnmarshalBinary(p.Bytes[1:]); err != nil {
-		return nil, err
+		return p, err
 	}
 	if pp.IsPackedAny() {
-		up, err := pp.UnpackAny()
-		if err != nil {
-			return nil, err
+		if up, err := pp.UnpackAll(); err == nil {
+			pp = up
 		}
-		pp = up
 	}
 	return pp, nil
 }
@@ -493,25 +501,25 @@ func (p Prim) IsPackedAny() bool {
 	return false
 }
 
-func (p *Prim) UnpackAny() (*Prim, error) {
+func (p Prim) UnpackAll() (Prim, error) {
 	if p.IsPacked() {
 		return p.Unpack()
 	}
-	pp := *p
-	pp.Args = make([]*Prim, len(p.Args))
+	pp := p
+	pp.Args = make([]Prim, len(p.Args))
 	for i, v := range p.Args {
-		vv := *v
-		if vv.IsPackedAny() {
-			up, err := v.UnpackAny()
-			if err != nil {
-				return nil, err
+		if v.IsPackedAny() {
+			if up, err := v.UnpackAll(); err == nil {
+				pp.Args[i] = up
 			}
-			pp.Args[i] = up
-		} else {
-			pp.Args[i] = &vv
+			// if err != nil {
+			// 	return nil, err
+			// }
+			continue
 		}
+		pp.Args[i] = v
 	}
-	return &pp, nil
+	return pp, nil
 }
 
 func (p Prim) Value(as OpCode) interface{} {
@@ -615,6 +623,8 @@ func (p Prim) Value(as OpCode) interface{} {
 			return strconv.FormatBool(false)
 		case D_TRUE:
 			return strconv.FormatBool(true)
+		case D_UNIT:
+			return nil
 		default:
 			return p.OpCode.String()
 		}
@@ -635,7 +645,7 @@ func (p Prim) Value(as OpCode) interface{} {
 					right = p.Args[1].OpCode.String()
 				}
 			}
-			return fmt.Sprintf("%s#%s", left, right)
+			return fmt.Sprintf("%s,%s", left, right)
 		}
 
 	case PrimSequence:
@@ -644,7 +654,7 @@ func (p Prim) Value(as OpCode) interface{} {
 			var b strings.Builder
 			for i, v := range p.Args {
 				if i > 0 {
-					b.WriteByte('#')
+					b.WriteByte(',')
 				}
 				val := v.Value(v.OpCode)
 				if stringer, ok := val.(fmt.Stringer); !ok {
@@ -662,7 +672,8 @@ func (p Prim) Value(as OpCode) interface{} {
 		default:
 			switch as {
 			case T_UNIT, T_LAMBDA, T_LIST, T_MAP, T_BIG_MAP, T_SET, T_SAPLING_STATE:
-				return &p
+				// return &p
+				return p
 			default:
 				warn = true
 			}
@@ -685,12 +696,13 @@ func (p Prim) Value(as OpCode) interface{} {
 		}
 	}
 
-	if warn {
+	if warn && !p.WasPacked {
 		buf, _ := json.Marshal(p)
 		log.Warnf("Rendering prim type %s as %s: not implemented (%s)", p.Type, as, string(buf))
 	}
 
-	return &p
+	// return &p
+	return p
 }
 
 func (p Prim) MarshalJSON() ([]byte, error) {
@@ -722,11 +734,6 @@ func (p Prim) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(m)
-}
-
-func (p Prim) JSONString() string {
-	buf, _ := p.MarshalJSON()
-	return string(buf)
 }
 
 func (p Prim) MarshalBinary() ([]byte, error) {
@@ -892,6 +899,7 @@ func (p *Prim) UnpackScalar(val interface{}) error {
 			p.OpCode = oc
 			p.Type = PrimNullary
 		} else {
+			// fallback (should not happen)
 			p.OpCode = T_STRING
 			p.String = val.(string)
 			p.Type = PrimString
@@ -902,9 +910,9 @@ func (p *Prim) UnpackScalar(val interface{}) error {
 
 func (p *Prim) UnpackSequence(val []interface{}) error {
 	p.Type = PrimSequence
-	p.Args = make([]*Prim, 0)
+	p.Args = make([]Prim, 0)
 	for _, v := range val {
-		prim := &Prim{}
+		prim := Prim{}
 		if err := prim.UnpackJSON(v); err != nil {
 			return err
 		}
@@ -914,7 +922,7 @@ func (p *Prim) UnpackSequence(val []interface{}) error {
 }
 
 func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
-	p.Args = make([]*Prim, 0)
+	p.Args = make([]Prim, 0)
 	for n, v := range val {
 		switch n {
 		case "prim":
@@ -1001,7 +1009,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 
 		// every arg is handled as embedded primitive
 		for _, v := range args {
-			prim := &Prim{}
+			prim := Prim{}
 			if err := prim.UnpackJSON(v); err != nil {
 				return err
 			}
@@ -1029,7 +1037,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 			return err
 		}
 		p.Int = z.Big()
-		p.OpCode = T_INT
+		// p.OpCode = T_INT
 
 	case PrimString:
 		// cross-check content size
@@ -1038,7 +1046,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 			return io.ErrShortBuffer
 		}
 		p.String = string(buf.Next(size))
-		p.OpCode = T_STRING
+		// p.OpCode = T_STRING
 
 	case PrimSequence:
 		// cross-check content size
@@ -1049,15 +1057,15 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 		// extract sub-buffer
 		seq := bytes.NewBuffer(buf.Next(size))
 		// decode contained primitives
-		p.Args = make([]*Prim, 0)
+		p.Args = make([]Prim, 0)
 		for seq.Len() > 0 {
-			prim := &Prim{}
+			prim := Prim{}
 			if err := prim.DecodeBuffer(seq); err != nil {
 				return err
 			}
 			p.Args = append(p.Args, prim)
 		}
-		p.OpCode = T_LIST
+		// p.OpCode = T_LIST
 
 	case PrimNullary:
 		// opcode only
@@ -1092,7 +1100,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 		p.OpCode = OpCode(b[0])
 
 		// argument
-		prim := &Prim{}
+		prim := Prim{}
 		if err := prim.DecodeBuffer(buf); err != nil {
 			return err
 		}
@@ -1107,7 +1115,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 		p.OpCode = OpCode(b[0])
 
 		// argument
-		prim := &Prim{}
+		prim := Prim{}
 		if err := prim.DecodeBuffer(buf); err != nil {
 			return err
 		}
@@ -1131,7 +1139,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 
 		// 2 arguments
 		for i := 0; i < 2; i++ {
-			prim := &Prim{}
+			prim := Prim{}
 			if err := prim.DecodeBuffer(buf); err != nil {
 				return err
 			}
@@ -1148,7 +1156,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 
 		// 2 arguments
 		for i := 0; i < 2; i++ {
-			prim := &Prim{}
+			prim := Prim{}
 			if err := prim.DecodeBuffer(buf); err != nil {
 				return err
 			}
@@ -1179,7 +1187,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 
 		// decode contained primitives
 		for seq.Len() > 0 {
-			prim := &Prim{}
+			prim := Prim{}
 			if err := prim.DecodeBuffer(seq); err != nil {
 				return err
 			}
@@ -1200,7 +1208,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 			return io.ErrShortBuffer
 		}
 		p.Bytes = buf.Next(size)
-		p.OpCode = T_BYTES
+		// p.OpCode = T_BYTES
 
 	default:
 		return fmt.Errorf("micheline: unknown primitive type 0x%x", tag)
@@ -1209,14 +1217,14 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 	return nil
 }
 
-func (p *Prim) FindByOpCode(typ OpCode) ([]*Prim, bool) {
-	if p == nil {
-		return nil, false
-	}
+func (p Prim) FindByOpCode(typ OpCode) ([]Prim, bool) {
+	// if p == nil {
+	// 	return nil, false
+	// }
 	if p.OpCode == typ {
-		return []*Prim{p}, true
+		return []Prim{p}, true
 	}
-	found := make([]*Prim, 0)
+	found := make([]Prim, 0)
 	for i := range p.Args {
 		x, ok := p.Args[i].FindByOpCode(typ)
 		if ok {
@@ -1226,14 +1234,14 @@ func (p *Prim) FindByOpCode(typ OpCode) ([]*Prim, bool) {
 	return found, len(found) > 0
 }
 
-func (p *Prim) FindByAnno(anno string) ([]*Prim, bool) {
-	if p == nil {
-		return nil, false
+func (p Prim) FindByAnno(anno string) ([]Prim, bool) {
+	// if p == nil {
+	// 	return nil, false
+	// }
+	if p.MatchesAnno(anno) {
+		return []Prim{p}, true
 	}
-	if p.MatchesAnyAnno(anno) {
-		return []*Prim{p}, true
-	}
-	found := make([]*Prim, 0)
+	found := make([]Prim, 0)
 	for i := range p.Args {
 		x, ok := p.Args[i].FindByAnno(anno)
 		if ok {
@@ -1243,10 +1251,10 @@ func (p *Prim) FindByAnno(anno string) ([]*Prim, bool) {
 	return found, len(found) > 0
 }
 
-func (p *Prim) ContainsOpCode(typ OpCode) bool {
-	if p == nil {
-		return false
-	}
+func (p Prim) ContainsOpCode(typ OpCode) bool {
+	// if p == nil {
+	// 	return false
+	// }
 	if p.OpCode == typ {
 		return true
 	}
@@ -1259,12 +1267,12 @@ func (p *Prim) ContainsOpCode(typ OpCode) bool {
 }
 
 // build matching type tree for value
-func (p *Prim) BuildType() *Prim {
-	if p == nil {
-		return nil
-	}
-	t := &Prim{}
-	if p.OpCode.IsType() {
+func (p Prim) BuildType() Type {
+	// if p == nil {
+	// 	return nil
+	// }
+	t := Prim{WasPacked: true}
+	if p.OpCode.IsTypeCode() {
 		t.OpCode = p.OpCode
 	}
 	switch p.Type {
@@ -1284,11 +1292,15 @@ func (p *Prim) BuildType() *Prim {
 
 	case PrimString:
 		t.Type = PrimNullary
-		// detect timestamp and address encoding first
-		if _, err := time.Parse(time.RFC3339, p.String); err == nil {
-			t.OpCode = T_TIMESTAMP
-		} else if _, err := tezos.ParseAddress(p.String); err == nil {
-			t.OpCode = T_ADDRESS
+		if len(p.String) > 0 {
+			// detect timestamp and address encoding first
+			if _, err := time.Parse(time.RFC3339, p.String); err == nil {
+				t.OpCode = T_TIMESTAMP
+			} else if _, err := tezos.ParseAddress(p.String); err == nil {
+				t.OpCode = T_ADDRESS
+			} else {
+				t.OpCode = p.Type.TypeCode()
+			}
 		} else {
 			t.OpCode = p.Type.TypeCode()
 		}
@@ -1298,11 +1310,12 @@ func (p *Prim) BuildType() *Prim {
 			// ELT can be T_MAP, T_SET, T_BIG_MAP: all same-type elements
 			t.OpCode = T_MAP
 			t.Type = PrimBinary
-			t.Args = []*Prim{
-				p.Args[0].Args[0].BuildType(), // key type
-				p.Args[0].Args[1].BuildType(), // value type, breaks on polymorph types
+			t.Args = []Prim{
+				p.Args[0].Args[0].BuildType().Prim, // key type
+				// FIXME: allow ANY type (should apply recursive, detect on the fly)
+				p.Args[0].Args[1].BuildType().Prim, // value type, breaks on polymorph types
 			}
-		} else if len(p.Args) > 0 && p.Args[0].OpCode.Type() == T_OPERATION {
+		} else if len(p.Args) > 0 && p.Args[0].OpCode.TypeCode() == T_OPERATION {
 			// sequences can be T_LIST, T_LAMBDA (if T_OPERATION is included)
 			t.Type = PrimNullary // we don't know in/out types
 			t.OpCode = T_LAMBDA
@@ -1314,39 +1327,39 @@ func (p *Prim) BuildType() *Prim {
 				t.Type = PrimNullary
 			case 1:
 				t.Type = PrimUnary
-				t.Args = []*Prim{p.Args[0].BuildType()}
+				t.Args = []Prim{p.Args[0].BuildType().Prim}
 			case 2:
 				t.Type = PrimBinary
-				t.Args = []*Prim{
-					p.Args[0].BuildType(),
-					p.Args[1].BuildType(),
+				t.Args = []Prim{
+					p.Args[0].BuildType().Prim,
+					p.Args[1].BuildType().Prim,
 				}
 			default:
 				t.Type = PrimVariadicAnno
-				t.Args = make([]*Prim, len(p.Args))
+				t.Args = make([]Prim, len(p.Args))
 				for i, v := range p.Args {
-					t.Args[i] = v.BuildType()
+					t.Args[i] = v.BuildType().Prim
 				}
 			}
 		}
 	case PrimNullary, PrimNullaryAnno:
 		t.Type = PrimNullary
-		t.OpCode = p.OpCode.Type()
+		t.OpCode = p.OpCode.TypeCode()
 	case PrimUnary, PrimUnaryAnno:
-		t.OpCode = p.OpCode.Type()
+		t.OpCode = p.OpCode.TypeCode()
 		switch t.OpCode {
 		case T_OPERATION:
 			t.Type = PrimNullary
 		case T_OR:
 			// in data we only see one branch, so we have to guess the other type
 			t.Type = PrimBinary
-			inner := p.Args[0].BuildType()
-			t.Args = []*Prim{inner, inner}
+			inner := p.Args[0].BuildType().Prim
+			t.Args = []Prim{inner, inner}
 		case T_OPTION:
 			// we only know the embedded type on D_SOME
 			if p.OpCode == D_SOME {
 				t.Type = PrimUnary
-				t.Args = []*Prim{p.Args[0].BuildType()}
+				t.Args = []Prim{p.Args[0].BuildType().Prim}
 			} else {
 				t.Type = PrimNullary
 			}
@@ -1354,35 +1367,36 @@ func (p *Prim) BuildType() *Prim {
 			t.Type = PrimNullary
 		case T_TICKET:
 			t.Type = PrimUnary
-			t.Args = []*Prim{p.Args[0].BuildType()}
+			t.Args = []Prim{p.Args[0].BuildType().Prim}
 		}
 	case PrimBinary, PrimBinaryAnno:
 		if p.OpCode == D_ELT {
 			t.OpCode = T_MAP
 			t.Type = PrimBinary
-			t.Args = []*Prim{
-				p.Args[0].BuildType(),
-				p.Args[1].BuildType(), // FIXME: breaks on polymorph types
+			t.Args = []Prim{
+				p.Args[0].BuildType().Prim,
+				// FIXME: allow ANY type (should apply recursive, detect on the fly)
+				p.Args[1].BuildType().Prim,
 			}
 		} else {
 			// probably a regular pair
 			t.Type = PrimBinary
-			t.OpCode = p.OpCode.Type()
-			t.Args = []*Prim{
-				p.Args[0].BuildType(),
-				p.Args[1].BuildType(), // FIXME: breaks on polymorph types
+			t.OpCode = p.OpCode.TypeCode()
+			t.Args = []Prim{
+				p.Args[0].BuildType().Prim,
+				p.Args[1].BuildType().Prim,
 			}
 		}
 
 	case PrimVariadicAnno:
 		// ? probably an operation
 		t.Type = PrimNullary
-		t.OpCode = p.OpCode.Type()
+		t.OpCode = p.OpCode.TypeCode()
 	}
-	return t
+	return Type{t}
 }
 
-func (p *Prim) GetPathString(path string) (*Prim, error) {
+func (p Prim) GetPathString(path string) (Prim, error) {
 	ipath := make([]int, len(path))
 	for i, v := range path {
 		switch v {
@@ -1391,17 +1405,17 @@ func (p *Prim) GetPathString(path string) (*Prim, error) {
 		case 'R', 'r', '1':
 			ipath[i] = 1
 		default:
-			return nil, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
+			return InvalidPrim, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
 		}
 	}
 	return p.GetPath(ipath)
 }
 
-func (p *Prim) GetPath(path []int) (*Prim, error) {
+func (p Prim) GetPath(path []int) (Prim, error) {
 	prim := p
 	for i, v := range path {
 		if len(prim.Args) < v+1 {
-			return nil, fmt.Errorf("micheline: path does not exist at pos %d[%d]", path, i)
+			return InvalidPrim, fmt.Errorf("micheline: path does not exist at pos %d[%d]", path, i)
 		}
 		prim = prim.Args[v]
 	}

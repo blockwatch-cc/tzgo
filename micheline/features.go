@@ -63,7 +63,7 @@ func (f Features) MarshalJSON() ([]byte, error) {
 
 func (s *Script) Features() Features {
 	var f Features
-	_ = s.Code.Code.Walk(func(p *Prim) error {
+	_ = s.Code.Code.Walk(func(p Prim) error {
 		switch p.OpCode {
 		case I_CREATE_ACCOUNT:
 			f |= FeatureAccountFactory

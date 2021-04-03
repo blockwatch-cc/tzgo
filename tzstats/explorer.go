@@ -11,7 +11,7 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-type BlockchainTip struct {
+type Tip struct {
 	Name               string            `json:"name"`
 	Network            string            `json:"network"`
 	Symbol             string            `json:"symbol"`
@@ -61,8 +61,8 @@ func (c *Client) GetStatus(ctx context.Context) (*Status, error) {
 	return s, nil
 }
 
-func (c *Client) GetTip(ctx context.Context) (*BlockchainTip, error) {
-	tip := &BlockchainTip{}
+func (c *Client) GetTip(ctx context.Context) (*Tip, error) {
+	tip := &Tip{}
 	if err := c.get(ctx, "/explorer/tip", nil, tip); err != nil {
 		return nil, err
 	}

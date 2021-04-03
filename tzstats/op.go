@@ -231,7 +231,7 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 		case "storage":
 			var buf []byte
 			if buf, err = hex.DecodeString(f.(string)); err == nil {
-				prim := &micheline.Prim{}
+				prim := micheline.Prim{}
 				err = prim.UnmarshalBinary(buf)
 				if err == nil {
 					op.Storage = &ContractStorage{
@@ -244,25 +244,28 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 		case "big_map_diff":
 			var buf []byte
 			if buf, err = hex.DecodeString(f.(string)); err == nil {
-				bmd := make(micheline.BigMapDiff, 0)
+				bmd := make(micheline.BigmapDiff, 0)
 				err = bmd.UnmarshalBinary(buf)
 				if err == nil {
 					op.BigMapDiff = make([]BigmapUpdate, len(bmd))
 					for i, v := range bmd {
-						key := v.MapKeyAs(v.Key.BuildType())
+						keybuf, _ := v.GetKey(v.Key.BuildType()).MarshalJSON()
+						mk := MultiKey{}
+						_ = mk.UnmarshalJSON(keybuf)
 						op.BigMapDiff[i] = BigmapUpdate{
-							Action:      v.Action.String(),
+							Action:      v.Action,
 							KeyEncoding: v.Encoding().String(),
 							KeyType:     v.KeyType,
 							ValueType:   v.ValueType,
 							SourceId:    v.SourceId,
 							DestId:      v.DestId,
 							BigmapValue: BigmapValue{
-								Keys:      strings.Split(key.String(), "#"),
-								KeyHash:   v.KeyHash,
-								KeyBinary: key.Encode(),
+								Keys:    mk,
+								KeyHash: v.KeyHash,
+								// KeyBinary: key.Encode(),
 								Prim: BigmapValuePrim{
 									ValuePrim: v.Value,
+									// Note: type is unknown here
 								},
 								Meta: BigmapMeta{
 									Contract:     op.Receiver,

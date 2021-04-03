@@ -10,17 +10,31 @@ import (
 	"strconv"
 )
 
-func (e Value) DumpString() string {
+func (p Prim) Dump() string {
+	buf, _ := p.MarshalJSON()
+	return string(buf)
+}
+
+func (p Prim) DumpLimit(n int) string {
+	buf, _ := p.MarshalJSON()
+	return limit(string(buf), n)
+}
+
+func (e Value) Dump() string {
 	buf := bytes.NewBuffer(nil)
-	e.Dump(buf)
+	e.DumpTo(buf)
 	return string(buf.Bytes())
 }
 
-func (e Value) Dump(w io.Writer) {
+func (e Value) DumpLimit(n int) string {
+	return limit(e.Dump(), n)
+}
+
+func (e Value) DumpTo(w io.Writer) {
 	dumpTree(w, "", e.Type, e.Value)
 }
 
-func dumpTree(w io.Writer, path string, typ *Prim, val *Prim) {
+func dumpTree(w io.Writer, path string, typ Type, val Prim) {
 	if s, err := dump(path, typ, val); err != nil {
 		io.WriteString(w, err.Error())
 	} else {
@@ -36,21 +50,16 @@ func dumpTree(w io.Writer, path string, typ *Prim, val *Prim) {
 	default:
 		// advance type as well
 		for i, v := range val.Args {
-			t := typ.Args[i]
+			t := Type{typ.Args[i]}
 			p := path + "." + strconv.Itoa(i)
 			dumpTree(w, p, t, v)
 		}
 	}
 }
 
-func dump(path string, typ *Prim, val *Prim) (string, error) {
+func dump(path string, typ Type, val Prim) (string, error) {
 	if !val.matchOpCode(typ.OpCode) {
 		return "", fmt.Errorf("Type mismatch val_type=%s type_code=%s", val.Type, typ.OpCode)
-	}
-
-	var ann string
-	if len(typ.Anno) > 0 {
-		ann = typ.Anno[0][1:]
 	}
 
 	vtyp := "-"
@@ -61,6 +70,6 @@ func dump(path string, typ *Prim, val *Prim) (string, error) {
 	}
 
 	return fmt.Sprintf("path=%-20s val_prim=%-8s val_type=%-8s val_val=%-10s type_prim=%-8s type_code=%-8s type_name=%-8s\n",
-		path, val.Type, vtyp, limit(val.Text(), 512), typ.Type, typ.OpCode, ann,
+		path, val.Type, vtyp, limit(val.Text(), 512), typ.Type, typ.OpCode, typ.Label(),
 	), nil
 }

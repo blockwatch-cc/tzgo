@@ -9,7 +9,9 @@ import (
 	"strings"
 )
 
-type Type Prim
+type Type struct {
+	Prim
+}
 
 type KeyValueType struct {
 	KeyType   Type `json:"key_type"`
@@ -17,28 +19,60 @@ type KeyValueType struct {
 }
 
 func NewType() Type {
-	return Type(Prim{})
+	return Type{Prim{}}
 }
 
 func (t *Type) UnmarshalBinary(buf []byte) error {
-	return ((*Prim)(t)).UnmarshalBinary(buf)
+	return t.Prim.UnmarshalBinary(buf)
 }
 
-func (t Type) Prim() *Prim {
-	return (*Prim)(&t)
+func (t Type) Clone() Type {
+	return Type{t.Prim.Clone()}
 }
 
+func (t Type) Label() string {
+	return t.GetVarAnnoAny()
+}
+
+func (t Type) HasLabel() bool {
+	return t.HasAnno()
+}
+
+func (t Type) IsEqual(t2 Type) bool {
+	return IsEqualPrim(t.Prim, t2.Prim, false)
+}
+
+func (t Type) IsEqualWithAnno(t2 Type) bool {
+	return IsEqualPrim(t.Prim, t2.Prim, true)
+}
+
+func (t Type) Left() Type {
+	if len(t.Args) > 0 {
+		return Type{t.Args[0]}
+	}
+	return Type{}
+}
+
+func (t Type) Right() Type {
+	if len(t.Args) > 1 {
+		return Type{t.Args[1]}
+	}
+	return Type{}
+}
+
+// FIXME: rework type listing
 func (e Type) MarshalJSON() ([]byte, error) {
 	m := make(map[string]interface{}, 1024)
 	// always normalize comb pairs
-	typ := e.Prim()
-	if typ.IsPair() {
-		typ = &Prim{Type: PrimSequence, OpCode: T_PAIR, Args: typ.FlattenComb(typ)}
-	}
+	typ := e
+	// if typ.IsPair() {
+	// 	typ = Type{tcomb(typ.FlattenComb(typ)...)}
+	// }
 	if err := walkTypeTree(m, "", typ, false); err != nil {
 		return nil, err
 	}
 	// lift embedded scalars unless they are named or container types
+	// FIXME: is this still necessary
 	if len(m) == 1 {
 		for n, v := range m {
 			fields := strings.Split(n, "@")
@@ -55,27 +89,22 @@ func (e Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func (e *Type) UnmarshalJSON(buf []byte) error {
-	return (*Prim)(e).UnmarshalJSON(buf)
+// FIXME: do we need ArgType in addition to Type (just for not lifting scalars)
+type ArgType struct {
+	Prim
 }
-
-type ArgType Prim
 
 func (e ArgType) MarshalJSON() ([]byte, error) {
 	m := make(map[string]interface{}, 1024)
 	// always normalize comb pairs
-	typ := e.Prim()
-	if typ.IsPair() {
-		typ = &Prim{Type: PrimSequence, OpCode: T_PAIR, Args: typ.FlattenComb(typ)}
-	}
+	typ := Type{e.Prim}
+	// if typ.IsPair() {
+	// 	typ = Type{tcomb(typ.FlattenComb(typ)...)}
+	// }
 	if err := walkTypeTree(m, "", typ, true); err != nil {
 		return nil, err
 	}
 	return json.Marshal(m)
-}
-
-func (t ArgType) Prim() *Prim {
-	return (*Prim)(&t)
 }
 
 func (t *ArgType) StripAnno(name string) {
@@ -87,17 +116,17 @@ func (t *ArgType) StripAnno(name string) {
 	}
 }
 
-func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequenceNum bool) error {
+func walkTypeTree(m map[string]interface{}, path string, typ Type, withSequenceNum bool) error {
 	// use annot as name when exists; even though this is a type tree we need to produce
 	// variable names that match the storage spec so our frontends can match between
 	// type desc and values
-	haveName := typ.HasAnyAnno()
+	haveLabel := typ.HasLabel()
 	if len(path) == 0 {
-		if haveName {
+		if haveLabel {
 			if withSequenceNum {
-				path = strconv.Itoa(len(m)) + "@" + typ.GetVarAnnoAny()
+				path = strconv.Itoa(len(m)) + "@" + typ.Label()
 			} else {
-				path = typ.GetVarAnnoAny()
+				path = typ.Label()
 			}
 		} else {
 			path = strconv.Itoa(len(m))
@@ -108,7 +137,7 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 	case T_LIST, T_SET:
 		// list <type>
 		// set <comparable type>
-		if haveName {
+		if haveLabel {
 			path = path + "@" + typ.OpCode.String()
 		} else {
 			path = strconv.Itoa(len(m)) + "@" + typ.OpCode.String()
@@ -116,7 +145,7 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 
 		// put list elements into own map, never collapse to avoid dropping list name/type
 		mm := make(map[string]interface{})
-		if err := walkTypeTree(mm, "", typ.Args[0], withSequenceNum); err != nil {
+		if err := walkTypeTree(mm, "", Type{typ.Args[0]}, withSequenceNum); err != nil {
 			return err
 		}
 		m[path] = mm
@@ -129,7 +158,7 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 		// key and value type
 		for i, v := range typ.Args {
 			mmm := make(map[string]interface{})
-			if err := walkTypeTree(mmm, "", v, withSequenceNum); err != nil {
+			if err := walkTypeTree(mmm, "", Type{v}, withSequenceNum); err != nil {
 				return err
 			}
 			// lift scalar
@@ -154,7 +183,7 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 			}
 		}
 
-		if haveName {
+		if haveLabel {
 			path = path + "@" + typ.OpCode.String()
 		} else {
 			path = strconv.Itoa(len(m)) + "@" + typ.OpCode.String()
@@ -166,12 +195,12 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 		// LAMBDA <type> <type> { <instruction> ... }
 		mm := make(map[string]interface{})
 		for _, v := range typ.Args {
-			if err := walkTypeTree(mm, "", v, withSequenceNum); err != nil {
+			if err := walkTypeTree(mm, "", Type{v}, withSequenceNum); err != nil {
 				return err
 			}
 		}
 
-		if haveName {
+		if haveLabel {
 			path = path + "@" + typ.OpCode.String()
 		} else {
 			path = strconv.Itoa(len(m)) + "@" + typ.OpCode.String()
@@ -181,10 +210,10 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 
 	case T_PAIR:
 		// pair <type> <type>
-		if !haveName {
+		if !haveLabel {
 			// collapse pairs when annots are empty
 			for _, v := range typ.Args {
-				if err := walkTypeTree(m, "", v, withSequenceNum); err != nil {
+				if err := walkTypeTree(m, "", Type{v}, withSequenceNum); err != nil {
 					return err
 				}
 			}
@@ -193,7 +222,7 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 			mm := make(map[string]interface{})
 			// 	log.Debugf("marshal sub pair map %p %s into map %p", mm, path, m)
 			for _, v := range typ.Args {
-				if err := walkTypeTree(mm, "", v, withSequenceNum); err != nil {
+				if err := walkTypeTree(mm, "", Type{v}, withSequenceNum); err != nil {
 					return err
 				}
 			}
@@ -205,27 +234,27 @@ func walkTypeTree(m map[string]interface{}, path string, typ *Prim, withSequence
 		// or <type> <type>
 		if len(typ.Args) == 0 {
 			p := path
-			if haveName {
+			if haveLabel {
 				p = p + "@" + typ.OpCode.String()
 			}
 			for _, v := range typ.Args {
-				if err := walkTypeTree(m, p, v, withSequenceNum); err != nil {
+				if err := walkTypeTree(m, p, Type{v}, withSequenceNum); err != nil {
 					return err
 				}
 			}
 		} else {
 			mm := m
 			p := path
-			if haveName {
+			if haveLabel {
 				mm = make(map[string]interface{})
 				p = p + "@" + typ.OpCode.String()
 			}
 			for _, v := range typ.Args {
-				if err := walkTypeTree(mm, "", v, withSequenceNum); err != nil {
+				if err := walkTypeTree(mm, "", Type{v}, withSequenceNum); err != nil {
 					return err
 				}
 			}
-			if haveName {
+			if haveLabel {
 				m[p] = mm
 			}
 		}

@@ -105,28 +105,53 @@ func walkValueMap(name string, val interface{}, fn ValueWalkerFunc) error {
 	}
 }
 
+// Access nested map or array contents
 func getPathString(val interface{}, path string) (string, bool) {
-	if tree, ok := val.(map[string]interface{}); ok {
-		frag := strings.Split(path, ".")
-		for i, v := range frag {
-			next, ok := tree[v]
+	if val == nil {
+		return "", false
+	}
+	frag := strings.Split(path, ".")
+	next := val
+	for i, v := range frag {
+		switch t := next.(type) {
+		case map[string]interface{}:
+			var ok bool
+			next, ok = t[v]
 			if !ok {
 				return "", false
 			}
-			switch t := next.(type) {
-			case map[string]interface{}:
-				tree = t
-			default:
-				return ToString(next), i == len(frag)-1
+		case []interface{}:
+			idx, err := strconv.Atoi(v)
+			if err != nil || len(t) < idx {
+				return "", false
 			}
+			next = t[idx]
+		default:
+			return ToString(next), i == len(frag)-1
 		}
-		return ToString(tree), true
-	} else {
-		return ToString(val), path == ""
 	}
+	return ToString(next), true
+	// if tree, ok := val.(map[string]interface{}); ok {
+	// 	frag := strings.Split(path, ".")
+	// 	for i, v := range frag {
+	// 		next, ok := tree[v]
+	// 		if !ok {
+	// 			return "", false
+	// 		}
+	// 		switch t := next.(type) {
+	// 		case map[string]interface{}:
+	// 			tree = t
+	// 		default:
+	// 			return ToString(next), i == len(frag)-1
+	// 		}
+	// 	}
+	// 	return ToString(tree), true
+	// } else {
+	// 	return ToString(val), path == ""
+	// }
 }
 
-func getPathInt(val interface{}, path string) (int64, bool) {
+func getPathInt64(val interface{}, path string) (int64, bool) {
 	str, ok := getPathString(val, path)
 	if !ok {
 		return 0, ok
@@ -196,4 +221,13 @@ func min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func nonNil(vals ...interface{}) interface{} {
+	for _, v := range vals {
+		if v != nil {
+			return v
+		}
+	}
+	return nil
 }

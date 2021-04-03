@@ -64,11 +64,11 @@ func (s *Script) SearchEntrypointName(name string) string {
 	return searchEntrypointName(name, "", s.Code.Param.Args[0])
 }
 
-func searchEntrypointName(name, branch string, node *Prim) string {
+func searchEntrypointName(name, branch string, node Prim) string {
 	if node.GetVarAnnoAny() == name {
 		return branch
 	}
-	if node.OpCode == T_OR && (len(branch) == 0 || !node.HasAnyAnno()) {
+	if node.OpCode == T_OR && (len(branch) == 0 || !node.HasAnno()) {
 		b := searchEntrypointName(name, branch+"L", node.Args[0])
 		if b != "" {
 			return b
@@ -103,7 +103,7 @@ func isKnownEntrypointPrefix(s string) bool {
 }
 
 // walks T_OR expressions and stores each non-T_OR branch as entrypoint
-func listEntrypoints(e Entrypoints, branch string, node *Prim) error {
+func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 	// prefer % annotations
 	name := node.GetVarAnnoAny()
 	if node.OpCode == T_OR && !isKnownEntrypointPrefix(name) {
@@ -132,10 +132,10 @@ func listEntrypoints(e Entrypoints, branch string, node *Prim) error {
 		Id:     len(e),
 		Branch: branch,
 		Call:   name,
-		Type:   ArgType(*node.Clone()),
-		Prim:   node,
+		Type:   ArgType{node.Clone()},
+		Prim:   &node,
 	}
-	if node.HasAnyAnno() {
+	if node.HasAnno() {
 		// drop entrypoint name annotation, keep any other annots (in case a single
 		// value entrypoint has another variable name)
 		ep.Type.StripAnno(name)

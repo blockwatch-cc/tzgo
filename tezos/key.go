@@ -18,6 +18,8 @@ var (
 	// ErrUnknownKeyType describes an error where a type for a
 	// public key is undefined.
 	ErrUnknownKeyType = errors.New("unknown key type")
+
+	InvalidKey = Key{Type: KeyTypeInvalid, Data: nil}
 )
 
 type KeyType byte

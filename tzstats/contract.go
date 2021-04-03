@@ -215,72 +215,43 @@ type ContractStorage struct {
 }
 
 type ContractValue struct {
-	Value    interface{}     `json:"value"`
-	Unpacked interface{}     `json:"value_unpacked"`
-	Prim     *micheline.Prim `json:"prim"`
+	Value    interface{}    `json:"value"`
+	Unpacked interface{}    `json:"value_unpacked"`
+	Prim     micheline.Prim `json:"prim"`
 }
 
 func (v ContractValue) GetString(path string) (string, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathString(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathString(v.Value, path)
+	return getPathString(nonNil(v.Unpacked, v.Value), path)
 }
 
-func (v ContractValue) GetInt(path string) (int64, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathInt(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathInt(v.Value, path)
+func (v ContractValue) GetInt64(path string) (int64, bool) {
+	return getPathInt64(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v ContractValue) GetBig(path string) (*big.Int, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathBig(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathBig(v.Value, path)
+	return getPathBig(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v ContractValue) GetTime(path string) (time.Time, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathTime(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathTime(v.Value, path)
+	return getPathTime(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v ContractValue) GetAddress(path string) (tezos.Address, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathAddress(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathAddress(v.Value, path)
+	return getPathAddress(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v ContractValue) GetValue(path string) (interface{}, bool) {
-	if v.Unpacked != nil {
-		if v, ok := getPathValue(v.Unpacked, path); ok {
-			return v, ok
-		}
-	}
-	return getPathValue(v.Value, path)
+	return getPathValue(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v ContractValue) Walk(path string, fn ValueWalkerFunc) error {
-	val, ok := v.Value, v.Value != nil
-	if !ok {
-		val, ok = v.Unpacked, v.Unpacked != nil
-	}
+	val := nonNil(v.Unpacked, v.Value)
 	if len(path) > 0 {
-		val, ok = getPathValue(v.Value, path)
+		var ok bool
+		val, ok = getPathValue(val, path)
+		if !ok {
+			return nil
+		}
 	}
 	return walkValueMap(path, val, fn)
 }

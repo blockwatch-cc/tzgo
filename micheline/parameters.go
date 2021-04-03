@@ -14,7 +14,7 @@ import (
 
 type Parameters struct {
 	Entrypoint string `json:"entrypoint"`
-	Value      *Prim  `json:"value"`
+	Value      Prim   `json:"value"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {
@@ -25,10 +25,10 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(p))
 }
 
-func (p Parameters) MapEntrypoint(script *Script) (Entrypoint, *Prim, error) {
+func (p Parameters) MapEntrypoint(script *Script) (Entrypoint, Prim, error) {
 	var ep Entrypoint
 	var ok bool
-	var prim *Prim
+	var prim Prim
 
 	// get list of script entrypoints
 	eps, _ := script.Entrypoints(true)
@@ -65,13 +65,13 @@ func (p Parameters) MapEntrypoint(script *Script) (Entrypoint, *Prim, error) {
 			prefix := script.SearchEntrypointName(p.Entrypoint)
 			if prefix == "" {
 				// meh
-				return ep, nil, fmt.Errorf("micheline: missing entrypoint '%s'", p.Entrypoint)
+				return ep, prim, fmt.Errorf("micheline: missing entrypoint '%s'", p.Entrypoint)
 			}
 			// otherwise rebase using the annotated branch as prefix
 			branch := p.Branch(prefix, eps)
 			ep, ok = eps.FindBranch(branch)
 			if !ok {
-				return ep, nil, fmt.Errorf("micheline: missing entrypoint '%s' + %s", p.Entrypoint, prefix)
+				return ep, prim, fmt.Errorf("micheline: missing entrypoint '%s' + %s", p.Entrypoint, prefix)
 			}
 			// unwrap the suffix branch only
 			prim = p.Unwrap(strings.TrimPrefix(ep.Branch, prefix))
@@ -84,7 +84,7 @@ func (p Parameters) MapEntrypoint(script *Script) (Entrypoint, *Prim, error) {
 
 func (p Parameters) Branch(prefix string, eps Entrypoints) string {
 	node := p.Value
-	if node == nil {
+	if !node.IsValid() {
 		return ""
 	}
 	branch := prefix
@@ -106,10 +106,10 @@ done:
 	return branch
 }
 
-func (p Parameters) Unwrap(branch string) *Prim {
+func (p Parameters) Unwrap(branch string) Prim {
 	node := p.Value
 	for _, v := range strings.Split(branch, "") {
-		if node == nil {
+		if !node.IsValid() {
 			break
 		}
 		switch v {
@@ -125,7 +125,8 @@ func (p Parameters) Unwrap(branch string) *Prim {
 // stay compatible with v005 transaction serialization
 func (p Parameters) MarshalBinary() ([]byte, error) {
 	// single Unit value
-	if len(p.Entrypoint) == 0 && p.Value != nil && p.Value.OpCode == D_UNIT {
+	// if len(p.Entrypoint) == 0 && p.Value != nil && p.Value.OpCode == D_UNIT {
+	if len(p.Entrypoint) == 0 && p.Value.OpCode == D_UNIT {
 		return []byte{0}, nil
 	}
 	// entrypoint format, compatible with v005
@@ -168,7 +169,6 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 	}
 	if data[0] == '[' {
 		// non-entrypoint calling convention
-		p.Value = &Prim{}
 		return json.Unmarshal(data, &p.Value)
 	} else {
 		// try entrypoint calling convention
@@ -176,19 +176,18 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 		if err := json.Unmarshal(data, alias(p)); err != nil {
 			return err
 		}
-		if p.Value != nil {
+		if p.Value.IsValid() {
 			return nil
 		}
 		// try legacy calling convention for single prim values
 		p.Entrypoint = "default"
-		p.Value = &Prim{}
-		return json.Unmarshal(data, p.Value)
+		return json.Unmarshal(data, &p.Value)
 	}
 }
 
 func (p *Parameters) UnmarshalBinary(data []byte) error {
 	if len(data) == 1 && data[0] == 0 {
-		p.Value = &Prim{Type: PrimNullary, OpCode: D_UNIT}
+		p.Value = Prim{Type: PrimNullary, OpCode: D_UNIT}
 		p.Entrypoint = "default"
 		return nil
 	}
@@ -221,7 +220,7 @@ func (p *Parameters) UnmarshalBinary(data []byte) error {
 	if buf.Len() < size {
 		return io.ErrShortBuffer
 	}
-	prim := &Prim{}
+	prim := Prim{}
 	if err := prim.DecodeBuffer(buf); err != nil {
 		return err
 	}

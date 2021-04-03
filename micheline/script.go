@@ -13,34 +13,34 @@ import (
 )
 
 type Script struct {
-	Code    *Code `json:"code"`    // code section, i.e. parameter & storage types, code
-	Storage *Prim `json:"storage"` // data section, i.e. initial contract storage
+	Code    Code `json:"code"`    // code section, i.e. parameter & storage types, code
+	Storage Prim `json:"storage"` // data section, i.e. initial contract storage
 }
 
 type Code struct {
-	Param   *Prim // call types
-	Storage *Prim // storage types
-	Code    *Prim // program code
+	Param   Prim  // call types
+	Storage Prim  // storage types
+	Code    Prim  // program code
 	BadCode *Prim // catch-all for ill-formed contracts
 }
 
 func NewScript() *Script {
 	return &Script{
 		Code:    NewCode(),
-		Storage: &Prim{},
+		Storage: Prim{},
 	}
 }
 
-func NewCode() *Code {
-	return &Code{
-		Param:   &Prim{Type: PrimSequence, Args: []*Prim{&Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
-		Storage: &Prim{Type: PrimSequence, Args: []*Prim{&Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
-		Code:    &Prim{Type: PrimSequence, Args: []*Prim{&Prim{Type: PrimUnary, OpCode: K_CODE}}},
+func NewCode() Code {
+	return Code{
+		Param:   Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
+		Storage: Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
+		Code:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_CODE}}},
 	}
 }
 
 func (s *Script) StorageType() Type {
-	return Type(*s.Code.Storage.Args[0])
+	return Type{s.Code.Storage.Args[0]}
 }
 
 // first 4 bytes of sha256(encode_binary(parameters))
@@ -111,7 +111,6 @@ func (p *Script) UnmarshalBinary(data []byte) error {
 	}
 
 	// read primitive tree
-	p.Storage = &Prim{}
 	if err := p.Storage.DecodeBuffer(buf); err != nil {
 		return err
 	}
@@ -130,16 +129,16 @@ func (c Code) MarshalBinary() ([]byte, error) {
 	binary.Write(buf, binary.BigEndian, uint32(0))
 
 	// root element is a sequence
-	root := &Prim{
+	root := Prim{
 		Type: PrimSequence,
-		Args: []*Prim{c.Param, c.Storage, c.Code},
+		Args: []Prim{c.Param, c.Storage, c.Code},
 	}
 
 	// store ill-formed contracts
 	if c.BadCode != nil {
-		root = &Prim{
+		root = Prim{
 			Type: PrimSequence,
-			Args: []*Prim{EmptyPrim, EmptyPrim, EmptyPrim, c.BadCode},
+			Args: []Prim{EmptyPrim, EmptyPrim, EmptyPrim, *c.BadCode},
 		}
 	}
 
@@ -186,7 +185,7 @@ func (c *Code) DecodeBuffer(buf *bytes.Buffer) error {
 		case K_CODE:
 			c.Code = v
 		case 255:
-			c.BadCode = v
+			c.BadCode = &v
 		default:
 			return fmt.Errorf("micheline: unexpected program key 0x%x", v.OpCode)
 		}
@@ -195,12 +194,12 @@ func (c *Code) DecodeBuffer(buf *bytes.Buffer) error {
 }
 
 func (c Code) MarshalJSON() ([]byte, error) {
-	root := &Prim{
+	root := Prim{
 		Type: PrimSequence,
-		Args: []*Prim{c.Param, c.Storage, c.Code},
+		Args: []Prim{c.Param, c.Storage, c.Code},
 	}
 	if c.BadCode != nil {
-		root = c.BadCode
+		root = *c.BadCode
 	}
 	return json.Marshal(root)
 }

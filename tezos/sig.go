@@ -16,6 +16,8 @@ var (
 	// ErrUnknownSignatureType describes an error where a type for a
 	// signature is undefined.
 	ErrUnknownSignatureType = errors.New("unknown signature type")
+
+	InvalidSignature = Signature{Type: SignatureTypeInvalid, Data: nil}
 )
 
 type SignatureType byte

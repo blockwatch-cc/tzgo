@@ -350,7 +350,7 @@ func ParseOpCode(str string) (OpCode, error) {
 	return op, nil
 }
 
-func (op OpCode) IsType() bool {
+func (op OpCode) IsTypeCode() bool {
 	switch op {
 	case T_BOOL,
 		T_CONTRACT,
@@ -388,7 +388,7 @@ func (op OpCode) IsType() bool {
 	}
 }
 
-func (op OpCode) IsKey() bool {
+func (op OpCode) IsKeyCode() bool {
 	switch op {
 	case K_PARAMETER, K_STORAGE, K_CODE:
 		return true
@@ -397,8 +397,8 @@ func (op OpCode) IsKey() bool {
 	}
 }
 
-func (op OpCode) Type() OpCode {
-	if op.IsType() {
+func (op OpCode) TypeCode() OpCode {
+	if op.IsTypeCode() {
 		return op
 	}
 	switch op {
@@ -416,5 +416,16 @@ func (op OpCode) Type() OpCode {
 		return T_MAP // may also be T_SET, T_BIG_MAP
 	default:
 		return T_OPERATION
+	}
+}
+
+func (op OpCode) PrimType() PrimType {
+	switch op {
+	case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP:
+		return PrimInt
+	case T_STRING:
+		return PrimString
+	default:
+		return PrimBytes
 	}
 }

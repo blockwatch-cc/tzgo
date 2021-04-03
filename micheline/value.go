@@ -1,65 +1,111 @@
 // Copyright (c) 2020-2021 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
-// FIXME: the introduction of comb pairs in Edo broke important assumptions
-// about the structure of type trees and value trees. As result, the current
-// method of recursively traversing these trees does no longer work.
-
 package micheline
 
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"strconv"
-	"strings"
+	"time"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
+const EMPTY_LABEL = `@%%@` // illegal Michelson annotation value
+
 type Value struct {
-	Type  *Prim
-	Value *Prim
+	Type  Type
+	Value Prim
 }
 
-func NewValue() *Value {
-	return &Value{
-		Type:  &Prim{},
-		Value: &Prim{},
+func NewValue(typ Type, val Prim) Value {
+	return Value{
+		Type:  typ.Clone(),
+		Value: val.Clone(),
 	}
+}
+
+func (v *Value) Decode(buf []byte) error {
+	return v.Value.UnmarshalBinary(buf)
+}
+
+func (v Value) IsPacked() bool {
+	return v.Value.IsPacked()
+}
+
+func (v Value) IsPackedAny() bool {
+	return v.Value.IsPackedAny()
+}
+
+func (v Value) Unpack() (Value, error) {
+	if !v.Value.IsPacked() {
+		return v, nil
+	}
+	up, err := v.Value.Unpack()
+	if err != nil {
+		return v, err
+	}
+	return Value{
+		Type:  up.BuildType(),
+		Value: up,
+	}, nil
+}
+
+func (v Value) UnpackAll() (Value, error) {
+	if !v.Value.IsPackedAny() {
+		return v, nil
+	}
+	up, err := v.Value.UnpackAll()
+	if err != nil {
+		return v, err
+	}
+	return Value{
+		Type:  up.BuildType(),
+		Value: up,
+	}, nil
 }
 
 func (e Value) Map() (map[string]interface{}, error) {
 	m := make(map[string]interface{}, 1024)
 	typ, val := e.Type, e.Value
 
+	// FIXME: should not be necessary
 	// pre-process ticket types
-	if typ.ContainsOpCode(T_TICKET) {
-		typ = typ.Clone().ExpandTickets()
-	}
+	// if typ.ContainsOpCode(T_TICKET) {
+	// 	clone := typ.Clone()
+	// 	clone.ExpandTickets()
+	// 	typ = Type(clone)
+	// }
 
+	// FIXME: should not be necessary
 	// always normalize comb pairs
-	if val.IsPair() || typ.IsPair() {
-		val = dcomb(val.FlattenComb(typ)...)
-		typ = tcomb(typ.FlattenComb(typ)...)
-	}
+	// if val.IsPair() || typ.IsPair() {
+	// 	val = dcomb(val.ConvertComb(typ)...)
+	// 	typ = Type{tcomb(typ.ConvertComb(typ)...)}
+	// }
 
-	if err := walkTree(m, "", typ, val, 0, false); err != nil {
+	if err := walkTree(m, EMPTY_LABEL, typ, val, 0, false); err != nil {
 		return nil, err
 	}
 
 	if len(m) == 1 {
 		for n, v := range m {
-			fields := strings.Split(n, "@")
-			oc, err := ParseOpCode(fields[len(fields)-1])
-			if err == nil || strings.HasPrefix(n, "0") {
-				switch oc {
-				case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
+			// fields := strings.Split(n, "@")
+			// oc, err := ParseOpCode(fields[len(fields)-1])
+			// if err == nil || strings.HasPrefix(n, "0") {
+			if n == "0" {
+				// switch oc {
+				// case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
+				// default:
+				switch vv := v.(type) {
+				case map[string]interface{}:
+					return vv, nil
 				default:
-					switch vv := v.(type) {
-					case map[string]interface{}:
-						return vv, nil
-					default:
-						return map[string]interface{}{"": v}, nil
-					}
+					return map[string]interface{}{"": v}, nil
 				}
+				// }
 			}
 		}
 	}
@@ -67,9 +113,9 @@ func (e Value) Map() (map[string]interface{}, error) {
 }
 
 func (e Value) MarshalJSON() ([]byte, error) {
-	if e.Type == nil || e.Value == nil {
-		return nil, nil
-	}
+	// if e.Type == nil || e.Value == nil {
+	// 	return nil, nil
+	// }
 	// output scalar types as-is unless packed
 	if e.Type.IsScalar() && !e.Value.IsPacked() {
 		return json.Marshal(e.Value.Value(e.Type.OpCode))
@@ -77,53 +123,66 @@ func (e Value) MarshalJSON() ([]byte, error) {
 	m := make(map[string]interface{}, 1024)
 
 	typ, val := e.Type, e.Value
+
+	// FIXME: should not be necessary
 	// pre-process ticket types
-	if typ.ContainsOpCode(T_TICKET) {
-		typ = typ.Clone().ExpandTickets()
-	}
+	// if typ.ContainsOpCode(T_TICKET) {
+	// 	clone := typ.Clone()
+	// 	clone.ExpandTickets()
+	// 	typ = Type(clone)
+	// }
 
+	// FIXME: should not be necessary
 	// always normalize comb pairs
-	if val.IsPair() || typ.IsPair() {
-		val = dcomb(val.FlattenComb(typ)...)
-		typ = tcomb(typ.FlattenComb(typ)...)
-	}
+	// if val.IsPair() || typ.IsPair() {
+	// 	val = dcomb(val.ConvertComb(typ)...)
+	// 	typ = Type{tcomb(typ.ConvertComb(typ)...)}
+	// }
 
-	if err := walkTree(m, "", typ, val, 0, false); err != nil {
+	if err := walkTree(m, EMPTY_LABEL, typ, val, 0, false); err != nil {
+		// FIXME: should not be necessary
 		// HACK: on error, try again without flattening
-		typ = e.Type.Clone().ExpandTickets()
-		m = make(map[string]interface{}, 1024)
-		if err2 := walkTree(m, "", typ, e.Value, 0, true); err2 != nil {
-			log.Errorf("FLAT: %v", err)
-			log.Errorf("NORM: %v", err2)
-			type xErrorMessage struct {
-				Message string `json:"message"`
-				Type    *Prim  `json:"type"`
-				Value   *Prim  `json:"value"`
-			}
-			resp := struct {
-				Error xErrorMessage `json:"error"`
-			}{
-				Error: xErrorMessage{
-					Message: err.Error(),
-					Type:    e.Type,
-					Value:   e.Value,
-				},
-			}
-			return json.Marshal(resp)
+		// typ, val = e.Type, e.Value
+		// if typ.ContainsOpCode(T_TICKET) {
+		// 	clone := typ.Clone()
+		// 	clone.ExpandTickets()
+		// 	typ = Type(clone)
+		// }
+		// m = make(map[string]interface{}, 1024)
+		// if err2 := walkTree(m, EMPTY_LABEL, typ, val, 0, true); err2 != nil {
+		log.Errorf("RENDER: %v", err)
+		// log.Errorf("NORM: %v", err2)
+		type xErrorMessage struct {
+			Message string `json:"message"`
+			Type    Prim   `json:"type"`
+			Value   Prim   `json:"value"`
 		}
+		resp := struct {
+			Error xErrorMessage `json:"error"`
+		}{
+			Error: xErrorMessage{
+				Message: err.Error(),
+				Type:    e.Type.Prim,
+				Value:   e.Value,
+			},
+		}
+		return json.Marshal(resp)
+		// }
 	}
 
+	// FIXME: should not be necessary
 	// lift embedded scalars unless they are named or container types
 	if len(m) == 1 {
 		for n, v := range m {
-			fields := strings.Split(n, "@")
-			oc, err := ParseOpCode(fields[len(fields)-1])
-			if err == nil || strings.HasPrefix(n, "0") {
-				switch oc {
-				case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
-				default:
-					return json.Marshal(v)
-				}
+			// fields := strings.Split(n, "@")
+			// oc, err := ParseOpCode(fields[len(fields)-1])
+			// if err == nil || strings.HasPrefix(n, "0") {
+			if n == "0" {
+				// switch oc {
+				// case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
+				// default:
+				return json.Marshal(v)
+				// }
 			}
 		}
 	}
@@ -131,36 +190,41 @@ func (e Value) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-// var logRecursive bool
+func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int, noflat bool) error {
 
-func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl int, noflat bool) error {
-	// if typ.OpCode == T_SET || typ.OpCode == T_MAP || logRecursive {
-	// log.Infof("L%0d: %s/%s typ=%s %s", lvl, path, typ.GetVarAnnoAny(), typ.OpCode, typ.JSONString())
-	// log.Infof("L%0d: %s/%s val=%s %s", lvl, path, typ.GetVarAnnoAny(), val.OpCode, val.JSONString())
-	// 	logRecursive = true
-	// 	defer func() {
-	// 		logRecursive = false
-	// 	}()
-	// }
+	// Trace Helper
+	// fmt.Printf("L%0d: %s/%s typ=%s %s\n", lvl, label, typ.Label(), typ.OpCode, typ.Dump())
+	// fmt.Printf("L%0d: %s/%s val=%s %s\n", lvl, label, typ.Label(), val.OpCode, val.Dump())
 
 	// abort infinite recursions
-	if lvl > 999 {
-		log.Warnf("L%0d: %s/%s typ=%s val=%s %s", lvl, path, typ.GetVarAnnoAny(), typ.OpCode, val.OpCode, val.JSONString())
+	if lvl > 99 {
+		log.Warnf("L%0d: %s/%s typ=%s val=%s %s", lvl, label, typ.Label(), typ.OpCode, val.OpCode, val.Dump())
 		return fmt.Errorf("micheline: max nesting level reached")
 	}
 
 	// make sure value matches type
 	if !val.matchOpCode(typ.OpCode) {
-		return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
-			val.Type, val.OpCode, typ.OpCode, limit(typ.JSONString(), 512), limit(val.JSONString(), 512))
+		if val.WasPacked {
+			// handle polymorph value types in packed maps by auto-detecting their
+			// true type on access
+			typ = val.BuildType()
+		} else {
+			return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
+				val.Type, val.OpCode, typ.OpCode, typ.DumpLimit(512), val.DumpLimit(512))
+		}
 	}
 
-	// use annot as name when exists
-	haveName := typ.HasAnyAnno()
-	if haveName && len(path) == 0 {
-		path = typ.GetVarAnnoAny()
-	} else if len(path) == 0 && typ.OpCode != T_OR {
-		path = strconv.Itoa(len(m)) + "@" + typ.OpCode.String()
+	typeLabel := typ.Label()
+	haveTypeLabel := len(typeLabel) > 0
+	haveKeyLabel := label != EMPTY_LABEL && len(label) > 0
+	if label == EMPTY_LABEL {
+		if haveTypeLabel {
+			// overwrite struct field label from type annotation
+			label = typeLabel
+		} else {
+			// or use sequence number when type annotation is empty
+			label = strconv.Itoa(len(m))
+		}
 	}
 
 	// walk the type tree and add values if they exist
@@ -168,7 +232,6 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 	case T_SET:
 		// set <comparable type>
 		arr := make([]interface{}, 0, len(val.Args))
-		// log.Debugf("%*s> %s key %s len %d into map %p", lvl, "", typ.OpCode, path, len(val.Args), m)
 
 		for _, v := range val.Args {
 			if v.IsScalar() && !v.IsSequence() {
@@ -177,18 +240,17 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, "", typ.Args[0], v, lvl+1, noflat); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, v, lvl+1, noflat); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
 			}
 		}
-		m[path] = arr
+		m[label] = arr
 
 	case T_LIST:
 		// list <type>
 		arr := make([]interface{}, 0, len(val.Args))
-		// log.Debugf("%*s> %s key %s len %d into map %p", lvl, "", typ.OpCode, path, len(val.Args), m)
 		for i, v := range val.Args {
 			// lists may contain different types, i.e. when unpack+detect is used
 			valType := typ.Args[0]
@@ -201,19 +263,18 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, "", valType, v, lvl+1, noflat); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, v, lvl+1, noflat); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
 			}
 		}
-		m[path] = arr
+		m[label] = arr
 
 	case T_LAMBDA:
 		// LAMBDA <type> <type> { <instruction> ... }
 		// value_type, return_type, code
-		// log.Debugf("%*s> marshal %s key %s len %d into map %p", lvl, "", typ.OpCode, path, len(val.Args), m)
-		m[path] = val
+		m[label] = val
 
 	case T_MAP, T_BIG_MAP:
 		// map <comparable type> <type>
@@ -222,106 +283,83 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 
 		// render bigmap reference
 		if typ.OpCode == T_BIG_MAP && len(val.Args) == 0 {
-			// log.Debugf("%*s> marshal %s ref key %s into map %p", lvl, "", typ.OpCode, path, m)
+			// log.Debugf("%*s> marshal %s ref key %s into map %p", lvl, "", typ.OpCode, label, m)
 			switch val.Type {
 			case PrimInt:
 				// Babylon bigmaps contain a reference here
-				m[path] = val.Value(T_INT)
+				m[label] = val.Value(T_INT)
 			case PrimSequence:
 				// pre-babylon there's only an empty sequence
 				// FIXME: we could insert the bigmap id, but this is unknown at ths point
-				m[path] = nil
+				m[label] = nil
 			}
 			return nil
 		}
-		mm := make(map[string]interface{})
 
 		switch val.Type {
 		case PrimBinary: // single ELT
-			// log.Debugf("%*s> T_MAP marshal single %s key %s len %d into map %p adding sub map %p", lvl, "", typ.OpCode, path, len(val.Args), m, mm)
-			// unpack key type
+			// log.Debugf("%*s> T_MAP marshal single %s key %s len %d into map %p adding sub map %p", lvl, "", typ.OpCode, label, len(val.Args), m, mm)
+			keyType := Type{typ.Args[0]}
+			valType := Type{typ.Args[1]}
+
 			// build type info if prim was packed
-			keyType := typ.Args[0]
 			if val.Args[0].WasPacked {
 				keyType = val.Args[0].BuildType()
 			}
-			key, err := NewBigMapKeyAs(keyType, val.Args[0])
+
+			// build type info if prim was packed
+			if val.Args[1].WasPacked {
+				valType = val.Args[1].BuildType()
+			}
+
+			// prepare key
+			key, err := NewKey(keyType, val.Args[0])
 			if err != nil {
 				return err
 			}
 
-			// recurse to unpack value type
-			if val.Args[1].IsScalar() {
-				// add scalar type to map
-				// log.Debugf("%*s> T_MAP/PrimBinary marshal scalar %s key %s into map %p", lvl, "", typ.OpCode, key.String(), mm)
-				if err := walkTree(mm, key.String(), typ.Args[1], val.Args[1], lvl+1, noflat); err != nil {
-					return err
-				}
-			} else {
-				// add complex type to sub-map
-				mmm := make(map[string]interface{})
-				// log.Debugf("%*s> T_MAP/PrimBinary marshal sub %s key %s %p into map %p", lvl, "", typ.OpCode, key.String(), mmm, mm)
-				if err := walkTree(mmm, "", typ.Args[1], val.Args[1], lvl+1, noflat); err != nil {
-					return err
-				}
-				mm[key.String()] = mmm
+			mm := make(map[string]interface{})
+			if err := walkTree(mm, key.String(), valType, val.Args[1], lvl+1, noflat); err != nil {
+				return err
 			}
+			m[label] = mm
 
 		case PrimSequence: // sequence of ELTs
-			// log.Debugf("%*s> T_MAP marshal sequence %s key %s len %d into map %p adding sub map %p", lvl, "", typ.OpCode, path, len(val.Args), m, mm)
+			mm := make(map[string]interface{})
 			for _, v := range val.Args {
-				// unpack Elt
 				if v.OpCode != D_ELT {
 					return fmt.Errorf("micheline: unexpected type %s [%s] for %s Elt item", v.Type, v.OpCode, typ.OpCode)
 				}
 
+				keyType := Type{typ.Args[0]}
+				valType := Type{typ.Args[1]}
+
 				// build type info if prim was packed
-				keyType := typ.Args[0]
 				if v.Args[0].WasPacked {
 					keyType = v.Args[0].BuildType()
-					// log.Debugf("%*s> T_MAP/PrimSequence-1 BUILD TYPE for unpacked key %s type [%s,%s] is [%s,%s]",
-					// 	lvl, "", path, typ.Args[0].Type, typ.Args[0].OpCode, keyType.Type, keyType.OpCode)
 				}
 
-				// unpack key type
-				key, err := NewBigMapKeyAs(keyType, v.Args[0])
+				// build type info if prim was packed
+				if v.Args[1].WasPacked {
+					valType = v.Args[1].BuildType()
+				}
+
+				key, err := NewKey(keyType, v.Args[0])
 				if err != nil {
 					return err
 				}
 
-				// build type info if prim was packed
-				valType := typ.Args[1]
-				if v.Args[1].WasPacked {
-					valType = v.Args[1].BuildType()
-					// log.Debugf("%*s> T_MAP/PrimSequence-2 BUILD TYPE for unpacked value %s type [%s,%s] is [%s,%s]",
-					// 	lvl, "", path, typ.Args[0].Type, typ.Args[0].OpCode, keyType.Type, keyType.OpCode)
-				}
-
-				// recurse to unpack value type directly into map under key
-				if v.Args[1].IsScalar() {
-					// add scalar type to map
-					// log.Debugf("%*s> T_MAP/PrimSequence-3 marshal scalar %s key %s into map %p", lvl, "", valType.OpCode, key.String(), mm)
-					if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1, noflat); err != nil {
-						return err
-					}
-				} else {
-					// add complex type to sub-map
-					mmm := make(map[string]interface{})
-					// log.Debugf("%*s> T_MAP/PrimSequence-4 marshal sub %s key %s %p into map %p", lvl, "", valType.OpCode, key.String(), mmm, mm)
-					if err := walkTree(mmm, "", valType, v.Args[1], lvl+1, noflat); err != nil {
-						return err
-					}
-					mm[key.String()] = mmm
+				if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1, noflat); err != nil {
+					return err
 				}
 			}
+			m[label] = mm
 
 		default:
 			buf, _ := json.Marshal(val)
 			return fmt.Errorf("%*s> micheline: unexpected type %s [%s] for %s Elt sequence: %s",
 				lvl, "", val.Type, val.OpCode, typ.OpCode, buf)
 		}
-
-		m[path] = mm
 
 	case T_PAIR:
 		// pair <type> <type> or COMB
@@ -330,41 +368,42 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 		// - for n=3, [Pair x1 (Pair x2 x3)],
 		// - for n>=4, [{x1; x2; ...; xn}].
 
-		// EDO pair with comb
+		// when annots are NOT empty
 		mm := m
-		if haveName {
-			// when annots are NOT empty, create a new sub-map unless value is scalar
+		if haveTypeLabel || haveKeyLabel {
 			mm = make(map[string]interface{})
-			// log.Debugf("%*s> T_PAIR marshal sub pair map %p %s into map %p", lvl, "", mm, path, m)
-			// } else {
-			// 	log.Debugf("%*s> T_PAIR marshal direct pair %s into map %p", lvl, "", path, m)
 		}
 
 		vals := val.Args
 		typs := typ.Args
-		// if val.IsComb() || typ.IsComb() {
-		if val.IsComb() || val.IsPair() {
-			vals = val.FlattenCombNoType()
-			typs = typ.FlattenCombNoType()
-			// log.Infof("Flatten pair typ=%s", seq(typs...).JSONString())
-			// log.Infof("Flatten pair vals=%s", seq(vals...).JSONString())
+		if val.IsComb(typ) {
+			if val.IsConvertedComb() {
+				// if value is already a comb sequence, we use the
+				// converted type tree for matching types
+				typs = typ.ConvertComb(typ)
+				// fmt.Printf("PAIR flatten* typ=%s\n", seq(typs...).Dump())
+				vals = val.ConvertComb(Type{tcomb(typs...)})
+				// fmt.Printf("PAIR flatten* val=%s\n", seq(vals...).Dump())
+			} else {
+				typs = typ.ConvertComb(typ)
+				// fmt.Printf("PAIR flatten typ=%s\n", seq(typs...).Dump())
+				vals = val.ConvertComb(typ)
+				// fmt.Printf("PAIR flatten val=%s\n", seq(vals...).Dump())
+			}
 		}
 
 		for i, v := range vals {
 			if i >= len(typs) {
-				// log.Errorf("T_PAIR %s val/type len mismatch %d <> %d", path, len(vals), len(typs))
-				// log.Errorf("T_PAIR typs %s", seq(typs...).JSONString())
-				// log.Errorf("T_PAIR vals %s", seq(vals...).JSONString())
 				// illegal type, only happens for bad parameters
 				break
 			}
-			if err := walkTree(mm, "", typs[i], v, lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typs[i]}, v, lvl+1, noflat); err != nil {
 				return err
 			}
 		}
 
-		if haveName {
-			m[path] = mm
+		if haveTypeLabel || haveKeyLabel {
+			m[label] = mm
 		}
 
 	case T_OPTION:
@@ -372,83 +411,47 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 		switch val.OpCode {
 		case D_NONE:
 			// add empty option values as null
-			p := path
-			if len(path) == 0 && !haveName {
-				if len(typ.Args) > 0 {
-					p = strconv.Itoa(len(m)) + "@" + typ.Args[0].OpCode.String()
-				} else {
-					p = strconv.Itoa(len(m)) + "@" + typ.OpCode.String()
-				}
-			}
-			// log.Debugf("%*s> T_OPTION/D_NONE marshal empty opt %s into map %p", lvl, "", p, m)
-			m[p] = nil // stop recursion
+			m[label] = nil
 		case D_SOME:
-			// continue recursion
-			// log.Debugf("%*s> T_OPTION/D_SOME-1 marshal some opt at %s name=%t scalar=%t %#v",
-			// lvl, "", path, haveName, val.IsScalar(), val)
-
-			if len(path) == 0 && !haveName {
-				// when annots are empty, use sequence + type name as key
+			// with annots (name) use it for scalar or complex render
+			if val.IsScalar() {
 				for i, v := range val.Args {
-					// ATTN: since people can use lists of options the type tree
+					// NOTE: since contracts can use lists of options the type tree
 					// may not contain as many values as the value tree, to stay
 					// resilient we only use the i-th type if it exists
 					t := typ.Args[0]
 					if len(typ.Args) < i {
 						t = typ.Args[i]
 					}
-					p := strconv.Itoa(len(m)) + "@" + t.OpCode.String()
-					// log.Debugf("%*s> T_OPTION/D_SOME-2 marshal some opt collapse %s into map %p", lvl, "", p, m)
-					if err := walkTree(m, p, t, v, lvl+1, noflat); err != nil {
+					if err := walkTree(m, label, Type{t}, v, lvl+1, noflat); err != nil {
 						return err
 					}
 				}
 			} else {
-				// with annots (name) use it for scalar or complex render
-				if val.IsScalar() {
-					// log.Debugf("%*s> T_OPTION/D_SOME-3 marshal some opt collapse %s into map %p", lvl, "", path, m)
-					for i, v := range val.Args {
-						// ATTN: since people can use lists of options the type tree
-						// may not contain as many values as the value tree, to stay
-						// resilient we only use the i-th type if it exists
-						t := typ.Args[0]
-						if len(typ.Args) < i {
-							t = typ.Args[i]
-						}
-						if err := walkTree(m, path, t, v, lvl+1, noflat); err != nil {
-							return err
-						}
-					}
-				} else {
-					mm := make(map[string]interface{})
-					// log.Debugf("%*s> T_OPTION/D_SOME-4 marshal some opt map %p sub %s into map %p", lvl, "", mm, path, m)
-					for i, v := range val.Args {
-						// ATTN: since people can use lists of options the type tree
-						// may not contain as many values as the value tree, to stay
-						// resilient we only use the i-th type if it exists
-						t := typ.Args[0]
-						if len(typ.Args) < i {
-							t = typ.Args[i]
-						}
-						if err := walkTree(mm, "", t, v, lvl+1, noflat); err != nil {
-							return err
-						}
-					}
-					m[path] = mm
+				mm := make(map[string]interface{})
+				vals := val.Args
+				typs := typ.Args
+				if val.IsComb(typ) {
+					vals = val.ConvertComb(typ)
+					typs = typ.ConvertComb(typ)
+					// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
+					// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
 				}
+
+				for i, v := range vals {
+					// NOTE: since contracts can use lists of options the type tree
+					// may not contain as many values as the value tree, to stay
+					// resilient we only use the i-th type if it exists
+					t := typs[0]
+					if len(typs) < i {
+						t = typs[i]
+					}
+					if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1, noflat); err != nil {
+						return err
+					}
+				}
+				m[label] = mm
 			}
-		case D_PAIR:
-			// unpack options from pair
-			if val.Args[0].OpCode == D_SOME {
-				// log.Debugf("%*s> T_OPTION/D_SOME-5 marshal some pair LEFT sub %s into map %p", lvl, "", path, m)
-				return walkTree(m, path, typ, val.Args[0], lvl+1, noflat)
-			}
-			if val.Args[1].OpCode == D_SOME {
-				// log.Debugf("%*s> T_OPTION/D_SOME-6 marshal some pair RIGHT sub %s into map %p", lvl, "", path, m)
-				return walkTree(m, path, typ, val.Args[1], lvl+1, noflat)
-			}
-			// empty pair, stop recursion
-			m[path] = nil
 		default:
 			return fmt.Errorf("micheline: unexpected T_OPTION code %s [%s]", val.OpCode, val.OpCode)
 		}
@@ -456,38 +459,23 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 	case T_OR:
 		// or <type> <type>
 		mm := m
-		if haveName {
+		if haveTypeLabel || haveKeyLabel {
 			mm = make(map[string]interface{})
 		}
-		p := path
 		switch val.OpCode {
 		case D_LEFT:
-			if len(p) == 0 && !haveName {
-				p = strconv.Itoa(len(mm)) + "@" + typ.Args[0].OpCode.String()
-			}
-			// log.Debugf("%*s> T_OR/D_LEFT marshal OR left type %s into map %p", lvl, "", p, m)
-			if err := walkTree(mm, p, typ.Args[0], val.Args[0], lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, val.Args[0], lvl+1, noflat); err != nil {
 				return err
 			}
 		case D_RIGHT:
-			if len(p) == 0 && !haveName {
-				p = strconv.Itoa(len(mm)) + "@" + typ.Args[1].OpCode.String()
-			}
-			// log.Debugf("%*s> T_OR/D_RIGHT marshal OR right type %s into map %p", lvl, "", p, m)
-			if err := walkTree(mm, p, typ.Args[1], val.Args[0], lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, val.Args[0], lvl+1, noflat); err != nil {
 				return err
 			}
 		default:
-			if len(p) == 0 && !haveName {
-				p = strconv.Itoa(len(mm)) + "@" + typ.Args[0].OpCode.String()
-			}
-			// log.Debugf("%*s> T_OR/default marshal OR full type %s into map %p", lvl, "", p, m)
-			if err := walkTree(mm, p, typ.Args[0], val, lvl+1, noflat); err != nil {
-				return err
-			}
+			return fmt.Errorf("micheline: unexpected T_OR branch with value opcode %s", val.OpCode)
 		}
-		if haveName {
-			m[path] = mm
+		if haveTypeLabel || haveKeyLabel {
+			m[label] = mm
 		}
 
 	case T_TICKET:
@@ -495,7 +483,7 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 		ttyp := TicketType(typ.Args[0])
 		// log.Debugf("%*s> T_TICKET %s type %s into map %p", lvl, "", path, ttyp.JSONString(), m)
 		// log.Debugf("%*s> T_TICKET %s value %s", lvl, "", path, val.JSONString())
-		if err := walkTree(m, path, ttyp, val, lvl+1, noflat); err != nil {
+		if err := walkTree(m, label, ttyp, val, lvl+1, noflat); err != nil {
 			return err
 		}
 
@@ -517,15 +505,13 @@ func walkTree(m map[string]interface{}, path string, typ *Prim, val *Prim, lvl i
 		// chain_id
 		// append scalar or other complex value
 		if val.IsScalar() {
-			// log.Debugf("%*s> marshal scalar val %s (%s, %s) as %s", lvl, "", path, val.Type, val.OpCode, typ.OpCode)
-			m[path] = val.Value(typ.OpCode)
+			m[label] = val.Value(typ.OpCode)
 		} else {
 			mm := make(map[string]interface{})
-			// log.Debugf("%*s> marshal scalar val (%s, %s) type (%s, %s) sub map %p into map %p", lvl, "", val.Type, val.OpCode, typ.Type, typ.OpCode, mm, m)
-			if err := walkTree(mm, "", typ, val, lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, typ, val, lvl+1, noflat); err != nil {
 				return err
 			}
-			m[path] = mm
+			m[label] = mm
 		}
 	}
 	return nil
@@ -543,7 +529,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 
 	case PrimInt:
 		switch oc {
-		case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP, T_BIG_MAP, T_OR, T_OPTION, T_SAPLING_STATE:
+		case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP, T_BIG_MAP, T_OR, T_OPTION, T_SAPLING_STATE,
+			T_BLS12_381_G1, T_BLS12_381_FR: // stored as int
 			// accept references to bigmap and sapling states
 		default:
 			mismatch = true
@@ -563,8 +550,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 		case T_BYTES, T_STRING, T_BOOL, T_ADDRESS, T_KEY_HASH, T_KEY,
 			T_CONTRACT, T_SIGNATURE, T_OPERATION, T_LAMBDA, T_OR,
 			T_CHAIN_ID, T_OPTION, T_SAPLING_STATE, T_SAPLING_TRANSACTION,
-			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR,
-			T_TICKET: // allow ticket since first value is ticketer address
+			T_BLS12_381_G2, // stored as bytes
+			T_TICKET:       // allow ticket since first value is ticketer address
 		default:
 			mismatch = true
 		}
@@ -581,5 +568,68 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 			mismatch = oc != T_OR
 		}
 	}
+
 	return !mismatch
 }
+
+func (v Value) Sub(label string) (Value, bool) {
+	return v, false
+}
+
+func (v Value) Prim(label string) (Prim, bool) {
+	// return getPathValue(v.Value, path)
+	return InvalidPrim, false
+}
+
+func (v Value) String(label string) (string, bool) {
+	// return getPathString(v.Value, path)
+	return "", false
+}
+
+func (v Value) Bytes(label string) ([]byte, bool) {
+	// return getPathString(v.Value, path)
+	return nil, false
+}
+
+func (v Value) Int64(label string) (int64, bool) {
+	// return getPathInt(v.Value, path)
+	return 0, false
+}
+
+func (v Value) Big(label string) (*big.Int, bool) {
+	// return getPathBig(v.Value, path)
+	return nil, false
+}
+
+func (v Value) Bool(label string) (bool, bool) {
+	// return getPathBig(v.Value, path)
+	return false, false
+}
+
+func (v Value) Time(label string) (time.Time, bool) {
+	// return getPathTime(v.Value, path)
+	return time.Time{}, false
+}
+
+func (v Value) Address(label string) (tezos.Address, bool) {
+	// return getPathAddress(v.Value, path)
+	return tezos.InvalidAddress, false
+}
+
+func (v Value) Key(label string) (tezos.Key, bool) {
+	// return getPathAddress(v.Value, path)
+	return tezos.InvalidKey, false
+}
+
+func (v Value) Signature(label string) (tezos.Signature, bool) {
+	// return getPathAddress(v.Value, path)
+	return tezos.InvalidSignature, false
+}
+
+// func (v Value) Walk(path string, fn ValueWalkerFunc) error {
+// 	val, ok := v.Value, v.Value != nil
+// 	if len(path) > 0 {
+// 		val, ok = getPathValue(v.Value, path)
+// 	}
+// 	return walkValueMap(path, val, fn)
+// }

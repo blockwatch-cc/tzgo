@@ -42,8 +42,8 @@ type BigmapType struct {
 }
 
 type BigmapTypePrim struct {
-	KeyPrim   *micheline.Prim `json:"key_type"`
-	ValuePrim *micheline.Prim `json:"value_type"`
+	KeyPrim   micheline.Prim `json:"key_type"`
+	ValuePrim micheline.Prim `json:"value_type"`
 }
 
 type BigmapMeta struct {
@@ -57,165 +57,203 @@ type BigmapMeta struct {
 }
 
 type BigmapKey struct {
-	Keys         MultiKey        `json:"key"`
-	KeyHash      tezos.ExprHash  `json:"key_hash"`
-	KeyBinary    string          `json:"key_binary"`
-	KeysUnpacked MultiKey        `json:"key_unpacked"`
-	KeyPretty    string          `json:"key_pretty"`
-	Meta         BigmapMeta      `json:"meta"`
-	Prim         *micheline.Prim `json:"prim"`
+	Keys         MultiKey       `json:"key"`
+	KeyHash      tezos.ExprHash `json:"key_hash"`
+	KeyBinary    string         `json:"key_binary"`   // deprecated
+	KeysUnpacked MultiKey       `json:"key_unpacked"` // deprecated
+	KeyPretty    string         `json:"key_pretty"`   // deprecated
+	Meta         BigmapMeta     `json:"meta"`
+	Prim         micheline.Prim `json:"prim"`
 }
 
-type MultiKey []string
+type MultiKey struct {
+	named  map[string]interface{}
+	anon   []interface{}
+	single string
+}
+
+func (k MultiKey) Len() int {
+	if len(k.single) > 0 {
+		return 1
+	}
+	return len(k.named) + len(k.anon)
+}
 
 func (k MultiKey) String() string {
-	return strings.Join([]string(k), ",")
+	switch true {
+	case len(k.named) > 0:
+		strs := make([]string, 0)
+		for n, v := range k.named {
+			strs = append(strs, fmt.Sprintf("%s=%s", n, v))
+		}
+		return strings.Join(strs, ",")
+	case len(k.anon) > 0:
+		strs := make([]string, 0)
+		for _, v := range k.anon {
+			strs = append(strs, ToString(v))
+		}
+		return strings.Join(strs, ",")
+	default:
+		return k.single
+	}
+}
+
+func (k MultiKey) MarshalJSON() ([]byte, error) {
+	switch true {
+	case len(k.named) > 0:
+		return json.Marshal(k.named)
+	case len(k.anon) > 0:
+		return json.Marshal(k.anon)
+	default:
+		return []byte(strconv.Quote(k.single)), nil
+	}
 }
 
 func (k *MultiKey) UnmarshalJSON(buf []byte) error {
 	if len(buf) == 0 {
 		return nil
 	}
-	key := make([]string, 0)
 	switch buf[0] {
 	case '{':
 		m := make(map[string]interface{})
 		if err := json.Unmarshal(buf, &m); err != nil {
 			return err
 		}
-		for _, v := range m {
-			key = append(key, ToString(v))
-		}
+		k.named = m
 	case '[':
 		m := make([]interface{}, 0)
 		if err := json.Unmarshal(buf, &m); err != nil {
 			return err
 		}
-		for _, v := range m {
-			key = append(key, ToString(v))
-		}
+		k.anon = m
 	case '"':
 		s, _ := strconv.Unquote(string(buf))
-		key = []string{s}
+		k.single = s
 	default:
-		key = []string{string(buf)}
+		k.single = string(buf)
 	}
-	*k = key
 	return nil
 }
 
+func (k MultiKey) GetString(path string) (string, bool) {
+	return getPathString(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) GetInt64(path string) (int64, bool) {
+	return getPathInt64(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) GetBig(path string) (*big.Int, bool) {
+	return getPathBig(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) GetTime(path string) (time.Time, bool) {
+	return getPathTime(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) GetAddress(path string) (tezos.Address, bool) {
+	return getPathAddress(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) GetValue(path string) (interface{}, bool) {
+	return getPathValue(nonNil(k.named, k.anon, k.single), path)
+}
+
+func (k MultiKey) Walk(path string, fn ValueWalkerFunc) error {
+	val := nonNil(k.named, k.anon, k.single)
+	if len(path) > 0 {
+		var ok bool
+		val, ok = getPathValue(val, path)
+		if !ok {
+			return nil
+		}
+	}
+	return walkValueMap(path, val, fn)
+}
+
 type BigmapValue struct {
-	Keys         MultiKey        `json:"key"`
-	KeyHash      tezos.ExprHash  `json:"key_hash"`
-	KeyBinary    string          `json:"key_binary"`
-	KeysUnpacked MultiKey        `json:"key_unpacked"`
-	KeyPretty    string          `json:"key_pretty"`
-	Meta         BigmapMeta      `json:"meta"`
-	Value        interface{}     `json:"value"`
-	Unpacked     interface{}     `json:"value_unpacked"`
-	Prim         BigmapValuePrim `json:"prim"`
+	Keys    MultiKey       `json:"key"`
+	KeyHash tezos.ExprHash `json:"key_hash"`
+	// KeyBinary    string          `json:"key_binary"` // deprecated
+	KeysUnpacked MultiKey `json:"key_unpacked"` // deprecated
+	// KeyPretty    string          `json:"key_pretty"` // deprecated
+	Meta     BigmapMeta      `json:"meta"`
+	Value    interface{}     `json:"value"`
+	Unpacked interface{}     `json:"value_unpacked"` // deprecated
+	Prim     BigmapValuePrim `json:"prim"`
 }
 
 type BigmapValuePrim struct {
-	KeyPrim   *micheline.Prim `json:"key"`
-	ValuePrim *micheline.Prim `json:"value"`
+	KeyPrim   micheline.Prim `json:"key"`
+	ValuePrim micheline.Prim `json:"value"`
 }
 
 func (v BigmapValue) GetString(path string) (string, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathString(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathString(v.Value, path)
+	return getPathString(nonNil(v.Unpacked, v.Value), path)
 }
 
-func (v BigmapValue) GetInt(path string) (int64, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathInt(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathInt(v.Value, path)
+func (v BigmapValue) GetInt64(path string) (int64, bool) {
+	return getPathInt64(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v BigmapValue) GetBig(path string) (*big.Int, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathBig(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathBig(v.Value, path)
+	return getPathBig(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v BigmapValue) GetTime(path string) (time.Time, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathTime(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathTime(v.Value, path)
+	return getPathTime(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v BigmapValue) GetAddress(path string) (tezos.Address, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathAddress(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathAddress(v.Value, path)
+	return getPathAddress(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v BigmapValue) GetValue(path string) (interface{}, bool) {
-	if v.Unpacked != nil {
-		if vv, ok := getPathValue(v.Unpacked, path); ok {
-			return vv, ok
-		}
-	}
-	return getPathValue(v.Value, path)
+	return getPathValue(nonNil(v.Unpacked, v.Value), path)
 }
 
 func (v BigmapValue) Walk(path string, fn ValueWalkerFunc) error {
-	val, ok := v.Value, v.Value != nil
-	if !ok {
-		val, ok = v.Unpacked, v.Unpacked != nil
-	}
+	val := nonNil(v.Unpacked, v.Value)
 	if len(path) > 0 {
-		val, ok = getPathValue(v.Value, path)
+		var ok bool
+		val, ok = getPathValue(val, path)
+		if !ok {
+			return nil
+		}
 	}
 	return walkValueMap(path, val, fn)
 }
 
 type BigmapUpdate struct {
 	BigmapValue
-	Action      string      `json:"action"`
-	KeyEncoding string      `json:"key_encoding"`
-	KeyType     interface{} `json:"key_type"`
-	ValueType   interface{} `json:"value_type"`
-	SourceId    int64       `json:"source_big_map"`
-	DestId      int64       `json:"destination_big_map"`
+	Action      micheline.DiffAction `json:"action"`
+	KeyEncoding string               `json:"key_encoding"`
+	KeyType     interface{}          `json:"key_type"`
+	ValueType   interface{}          `json:"value_type"`
+	SourceId    int64                `json:"source_big_map"`
+	DestId      int64                `json:"destination_big_map"`
 }
 
 type BigmapRow struct {
-	RowId       uint64         `json:"row_id"`
-	PrevId      uint64         `json:"prev_id"`
-	Address     tezos.Address  `json:"address"`
-	AccountId   uint64         `json:"account_id"`
-	ContractId  uint64         `json:"contract_id"`
-	OpId        uint64         `json:"op_id"`
-	Op          tezos.OpHash   `json:"op"`
-	Height      int64          `json:"height"`
-	Timestamp   time.Time      `json:"time"`
-	BigMapId    int64          `json:"bigmap_id"`
-	Action      string         `json:"action"`
-	KeyHash     tezos.ExprHash `json:"key_hash,omitempty"`
-	KeyType     string         `json:"key_type,omitempty"`
-	KeyEncoding string         `json:"key_encoding,omitempty"`
-	Key         string         `json:"key,omitempty"`
-	Value       string         `json:"value,omitempty"`
-	IsReplaced  bool           `json:"is_replaced"`
-	IsDeleted   bool           `json:"is_deleted"`
-	IsCopied    bool           `json:"is_copied"`
+	RowId       uint64               `json:"row_id"`
+	PrevId      uint64               `json:"prev_id"`
+	Address     tezos.Address        `json:"address"`
+	AccountId   uint64               `json:"account_id"`
+	ContractId  uint64               `json:"contract_id"`
+	OpId        uint64               `json:"op_id"`
+	Op          tezos.OpHash         `json:"op"`
+	Height      int64                `json:"height"`
+	Timestamp   time.Time            `json:"time"`
+	BigMapId    int64                `json:"bigmap_id"`
+	Action      micheline.DiffAction `json:"action"`
+	KeyHash     tezos.ExprHash       `json:"key_hash,omitempty"`
+	KeyType     string               `json:"key_type,omitempty"`
+	KeyEncoding string               `json:"key_encoding,omitempty"`
+	Key         string               `json:"key,omitempty"`
+	Value       string               `json:"value,omitempty"`
+	IsReplaced  bool                 `json:"is_replaced"`
+	IsDeleted   bool                 `json:"is_deleted"`
+	IsCopied    bool                 `json:"is_copied"`
 
 	columns []string `json:"-"`
 }
@@ -304,7 +342,7 @@ func (b *BigmapRow) UnmarshalJSONBrief(data []byte) error {
 		case "bigmap_id":
 			br.BigMapId, err = strconv.ParseInt(f.(json.Number).String(), 10, 64)
 		case "action":
-			b.Action = f.(string)
+			b.Action, err = micheline.ParseDiffAction(f.(string))
 		case "key_hash":
 			b.KeyHash, err = tezos.ParseExprHash(f.(string))
 		case "key_type":
