@@ -83,26 +83,31 @@ func ToRawString(t interface{}) (string, error) {
 type ValueWalkerFunc func(path string, value interface{}) error
 
 func walkValueMap(name string, val interface{}, fn ValueWalkerFunc) error {
-	if len(name) > 0 {
-		name += "."
-	}
-	if tree, ok := val.(map[string]interface{}); ok {
-		for n, v := range tree {
-			childname := name + n
-			if _, ok := v.(map[string]interface{}); ok {
-				if err := walkValueMap(childname, v, fn); err != nil {
-					return err
-				}
-			} else {
-				if err := fn(childname, v); err != nil {
-					return err
-				}
+	switch t := val.(type) {
+	case map[string]interface{}:
+		if len(name) > 0 {
+			name += "."
+		}
+		for n, v := range t {
+			child := name + n
+			if err := walkValueMap(child, v, fn); err != nil {
+				return err
 			}
 		}
-		return nil
-	} else {
+	case []interface{}:
+		if len(name) > 0 {
+			name += "."
+		}
+		for i, v := range t {
+			child := name + strconv.Itoa(i)
+			if err := walkValueMap(child, v, fn); err != nil {
+				return err
+			}
+		}
+	default:
 		return fn(name, val)
 	}
+	return nil
 }
 
 // Access nested map or array contents
@@ -131,24 +136,6 @@ func getPathString(val interface{}, path string) (string, bool) {
 		}
 	}
 	return ToString(next), true
-	// if tree, ok := val.(map[string]interface{}); ok {
-	// 	frag := strings.Split(path, ".")
-	// 	for i, v := range frag {
-	// 		next, ok := tree[v]
-	// 		if !ok {
-	// 			return "", false
-	// 		}
-	// 		switch t := next.(type) {
-	// 		case map[string]interface{}:
-	// 			tree = t
-	// 		default:
-	// 			return ToString(next), i == len(frag)-1
-	// 		}
-	// 	}
-	// 	return ToString(tree), true
-	// } else {
-	// 	return ToString(val), path == ""
-	// }
 }
 
 func getPathInt64(val interface{}, path string) (int64, bool) {

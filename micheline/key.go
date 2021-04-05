@@ -1,28 +1,6 @@
 // Copyright (c) 2020-2021 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
-// see http://tezos.gitlab.io/whitedoc/michelson.html#full-grammar
-//
-// Domain specific data types
-//
-// - timestamp: Dates in the real world.
-// - mutez: A specific type for manipulating tokens.
-// - address: An untyped address (implicit account or smart contract).
-// - contract 'param: A contract, with the type of its code,
-//   contract unit for implicit accounts.
-// - operation: An internal operation emitted by a contract.
-// - key: A public cryptographic key.
-// - key_hash: The hash of a public cryptographic key.
-// - signature: A cryptographic signature.
-// - chain_id: An identifier for a chain, used to distinguish the test
-//   and the main chains.
-//
-// PACK prefixes with 0x05!
-// So that when contracts checking signatures (multisigs etc) do the current
-// best practice, PACK; ...; CHECK_SIGNATURE, the 0x05 byte distinguishes the
-// message from blocks, endorsements, transactions, or tezos-signer authorization
-// requests (0x01-0x04)
-
 package micheline
 
 import (
@@ -193,16 +171,6 @@ func ParseKey(typ, val string) (Key, error) {
 		key.Type.Type = PrimInt
 		key.IntKey = big.NewInt(0)
 		err = key.IntKey.UnmarshalText([]byte(val))
-		// if err = key.IntKey.UnmarshalText([]byte(val)); err != nil {
-		// 	// try again via hex decoding
-		// 	var z Z
-		// 	if buf, err2 := hex.DecodeString(val); err2 == nil {
-		// 		if err2 = z.UnmarshalBinary(buf); err2 == nil {
-		// 			key.IntKey = z.Big()
-		// 			err = nil
-		// 		}
-		// 	}
-		// }
 	case T_STRING:
 		key.Type.Type = PrimString
 		key.StringKey = val
@@ -225,33 +193,23 @@ func ParseKey(typ, val string) (Key, error) {
 	case T_KEY_HASH, T_ADDRESS:
 		key.Type.Type = PrimBytes
 		key.AddrKey, err = tezos.ParseAddress(val)
-		// if err != nil {
-		// 	a := tezos.Address{}
-		// 	buf, err2 := hex.DecodeString(val)
-		// 	if err2 == nil {
-		// 		err2 = a.UnmarshalBinary(buf)
-		// 	}
-		// 	if err2 != nil {
-		// 		return nil, fmt.Errorf("micheline: decoding bigmap key %s (%s): %v", key.Type.Label(), val, err)
-		// 	}
-		// 	key.AddrKey = a
-		// }
 	case T_PAIR:
-		// parse comma-separated list into a pair tree
-		v := strings.SplitN(val, ",", 2)
-		if len(v) != 2 {
-			return Key{}, fmt.Errorf("micheline: invalid big_map pair key %s", val)
+		// parse comma-separated list into a comb pair tree
+		prims := []Prim{}
+		for _, v := range strings.Split(val, ",") {
+			parsed, err := ParseKey(InferKeyType(v).String(), v)
+			if err != nil {
+				return Key{}, fmt.Errorf("micheline: decoding bigmap pair key element %s: %v", v, err)
+			}
+			prims = append(prims, parsed.Prim())
 		}
-		left, err := ParseKey(InferKeyType(v[0]).String(), v[0])
-		if err != nil {
-			return Key{}, fmt.Errorf("micheline: decoding bigmap pair left key %s: %v", val, err)
+		if len(prims) == 2 {
+			key.PrimKey = dpair(prims[0], prims[1])
+			key.Type.Type = PrimBinary
+		} else {
+			key.PrimKey = seq(prims...)
+			key.Type.Type = PrimSequence
 		}
-		right, err := ParseKey(InferKeyType(v[1]).String(), v[1])
-		if err != nil {
-			return Key{}, fmt.Errorf("micheline: decoding bigmap pair right key %s: %v", val, err)
-		}
-		key.PrimKey = dpair(left.Prim(), right.Prim())
-		key.Type.Type = PrimBinary
 
 	default:
 		return Key{}, fmt.Errorf("micheline: unsupported big_map key %s type %s", key.Type.Label(), key.Type.OpCode)

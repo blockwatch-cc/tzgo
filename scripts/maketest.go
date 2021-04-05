@@ -76,6 +76,7 @@ var knownContracts = map[string][]string{
 		"KT1K36wjZ3VwQ54sKctXZYvkQ8mvF8jmZJY9", // baseDAO
 		"KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi", // oracle ??
 		"KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv", // dex
+		"KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e", // ticket (bigmap)
 	},
 }
 
@@ -233,7 +234,7 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 	}
 
 	// write to file
-	if err := writeFile(filepath.Join(testpath, "storage", hash), &tc); err != nil {
+	if err := writeFile(filepath.Join(testpath, "storage", hash), []Testcase{tc}); err != nil {
 		return err
 	}
 
@@ -256,7 +257,7 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 			tc := Testcase{
 				Name: fmt.Sprintf("%s/%s-%d-%s", net, hash, id, val.KeyHash),
 			}
-			bmtype, _ := script.Script.Code.Storage.FindByOpCode(micheline.T_BIG_MAP)
+			bmtype, _ := script.Script.Code.Storage.FindOpCodes(micheline.T_BIG_MAP)
 			if buf, err := bmtype[idx].MarshalJSON(); err == nil {
 				tc.Type = json.RawMessage(buf)
 			} else {
@@ -410,7 +411,7 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 			tc := Testcase{
 				Name: fmt.Sprintf("%s/%s/%d/%d/%d-%d", net, hash, v.OpC, v.OpI, i, bmd.Meta.BigMapId),
 			}
-			bmtype, _ := script.Script.Code.Storage.FindByOpCode(micheline.T_BIG_MAP)
+			bmtype, _ := script.Script.Code.Storage.FindOpCodes(micheline.T_BIG_MAP)
 			if buf, err := bmtype[idx].MarshalJSON(); err == nil {
 				tc.Type = json.RawMessage(buf)
 			} else {

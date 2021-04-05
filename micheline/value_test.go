@@ -39,6 +39,9 @@ type testcase struct {
 }
 
 func scanTestFiles(t *testing.T, category string) {
+	if len(testfiles[category]) > 0 {
+		return
+	}
 	err := filepath.WalkDir(
 		filepath.Join(testDataRootPath, category),
 		func(path string, d fs.DirEntry, err error) error {
@@ -252,8 +255,8 @@ func TestStorageValues(t *testing.T) {
 	)
 	scanTestFiles(t, "storage")
 	for {
-		var test testcase
-		next, err = loadNextTestFile("storage", next, &test)
+		var tests []testcase
+		next, err = loadNextTestFile("storage", next, &tests)
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -261,32 +264,34 @@ func TestStorageValues(t *testing.T) {
 			t.Error(err)
 			continue
 		}
-		t.Run(test.Name, func(T *testing.T) {
-			typ1 := checkTypeEncoding(T, test)
-			val1 := checkValueEncoding(T, test)
+		for _, test := range tests {
+			t.Run(test.Name, func(T *testing.T) {
+				typ1 := checkTypeEncoding(T, test)
+				val1 := checkValueEncoding(T, test)
 
-			// test storage value
-			v := Value{
-				Type:  typ1, // from binary
-				Value: val1, // from binary
-			}
-			if v.IsPacked() {
-				up, err := v.Unpack()
-				if err != nil {
-					T.Errorf("value unpack error: %v", err)
+				// test storage value
+				v := Value{
+					Type:  typ1, // from binary
+					Value: val1, // from binary
 				}
-				v = up
-			}
+				if v.IsPacked() {
+					up, err := v.Unpack()
+					if err != nil {
+						T.Errorf("value unpack error: %v", err)
+					}
+					v = up
+				}
 
-			buf, err := v.MarshalJSON()
-			if err != nil {
-				T.Errorf("value render error: %v", err)
-			}
-			if !jsonDiff(t, buf, test.WantValue) {
-				T.Error("value render mismatch, see log for details")
-				t.FailNow()
-			}
-		})
+				buf, err := v.MarshalJSON()
+				if err != nil {
+					T.Errorf("value render error: %v", err)
+				}
+				if !jsonDiff(t, buf, test.WantValue) {
+					T.Error("value render mismatch, see log for details")
+					t.FailNow()
+				}
+			})
+		}
 	}
 }
 

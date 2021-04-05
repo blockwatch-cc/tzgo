@@ -204,7 +204,7 @@ type ContractParameters struct {
 }
 
 type ContractScript struct {
-	StorageType micheline.Type        `json:"storage_type"`
+	StorageType micheline.Typedef     `json:"storage_type"`
 	Entrypoints micheline.Entrypoints `json:"entrypoints"`
 	Script      *micheline.Script     `json:"script"`
 }
@@ -215,37 +215,36 @@ type ContractStorage struct {
 }
 
 type ContractValue struct {
-	Value    interface{}    `json:"value"`
-	Unpacked interface{}    `json:"value_unpacked"`
-	Prim     micheline.Prim `json:"prim"`
+	Value interface{}    `json:"value"`
+	Prim  micheline.Prim `json:"prim"`
 }
 
 func (v ContractValue) GetString(path string) (string, bool) {
-	return getPathString(nonNil(v.Unpacked, v.Value), path)
+	return getPathString(v.Value, path)
 }
 
 func (v ContractValue) GetInt64(path string) (int64, bool) {
-	return getPathInt64(nonNil(v.Unpacked, v.Value), path)
+	return getPathInt64(v.Value, path)
 }
 
 func (v ContractValue) GetBig(path string) (*big.Int, bool) {
-	return getPathBig(nonNil(v.Unpacked, v.Value), path)
+	return getPathBig(v.Value, path)
 }
 
 func (v ContractValue) GetTime(path string) (time.Time, bool) {
-	return getPathTime(nonNil(v.Unpacked, v.Value), path)
+	return getPathTime(v.Value, path)
 }
 
 func (v ContractValue) GetAddress(path string) (tezos.Address, bool) {
-	return getPathAddress(nonNil(v.Unpacked, v.Value), path)
+	return getPathAddress(v.Value, path)
 }
 
 func (v ContractValue) GetValue(path string) (interface{}, bool) {
-	return getPathValue(nonNil(v.Unpacked, v.Value), path)
+	return getPathValue(v.Value, path)
 }
 
 func (v ContractValue) Walk(path string, fn ValueWalkerFunc) error {
-	val := nonNil(v.Unpacked, v.Value)
+	val := v.Value
 	if len(path) > 0 {
 		var ok bool
 		val, ok = getPathValue(val, path)

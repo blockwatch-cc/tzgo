@@ -9,11 +9,18 @@ import (
 )
 
 type Entrypoint struct {
-	Id     int     `json:"id"`
-	Call   string  `json:"call"`
-	Branch string  `json:"branch"`
-	Type   ArgType `json:"type"`
-	Prim   *Prim   `json:"prim,omitempty"`
+	Id      int       `json:"id"`
+	Call    string    `json:"call"`
+	Branch  string    `json:"branch"`
+	Typedef []Typedef `json:"type"`
+	Prim    *Prim     `json:"prim,omitempty"`
+}
+
+func (e Entrypoint) Type() Type {
+	if e.Prim == nil {
+		e.Prim = &Prim{} // invalid
+	}
+	return Type{*e.Prim}
 }
 
 type Entrypoints map[string]Entrypoint
@@ -128,18 +135,19 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 	}
 
 	// process non-T_OR branches
+	cp := node.Clone()
 	ep := Entrypoint{
-		Id:     len(e),
-		Branch: branch,
-		Call:   name,
-		Type:   ArgType{node.Clone()},
-		Prim:   &node,
+		Id:      len(e),
+		Branch:  branch,
+		Call:    name,
+		Typedef: buildTypedef("", node).Args,
+		Prim:    &cp,
 	}
-	if node.HasAnno() {
-		// drop entrypoint name annotation, keep any other annots (in case a single
-		// value entrypoint has another variable name)
-		ep.Type.StripAnno(name)
-	}
+	// if cp.HasAnno() {
+	// 	// drop entrypoint name annotation, keep any other annots (in case a single
+	// 	// value entrypoint has another variable name)
+	// 	ep.Prim.StripAnno(name)
+	// }
 
 	e[name] = ep
 	return nil

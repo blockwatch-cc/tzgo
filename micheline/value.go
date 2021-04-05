@@ -4,6 +4,7 @@
 package micheline
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -16,8 +17,9 @@ import (
 const EMPTY_LABEL = `@%%@` // illegal Michelson annotation value
 
 type Value struct {
-	Type  Type
-	Value Prim
+	Type   Type
+	Value  Prim
+	mapped interface{}
 }
 
 func NewValue(typ Type, val Prim) Value {
@@ -67,91 +69,35 @@ func (v Value) UnpackAll() (Value, error) {
 	}, nil
 }
 
-func (e Value) Map() (map[string]interface{}, error) {
-	m := make(map[string]interface{}, 1024)
-	typ, val := e.Type, e.Value
+func (e *Value) Map() (interface{}, error) {
+	if e.mapped != nil {
+		return e.mapped, nil
+	}
+	m := make(map[string]interface{})
 
-	// FIXME: should not be necessary
-	// pre-process ticket types
-	// if typ.ContainsOpCode(T_TICKET) {
-	// 	clone := typ.Clone()
-	// 	clone.ExpandTickets()
-	// 	typ = Type(clone)
-	// }
-
-	// FIXME: should not be necessary
-	// always normalize comb pairs
-	// if val.IsPair() || typ.IsPair() {
-	// 	val = dcomb(val.ConvertComb(typ)...)
-	// 	typ = Type{tcomb(typ.ConvertComb(typ)...)}
-	// }
-
-	if err := walkTree(m, EMPTY_LABEL, typ, val, 0, false); err != nil {
+	// extract labeled fields
+	if err := walkTree(m, EMPTY_LABEL, e.Type, e.Value, 0); err != nil {
 		return nil, err
 	}
 
+	e.mapped = m
+
+	// lift single values
 	if len(m) == 1 {
 		for n, v := range m {
-			// fields := strings.Split(n, "@")
-			// oc, err := ParseOpCode(fields[len(fields)-1])
-			// if err == nil || strings.HasPrefix(n, "0") {
 			if n == "0" {
-				// switch oc {
-				// case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
-				// default:
-				switch vv := v.(type) {
-				case map[string]interface{}:
-					return vv, nil
-				default:
-					return map[string]interface{}{"": v}, nil
-				}
-				// }
+				e.mapped = v
 			}
 		}
 	}
-	return m, nil
+
+	return e.mapped, nil
 }
 
 func (e Value) MarshalJSON() ([]byte, error) {
-	// if e.Type == nil || e.Value == nil {
-	// 	return nil, nil
-	// }
-	// output scalar types as-is unless packed
-	if e.Type.IsScalar() && !e.Value.IsPacked() {
-		return json.Marshal(e.Value.Value(e.Type.OpCode))
-	}
-	m := make(map[string]interface{}, 1024)
-
-	typ, val := e.Type, e.Value
-
-	// FIXME: should not be necessary
-	// pre-process ticket types
-	// if typ.ContainsOpCode(T_TICKET) {
-	// 	clone := typ.Clone()
-	// 	clone.ExpandTickets()
-	// 	typ = Type(clone)
-	// }
-
-	// FIXME: should not be necessary
-	// always normalize comb pairs
-	// if val.IsPair() || typ.IsPair() {
-	// 	val = dcomb(val.ConvertComb(typ)...)
-	// 	typ = Type{tcomb(typ.ConvertComb(typ)...)}
-	// }
-
-	if err := walkTree(m, EMPTY_LABEL, typ, val, 0, false); err != nil {
-		// FIXME: should not be necessary
-		// HACK: on error, try again without flattening
-		// typ, val = e.Type, e.Value
-		// if typ.ContainsOpCode(T_TICKET) {
-		// 	clone := typ.Clone()
-		// 	clone.ExpandTickets()
-		// 	typ = Type(clone)
-		// }
-		// m = make(map[string]interface{}, 1024)
-		// if err2 := walkTree(m, EMPTY_LABEL, typ, val, 0, true); err2 != nil {
+	m, err := e.Map()
+	if err != nil {
 		log.Errorf("RENDER: %v", err)
-		// log.Errorf("NORM: %v", err2)
 		type xErrorMessage struct {
 			Message string `json:"message"`
 			Type    Prim   `json:"type"`
@@ -167,30 +113,12 @@ func (e Value) MarshalJSON() ([]byte, error) {
 			},
 		}
 		return json.Marshal(resp)
-		// }
-	}
-
-	// FIXME: should not be necessary
-	// lift embedded scalars unless they are named or container types
-	if len(m) == 1 {
-		for n, v := range m {
-			// fields := strings.Split(n, "@")
-			// oc, err := ParseOpCode(fields[len(fields)-1])
-			// if err == nil || strings.HasPrefix(n, "0") {
-			if n == "0" {
-				// switch oc {
-				// case T_LIST, T_MAP, T_SET, T_LAMBDA, T_BIG_MAP, T_OR, T_OPTION, T_PAIR:
-				// default:
-				return json.Marshal(v)
-				// }
-			}
-		}
 	}
 
 	return json.Marshal(m)
 }
 
-func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int, noflat bool) error {
+func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int) error {
 
 	// Trace Helper
 	// fmt.Printf("L%0d: %s/%s typ=%s %s\n", lvl, label, typ.Label(), typ.OpCode, typ.Dump())
@@ -240,7 +168,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, v, lvl+1, noflat); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, v, lvl+1); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
@@ -263,7 +191,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, v, lvl+1, noflat); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, v, lvl+1); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
@@ -319,7 +247,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			}
 
 			mm := make(map[string]interface{})
-			if err := walkTree(mm, key.String(), valType, val.Args[1], lvl+1, noflat); err != nil {
+			if err := walkTree(mm, key.String(), valType, val.Args[1], lvl+1); err != nil {
 				return err
 			}
 			m[label] = mm
@@ -349,7 +277,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 					return err
 				}
 
-				if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1, noflat); err != nil {
+				if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1); err != nil {
 					return err
 				}
 			}
@@ -397,7 +325,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 				// illegal type, only happens for bad parameters
 				break
 			}
-			if err := walkTree(mm, EMPTY_LABEL, Type{typs[i]}, v, lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typs[i]}, v, lvl+1); err != nil {
 				return err
 			}
 		}
@@ -423,7 +351,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 					if len(typ.Args) < i {
 						t = typ.Args[i]
 					}
-					if err := walkTree(m, label, Type{t}, v, lvl+1, noflat); err != nil {
+					if err := walkTree(m, label, Type{t}, v, lvl+1); err != nil {
 						return err
 					}
 				}
@@ -432,10 +360,19 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 				vals := val.Args
 				typs := typ.Args
 				if val.IsComb(typ) {
-					vals = val.ConvertComb(typ)
-					typs = typ.ConvertComb(typ)
-					// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
-					// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
+					if val.IsConvertedComb() {
+						// if value is already a comb sequence, we use the
+						// converted type tree for matching types
+						typs = typ.ConvertComb(typ)
+						// fmt.Printf("OPT flatten* typ=%s\n", seq(typs...).Dump())
+						vals = val.ConvertComb(Type{tcomb(typs...)})
+						// fmt.Printf("OPT flatten* val=%s\n", seq(vals...).Dump())
+					} else {
+						typs = typ.ConvertComb(typ)
+						// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
+						vals = val.ConvertComb(typ)
+						// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
+					}
 				}
 
 				for i, v := range vals {
@@ -446,7 +383,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 					if len(typs) < i {
 						t = typs[i]
 					}
-					if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1, noflat); err != nil {
+					if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1); err != nil {
 						return err
 					}
 				}
@@ -464,11 +401,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		}
 		switch val.OpCode {
 		case D_LEFT:
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, val.Args[0], lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, val.Args[0], lvl+1); err != nil {
 				return err
 			}
 		case D_RIGHT:
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, val.Args[0], lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, val.Args[0], lvl+1); err != nil {
 				return err
 			}
 		default:
@@ -483,7 +420,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		ttyp := TicketType(typ.Args[0])
 		// log.Debugf("%*s> T_TICKET %s type %s into map %p", lvl, "", path, ttyp.JSONString(), m)
 		// log.Debugf("%*s> T_TICKET %s value %s", lvl, "", path, val.JSONString())
-		if err := walkTree(m, label, ttyp, val, lvl+1, noflat); err != nil {
+		if err := walkTree(m, label, ttyp, val, lvl+1); err != nil {
 			return err
 		}
 
@@ -508,7 +445,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			m[label] = val.Value(typ.OpCode)
 		} else {
 			mm := make(map[string]interface{})
-			if err := walkTree(mm, EMPTY_LABEL, typ, val, lvl+1, noflat); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, typ, val, lvl+1); err != nil {
 				return err
 			}
 			m[label] = mm
@@ -572,64 +509,191 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 	return !mismatch
 }
 
-func (v Value) Sub(label string) (Value, bool) {
-	return v, false
+func (v *Value) GetValue(label string) (interface{}, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			return vv, ok
+		}
+	}
+	return nil, false
 }
 
-func (v Value) Prim(label string) (Prim, bool) {
-	// return getPathValue(v.Value, path)
-	return InvalidPrim, false
-}
-
-func (v Value) String(label string) (string, bool) {
-	// return getPathString(v.Value, path)
+func (v *Value) GetString(label string) (string, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			if s, ok := vv.(string); ok {
+				return s, true
+			} else {
+				return fmt.Sprint(s), true
+			}
+		}
+	}
 	return "", false
 }
 
-func (v Value) Bytes(label string) ([]byte, bool) {
-	// return getPathString(v.Value, path)
+func (v *Value) GetBytes(label string) ([]byte, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// hex string or nil
+			if vv == nil {
+				return nil, ok
+			}
+			if s, ok := vv.(string); ok {
+				h, err := hex.DecodeString(s)
+				if err == nil {
+					return h, true
+				}
+			}
+		}
+	}
 	return nil, false
 }
 
-func (v Value) Int64(label string) (int64, bool) {
-	// return getPathInt(v.Value, path)
+func (v *Value) GetInt64(label string) (int64, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// big, string or nil
+			if vv == nil {
+				return 0, ok
+			}
+			switch t := vv.(type) {
+			case *big.Int:
+				return t.Int64(), true
+			case string:
+				i, err := strconv.ParseInt(t, 10, 64)
+				if err == nil {
+					return i, true
+				}
+			}
+		}
+	}
 	return 0, false
 }
 
-func (v Value) Big(label string) (*big.Int, bool) {
-	// return getPathBig(v.Value, path)
+func (v *Value) GetBig(label string) (*big.Int, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// big, string or nil
+			if vv == nil {
+				return big.NewInt(0), ok
+			}
+			switch t := vv.(type) {
+			case *big.Int:
+				return t, true
+			case string:
+				return big.NewInt(0).SetString(t, 10)
+			}
+		}
+	}
 	return nil, false
 }
 
-func (v Value) Bool(label string) (bool, bool) {
-	// return getPathBig(v.Value, path)
+func (v *Value) GetBool(label string) (bool, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// bool, string or nil
+			if vv == nil {
+				return false, ok
+			}
+			switch t := vv.(type) {
+			case bool:
+				return t, true
+			case string:
+				if b, err := strconv.ParseBool(t); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
 	return false, false
 }
 
-func (v Value) Time(label string) (time.Time, bool) {
-	// return getPathTime(v.Value, path)
+func (v *Value) GetTime(label string) (time.Time, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// time, string or nil
+			if vv == nil {
+				return time.Time{}, ok
+			}
+			switch t := vv.(type) {
+			case time.Time:
+				return t, true
+			case string:
+				if b, err := time.Parse(t, time.RFC3339); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
 	return time.Time{}, false
 }
 
-func (v Value) Address(label string) (tezos.Address, bool) {
-	// return getPathAddress(v.Value, path)
+func (v *Value) GetAddress(label string) (tezos.Address, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// Adddress, string or nil
+			if vv == nil {
+				return tezos.InvalidAddress, ok
+			}
+			switch t := vv.(type) {
+			case tezos.Address:
+				return t, true
+			case string:
+				if b, err := tezos.ParseAddress(t); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
 	return tezos.InvalidAddress, false
 }
 
-func (v Value) Key(label string) (tezos.Key, bool) {
-	// return getPathAddress(v.Value, path)
+func (v *Value) GetKey(label string) (tezos.Key, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// Key, string or nil
+			if vv == nil {
+				return tezos.InvalidKey, ok
+			}
+			switch t := vv.(type) {
+			case tezos.Key:
+				return t, true
+			case string:
+				if b, err := tezos.ParseKey(t); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
 	return tezos.InvalidKey, false
 }
 
-func (v Value) Signature(label string) (tezos.Signature, bool) {
-	// return getPathAddress(v.Value, path)
+func (v *Value) GetSignature(label string) (tezos.Signature, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// Signature, string or nil
+			if vv == nil {
+				return tezos.InvalidSignature, ok
+			}
+			switch t := vv.(type) {
+			case tezos.Signature:
+				return t, true
+			case string:
+				if b, err := tezos.ParseSignature(t); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
 	return tezos.InvalidSignature, false
 }
 
-// func (v Value) Walk(path string, fn ValueWalkerFunc) error {
-// 	val, ok := v.Value, v.Value != nil
-// 	if len(path) > 0 {
-// 		val, ok = getPathValue(v.Value, path)
-// 	}
-// 	return walkValueMap(path, val, fn)
-// }
+type ValueWalkerFunc func(label string, value interface{}) error
+
+func (v *Value) Walk(label string, fn ValueWalkerFunc) error {
+	val, ok := v.GetValue(label)
+	if !ok {
+		return nil
+	}
+	return walkValueMap(label, val, fn)
+}

@@ -1,7 +1,13 @@
+github.com/daviddengcn/go-colortext v1.0.0 h1:ANqDyC0ys6qCSvuEK7l3g5RaehL/Xck9EX8ATG8oKsE=
+github.com/daviddengcn/go-colortext v1.0.0/go.mod h1:zDqEI5NVUop5QPpVJUxE9UO10hRnmkD5G4Pmri9+m4c=
 github.com/echa/log v1.0.3 h1:2If0QCt2MF9byXeYHfeCcemfqxTPGZpaKyOvneXo8ho=
 github.com/echa/log v1.0.3/go.mod h1:V8lWE4YGcwDdg0IPBqDQ9eWp2MdsMHfvHpSjaIp4+VQ=
 github.com/go-bson/bson v0.0.0-20171017145622-6d291e839eca h1:jPdPq2xinuUF8i7qSJgGFGXYwLLrEun8Gkz2hnKl0AM=
 github.com/go-bson/bson v0.0.0-20171017145622-6d291e839eca/go.mod h1:6wiyFSKWkT/Lb+bV2RNbeGdC4ctqsZ/Bv46cDGj9JBE=
+github.com/golangplus/bytes v0.0.0-20160111154220-45c989fe5450/go.mod h1:Bk6SMAONeMXrxql8uvOKuAZSu8aM5RUGv+1C6IJaEho=
+github.com/golangplus/bytes v1.0.0/go.mod h1:AdRaCFwmc/00ZzELMWb01soso6W1R/++O1XL80yAn+A=
+github.com/golangplus/fmt v1.0.0/go.mod h1:zpM0OfbMCjPtd2qkTD/jX2MgiFCqklhSUFyDW44gVQE=
+github.com/golangplus/testing v1.0.0/go.mod h1:ZDreixUV3YzhoVraIDyOzHrr76p6NUh6k/pPg/Q3gYA=
 github.com/kr/pretty v0.2.1 h1:Fmg33tUaq4/8ym9TJN1x7sLJnHVwhP33CNkpYV/7rwI=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=

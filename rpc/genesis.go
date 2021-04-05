@@ -169,21 +169,21 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 		// skip when this does not look like a vesting contract
 		isVesting := true
 		switch true {
-		case c[i].Script.Storage == nil:
+		case !c[i].Script.Storage.IsValid():
 			isVesting = false
-		case c[i].Script.Storage.Args == nil:
+		case len(c[i].Script.Storage.Args) == 0:
 			isVesting = false
-		case c[i].Script.Storage.Args[0] == nil:
+		case !c[i].Script.Storage.Args[0].IsValid():
 			isVesting = false
-		case c[i].Script.Storage.Args[0].Args == nil:
+		case len(c[i].Script.Storage.Args[0].Args) == 0:
 			isVesting = false
-		case c[i].Script.Storage.Args[0].Args[1] == nil:
+		case !c[i].Script.Storage.Args[0].Args[1].IsValid():
 			isVesting = false
-		case c[i].Script.Storage.Args[0].Args[1].Args == nil:
+		case len(c[i].Script.Storage.Args[0].Args[1].Args) == 0:
 			isVesting = false
-		case c[i].Script.Storage.Args[0].Args[1].Args[0] == nil:
+		case !c[i].Script.Storage.Args[0].Args[1].Args[0].IsValid():
 			isVesting = false
-		case c[i].Script.Storage.Args[0].Args[1].Args[0].Args == nil:
+		case len(c[i].Script.Storage.Args[0].Args[1].Args[0].Args) == 0:
 			isVesting = false
 		}
 

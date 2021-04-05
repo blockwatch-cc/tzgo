@@ -113,7 +113,7 @@ loop:
 
 type LazyBigMapDiff struct {
 	GenericDiff
-	Diff micheline.BigMapDiffElem `json:"diff"`
+	Diff micheline.BigmapDiffElem `json:"diff"`
 }
 
 type LazySaplingDiff struct {

@@ -4,8 +4,12 @@
 package micheline
 
 import (
+	"strconv"
+	"strings"
 	"unicode"
 )
+
+const PATH_SEPARATOR = "."
 
 func isASCII(s string) bool {
 	for i := 0; i < len(s); i++ {
@@ -25,4 +29,62 @@ func min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func getPath(val interface{}, path string) (interface{}, bool) {
+	if val == nil {
+		return nil, false
+	}
+	if path == "" {
+		return val, true
+	}
+	frag := strings.Split(path, PATH_SEPARATOR)
+	next := val
+	for i, v := range frag {
+		switch t := next.(type) {
+		case map[string]interface{}:
+			var ok bool
+			next, ok = t[v]
+			if !ok {
+				return nil, false
+			}
+		case []interface{}:
+			idx, err := strconv.Atoi(v)
+			if err != nil || idx < 0 || len(t) < idx {
+				return nil, false
+			}
+			next = t[idx]
+		default:
+			return next, i == len(frag)-1
+		}
+	}
+	return next, true
+}
+
+func walkValueMap(name string, val interface{}, fn ValueWalkerFunc) error {
+	switch t := val.(type) {
+	case map[string]interface{}:
+		if len(name) > 0 {
+			name += "."
+		}
+		for n, v := range t {
+			child := name + n
+			if err := walkValueMap(child, v, fn); err != nil {
+				return err
+			}
+		}
+	case []interface{}:
+		if len(name) > 0 {
+			name += "."
+		}
+		for i, v := range t {
+			child := name + strconv.Itoa(i)
+			if err := walkValueMap(child, v, fn); err != nil {
+				return err
+			}
+		}
+	default:
+		return fn(name, val)
+	}
+	return nil
 }

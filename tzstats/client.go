@@ -190,12 +190,11 @@ func (c *Client) handleRequest(req *request) {
 	// Read the raw bytes
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		err = fmt.Errorf("reading reply: %v", err)
 		req.responseChan <- &response{
 			status:  resp.StatusCode,
 			request: req.String(),
 			headers: mergeHeaders(req.responseHeaders, resp.Header, resp.Trailer),
-			err:     err,
+			err:     fmt.Errorf("reading reply: %v", err),
 		}
 		return
 	}
@@ -243,6 +242,6 @@ func (c *Client) handleRequest(req *request) {
 		request: req.String(),
 		headers: mergeHeaders(req.responseHeaders, resp.Header, resp.Trailer),
 		result:  respBytes,
-		err:     err,
+		err:     fmt.Errorf("unmarshalling reply: %v", err),
 	}
 }
