@@ -29,6 +29,11 @@ func NewValue(typ Type, val Prim) Value {
 	}
 }
 
+func NewValuePtr(typ Type, val Prim) *Value {
+	v := NewValue(typ, val)
+	return &v
+}
+
 func (v *Value) Decode(buf []byte) error {
 	return v.Value.UnmarshalBinary(buf)
 }
@@ -67,6 +72,10 @@ func (v Value) UnpackAll() (Value, error) {
 		Type:  up.BuildType(),
 		Value: up,
 	}, nil
+}
+
+func (e *Value) FixType() {
+	e.Type = e.Value.BuildType()
 }
 
 func (e *Value) Map() (interface{}, error) {

@@ -96,6 +96,11 @@ func NewKey(typ Type, key Prim) (Key, error) {
 	return k, nil
 }
 
+func NewKeyPtr(typ Type, key Prim) (*Key, error) {
+	k, err := NewKey(typ, key)
+	return &k, err
+}
+
 func (k Key) IsPacked() bool {
 	return k.Type.OpCode == T_BYTES && len(k.BytesKey) > 1 && k.BytesKey[0] == 0x5
 }
@@ -421,6 +426,10 @@ func (k Key) Prim() Prim {
 	return p
 }
 
+func (k Key) PrimPtr() *Prim {
+	p := k.Prim()
+	return &p
+}
 func (k Key) MarshalJSON() ([]byte, error) {
 	switch k.Type.OpCode {
 	case T_INT, T_NAT, T_MUTEZ:

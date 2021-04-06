@@ -1275,6 +1275,8 @@ func (p Prim) Index(label string) ([]int, bool) {
 
 func (p Prim) GetPath(path string) (Prim, error) {
 	index := make([]int, len(path))
+	path = strings.TrimPrefix(path, "/")
+	path = strings.TrimSuffix(path, "/")
 	for i, v := range strings.Split(path, "/") {
 		switch v {
 		case "L", "l", "0":

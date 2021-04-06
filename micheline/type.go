@@ -34,6 +34,10 @@ func NewType() Type {
 	return Type{Prim{}}
 }
 
+func NewTypePtr() *Type {
+	return &Type{Prim{}}
+}
+
 func (t *Type) UnmarshalBinary(buf []byte) error {
 	return t.Prim.UnmarshalBinary(buf)
 }
