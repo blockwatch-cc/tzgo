@@ -42,7 +42,7 @@ type TransactionResult struct {
 	PaidStorageSizeDiff int64            `json:"paid_storage_size_diff,string"`
 
 	// deprecated in v008
-	BigMapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
+	BigmapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
 
 	// v008
 	LazyStorageDiff LazyStorageDiff `json:"lazy_storage_diff,omitempty"`

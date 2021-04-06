@@ -53,7 +53,7 @@ type OriginationResult struct {
 	ConsumedMilliGas int64 `json:"consumed_milligas,string"`
 
 	// deprecated in v008
-	BigMapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
+	BigmapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
 
 	// v008
 	LazyStorageDiff LazyStorageDiff `json:"lazy_storage_diff,omitempty"`

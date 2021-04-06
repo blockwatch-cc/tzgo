@@ -72,6 +72,15 @@ func (e BigmapDiffElem) GetKey(typ Type) Key {
 	return k
 }
 
+func (e BigmapDiffElem) GetKeyPtr(typ Type) *Key {
+	k, err := NewKey(typ, e.Key)
+	if err != nil {
+		log.Error(err)
+	}
+	k.Type = typ
+	return &k
+}
+
 // TODO: lazy_storage_diff updates
 func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 	var val struct {
