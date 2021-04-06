@@ -92,9 +92,9 @@ done:
 	for {
 		switch node.OpCode {
 		case D_LEFT:
-			branch += "L"
+			branch += "/L"
 		case D_RIGHT:
-			branch += "R"
+			branch += "/R"
 		default:
 			break done
 		}
@@ -108,7 +108,9 @@ done:
 
 func (p Parameters) Unwrap(branch string) Prim {
 	node := p.Value
-	for _, v := range strings.Split(branch, "") {
+	branch = strings.TrimPrefix(branch, "/")
+	branch = strings.TrimSuffix(branch, "/")
+	for _, v := range strings.Split(branch, "/") {
 		if !node.IsValid() {
 			break
 		}

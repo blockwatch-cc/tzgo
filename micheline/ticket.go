@@ -21,24 +21,3 @@ func TicketType(t Prim) Type {
 		),
 	)}
 }
-
-// FIXME: ideally this is not necessary and handled while walking trees
-func (t *Type) ExpandTickets() Type {
-	if t.OpCode == T_TICKET {
-		return TicketType(t.Args[0])
-	}
-	for i, v := range t.Args {
-		t.Args[i] = v.ExpandTickets()
-	}
-	return *t
-}
-
-func (p *Prim) ExpandTickets() Prim {
-	if p.OpCode == T_TICKET {
-		return TicketType(p.Args[0]).Prim
-	}
-	for i, v := range p.Args {
-		p.Args[i] = v.ExpandTickets()
-	}
-	return *p
-}

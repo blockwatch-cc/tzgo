@@ -5,17 +5,7 @@
 package micheline
 
 import (
-	// "encoding/hex"
-	// "encoding/json"
-	// "fmt"
-	// "io"
-	// "io/fs"
-	// "io/ioutil"
-	// "path/filepath"
-	// "reflect"
-	// "strings"
 	"testing"
-	// "github.com/pmezard/go-difflib/difflib"
 )
 
 type typedefTest struct {

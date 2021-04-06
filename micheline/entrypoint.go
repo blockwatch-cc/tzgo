@@ -76,11 +76,11 @@ func searchEntrypointName(name, branch string, node Prim) string {
 		return branch
 	}
 	if node.OpCode == T_OR && (len(branch) == 0 || !node.HasAnno()) {
-		b := searchEntrypointName(name, branch+"L", node.Args[0])
+		b := searchEntrypointName(name, branch+"/L", node.Args[0])
 		if b != "" {
 			return b
 		}
-		b = searchEntrypointName(name, branch+"R", node.Args[1])
+		b = searchEntrypointName(name, branch+"/R", node.Args[1])
 		if b != "" {
 			return b
 		}
@@ -118,11 +118,11 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 			return fmt.Errorf("micheline: expected 2 arguments for T_OR, got %d", l)
 		}
 
-		if err := listEntrypoints(e, branch+"L", node.Args[0]); err != nil {
+		if err := listEntrypoints(e, branch+"/L", node.Args[0]); err != nil {
 			return err
 		}
 
-		if err := listEntrypoints(e, branch+"R", node.Args[1]); err != nil {
+		if err := listEntrypoints(e, branch+"/R", node.Args[1]); err != nil {
 			return err
 		}
 

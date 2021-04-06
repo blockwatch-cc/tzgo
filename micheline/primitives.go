@@ -179,7 +179,7 @@ func (p Prim) IsEqualWithAnno(p2 Prim) bool {
 func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	// opcode
 	if p1.OpCode != p2.OpCode {
-		fmt.Printf("Opcode mismatch %s <> %s\n", p1.OpCode, p2.OpCode)
+		// fmt.Printf("Opcode mismatch %s <> %s\n", p1.OpCode, p2.OpCode)
 		return false
 	}
 
@@ -196,25 +196,25 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 		}
 	}
 	if t1 != t2 {
-		fmt.Println("Prim type mismatch")
+		// fmt.Println("Prim type mismatch")
 		return false
 	}
 
 	// arg len
 	if len(p1.Args) != len(p2.Args) {
-		fmt.Println("Arg len mismatch")
+		// fmt.Println("Arg len mismatch")
 		return false
 	}
 
 	// anno
 	if withAnno {
 		if len(p1.Anno) != len(p2.Anno) {
-			fmt.Println("Anno len mismatch")
+			// fmt.Println("Anno len mismatch")
 			return false
 		}
 		for i := range p1.Anno {
 			if p1.Anno[i] != p2.Anno[i] {
-				fmt.Println("Anno mismatch")
+				// fmt.Println("Anno mismatch")
 				return false
 			}
 		}
@@ -222,26 +222,26 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 
 	// contents
 	if p1.String != p2.String {
-		fmt.Println("String content mismatch")
+		// fmt.Println("String content mismatch")
 		return false
 	}
 	if (p1.Int == nil) != (p2.Int == nil) {
-		fmt.Println("Int ptr content mismatch")
+		// fmt.Println("Int ptr content mismatch")
 		return false
 	}
 	if p1.Int != nil {
 		if p1.Int.Cmp(p2.Int) != 0 {
-			fmt.Println("Int content mismatch")
+			// fmt.Println("Int content mismatch")
 			return false
 		}
 	}
 	if (p1.Bytes == nil) != (p2.Bytes == nil) {
-		fmt.Println("Bytes ptr content mismatch")
+		// fmt.Println("Bytes ptr content mismatch")
 		return false
 	}
 	if p1.Bytes != nil {
 		if bytes.Compare(p1.Bytes, p2.Bytes) != 0 {
-			fmt.Println("Bytes content mismatch")
+			// fmt.Println("Bytes content mismatch")
 			return false
 		}
 	}
@@ -249,7 +249,7 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	// recurse
 	for i := range p1.Args {
 		if !IsEqualPrim(p1.Args[i], p2.Args[i], withAnno) {
-			fmt.Println("Nested content mismatch")
+			// fmt.Println("Nested content mismatch")
 			return false
 		}
 	}

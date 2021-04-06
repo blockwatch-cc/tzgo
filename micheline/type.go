@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	// "strings"
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -24,7 +23,7 @@ const (
 )
 
 type Typedef struct {
-	Name     string    `json:"name"`               // annotation label + _key | _value | _item | in | out | params
+	Name     string    `json:"name"`               // annotation label | _key | _value | _item | _params | _return
 	Type     string    `json:"type"`               // opcode or struct | union
 	Optional bool      `json:"optional,omitempty"` // Union only
 	Args     []Typedef `json:"args,omitempty"`
@@ -92,12 +91,6 @@ func (t Type) Typedef(name string) Typedef {
 func (t Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(buildTypedef("", t.Prim))
 }
-
-// FIXME: maybe refactor
-// type KeyValueType struct {
-// 	KeyType   Type `json:"key_type"`
-// 	ValueType Type `json:"value_type"`
-// }
 
 func buildTypedef(name string, typ Prim) Typedef {
 	if typ.HasAnno() {
@@ -243,7 +236,6 @@ func (p Prim) BuildType() Type {
 			t.Type = PrimBinary
 			t.Args = []Prim{
 				p.Args[0].Args[0].BuildType().Prim, // key type
-				// FIXME: allow ANY type (should apply recursive, detect on the fly)
 				p.Args[0].Args[1].BuildType().Prim, // value type, breaks on polymorph types
 			}
 		} else if len(p.Args) > 0 && p.Args[0].OpCode.TypeCode() == T_OPERATION {
@@ -306,7 +298,6 @@ func (p Prim) BuildType() Type {
 			t.Type = PrimBinary
 			t.Args = []Prim{
 				p.Args[0].BuildType().Prim,
-				// FIXME: allow ANY type (should apply recursive, detect on the fly)
 				p.Args[1].BuildType().Prim,
 			}
 		} else {

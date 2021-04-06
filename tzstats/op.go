@@ -58,7 +58,7 @@ type Op struct {
 	Data         json.RawMessage     `json:"data"`
 	Parameters   *ContractParameters `json:"parameters"`
 	Storage      *ContractStorage    `json:"storage"`
-	BigMapDiff   []BigmapUpdate      `json:"big_map_diff"`
+	BigmapDiff   []BigmapUpdate      `json:"big_map_diff"`
 	Errors       json.RawMessage     `json:"errors"`
 	TDD          float64             `json:"days_destroyed"`
 	BranchHeight int64               `json:"branch_height"`
@@ -247,26 +247,24 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 				bmd := make(micheline.BigmapDiff, 0)
 				err = bmd.UnmarshalBinary(buf)
 				if err == nil {
-					op.BigMapDiff = make([]BigmapUpdate, len(bmd))
+					op.BigmapDiff = make([]BigmapUpdate, len(bmd))
 					for i, v := range bmd {
 						keybuf, _ := v.GetKey(v.Key.BuildType()).MarshalJSON()
 						mk := MultiKey{}
 						_ = mk.UnmarshalJSON(keybuf)
-						op.BigMapDiff[i] = BigmapUpdate{
-							Action:      v.Action,
-							KeyEncoding: v.Encoding().String(),
-							KeyType:     v.KeyType,
-							ValueType:   v.ValueType,
-							SourceId:    v.SourceId,
-							DestId:      v.DestId,
+						op.BigmapDiff[i] = BigmapUpdate{
+							Action:        v.Action,
+							KeyType:       v.KeyType,   // alloc/copy only
+							ValueType:     v.ValueType, // alloc/copy only
+							KeyTypePrim:   v.KeyType,   // alloc/copy only
+							ValueTypePrim: v.ValueType, // alloc/copy only
+							SourceId:      v.SourceId,  // alloc/copy only
+							DestId:        v.DestId,    // alloc/copy only
 							BigmapValue: BigmapValue{
-								Keys:    mk,
-								KeyHash: v.KeyHash,
-								// KeyBinary: key.Encode(),
-								Prim: BigmapValuePrim{
-									ValuePrim: v.Value,
-									// Note: type is unknown here
-								},
+								Keys:      mk,        // update/remove only
+								KeyHash:   v.KeyHash, // update/remove only
+								KeyPrim:   v.Key,     // update/remove only
+								ValuePrim: v.Value,   // update only
 								Meta: BigmapMeta{
 									Contract:     op.Receiver,
 									BigMapId:     v.Id,

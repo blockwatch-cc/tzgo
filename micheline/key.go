@@ -430,6 +430,7 @@ func (k Key) PrimPtr() *Prim {
 	p := k.Prim()
 	return &p
 }
+
 func (k Key) MarshalJSON() ([]byte, error) {
 	switch k.Type.OpCode {
 	case T_INT, T_NAT, T_MUTEZ:

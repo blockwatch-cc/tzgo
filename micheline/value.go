@@ -91,7 +91,7 @@ func (e *Value) Map() (interface{}, error) {
 
 	e.mapped = m
 
-	// lift single values
+	// lift scalar values
 	if len(m) == 1 {
 		for n, v := range m {
 			if n == "0" {
