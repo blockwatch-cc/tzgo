@@ -306,6 +306,10 @@ func (p Prim) IsSequence() bool {
 	return p.Type == PrimSequence
 }
 
+func (p Prim) IsOperation() bool {
+	return p.OpCode.TypeCode() == T_OPERATION
+}
+
 func (p Prim) IsTicket() bool {
 	return p.OpCode == T_TICKET
 }
@@ -430,6 +434,15 @@ func (p Prim) LooksLikeContainer() bool {
 	return true
 }
 
+// Checks if a Prim looks like a lambda type.
+func (p Prim) LooksLikeLambda() bool {
+	if p.OpCode == T_LAMBDA || p.IsOperation() {
+		return true
+	}
+
+	return p.Type == PrimSequence && len(p.Args) > 0 && p.Args[0].IsOperation()
+}
+
 // Converts a pair tree into a flattened sequence. While Michelson
 // optimized comb pairs are only used for right-side combs, this
 // function applies all pairs. It makes use of the type definition
@@ -457,29 +470,9 @@ func (p Prim) UnfoldComb(typ Type) []Prim {
 	return flat
 }
 
-func (p Prim) Text() string {
-	switch p.Type {
-	case PrimInt:
-		return p.Int.Text(10)
-	case PrimString:
-		return p.String
-	case PrimBytes:
-		return hex.EncodeToString(p.Bytes)
-	default:
-		v, _ := p.Value(p.OpCode).(string)
-		return v
-	}
-}
-
 func (p Prim) IsPacked() bool {
-	return (p.OpCode == T_BYTES || p.Type == PrimBytes) && len(p.Bytes) > 1 && p.Bytes[0] == 0x5
-}
-
-func (p Prim) PackedType() PrimType {
-	if !p.IsPacked() {
-		return PrimNullary
-	}
-	return PrimType(p.Bytes[1])
+	return p.Type == PrimBytes &&
+		(isPackedBytes(p.Bytes) || tezos.IsAddressBytes(p.Bytes) || isASCIIBytes(p.Bytes))
 }
 
 func (p Prim) Unpack() (pp Prim, err error) {
@@ -493,13 +486,28 @@ func (p Prim) Unpack() (pp Prim, err error) {
 		}
 	}()
 	pp = Prim{WasPacked: true}
-	if err := pp.UnmarshalBinary(p.Bytes[1:]); err != nil {
-		return p, err
-	}
-	if pp.IsPackedAny() {
-		if up, err := pp.UnpackAll(); err == nil {
-			pp = up
+	switch true {
+	case len(p.Bytes) > 1 && p.Bytes[0] == 0x5 && p.Bytes[1] <= 0xA:
+		if err := pp.UnmarshalBinary(p.Bytes[1:]); err != nil {
+			return p, err
 		}
+		if pp.IsPackedAny() {
+			if up, err := pp.UnpackAll(); err == nil {
+				pp = up
+			}
+		}
+	case tezos.IsAddressBytes(p.Bytes):
+		a := tezos.Address{}
+		if err := a.UnmarshalBinary(p.Bytes); err != nil {
+			return p, err
+		}
+		pp.Type = PrimString
+		pp.String = a.String()
+	case isASCII(string(p.Bytes)):
+		pp.Type = PrimString
+		pp.String = string(p.Bytes)
+	default:
+		pp = p
 	}
 	return pp, nil
 }
@@ -519,6 +527,9 @@ func (p Prim) IsPackedAny() bool {
 func (p Prim) UnpackAll() (Prim, error) {
 	if p.IsPacked() {
 		return p.Unpack()
+	}
+	if p.LooksLikeLambda() {
+		return p, nil
 	}
 	pp := p
 	pp.Args = make([]Prim, len(p.Args))
@@ -562,44 +573,22 @@ func (p Prim) Value(as OpCode) interface{} {
 
 	case PrimBytes:
 		switch as {
-		case T_BYTES:
-			// try unpack
-			if p.IsPacked() {
-				if up, err := p.Unpack(); err == nil {
-					return up.Value(as)
-				}
-			}
-			// try address
-			a := tezos.Address{}
-			if err := a.UnmarshalBinary(p.Bytes); err == nil {
-				return a
-			}
-			// try ascii string
-			if s := string(p.Bytes); isASCII(s) {
-				return s
-			}
-
 		case T_KEY_HASH, T_ADDRESS, T_CONTRACT:
 			a := tezos.Address{}
 			if err := a.UnmarshalBinary(p.Bytes); err == nil {
 				return a
-			} else {
-				log.Errorf("Rendering prim type %s as %s: %v (%s)", p.Type, as, err, hex.EncodeToString(p.Bytes))
 			}
+
 		case T_KEY:
 			k := tezos.Key{}
 			if err := k.UnmarshalBinary(p.Bytes); err == nil {
 				return k
-			} else {
-				log.Errorf("Rendering prim type %s as %s: %v (%s)", p.Type, as, err, hex.EncodeToString(p.Bytes))
 			}
 
 		case T_SIGNATURE:
 			s := tezos.Signature{}
 			if err := s.UnmarshalBinary(p.Bytes); err == nil {
 				return s
-			} else {
-				log.Errorf("Rendering prim type %s as %s: %v (%s)", p.Type, as, err, p.Bytes, hex.EncodeToString(p.Bytes))
 			}
 
 		case T_CHAIN_ID:
@@ -607,15 +596,15 @@ func (p Prim) Value(as OpCode) interface{} {
 				return tezos.NewChainIdHash(p.Bytes).String()
 			}
 
-		case T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR, T_SAPLING_STATE:
-			// as hex, fallthrough
-
 		default:
+			// as hex, fallthrough
+			// case T_BYTES:
+			// case T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR:
+			// case T_SAPLING_STATE:
 			// case T_LAMBDA:
 			// case T_LIST, T_MAP, T_BIG_MAP, T_SET:
 			// case T_OPTION, T_OR, T_PAIR, T_UNIT:
 			// case T_OPERATION:
-			warn = true
 		}
 
 		// default is to render bytes as hex string

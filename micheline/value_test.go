@@ -248,8 +248,8 @@ func TestBigmapValues(t *testing.T) {
 					Type:  typ1.Right(), // from binary (use value type)
 					Value: val1,         // from binary
 				}
-				if v.IsPacked() && !test.NoUnpack {
-					up, err := v.Unpack()
+				if v.IsPackedAny() && !test.NoUnpack {
+					up, err := v.UnpackAll()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
 					}
@@ -298,8 +298,8 @@ func TestStorageValues(t *testing.T) {
 					Type:  typ1, // from binary
 					Value: val1, // from binary
 				}
-				if v.IsPacked() && !test.NoUnpack {
-					up, err := v.Unpack()
+				if v.IsPackedAny() && !test.NoUnpack {
+					up, err := v.UnpackAll()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
 					}
@@ -348,8 +348,8 @@ func TestParamsValues(t *testing.T) {
 					Type:  typ1, // from binary
 					Value: val1, // from binary
 				}
-				if v.IsPacked() && !test.NoUnpack {
-					up, err := v.Unpack()
+				if v.IsPackedAny() && !test.NoUnpack {
+					up, err := v.UnpackAll()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
 					}

@@ -74,6 +74,6 @@ func dump(path string, typ Type, val Prim) (string, error) {
 	}
 
 	return fmt.Sprintf("path=%-20s val_prim=%-8s val_type=%-8s val_val=%-10s type_prim=%-8s type_code=%-8s type_name=%-8s\n",
-		path, val.Type, vtyp, limit(val.Text(), 512), typ.Type, typ.OpCode, typ.Label(),
+		path, val.Type, vtyp, val.DumpLimit(512), typ.Type, typ.OpCode, typ.Label(),
 	), nil
 }

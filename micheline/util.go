@@ -20,6 +20,14 @@ func isASCII(s string) bool {
 	return true
 }
 
+func isASCIIBytes(b []byte) bool {
+	return isASCII(string(b))
+}
+
+func isPackedBytes(b []byte) bool {
+	return len(b) > 1 && b[0] == 0x5 && b[1] <= 0x0A // first primitive is valid
+}
+
 func limit(s string, l int) string {
 	return s[:min(len(s), l)]
 }

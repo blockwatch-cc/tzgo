@@ -402,21 +402,3 @@ func (b *BigmapDiff) UnmarshalBinary(data []byte) error {
 	}
 	return nil
 }
-
-func (e BigmapDiffElem) Dump() string {
-	switch e.Action {
-	case DiffActionAlloc:
-		return fmt.Sprintf("Bigmap action=%s keytype=%s (%s)",
-			e.Action, e.KeyType.OpCode, e.KeyType.OpCode.PrimType())
-	case DiffActionCopy:
-		return fmt.Sprintf("Bigmap action=%s src=%d dst=%d", e.Action, e.SourceId, e.DestId)
-	default:
-		keystr := e.Key.Text()
-		if keystr == "" {
-			buf, _ := e.Key.MarshalJSON()
-			keystr = string(buf)
-		}
-		return fmt.Sprintf("Bigmap action=%s keytype=%s (%s) key=%s hash=%s",
-			e.Action, e.KeyType.OpCode, e.KeyType.OpCode.PrimType(), keystr, e.KeyHash)
-	}
-}

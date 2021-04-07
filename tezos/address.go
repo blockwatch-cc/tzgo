@@ -303,6 +303,20 @@ func (a *Address) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
+func IsAddressBytes(b []byte) bool {
+	if len(b) < 21 {
+		return false
+	}
+	switch true {
+	case len(b) == 22 && (b[0] == 0 || b[0] == 1):
+		return true
+	case len(b) == 21:
+		return ParseAddressTag(b[0]) != AddressTypeInvalid
+	default:
+		return false
+	}
+}
+
 // ContractAddress returns the string encoding of the address when used
 // as originated contract.
 func (a Address) ContractAddress() string {
