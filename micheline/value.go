@@ -54,10 +54,11 @@ func (v Value) Unpack() (Value, error) {
 	if err != nil {
 		return v, err
 	}
-	return Value{
-		Type:  up.BuildType(),
+	vv := Value{
+		Type:  v.Type.Clone(),
 		Value: up,
-	}, nil
+	}
+	return vv, nil
 }
 
 func (v Value) UnpackAll() (Value, error) {
@@ -68,14 +69,18 @@ func (v Value) UnpackAll() (Value, error) {
 	if err != nil {
 		return v, err
 	}
-	return Value{
-		Type:  up.BuildType(),
+	vv := Value{
+		Type:  v.Type.Clone(),
 		Value: up,
-	}, nil
+	}
+	return vv, nil
 }
 
 func (e *Value) FixType() {
+	labels := e.Type.Anno
 	e.Type = e.Value.BuildType()
+	e.Type.WasPacked = true
+	e.Type.Anno = labels
 }
 
 func (e *Value) Map() (interface{}, error) {
@@ -130,8 +135,14 @@ func (e Value) MarshalJSON() ([]byte, error) {
 func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int) error {
 
 	// Trace Helper
-	// fmt.Printf("L%0d: %s/%s typ=%s %s\n", lvl, label, typ.Label(), typ.OpCode, typ.Dump())
-	// fmt.Printf("L%0d: %s/%s val=%s %s\n", lvl, label, typ.Label(), val.OpCode, val.Dump())
+	// ps := func(p Prim) string {
+	// 	if p.WasPacked {
+	// 		return "unpacked"
+	// 	}
+	// 	return ""
+	// }
+	// fmt.Printf("L%0d: %s/%s %s typ=%s %s\n", lvl, label, typ.Label(), ps(typ.Prim), typ.OpCode, typ.Dump())
+	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), val.OpCode, val.Dump())
 
 	// abort infinite recursions
 	if lvl > 99 {
@@ -139,16 +150,18 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		return fmt.Errorf("micheline: max nesting level reached")
 	}
 
+	// detect type for unpacked values
+	if val.WasPacked {
+		labels := typ.Anno
+		typ = val.BuildType()
+		typ.WasPacked = true
+		typ.Anno = labels
+	}
+
 	// make sure value matches type
 	if !val.matchOpCode(typ.OpCode) {
-		if val.WasPacked {
-			// handle polymorph value types in packed maps by auto-detecting their
-			// true type on access
-			typ = val.BuildType()
-		} else {
-			return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
-				val.Type, val.OpCode, typ.OpCode, typ.DumpLimit(512), val.DumpLimit(512))
-		}
+		return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
+			val.Type, val.OpCode, typ.OpCode, typ.DumpLimit(512), val.DumpLimit(512))
 	}
 
 	typeLabel := typ.Label()
@@ -317,20 +330,22 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			if val.IsConvertedComb() {
 				// if value is already a comb sequence, we use the
 				// converted type tree for matching types
-				typs = typ.ConvertComb(typ)
+				typs = typ.UnfoldComb(typ)
 				// fmt.Printf("PAIR flatten* typ=%s\n", seq(typs...).Dump())
-				vals = val.ConvertComb(Type{tcomb(typs...)})
+				vals = val.UnfoldComb(Type{tcomb(typs...)})
 				// fmt.Printf("PAIR flatten* val=%s\n", seq(vals...).Dump())
 			} else {
-				typs = typ.ConvertComb(typ)
+				typs = typ.UnfoldComb(typ)
 				// fmt.Printf("PAIR flatten typ=%s\n", seq(typs...).Dump())
-				vals = val.ConvertComb(typ)
+				vals = val.UnfoldComb(typ)
 				// fmt.Printf("PAIR flatten val=%s\n", seq(vals...).Dump())
 			}
 		}
 
 		for i, v := range vals {
 			if i >= len(typs) {
+				log.Warnf("Missing type definition for val_type=%s[%s] packed=%t val=%s",
+					val.Type, val.OpCode, val.WasPacked, val.DumpLimit(512))
 				// illegal type, only happens for bad parameters
 				break
 			}
@@ -372,14 +387,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 					if val.IsConvertedComb() {
 						// if value is already a comb sequence, we use the
 						// converted type tree for matching types
-						typs = typ.ConvertComb(typ)
+						typs = typ.UnfoldComb(typ)
 						// fmt.Printf("OPT flatten* typ=%s\n", seq(typs...).Dump())
-						vals = val.ConvertComb(Type{tcomb(typs...)})
+						vals = val.UnfoldComb(Type{tcomb(typs...)})
 						// fmt.Printf("OPT flatten* val=%s\n", seq(vals...).Dump())
 					} else {
-						typs = typ.ConvertComb(typ)
+						typs = typ.UnfoldComb(typ)
 						// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
-						vals = val.ConvertComb(typ)
+						vals = val.UnfoldComb(typ)
 						// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
 					}
 				}
@@ -433,6 +448,17 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			return err
 		}
 
+	case T_SAPLING_STATE:
+		mm := make(map[string]interface{})
+		if err := walkTree(mm, "memo_size", Type{prim(T_INT)}, typ.Args[0], lvl+1); err != nil {
+			return err
+		}
+		// FIXME: add content
+		if err := walkTree(mm, "content", val.BuildType(), val, lvl+1); err != nil {
+			return err
+		}
+		m[label] = mm
+
 	default:
 		// int
 		// nat
@@ -449,6 +475,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		// operation
 		// contract <type> (??)
 		// chain_id
+		// never
 		// append scalar or other complex value
 		if val.IsScalar() {
 			m[label] = val.Value(typ.OpCode)
@@ -476,7 +503,7 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 	case PrimInt:
 		switch oc {
 		case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP, T_BIG_MAP, T_OR, T_OPTION, T_SAPLING_STATE,
-			T_BLS12_381_G1, T_BLS12_381_FR: // stored as int
+			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR: // maybe stored as bytes
 			// accept references to bigmap and sapling states
 		default:
 			mismatch = true
@@ -496,8 +523,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 		case T_BYTES, T_STRING, T_BOOL, T_ADDRESS, T_KEY_HASH, T_KEY,
 			T_CONTRACT, T_SIGNATURE, T_OPERATION, T_LAMBDA, T_OR,
 			T_CHAIN_ID, T_OPTION, T_SAPLING_STATE, T_SAPLING_TRANSACTION,
-			T_BLS12_381_G2, // stored as bytes
-			T_TICKET:       // allow ticket since first value is ticketer address
+			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR, // maybe stored as bytes
+			T_TICKET: // allow ticket since first value is ticketer address
 		default:
 			mismatch = true
 		}

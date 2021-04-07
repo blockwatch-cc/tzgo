@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
@@ -26,10 +27,12 @@ import (
 )
 
 var (
-	testpath = "micheline/testdata" // bigmap, storage, params
+	testPath = "micheline/testdata" // + net / bigmap, storage, params
+	rootPath = ""                   // root path to write files to (`testpath-$net`)
 	flags    = flag.NewFlagSet("qa", flag.ContinueOnError)
 	verbose  bool
 	force    bool
+	nounpack bool
 	index    string
 )
 
@@ -37,6 +40,7 @@ func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
 	flags.BoolVar(&force, "f", false, "force-overwrite files")
+	flags.BoolVar(&nounpack, "no-unpack", false, "disable value unpacking")
 	flags.StringVar(&index, "index", "https://api.tzstats.com", "tzwatch url")
 }
 
@@ -77,6 +81,7 @@ var knownContracts = map[string][]string{
 		"KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi", // oracle ??
 		"KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv", // dex
 		"KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e", // ticket (bigmap)
+		"KT1JrX3LMNmN2Sy5DdW4TyjvWzww49rjgnVK", // packed lambdas
 	},
 }
 
@@ -131,6 +136,12 @@ func run() error {
 	}
 	log.Infof("Running on %s %s block %d", tip.Name, tip.Network, tip.Height)
 
+	// make sure target path exists
+	rootPath = fmt.Sprintf("%s-%s", testPath, strings.ToLower(tip.Network))
+	if err := os.MkdirAll(rootPath, 0755); err != nil {
+		return err
+	}
+
 	h := flags.Arg(0)
 	switch tezos.ParseHashType(h) {
 	case tezos.HashTypePkhNocurve:
@@ -159,6 +170,7 @@ func run() error {
 
 type Testcase struct {
 	Name      string          `json:"name"`
+	NoUnpack  bool            `json:"no_unpack,omitempty"`
 	Type      json.RawMessage `json:"type"`
 	Value     json.RawMessage `json:"value"`
 	Key       json.RawMessage `json:"key,omitempty"`      // bigmap only
@@ -205,7 +217,8 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 
 	// construct testcase data
 	tc := Testcase{
-		Name: net + "/" + hash,
+		Name:     net + "/" + hash,
+		NoUnpack: nounpack,
 	}
 	if buf, err := script.Script.StorageType().Prim.MarshalJSON(); err == nil {
 		tc.Type = json.RawMessage(buf)
@@ -234,7 +247,7 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 	}
 
 	// write to file
-	if err := writeFile(filepath.Join(testpath, "storage", hash), []Testcase{tc}); err != nil {
+	if err := writeFile(filepath.Join(rootPath, "storage", hash), []Testcase{tc}); err != nil {
 		return err
 	}
 
@@ -249,13 +262,18 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 			continue
 		}
 		log.Infof("> bigmap %d", id)
-		vals, err := c.GetBigmapValues(ctx, id, params.WithLimit(500).WithUnpack())
+		p := params.WithLimit(500)
+		if !nounpack {
+			p = p.WithUnpack()
+		}
+		vals, err := c.GetBigmapValues(ctx, id, p)
 		if err != nil {
 			return err
 		}
 		for _, val := range vals {
 			tc := Testcase{
-				Name: fmt.Sprintf("%s/%s-%d-%s", net, hash, id, val.KeyHash),
+				Name:     fmt.Sprintf("%s/%s-%d-%s", net, hash, id, val.KeyHash),
+				NoUnpack: nounpack,
 			}
 			bmtype, _ := script.Script.Code.Storage.FindOpCodes(micheline.T_BIG_MAP)
 			if buf, err := bmtype[idx].MarshalJSON(); err == nil {
@@ -268,48 +286,40 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 			} else {
 				return err
 			}
-			if buf, err := val.Prim.ValuePrim.MarshalJSON(); err == nil {
+			if buf, err := val.ValuePrim.MarshalJSON(); err == nil {
 				tc.Value = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			if buf, err := val.Prim.ValuePrim.MarshalBinary(); err == nil {
+			if buf, err := val.ValuePrim.MarshalBinary(); err == nil {
 				tc.ValueHex = hex.EncodeToString(buf)
 			} else {
 				return err
 			}
-			if buf, err := val.Prim.KeyPrim.MarshalJSON(); err == nil {
+			if buf, err := val.KeyPrim.MarshalJSON(); err == nil {
 				tc.Key = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			if buf, err := val.Prim.KeyPrim.MarshalBinary(); err == nil {
+			if buf, err := val.KeyPrim.MarshalBinary(); err == nil {
 				tc.KeyHex = hex.EncodeToString(buf)
 			} else {
 				return err
-			}
-			vv := val.Value
-			if val.Unpacked != nil { // deprecated
-				vv = val.Unpacked
 			}
 			// check for embedded value error
 			if _, ok := val.GetString("error.message"); ok {
 				log.Errorf("> value error in %s", tc.Name)
 			}
-			if buf, err := json.Marshal(vv); err == nil {
+			if buf, err := json.Marshal(val.Value); err == nil {
 				tc.WantValue = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			vv = val.Keys
-			if val.KeysUnpacked.Len() > 0 { // deprecated
-				vv = val.KeysUnpacked
-			}
 			// check for embedded value error
-			if _, ok := val.Keys.GetString("error.message"); ok {
+			if _, ok := val.Key.GetString("error.message"); ok {
 				log.Errorf("> key error in %s", tc.Name)
 			}
-			if buf, err := json.Marshal(vv); err == nil {
+			if buf, err := json.Marshal(val.Key); err == nil {
 				tc.WantKey = json.RawMessage(buf)
 			} else {
 				return err
@@ -318,7 +328,7 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 		}
 		if len(bigmap) > 0 {
 			// bigmaps/:contract-:id.json
-			if err := writeFile(filepath.Join(testpath, "bigmap", hash+"-"+strconv.FormatInt(id, 10)), &bigmap); err != nil {
+			if err := writeFile(filepath.Join(rootPath, "bigmap", hash+"-"+strconv.FormatInt(id, 10)), &bigmap); err != nil {
 				return err
 			}
 		}
@@ -328,7 +338,11 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 
 func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string) error {
 	log.Infof("Fetching op %s", hash)
-	ops, err := c.GetOp(ctx, hash, tzstats.NewOpParams().WithPrim().WithMeta())
+	p := tzstats.NewOpParams().WithPrim().WithMeta()
+	if !nounpack {
+		p = p.WithUnpack()
+	}
+	ops, err := c.GetOp(ctx, hash, p)
 	if err != nil {
 		return err
 	}
@@ -348,7 +362,7 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 
 		// fetch target contract
 		log.Infof("> receiver %s", v.Receiver)
-		contract, err := c.GetContract(ctx, v.Receiver.String(), tzstats.NewContractParams().WithPrim().WithUnpack())
+		contract, err := c.GetContract(ctx, v.Receiver.String(), tzstats.NewContractParams().WithPrim())
 		if err != nil {
 			return err
 		}
@@ -366,7 +380,8 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 
 		// handle call parameters
 		tc := Testcase{
-			Name: fmt.Sprintf("%s/%s/%d/%d", net, hash, v.OpC, v.OpI),
+			Name:     fmt.Sprintf("%s/%s/%d/%d", net, hash, v.OpC, v.OpI),
+			NoUnpack: nounpack,
 		}
 		if buf, err := script.Entrypoints[v.Parameters.Call].Prim.MarshalJSON(); err == nil {
 			tc.Type = json.RawMessage(buf)
@@ -400,7 +415,7 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 		params = append(params, tc)
 
 		// handle bigmap updates
-		for i, bmd := range v.BigMapDiff {
+		for i, bmd := range v.BigmapDiff {
 			// skip non-update actions
 			if bmd.Action != micheline.DiffActionUpdate {
 				continue
@@ -409,7 +424,8 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 			idx := sort.Search(len(bmids), func(i int) bool { return bmids[i] >= bmd.Meta.BigMapId })
 
 			tc := Testcase{
-				Name: fmt.Sprintf("%s/%s/%d/%d/%d-%d", net, hash, v.OpC, v.OpI, i, bmd.Meta.BigMapId),
+				Name:     fmt.Sprintf("%s/%s/%d/%d/%d-%d", net, hash, v.OpC, v.OpI, i, bmd.Meta.BigMapId),
+				NoUnpack: nounpack,
 			}
 			bmtype, _ := script.Script.Code.Storage.FindOpCodes(micheline.T_BIG_MAP)
 			if buf, err := bmtype[idx].MarshalJSON(); err == nil {
@@ -422,48 +438,40 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 			} else {
 				return err
 			}
-			if buf, err := bmd.Prim.ValuePrim.MarshalJSON(); err == nil {
+			if buf, err := bmd.ValuePrim.MarshalJSON(); err == nil {
 				tc.Value = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			if buf, err := bmd.Prim.ValuePrim.MarshalBinary(); err == nil {
+			if buf, err := bmd.ValuePrim.MarshalBinary(); err == nil {
 				tc.ValueHex = hex.EncodeToString(buf)
 			} else {
 				return err
 			}
-			if buf, err := bmd.Prim.KeyPrim.MarshalJSON(); err == nil {
+			if buf, err := bmd.KeyPrim.MarshalJSON(); err == nil {
 				tc.Key = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			if buf, err := bmd.Prim.KeyPrim.MarshalBinary(); err == nil {
+			if buf, err := bmd.KeyPrim.MarshalBinary(); err == nil {
 				tc.KeyHex = hex.EncodeToString(buf)
 			} else {
 				return err
-			}
-			vv := bmd.Value
-			if bmd.Unpacked != nil { // deprecated
-				vv = bmd.Unpacked
 			}
 			// check for embedded value error
 			if _, ok := bmd.GetString("error.message"); ok {
 				log.Errorf("> value error in %s", tc.Name)
 			}
-			if buf, err := json.Marshal(vv); err == nil {
+			if buf, err := json.Marshal(bmd.Value); err == nil {
 				tc.WantValue = json.RawMessage(buf)
 			} else {
 				return err
 			}
-			vv = bmd.Keys
-			if bmd.KeysUnpacked.Len() > 0 { // deprecated
-				vv = bmd.KeysUnpacked
-			}
 			// check for embedded value error
-			if _, ok := bmd.Keys.GetString("error.message"); ok {
+			if _, ok := bmd.Key.GetString("error.message"); ok {
 				log.Errorf("> key error in %s", tc.Name)
 			}
-			if buf, err := json.Marshal(vv); err == nil {
+			if buf, err := json.Marshal(bmd.Key); err == nil {
 				tc.WantKey = json.RawMessage(buf)
 			} else {
 				return err
@@ -474,12 +482,12 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 
 	// write params to file
 	if len(params) > 0 {
-		if err := writeFile(filepath.Join(testpath, "params", hash), &params); err != nil {
+		if err := writeFile(filepath.Join(rootPath, "params", hash), &params); err != nil {
 			return err
 		}
 	}
 	if len(bigmap) > 0 {
-		if err := writeFile(filepath.Join(testpath, "bigmap", hash), &bigmap); err != nil {
+		if err := writeFile(filepath.Join(rootPath, "bigmap", hash), &bigmap); err != nil {
 			return err
 		}
 	}

@@ -261,7 +261,7 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 							SourceId:      v.SourceId,  // alloc/copy only
 							DestId:        v.DestId,    // alloc/copy only
 							BigmapValue: BigmapValue{
-								Keys:      mk,        // update/remove only
+								Key:       mk,        // update/remove only
 								KeyHash:   v.KeyHash, // update/remove only
 								KeyPrim:   v.Key,     // update/remove only
 								ValuePrim: v.Value,   // update only

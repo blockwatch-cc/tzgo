@@ -134,7 +134,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 		}
 
 	case T_PAIR:
-		typs := typ.ConvertComb(Type{typ})
+		typs := typ.UnfoldComb(Type{typ})
 		td.Type = TypeStruct
 		td.Args = make([]Typedef, len(typs))
 		for i, v := range typs {
@@ -195,7 +195,11 @@ func buildTypedef(name string, typ Prim) Typedef {
 
 // build matching type tree for value
 func (p Prim) BuildType() Type {
-	t := Prim{WasPacked: true}
+	// Note: don't set WasPacked flag recursively on all children; we set this flag
+	// once on the top level type during dynamic type detection so that comb unfolding
+	// works
+	t := Prim{}
+	// t := Prim{WasPacked: true}
 	if p.OpCode.IsTypeCode() {
 		t.OpCode = p.OpCode
 	}

@@ -19,7 +19,7 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 )
 
-const testDataRootPath = "testdata"
+const testDataRootPathPrefix = "testdata"
 
 var (
 	testcats  = []string{"bigmap", "storage", "params"}
@@ -28,6 +28,7 @@ var (
 
 type testcase struct {
 	Name      string          `json:"name"`
+	NoUnpack  bool            `json:"no_unpack"`
 	Type      json.RawMessage `json:"type"`
 	Value     json.RawMessage `json:"value"`
 	Key       json.RawMessage `json:"key"`
@@ -42,19 +43,36 @@ func scanTestFiles(t *testing.T, category string) {
 	if len(testfiles[category]) > 0 {
 		return
 	}
-	err := filepath.WalkDir(
-		filepath.Join(testDataRootPath, category),
-		func(path string, d fs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if !d.IsDir() && strings.HasSuffix(path, "json") {
-				testfiles[category] = append(testfiles[category], path)
-			}
+	// find all test data directories
+	testPaths := make([]string, 0)
+	err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() || path == "." {
 			return nil
-		})
-	if err != nil {
-		t.Fatalf("loading testfiles from %s: %v", testDataRootPath, err)
+		}
+		if strings.HasPrefix(filepath.Base(path), testDataRootPathPrefix) {
+			testPaths = append(testPaths, path)
+		}
+		return fs.SkipDir
+	})
+	// load tests from subdirs
+	for _, testPath := range testPaths {
+		err = filepath.WalkDir(
+			filepath.Join(testPath, category),
+			func(path string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+				if !d.IsDir() && strings.HasSuffix(path, "json") {
+					testfiles[category] = append(testfiles[category], path)
+				}
+				return nil
+			})
+		if err != nil {
+			t.Fatalf("loading testfiles from %s: %v", testPath, err)
+		}
 	}
 }
 
@@ -189,6 +207,9 @@ func TestBigmapValues(t *testing.T) {
 				break
 			}
 			t.Error(err)
+			if len(tests) == 0 {
+				break
+			}
 			continue
 		}
 		for _, test := range tests {
@@ -206,7 +227,7 @@ func TestBigmapValues(t *testing.T) {
 					T.Errorf("key render error: %v", err)
 				}
 				// try unpack
-				if k.IsPacked() {
+				if k.IsPacked() && !test.NoUnpack {
 					up, err := k.Unpack()
 					if err != nil {
 						T.Errorf("key unpack error: %v", err)
@@ -227,7 +248,7 @@ func TestBigmapValues(t *testing.T) {
 					Type:  typ1.Right(), // from binary (use value type)
 					Value: val1,         // from binary
 				}
-				if v.IsPacked() {
+				if v.IsPacked() && !test.NoUnpack {
 					up, err := v.Unpack()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
@@ -262,6 +283,9 @@ func TestStorageValues(t *testing.T) {
 				break
 			}
 			t.Error(err)
+			if len(tests) == 0 {
+				break
+			}
 			continue
 		}
 		for _, test := range tests {
@@ -274,7 +298,7 @@ func TestStorageValues(t *testing.T) {
 					Type:  typ1, // from binary
 					Value: val1, // from binary
 				}
-				if v.IsPacked() {
+				if v.IsPacked() && !test.NoUnpack {
 					up, err := v.Unpack()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
@@ -309,6 +333,9 @@ func TestParamsValues(t *testing.T) {
 				break
 			}
 			t.Error(err)
+			if len(tests) == 0 {
+				break
+			}
 			continue
 		}
 		for _, test := range tests {
@@ -321,7 +348,7 @@ func TestParamsValues(t *testing.T) {
 					Type:  typ1, // from binary
 					Value: val1, // from binary
 				}
-				if v.IsPacked() {
+				if v.IsPacked() && !test.NoUnpack {
 					up, err := v.Unpack()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)

@@ -85,18 +85,24 @@ type FutureResult chan *response
 func (r FutureResult) Receive(ctx context.Context) error {
 	resp, err := receiveFuture(ctx, r)
 	if err != nil {
-		buf := resp.result
-		if resp != nil && buf != nil {
-			errs := ApiErrors{}
-			if err := json.Unmarshal(buf, &errs); err != nil {
-				buf = bytes.Replace(bytes.TrimRight(resp.result[:min(len(buf), 512)], "\x00"), []byte{'\n'}, []byte{}, -1)
-				errs.Errors = append(errs.Errors, ApiError{
-					Status:  resp.status,
-					Message: string(buf),
-					Detail:  err.Error(),
-				})
+		if herr, ok := IsHttpError(err); ok {
+			return herr
+		} else if rerr, ok := IsErrRateLimited(err); ok {
+			return rerr
+		} else {
+			buf := resp.result
+			if resp != nil && buf != nil && resp.status > 299 {
+				errs := ApiErrors{}
+				if err := json.Unmarshal(buf, &errs); err != nil {
+					buf = bytes.Replace(bytes.TrimRight(resp.result[:min(len(buf), 512)], "\x00"), []byte{'\n'}, []byte{}, -1)
+					errs.Errors = append(errs.Errors, ApiError{
+						Status:  resp.status,
+						Message: string(buf),
+						Detail:  err.Error(),
+					})
+				}
+				return errs
 			}
-			return errs
 		}
 		return err
 	}

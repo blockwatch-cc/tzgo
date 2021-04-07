@@ -441,15 +441,15 @@ func (p Prim) LooksLikeContainer() bool {
 //   information will be lost.
 // - When called on already converted comb sequences this function is a noop.
 //
-func (p Prim) ConvertComb(typ Type) []Prim {
+func (p Prim) UnfoldComb(typ Type) []Prim {
 	flat := make([]Prim, 0)
 	for i, v := range p.Args {
 		t := Type{}
 		if len(typ.Args) > i {
 			t = Type{typ.Args[i]}
 		}
-		if v.IsComb(t) {
-			flat = append(flat, v.ConvertComb(t)...)
+		if !v.WasPacked && v.IsComb(t) {
+			flat = append(flat, v.UnfoldComb(t)...)
 		} else {
 			flat = append(flat, v)
 		}

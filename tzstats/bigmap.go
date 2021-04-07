@@ -54,7 +54,7 @@ type BigmapMeta struct {
 }
 
 type BigmapKey struct {
-	Keys    MultiKey       `json:"key"`
+	Key     MultiKey       `json:"key"`
 	KeyHash tezos.ExprHash `json:"key_hash"`
 	Meta    BigmapMeta     `json:"meta"`
 	Prim    micheline.Prim `json:"prim"`
@@ -166,7 +166,7 @@ func (k MultiKey) Walk(path string, fn ValueWalkerFunc) error {
 }
 
 type BigmapValue struct {
-	Keys      MultiKey       `json:"key"`
+	Key       MultiKey       `json:"key"`
 	KeyHash   tezos.ExprHash `json:"key_hash"`
 	Meta      BigmapMeta     `json:"meta"`
 	Value     interface{}    `json:"value"`

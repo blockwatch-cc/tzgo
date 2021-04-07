@@ -34,6 +34,7 @@ func (e Value) DumpTo(w io.Writer) {
 	dumpTree(w, "", e.Type, e.Value)
 }
 
+// TODO: improve tree output
 func dumpTree(w io.Writer, path string, typ Type, val Prim) {
 	if s, err := dump(path, typ, val); err != nil {
 		io.WriteString(w, err.Error())
@@ -50,7 +51,10 @@ func dumpTree(w io.Writer, path string, typ Type, val Prim) {
 	default:
 		// advance type as well
 		for i, v := range val.Args {
-			t := Type{typ.Args[i]}
+			t := Type{}
+			if len(typ.Args) > i {
+				t = Type{typ.Args[i]}
+			}
 			p := path + "." + strconv.Itoa(i)
 			dumpTree(w, p, t, v)
 		}
