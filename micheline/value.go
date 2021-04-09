@@ -375,8 +375,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			stack.Push(val)
 		}
 
-		for i, t := range typ.Args {
-			fmt.Printf("L%0d: %s/%s[%d/%d] CHILD=%s\n", lvl, label, t.GetVarAnnoAny(), i, len(typ.Args), (*stack)[0].Dump())
+		for _, t := range typ.Args {
+			// fmt.Printf("L%0d: %s/%s[%d/%d] CHILD=%s\n", lvl, label, t.GetVarAnnoAny(), i, len(typ.Args), stack.Peek().Dump())
 			if err := walkTree(mm, EMPTY_LABEL, Type{t}, stack, lvl+1); err != nil {
 				return err
 			}

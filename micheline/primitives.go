@@ -561,6 +561,17 @@ func (s *Stack) Len() int {
 	return len(*s)
 }
 
+func (s *Stack) Empty() bool {
+	return len(*s) == 0
+}
+
+func (s *Stack) Peek() Prim {
+	if s.Len() == 0 {
+		return InvalidPrim
+	}
+	return (*s)[0]
+}
+
 // func NewComb(args []Prim) Prim {
 // 	return Prim{
 // 		Type:   PrimSequence,
