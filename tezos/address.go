@@ -291,7 +291,6 @@ func (a *Address) UnmarshalBinary(b []byte) error {
 		return fmt.Errorf("invalid binary address length %d", len(b))
 	}
 	if !a.Type.IsValid() {
-		// fmt.Printf("ERRO Unmarshal address: typ=%d len=%d bytes=%x\n", a.Type, len(b), b)
 		return ErrUnknownAddressType
 	}
 	if cap(a.Hash) < 20 {
