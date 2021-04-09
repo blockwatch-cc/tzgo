@@ -375,8 +375,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			stack.Push(val)
 		}
 
-		for _, t := range typ.Args {
-			// fmt.Printf("L%0d: %s/%s[%d/%d] CHILD=%s\n", lvl, label, t.GetVarAnnoAny(), i, len(typ.Args), (*stack)[0].Dump())
+		for i, t := range typ.Args {
+			fmt.Printf("L%0d: %s/%s[%d/%d] CHILD=%s\n", lvl, label, t.GetVarAnnoAny(), i, len(typ.Args), (*stack)[0].Dump())
 			if err := walkTree(mm, EMPTY_LABEL, Type{t}, stack, lvl+1); err != nil {
 				return err
 			}
@@ -482,7 +482,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// always Pair( ticketer:address, Pair( original_type, int ))
 		// log.Debugf("%*s> T_TICKET %s type %s into map %p", lvl, "", path, ttyp.JSONString(), m)
 		// log.Debugf("%*s> T_TICKET %s value %s", lvl, "", path, val.JSONString())
-		if err := walkTree(m, label, TicketType(typ.Args[0]), NewStack(val), lvl+1); err != nil {
+		stack.Push(val)
+		if err := walkTree(m, label, TicketType(typ.Args[0]), stack, lvl+1); err != nil {
 			return err
 		}
 
@@ -901,7 +902,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 	switch p.Type {
 	case PrimSequence:
 		switch oc {
-		case T_LIST, T_MAP, T_BIG_MAP, T_SET, T_LAMBDA, T_OR, T_OPTION, T_PAIR, T_SAPLING_STATE:
+		case T_LIST, T_MAP, T_BIG_MAP, T_SET, T_LAMBDA, T_OR, T_OPTION, T_PAIR,
+			T_SAPLING_STATE, T_TICKET:
 		default:
 			mismatch = true
 		}
@@ -909,7 +911,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 	case PrimInt:
 		switch oc {
 		case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP, T_BIG_MAP, T_OR, T_OPTION, T_SAPLING_STATE,
-			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR: // maybe stored as bytes
+			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR, // maybe stored as bytes
+			T_TICKET:
 			// accept references to bigmap and sapling states
 		default:
 			mismatch = true
@@ -919,7 +922,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 		// sometimes timestamps and addresses can be strings
 		switch oc {
 		case T_BYTES, T_STRING, T_ADDRESS, T_CONTRACT, T_KEY_HASH, T_KEY,
-			T_SIGNATURE, T_TIMESTAMP, T_OR, T_CHAIN_ID, T_OPTION:
+			T_SIGNATURE, T_TIMESTAMP, T_OR, T_CHAIN_ID, T_OPTION,
+			T_TICKET:
 		default:
 			mismatch = true
 		}
