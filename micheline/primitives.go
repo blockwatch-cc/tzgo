@@ -343,6 +343,44 @@ func (p Prim) IsPair() bool {
 	}
 }
 
+func (p Prim) IsScalarType() bool {
+	switch p.OpCode {
+	case T_BOOL,
+		T_CONTRACT,
+		T_INT,
+		T_KEY,
+		T_KEY_HASH,
+		T_NAT,
+		T_SIGNATURE,
+		T_STRING,
+		T_BYTES,
+		T_MUTEZ,
+		T_TIMESTAMP,
+		T_UNIT,
+		T_OPERATION,
+		T_ADDRESS,
+		T_CHAIN_ID,
+		T_NEVER,
+		T_BLS12_381_G1,
+		T_BLS12_381_G2,
+		T_BLS12_381_FR,
+		T_SAPLING_STATE,
+		T_SAPLING_TRANSACTION:
+		return true
+	default:
+		return false
+	}
+}
+
+func (p Prim) IsContainerType() bool {
+	switch p.OpCode {
+	case T_MAP, T_LIST, T_SET, T_LAMBDA:
+		return true
+	default:
+		return false
+	}
+}
+
 // Detects whether a primitive contains a regular pair or a comb pair
 // which may be converted into a flat comb sequence.
 //
@@ -362,12 +400,15 @@ func (p Prim) IsComb(typ Type) bool {
 		return true
 	}
 
+	// if typ.IsPair() && (p.IsPair() || p.IsSequence()) {
+	// 	return true
+	// }
+
 	// Note: due to Tezos encoding issues, comb pairs in block receipts
 	// are naked sequences (they lack an enclosing pair wrapper), this means
 	// we have to distinquish them from other container types who also use
 	// a sequence as container, such as lists, sets, maps, lambdas
-	switch typ.OpCode {
-	case T_LIST, T_SET, T_MAP, T_LAMBDA:
+	if p.IsContainerType() || typ.IsContainerType() {
 		return false
 	}
 
@@ -376,7 +417,7 @@ func (p Prim) IsComb(typ Type) bool {
 	// type tree. Hence we revert to a heuristic that checks if the
 	// current primitive looks like a container type by checking its
 	// contents
-	if p.Type == PrimSequence && !p.LooksLikeContainer() {
+	if p.Type == PrimSequence && !p.LooksLikeContainer() && !p.LooksLikeLambda() {
 		return true
 	}
 
@@ -423,6 +464,8 @@ func (p Prim) LooksLikeContainer() bool {
 	}
 
 	// all elements have the same prim type and opcode
+	// Note this mis-detects same-type records and ambiguous types
+	// like PrimInt (int, nat, timestamp, mutez), PrimString and PrimBytes
 	oc := p.Args[0].OpCode
 	typ := p.Args[0].Type
 	for _, v := range p.Args[1:] {
@@ -456,12 +499,33 @@ func (p Prim) LooksLikeLambda() bool {
 //
 func (p Prim) UnfoldComb(typ Type) []Prim {
 	flat := make([]Prim, 0)
+
+	// FIXME: unclear if this is required; structural issue
+	// ensure value and type have same number of arguments
+	if p.IsSequence() || !p.OpCode.IsTypeCode() {
+		// if !p.OpCode.IsTypeCode() {
+		if len(p.Args) > len(typ.Args) {
+			typ2 := Type{tcomb(typ.UnfoldComb(typ)...)}
+			if len(typ2.Args) == len(p.Args) {
+				typ = typ2
+			}
+		}
+	}
+
+	// fmt.Printf("Unfold %d vals / %d typs\n", len(p.Args), len(typ.Args))
+
 	for i, v := range p.Args {
 		t := Type{}
 		if len(typ.Args) > i {
 			t = Type{typ.Args[i]}
 		}
-		if !v.WasPacked && v.IsComb(t) {
+
+		// FIXME: structural issue
+		// some tests need this
+		if !v.WasPacked && v.IsComb(t) && !t.HasAnno() {
+
+			// other tests work only with this
+			// if !v.WasPacked && v.IsComb(t) {
 			flat = append(flat, v.UnfoldComb(t)...)
 		} else {
 			flat = append(flat, v)
@@ -469,6 +533,86 @@ func (p Prim) UnfoldComb(typ Type) []Prim {
 	}
 	return flat
 }
+
+type Stack []Prim
+
+func NewStack(args ...Prim) *Stack {
+	s := &Stack{}
+	s.Push(args...)
+	return s
+}
+
+func (s *Stack) Pop() Prim {
+	if s.Len() == 0 {
+		return InvalidPrim
+	}
+	p := (*s)[0]
+	*s = (*s)[1:]
+	return p
+}
+
+func (s *Stack) Push(args ...Prim) {
+	if len(args) > 0 {
+		*s = append(args, (*s)...)
+	}
+}
+
+func (s *Stack) Len() int {
+	return len(*s)
+}
+
+// func NewComb(args []Prim) Prim {
+// 	return Prim{
+// 		Type:   PrimSequence,
+// 		OpCode: D_PAIR,
+// 		Args:   args,
+// 	}
+// }
+
+// func (p Prim) IsComb() bool {
+// 	return p.OpCode == D_PAIR && p.Type == PrimSequence
+// }
+
+// // Count non-pair children
+// func (p Prim) Count() int {
+// 	if !p.IsPair() {
+// 		return 1
+// 	}
+// 	var n int
+// 	for _, v := range p.Args {
+// 		n += v.Count()
+// 	}
+// 	return n
+// }
+
+// func (p Prim) CanUnfold() bool {
+// 	return p.IsPair() && p.Count() >= 4
+// }
+
+// func (p Prim) CheckAndUnfold() Prim {
+// 	if p.CanUnfold() {
+// 		return NewComb(p.Unfold()) // Pair(seq(c))
+// 	}
+// 	return p
+// }
+
+// func (p Prim) Unfold() []Prim {
+// 	c := make([]Prim, 0)
+// 	for i, v := range p.Args {
+// 		if i == 0 {
+// 			u := v.CheckAndUnfold()
+// 			if u.IsComb() {
+// 				c = append(c, u.Args...)
+// 			} else {
+// 				c = append(c, u)
+// 			}
+// 		} else {
+// 			// always unfold the right side
+// 			c = append(c, v.Unfold()...)
+// 		}
+// 	}
+// 	return c
+// }
 
 func (p Prim) IsPacked() bool {
 	return p.Type == PrimBytes &&

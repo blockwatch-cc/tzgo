@@ -79,15 +79,6 @@ func (t Type) Typedef(name string) Typedef {
 	return buildTypedef(name, t.Prim)
 }
 
-// func (t *Type) StripAnno(name string) {
-// 	for i := 0; i < len(t.Anno); i++ {
-// 		if t.Anno[i][1:] == name {
-// 			t.Anno = append(t.Anno[:i], t.Anno[i+1:]...)
-// 			i--
-// 		}
-// 	}
-// }
-
 func (t Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(buildTypedef("", t.Prim))
 }

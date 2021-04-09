@@ -82,6 +82,7 @@ var knownContracts = map[string][]string{
 		"KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv", // dex
 		"KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e", // ticket (bigmap)
 		"KT1JrX3LMNmN2Sy5DdW4TyjvWzww49rjgnVK", // packed lambdas
+		"KT1C8pXFQaRhMnGXtXwG6KqQ4aHZQ8B4QyaF", // good comb testcase
 	},
 }
 

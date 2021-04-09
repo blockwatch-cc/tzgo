@@ -7,10 +7,12 @@ package micheline
 import (
 	"encoding/hex"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -24,6 +26,7 @@ const testDataRootPathPrefix = "testdata"
 var (
 	testcats  = []string{"bigmap", "storage", "params"}
 	testfiles = make(map[string][]string)
+	testmask  string
 )
 
 type testcase struct {
@@ -39,10 +42,18 @@ type testcase struct {
 	WantKey   json.RawMessage `json:"want_key"`
 }
 
+func TestMain(m *testing.M) {
+	// call flag.Parse() here if TestMain uses flags
+	flag.StringVar(&testmask, "contract", "", "limit test to `contract`")
+	flag.Parse()
+	os.Exit(m.Run())
+}
+
 func scanTestFiles(t *testing.T, category string) {
 	if len(testfiles[category]) > 0 {
 		return
 	}
+	testfiles[category] = make([]string, 0)
 	// find all test data directories
 	testPaths := make([]string, 0)
 	err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
@@ -65,9 +76,13 @@ func scanTestFiles(t *testing.T, category string) {
 				if err != nil {
 					return err
 				}
-				if !d.IsDir() && strings.HasSuffix(path, "json") {
-					testfiles[category] = append(testfiles[category], path)
+				if d.IsDir() || !strings.HasSuffix(path, "json") {
+					return nil
 				}
+				if testmask != "" && !strings.Contains(path, testmask) {
+					return nil
+				}
+				testfiles[category] = append(testfiles[category], path)
 				return nil
 			})
 		if err != nil {

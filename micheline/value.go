@@ -90,7 +90,7 @@ func (e *Value) Map() (interface{}, error) {
 	m := make(map[string]interface{})
 
 	// extract labeled fields
-	if err := walkTree(m, EMPTY_LABEL, e.Type, e.Value, 0); err != nil {
+	if err := walkTree(m, EMPTY_LABEL, e.Type, NewStack(e.Value), 0); err != nil {
 		return nil, err
 	}
 
@@ -132,7 +132,30 @@ func (e Value) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int) error {
+func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lvl int) error {
+
+	// take next value from stack
+	val := stack.Pop()
+
+	// reuse the existing stack and push unfolded values if we see a pair
+	// if lvl > 0 && val.IsComb(typ) {
+	if lvl > 0 && val.IsPair() {
+		// if !typ.IsPair() && val.IsPair() {
+		// unfold regular pair
+		unfolded := val.UnfoldComb(typ)
+		// fmt.Printf("L%0d: %s UNFOLD VAL PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), seq(unfolded...).Dump())
+		stack.Push(unfolded...)
+		val = stack.Pop()
+	}
+
+	// if type is not a container, but value is a list, unwrap again
+	// FIXME: this accidentally unfolds maps inside pairs
+	// if val.IsSequence() && !typ.IsContainerType() {
+	if val.IsSequence() && typ.IsScalarType() && !val.LooksLikeLambda() && !val.WasPacked {
+		// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
+		stack.Push(val.Args...)
+		val = stack.Pop()
+	}
 
 	// Trace Helper
 	// ps := func(p Prim) string {
@@ -141,8 +164,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 	// 	}
 	// 	return ""
 	// }
+	// oc := func(p Prim) string {
+	// 	if p.OpCode == 0 {
+	// 		return p.Type.String()
+	// 	}
+	// 	return p.OpCode.String()
+	// }
 	// fmt.Printf("L%0d: %s/%s %s typ=%s %s\n", lvl, label, typ.Label(), ps(typ.Prim), typ.OpCode, typ.Dump())
-	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), val.OpCode, val.Dump())
+	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), oc(val), val.Dump())
 
 	// abort infinite recursions
 	if lvl > 99 {
@@ -151,17 +180,18 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 	}
 
 	// detect type for unpacked values
-	if val.WasPacked {
+	if val.WasPacked && (!val.IsScalar() || typ.OpCode == T_BYTES) {
+		// if val.WasPacked {
 		labels := typ.Anno
 		typ = val.BuildType()
 		typ.WasPacked = true
 		typ.Anno = labels
 	}
 
-	// make sure value matches type
-	if !val.matchOpCode(typ.OpCode) {
-		return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
-			val.Type, val.OpCode, typ.OpCode, typ.DumpLimit(512), val.DumpLimit(512))
+	// make sure value matches type, accept pairs which will be recursively unfolded
+	if !typ.IsPair() && !val.matchOpCode(typ.OpCode) {
+		return fmt.Errorf("micheline: type mismatch: type[%s]=%s value[%s/%d]=%s",
+			typ.OpCode, typ.DumpLimit(512), val.Type, val.OpCode, val.DumpLimit(512))
 	}
 
 	typeLabel := typ.Label()
@@ -182,7 +212,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 	case T_SET:
 		// set <comparable type>
 		arr := make([]interface{}, 0, len(val.Args))
-
 		for _, v := range val.Args {
 			if v.IsScalar() && !v.IsSequence() {
 				// array of scalar types
@@ -190,7 +219,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, v, lvl+1); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(v), lvl+1); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
@@ -213,7 +242,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			} else {
 				// array of complex types
 				mm := make(map[string]interface{})
-				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, v, lvl+1); err != nil {
+				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, NewStack(v), lvl+1); err != nil {
 					return err
 				}
 				arr = append(arr, mm)
@@ -269,7 +298,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			}
 
 			mm := make(map[string]interface{})
-			if err := walkTree(mm, key.String(), valType, val.Args[1], lvl+1); err != nil {
+			if err := walkTree(mm, key.String(), valType, NewStack(val.Args[1]), lvl+1); err != nil {
 				return err
 			}
 			m[label] = mm
@@ -299,7 +328,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 					return err
 				}
 
-				if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1); err != nil {
+				if err := walkTree(mm, key.String(), valType, NewStack(v.Args[1]), lvl+1); err != nil {
 					return err
 				}
 			}
@@ -324,32 +353,31 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			mm = make(map[string]interface{})
 		}
 
-		vals := val.Args
-		typs := typ.Args
-		if val.IsComb(typ) {
-			if val.IsConvertedComb() {
-				// if value is already a comb sequence, we use the
-				// converted type tree for matching types
-				typs = typ.UnfoldComb(typ)
-				// fmt.Printf("PAIR flatten* typ=%s\n", seq(typs...).Dump())
-				vals = val.UnfoldComb(Type{tcomb(typs...)})
-				// fmt.Printf("PAIR flatten* val=%s\n", seq(vals...).Dump())
-			} else {
-				typs = typ.UnfoldComb(typ)
-				// fmt.Printf("PAIR flatten typ=%s\n", seq(typs...).Dump())
-				vals = val.UnfoldComb(typ)
-				// fmt.Printf("PAIR flatten val=%s\n", seq(vals...).Dump())
-			}
+		// idea: pair stack and match type tree
+		// 1. unfold value
+		// 2. push all data on a stack
+		// 3. render pair stack along type tree, pop values as required by type
+
+		// // reuse the existing stack and push unfolded values if we see a pair
+		if val.IsPair() {
+			// unfold regular pair
+			unfolded := val.UnfoldComb(typ)
+			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), seq(unfolded...).Dump())
+			stack.Push(unfolded...)
+
+		} else if val.IsComb(typ) {
+			// comb pair
+			// fmt.Printf("L%0d: %s PUSH COMB args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
+			stack.Push(val.Args...)
+		} else {
+			// push value back on stack
+			// fmt.Printf("L%0d: %s PUSH VAL args[%d(+1)]=%s\n", lvl, label, stack.Len(), val.Dump())
+			stack.Push(val)
 		}
 
-		for i, v := range vals {
-			if i >= len(typs) {
-				log.Warnf("Missing type definition for val_type=%s[%s] packed=%t val=%s",
-					val.Type, val.OpCode, val.WasPacked, val.DumpLimit(512))
-				// illegal type, only happens for bad parameters
-				break
-			}
-			if err := walkTree(mm, EMPTY_LABEL, Type{typs[i]}, v, lvl+1); err != nil {
+		for _, t := range typ.Args {
+			// fmt.Printf("L%0d: %s/%s[%d/%d] CHILD=%s\n", lvl, label, t.GetVarAnnoAny(), i, len(typ.Args), (*stack)[0].Dump())
+			if err := walkTree(mm, EMPTY_LABEL, Type{t}, stack, lvl+1); err != nil {
 				return err
 			}
 		}
@@ -367,51 +395,62 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		case D_SOME:
 			// with annots (name) use it for scalar or complex render
 			if val.IsScalar() {
-				for i, v := range val.Args {
-					// NOTE: since contracts can use lists of options the type tree
-					// may not contain as many values as the value tree, to stay
-					// resilient we only use the i-th type if it exists
-					t := typ.Args[0]
-					if len(typ.Args) < i {
-						t = typ.Args[i]
-					}
-					if err := walkTree(m, label, Type{t}, v, lvl+1); err != nil {
-						return err
-					}
+				// FIXME: test if this works for all parameters / entrypoints
+				if err := walkTree(m, label, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
 				}
+				// for i, v := range val.Args {
+				// 	// NOTE: since contracts can use lists of options the type tree
+				// 	// may not contain as many values as the value tree, to stay
+				// 	// resilient we only use the i-th type if it exists
+				// 	t := typ.Args[0]
+				// 	if len(typ.Args) < i {
+				// 		t = typ.Args[i]
+				// 	}
+				// 	if err := walkTree(m, label, Type{t}, NewStack(v), lvl+1); err != nil {
+				// 		return err
+				// 	}
+				// }
 			} else {
+				// FIXME: test if this works for all parameters / entrypoints
 				mm := make(map[string]interface{})
-				vals := val.Args
-				typs := typ.Args
-				if val.IsComb(typ) {
-					if val.IsConvertedComb() {
-						// if value is already a comb sequence, we use the
-						// converted type tree for matching types
-						typs = typ.UnfoldComb(typ)
-						// fmt.Printf("OPT flatten* typ=%s\n", seq(typs...).Dump())
-						vals = val.UnfoldComb(Type{tcomb(typs...)})
-						// fmt.Printf("OPT flatten* val=%s\n", seq(vals...).Dump())
-					} else {
-						typs = typ.UnfoldComb(typ)
-						// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
-						vals = val.UnfoldComb(typ)
-						// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
-					}
-				}
-
-				for i, v := range vals {
-					// NOTE: since contracts can use lists of options the type tree
-					// may not contain as many values as the value tree, to stay
-					// resilient we only use the i-th type if it exists
-					t := typs[0]
-					if len(typs) < i {
-						t = typs[i]
-					}
-					if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1); err != nil {
-						return err
-					}
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
 				}
 				m[label] = mm
+
+				// FIXME: previous code, maybe too complex/unnecessary
+				// mm := make(map[string]interface{})
+				// vals := val.Args
+				// typs := typ.Args
+				// if val.IsComb(typ) {
+				// 	if val.IsConvertedComb() {
+				// 		// if value is already a comb sequence, we use the
+				// 		// converted type tree for matching types
+				// 		typs = typ.UnfoldComb(typ)
+				// 		// fmt.Printf("OPT flatten* typ=%s\n", seq(typs...).Dump())
+				// 		vals = val.UnfoldComb(Type{tcomb(typs...)})
+				// 		// fmt.Printf("OPT flatten* val=%s\n", seq(vals...).Dump())
+				// 	} else {
+				// 		typs = typ.UnfoldComb(typ)
+				// 		// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
+				// 		vals = val.UnfoldComb(typ)
+				// 		// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
+				// 	}
+				// }
+				// for i, v := range vals {
+				// 	// NOTE: since contracts can use lists of options the type tree
+				// 	// may not contain as many values as the value tree, to stay
+				// 	// resilient we only use the i-th type if it exists
+				// 	t := typs[0]
+				// 	if len(typs) < i {
+				// 		t = typs[i]
+				// 	}
+				// 	if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1); err != nil {
+				// 		return err
+				// 	}
+				// }
+				// m[label] = mm
 			}
 		default:
 			return fmt.Errorf("micheline: unexpected T_OPTION code %s [%s]", val.OpCode, val.OpCode)
@@ -425,11 +464,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 		}
 		switch val.OpCode {
 		case D_LEFT:
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, val.Args[0], lvl+1); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
 				return err
 			}
 		case D_RIGHT:
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, val.Args[0], lvl+1); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, NewStack(val.Args[0]), lvl+1); err != nil {
 				return err
 			}
 		default:
@@ -441,20 +480,19 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 
 	case T_TICKET:
 		// always Pair( ticketer:address, Pair( original_type, int ))
-		ttyp := TicketType(typ.Args[0])
 		// log.Debugf("%*s> T_TICKET %s type %s into map %p", lvl, "", path, ttyp.JSONString(), m)
 		// log.Debugf("%*s> T_TICKET %s value %s", lvl, "", path, val.JSONString())
-		if err := walkTree(m, label, ttyp, val, lvl+1); err != nil {
+		if err := walkTree(m, label, TicketType(typ.Args[0]), NewStack(val), lvl+1); err != nil {
 			return err
 		}
 
 	case T_SAPLING_STATE:
 		mm := make(map[string]interface{})
-		if err := walkTree(mm, "memo_size", Type{prim(T_INT)}, typ.Args[0], lvl+1); err != nil {
+		if err := walkTree(mm, "memo_size", Type{prim(T_INT)}, NewStack(typ.Args[0]), lvl+1); err != nil {
 			return err
 		}
 		// FIXME: add content
-		if err := walkTree(mm, "content", val.BuildType(), val, lvl+1); err != nil {
+		if err := walkTree(mm, "content", val.BuildType(), NewStack(val), lvl+1); err != nil {
 			return err
 		}
 		m[label] = mm
@@ -481,7 +519,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 			m[label] = val.Value(typ.OpCode)
 		} else {
 			mm := make(map[string]interface{})
-			if err := walkTree(mm, EMPTY_LABEL, typ, val, lvl+1); err != nil {
+			if err := walkTree(mm, EMPTY_LABEL, typ, NewStack(val), lvl+1); err != nil {
 				return err
 			}
 			m[label] = mm
@@ -490,7 +528,375 @@ func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl in
 	return nil
 }
 
+// func walkTree(m map[string]interface{}, label string, typ Type, val Prim, lvl int) error {
+
+// 	// Trace Helper
+// 	// ps := func(p Prim) string {
+// 	// 	if p.WasPacked {
+// 	// 		return "unpacked"
+// 	// 	}
+// 	// 	return ""
+// 	// }
+// 	// fmt.Printf("L%0d: %s/%s %s typ=%s %s\n", lvl, label, typ.Label(), ps(typ.Prim), typ.OpCode, typ.Dump())
+// 	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), val.OpCode, val.Dump())
+
+// 	// abort infinite recursions
+// 	if lvl > 99 {
+// 		log.Warnf("L%0d: %s/%s typ=%s val=%s %s", lvl, label, typ.Label(), typ.OpCode, val.OpCode, val.Dump())
+// 		return fmt.Errorf("micheline: max nesting level reached")
+// 	}
+
+// 	// detect type for unpacked values
+// 	if val.WasPacked {
+// 		labels := typ.Anno
+// 		typ = val.BuildType()
+// 		typ.WasPacked = true
+// 		typ.Anno = labels
+// 	}
+
+// 	// make sure value matches type
+// 	if !val.matchOpCode(typ.OpCode) {
+// 		return fmt.Errorf("micheline: type mismatch: val_type=%s[%s] type_code=%s type=%s value=%s",
+// 			val.Type, val.OpCode, typ.OpCode, typ.DumpLimit(512), val.DumpLimit(512))
+// 	}
+
+// 	typeLabel := typ.Label()
+// 	haveTypeLabel := len(typeLabel) > 0
+// 	haveKeyLabel := label != EMPTY_LABEL && len(label) > 0
+// 	if label == EMPTY_LABEL {
+// 		if haveTypeLabel {
+// 			// overwrite struct field label from type annotation
+// 			label = typeLabel
+// 		} else {
+// 			// or use sequence number when type annotation is empty
+// 			label = strconv.Itoa(len(m))
+// 		}
+// 	}
+
+// 	// walk the type tree and add values if they exist
+// 	switch typ.OpCode {
+// 	case T_SET:
+// 		// set <comparable type>
+// 		arr := make([]interface{}, 0, len(val.Args))
+
+// 		for _, v := range val.Args {
+// 			if v.IsScalar() && !v.IsSequence() {
+// 				// array of scalar types
+// 				arr = append(arr, v.Value(typ.Args[0].OpCode))
+// 			} else {
+// 				// array of complex types
+// 				mm := make(map[string]interface{})
+// 				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, v, lvl+1); err != nil {
+// 					return err
+// 				}
+// 				arr = append(arr, mm)
+// 			}
+// 		}
+// 		m[label] = arr
+
+// 	case T_LIST:
+// 		// list <type>
+// 		arr := make([]interface{}, 0, len(val.Args))
+// 		for i, v := range val.Args {
+// 			// lists may contain different types, i.e. when unpack+detect is used
+// 			valType := typ.Args[0]
+// 			if len(typ.Args) > i {
+// 				valType = typ.Args[i]
+// 			}
+// 			if v.IsScalar() && !v.IsSequence() {
+// 				// array of scalar types
+// 				arr = append(arr, v.Value(valType.OpCode))
+// 			} else {
+// 				// array of complex types
+// 				mm := make(map[string]interface{})
+// 				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, v, lvl+1); err != nil {
+// 					return err
+// 				}
+// 				arr = append(arr, mm)
+// 			}
+// 		}
+// 		m[label] = arr
+
+// 	case T_LAMBDA:
+// 		// LAMBDA <type> <type> { <instruction> ... }
+// 		// value_type, return_type, code
+// 		m[label] = val
+
+// 	case T_MAP, T_BIG_MAP:
+// 		// map <comparable type> <type>
+// 		// big_map <comparable type> <type>
+// 		// sequence of Elt (key/value) pairs
+
+// 		// render bigmap reference
+// 		if typ.OpCode == T_BIG_MAP && len(val.Args) == 0 {
+// 			// log.Debugf("%*s> marshal %s ref key %s into map %p", lvl, "", typ.OpCode, label, m)
+// 			switch val.Type {
+// 			case PrimInt:
+// 				// Babylon bigmaps contain a reference here
+// 				m[label] = val.Value(T_INT)
+// 			case PrimSequence:
+// 				// pre-babylon there's only an empty sequence
+// 				// FIXME: we could insert the bigmap id, but this is unknown at ths point
+// 				m[label] = nil
+// 			}
+// 			return nil
+// 		}
+
+// 		switch val.Type {
+// 		case PrimBinary: // single ELT
+// 			// log.Debugf("%*s> T_MAP marshal single %s key %s len %d into map %p adding sub map %p", lvl, "", typ.OpCode, label, len(val.Args), m, mm)
+// 			keyType := Type{typ.Args[0]}
+// 			valType := Type{typ.Args[1]}
+
+// 			// build type info if prim was packed
+// 			if val.Args[0].WasPacked {
+// 				keyType = val.Args[0].BuildType()
+// 			}
+
+// 			// build type info if prim was packed
+// 			if val.Args[1].WasPacked {
+// 				valType = val.Args[1].BuildType()
+// 			}
+
+// 			// prepare key
+// 			key, err := NewKey(keyType, val.Args[0])
+// 			if err != nil {
+// 				return err
+// 			}
+
+// 			mm := make(map[string]interface{})
+// 			if err := walkTree(mm, key.String(), valType, val.Args[1], lvl+1); err != nil {
+// 				return err
+// 			}
+// 			m[label] = mm
+
+// 		case PrimSequence: // sequence of ELTs
+// 			mm := make(map[string]interface{})
+// 			for _, v := range val.Args {
+// 				if v.OpCode != D_ELT {
+// 					return fmt.Errorf("micheline: unexpected type %s [%s] for %s Elt item", v.Type, v.OpCode, typ.OpCode)
+// 				}
+
+// 				keyType := Type{typ.Args[0]}
+// 				valType := Type{typ.Args[1]}
+
+// 				// build type info if prim was packed
+// 				if v.Args[0].WasPacked {
+// 					keyType = v.Args[0].BuildType()
+// 				}
+
+// 				// build type info if prim was packed
+// 				if v.Args[1].WasPacked {
+// 					valType = v.Args[1].BuildType()
+// 				}
+
+// 				key, err := NewKey(keyType, v.Args[0])
+// 				if err != nil {
+// 					return err
+// 				}
+
+// 				if err := walkTree(mm, key.String(), valType, v.Args[1], lvl+1); err != nil {
+// 					return err
+// 				}
+// 			}
+// 			m[label] = mm
+
+// 		default:
+// 			buf, _ := json.Marshal(val)
+// 			return fmt.Errorf("%*s> micheline: unexpected type %s [%s] for %s Elt sequence: %s",
+// 				lvl, "", val.Type, val.OpCode, typ.OpCode, buf)
+// 		}
+
+// 	case T_PAIR:
+// 		// pair <type> <type> or COMB
+// 		// FIXME: does this catch all COMB pairs??
+// 		// - for n=2, [Pair x1 x2],
+// 		// - for n=3, [Pair x1 (Pair x2 x3)],
+// 		// - for n>=4, [{x1; x2; ...; xn}].
+
+// 		// when annots are NOT empty
+// 		mm := m
+// 		if haveTypeLabel || haveKeyLabel {
+// 			mm = make(map[string]interface{})
+// 		}
+
+// 		// vals := val.CheckAndUnfold().Args
+// 		// typs := typ.CheckAndUnfold().Args
+// 		vals := val.Args
+// 		typs := typ.Args
+// 		if val.IsComb(typ) {
+// 			if val.IsConvertedComb() {
+// 				// if value is already a comb sequence, we use the
+// 				// converted type tree for matching types
+// 				typs = typ.UnfoldComb(typ)
+// 				// fmt.Printf("PAIR flatten* typ=%s\n", seq(typs...).Dump())
+// 				vals = val.UnfoldComb(Type{tcomb(typs...)})
+// 				// fmt.Printf("PAIR flatten* val=%s\n", seq(vals...).Dump())
+// 			} else {
+// 				typs = typ.UnfoldComb(typ)
+// 				// fmt.Printf("PAIR flatten typ=%s\n", seq(typs...).Dump())
+// 				vals = val.UnfoldComb(typ)
+// 				// fmt.Printf("PAIR flatten val=%s\n", seq(vals...).Dump())
+// 			}
+// 		} else if val.IsConvertedComb() && typ.IsComb(typ) {
+// 			typs = typ.UnfoldComb(typ)
+// 			// fmt.Printf("PAIR flatten** typ=%s\n", seq(typs...).Dump())
+// 		}
+
+// 		for i, v := range vals {
+// 			if i >= len(typs) {
+// 				log.Warnf("Missing type definition for val_type=%s[%s] packed=%t val=%s",
+// 					val.Type, val.OpCode, val.WasPacked, val.DumpLimit(512))
+// 				// illegal type, only happens for bad parameters
+// 				break
+// 			}
+// 			if err := walkTree(mm, EMPTY_LABEL, Type{typs[i]}, v, lvl+1); err != nil {
+// 				return err
+// 			}
+// 		}
+
+// 		if haveTypeLabel || haveKeyLabel {
+// 			m[label] = mm
+// 		}
+
+// 	case T_OPTION:
+// 		// option <type>
+// 		switch val.OpCode {
+// 		case D_NONE:
+// 			// add empty option values as null
+// 			m[label] = nil
+// 		case D_SOME:
+// 			// with annots (name) use it for scalar or complex render
+// 			if val.IsScalar() {
+// 				for i, v := range val.Args {
+// 					// NOTE: since contracts can use lists of options the type tree
+// 					// may not contain as many values as the value tree, to stay
+// 					// resilient we only use the i-th type if it exists
+// 					t := typ.Args[0]
+// 					if len(typ.Args) < i {
+// 						t = typ.Args[i]
+// 					}
+// 					if err := walkTree(m, label, Type{t}, v, lvl+1); err != nil {
+// 						return err
+// 					}
+// 				}
+// 			} else {
+// 				mm := make(map[string]interface{})
+// 				vals := val.Args
+// 				typs := typ.Args
+// 				if val.IsComb(typ) {
+// 					if val.IsConvertedComb() {
+// 						// if value is already a comb sequence, we use the
+// 						// converted type tree for matching types
+// 						typs = typ.UnfoldComb(typ)
+// 						// fmt.Printf("OPT flatten* typ=%s\n", seq(typs...).Dump())
+// 						vals = val.UnfoldComb(Type{tcomb(typs...)})
+// 						// fmt.Printf("OPT flatten* val=%s\n", seq(vals...).Dump())
+// 					} else {
+// 						typs = typ.UnfoldComb(typ)
+// 						// fmt.Printf("OPT flatten typ=%s\n", seq(typs...).Dump())
+// 						vals = val.UnfoldComb(typ)
+// 						// fmt.Printf("OPT flatten val=%s\n", seq(vals...).Dump())
+// 					}
+// 				}
+
+// 				for i, v := range vals {
+// 					// NOTE: since contracts can use lists of options the type tree
+// 					// may not contain as many values as the value tree, to stay
+// 					// resilient we only use the i-th type if it exists
+// 					t := typs[0]
+// 					if len(typs) < i {
+// 						t = typs[i]
+// 					}
+// 					if err := walkTree(mm, EMPTY_LABEL, Type{t}, v, lvl+1); err != nil {
+// 						return err
+// 					}
+// 				}
+// 				m[label] = mm
+// 			}
+// 		default:
+// 			return fmt.Errorf("micheline: unexpected T_OPTION code %s [%s]", val.OpCode, val.OpCode)
+// 		}
+
+// 	case T_OR:
+// 		// or <type> <type>
+// 		mm := m
+// 		if haveTypeLabel || haveKeyLabel {
+// 			mm = make(map[string]interface{})
+// 		}
+// 		switch val.OpCode {
+// 		case D_LEFT:
+// 			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, val.Args[0], lvl+1); err != nil {
+// 				return err
+// 			}
+// 		case D_RIGHT:
+// 			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, val.Args[0], lvl+1); err != nil {
+// 				return err
+// 			}
+// 		default:
+// 			return fmt.Errorf("micheline: unexpected T_OR branch with value opcode %s", val.OpCode)
+// 		}
+// 		if haveTypeLabel || haveKeyLabel {
+// 			m[label] = mm
+// 		}
+
+// 	case T_TICKET:
+// 		// always Pair( ticketer:address, Pair( original_type, int ))
+// 		ttyp := TicketType(typ.Args[0])
+// 		// log.Debugf("%*s> T_TICKET %s type %s into map %p", lvl, "", path, ttyp.JSONString(), m)
+// 		// log.Debugf("%*s> T_TICKET %s value %s", lvl, "", path, val.JSONString())
+// 		if err := walkTree(m, label, ttyp, val, lvl+1); err != nil {
+// 			return err
+// 		}
+
+// 	case T_SAPLING_STATE:
+// 		mm := make(map[string]interface{})
+// 		if err := walkTree(mm, "memo_size", Type{prim(T_INT)}, typ.Args[0], lvl+1); err != nil {
+// 			return err
+// 		}
+// 		// FIXME: add content
+// 		if err := walkTree(mm, "content", val.BuildType(), val, lvl+1); err != nil {
+// 			return err
+// 		}
+// 		m[label] = mm
+
+// 	default:
+// 		// int
+// 		// nat
+// 		// string
+// 		// bytes
+// 		// mutez
+// 		// bool
+// 		// key_hash
+// 		// timestamp
+// 		// address
+// 		// key
+// 		// unit
+// 		// signature
+// 		// operation
+// 		// contract <type> (??)
+// 		// chain_id
+// 		// never
+// 		// append scalar or other complex value
+// 		if val.IsScalar() {
+// 			m[label] = val.Value(typ.OpCode)
+// 		} else {
+// 			mm := make(map[string]interface{})
+// 			if err := walkTree(mm, EMPTY_LABEL, typ, val, lvl+1); err != nil {
+// 				return err
+// 			}
+// 			m[label] = mm
+// 		}
+// 	}
+// 	return nil
+// }
+
 func (p Prim) matchOpCode(oc OpCode) bool {
+	// match everything for pairs
+	// if oc == T_PAIR {
+	// 	return true
+	// }
+
 	mismatch := false
 	switch p.Type {
 	case PrimSequence:
