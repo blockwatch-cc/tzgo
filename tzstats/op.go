@@ -254,12 +254,12 @@ func (o *Op) UnmarshalJSONBrief(data []byte) error {
 						_ = mk.UnmarshalJSON(keybuf)
 						op.BigmapDiff[i] = BigmapUpdate{
 							Action:        v.Action,
-							KeyType:       v.KeyType,   // alloc/copy only
-							ValueType:     v.ValueType, // alloc/copy only
-							KeyTypePrim:   v.KeyType,   // alloc/copy only
-							ValueTypePrim: v.ValueType, // alloc/copy only
-							SourceId:      v.SourceId,  // alloc/copy only
-							DestId:        v.DestId,    // alloc/copy only
+							KeyType:       micheline.Type{Prim: v.KeyType}.Typedef("_key"),     // alloc/copy only
+							ValueType:     micheline.Type{Prim: v.ValueType}.Typedef("_value"), // alloc/copy only
+							KeyTypePrim:   v.KeyType,                                           // alloc/copy only
+							ValueTypePrim: v.ValueType,                                         // alloc/copy only
+							SourceId:      v.SourceId,                                          // alloc/copy only
+							DestId:        v.DestId,                                            // alloc/copy only
 							BigmapValue: BigmapValue{
 								Key:       mk,        // update/remove only
 								KeyHash:   v.KeyHash, // update/remove only
