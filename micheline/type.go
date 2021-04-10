@@ -79,6 +79,11 @@ func (t Type) Typedef(name string) Typedef {
 	return buildTypedef(name, t.Prim)
 }
 
+func (t Type) TypedefPtr(name string) *Typedef {
+	td := buildTypedef(name, t.Prim)
+	return &td
+}
+
 func (t Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(buildTypedef("", t.Prim))
 }

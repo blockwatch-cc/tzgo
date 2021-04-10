@@ -213,8 +213,8 @@ func (v BigmapValue) Walk(path string, fn ValueWalkerFunc) error {
 type BigmapUpdate struct {
 	BigmapValue
 	Action        micheline.DiffAction `json:"action"`
-	KeyType       interface{}          `json:"key_type"`
-	ValueType     interface{}          `json:"value_type"`
+	KeyType       micheline.Typedef    `json:"key_type"`
+	ValueType     micheline.Typedef    `json:"value_type"`
 	KeyTypePrim   micheline.Prim       `json:"key_type_prim"`
 	ValueTypePrim micheline.Prim       `json:"value_type_prim"`
 	SourceId      int64                `json:"source_big_map"`
