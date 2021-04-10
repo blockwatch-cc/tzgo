@@ -338,9 +338,16 @@ func (p Prim) IsPair() bool {
 	switch p.OpCode {
 	case T_PAIR, D_PAIR:
 		return true
-	default:
-		return false
 	}
+	return false
+}
+
+func (p Prim) IsNil() bool {
+	switch p.OpCode {
+	case D_UNIT, D_NONE:
+		return true
+	}
+	return false
 }
 
 func (p Prim) IsScalarType() bool {
