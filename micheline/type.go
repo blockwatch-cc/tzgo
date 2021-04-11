@@ -130,7 +130,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 		}
 
 	case T_PAIR:
-		typs := typ.UnfoldComb(Type{typ})
+		typs := typ.UnfoldPair(Type{typ})
 		td.Type = TypeStruct
 		td.Args = make([]Typedef, len(typs))
 		for i, v := range typs {
@@ -230,7 +230,9 @@ func (p Prim) BuildType() Type {
 		}
 
 	case PrimSequence:
-		if p.OpCode == D_ELT || len(p.Args) > 0 && p.Args[0].OpCode == D_ELT {
+
+		switch {
+		case p.LooksLikeMap():
 			// ELT can be T_MAP, T_SET, T_BIG_MAP: all same-type elements
 			t.OpCode = T_MAP
 			t.Type = PrimBinary
@@ -238,11 +240,17 @@ func (p Prim) BuildType() Type {
 				p.Args[0].Args[0].BuildType().Prim, // key type
 				p.Args[0].Args[1].BuildType().Prim, // value type, breaks on polymorph types
 			}
-		} else if len(p.Args) > 0 && p.Args[0].OpCode.TypeCode() == T_OPERATION {
+		case p.LooksLikeLambda():
 			// sequences can be T_LIST, T_LAMBDA (if T_OPERATION is included)
 			t.Type = PrimNullary // we don't know in/out types
 			t.OpCode = T_LAMBDA
-		} else {
+		case p.LooksLikeSet():
+			t.OpCode = T_SET
+			t.Type = PrimUnary
+			t.Args = []Prim{
+				p.Args[0].BuildType().Prim, // set type
+			}
+		default:
 			// walk the entire list and generate types for each element in-order
 			t.OpCode = T_LIST
 			switch len(p.Args) {

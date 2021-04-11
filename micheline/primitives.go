@@ -1,21 +1,8 @@
 // Copyright (c) 2020-2021 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
-// Domain specific data types
-//
+// Michelson type spec
 // see http://tezos.gitlab.io/whitedoc/michelson.html#full-grammar
-//
-// - timestamp: Dates in the real world.
-// - mutez: A specific type for manipulating tokens.
-// - address: An untyped address (implicit account or smart contract).
-// - contract 'param: A contract, with the type of its code,
-//   contract unit for implicit accounts.
-// - operation: An internal operation emitted by a contract.
-// - key: A public cryptographic key.
-// - key_hash: The hash of a public cryptographic key.
-// - signature: A cryptographic signature.
-// - chain_id: An identifier for a chain, used to distinguish the test
-//   and the main chains.
 //
 // PACK prefixes with 0x05!
 // So that when contracts checking signatures (multisigs etc) do the current
@@ -177,13 +164,10 @@ func (p Prim) IsEqualWithAnno(p2 Prim) bool {
 }
 
 func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
-	// opcode
 	if p1.OpCode != p2.OpCode {
-		// fmt.Printf("Opcode mismatch %s <> %s\n", p1.OpCode, p2.OpCode)
 		return false
 	}
 
-	// type
 	t1, t2 := p1.Type, p2.Type
 	if !withAnno {
 		switch t1 {
@@ -196,70 +180,59 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 		}
 	}
 	if t1 != t2 {
-		// fmt.Println("Prim type mismatch")
 		return false
 	}
 
-	// arg len
 	if len(p1.Args) != len(p2.Args) {
-		// fmt.Println("Arg len mismatch")
 		return false
 	}
 
-	// anno
 	if withAnno {
 		if len(p1.Anno) != len(p2.Anno) {
-			// fmt.Println("Anno len mismatch")
 			return false
 		}
 		for i := range p1.Anno {
 			if p1.Anno[i] != p2.Anno[i] {
-				// fmt.Println("Anno mismatch")
 				return false
 			}
 		}
 	}
 
-	// contents
 	if p1.String != p2.String {
-		// fmt.Println("String content mismatch")
 		return false
 	}
 	if (p1.Int == nil) != (p2.Int == nil) {
-		// fmt.Println("Int ptr content mismatch")
 		return false
 	}
 	if p1.Int != nil {
 		if p1.Int.Cmp(p2.Int) != 0 {
-			// fmt.Println("Int content mismatch")
 			return false
 		}
 	}
 	if (p1.Bytes == nil) != (p2.Bytes == nil) {
-		// fmt.Println("Bytes ptr content mismatch")
 		return false
 	}
 	if p1.Bytes != nil {
 		if bytes.Compare(p1.Bytes, p2.Bytes) != 0 {
-			// fmt.Println("Bytes content mismatch")
 			return false
 		}
 	}
 
-	// recurse
 	for i := range p1.Args {
 		if !IsEqualPrim(p1.Args[i], p2.Args[i], withAnno) {
-			// fmt.Println("Nested content mismatch")
 			return false
 		}
 	}
 
-	// all equal
 	return true
 }
 
+// PrimWalkerFunc is the callback function signature used while
+// traversing a prim tree in read-only mode.
 type PrimWalkerFunc func(p Prim) error
 
+// Walk traverses the prim tree in pre-order in read-only mode, forwarding
+// value copies to the callback.
 func (p Prim) Walk(f PrimWalkerFunc) error {
 	if err := f(p); err != nil {
 		return err
@@ -272,18 +245,35 @@ func (p Prim) Walk(f PrimWalkerFunc) error {
 	return nil
 }
 
+// PrimWalkerFunc is the callback function signature used while
+// traversing a prim tree. The callback may change the contents of
+// the visited node, including altering nested child nodes and annotations.
+type PrimVisitorFunc func(p *Prim) error
+
+// Visit traverses the prim tree in pre-order and allows the callback to
+// alter the contents of a visited node.
+func (p *Prim) Visit(f PrimVisitorFunc) error {
+	if err := f(p); err != nil {
+		return err
+	}
+	for _, v := range p.Args {
+		if err := v.Visit(f); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // returns true when the prim can be expressed as a single value
 // key/value pairs (ie. prims with annots) do not fit into this category
 // used when mapping complex big map values to JSON objects
 func (p Prim) IsScalar() bool {
 	switch p.Type {
 	case PrimInt, PrimString, PrimBytes, PrimNullary:
-		// generally ok
 		return true
 	case PrimSequence:
 		return len(p.Args) == 1 && !p.HasAnno()
 	case PrimNullaryAnno, PrimUnaryAnno, PrimBinaryAnno, PrimVariadicAnno:
-		// all annotated types become JSON properties
 		return false
 	case PrimUnary:
 		switch p.OpCode {
@@ -292,7 +282,6 @@ func (p Prim) IsScalar() bool {
 		}
 		return false
 	case PrimBinary:
-		// mostly not ok, unless type is option/or and sub-types are scalar
 		switch p.OpCode {
 		case T_OPTION, T_OR:
 			return p.Args[0].IsScalar()
@@ -388,28 +377,14 @@ func (p Prim) IsContainerType() bool {
 	}
 }
 
-// Detects whether a primitive contains a regular pair or a comb pair
-// which may be converted into a flat comb sequence.
+// Detects whether a primitive contains a regular pair or any form
+// of container type. Pairs can be unfolded into flat sequences.
 //
-// The Michelson spec says
-// For combs, three notations are supported:
-//  - a) [Pair x1 (Pair x2 ... (Pair xn-1 xn) ...)],
-//  - b) [Pair x1 x2 ... xn-1 xn], and
-//  - c) [{x1; x2; ...; xn-1; xn}].
-//  In readable mode, we always use b),
-//  in optimized mode we use the shortest to serialize:
-//  - for n=2, [Pair x1 x2],
-//  - for n=3, [Pair x1 (Pair x2 x3)],
-//  - for n>=4, [{x1; x2; ...; xn}].
-func (p Prim) IsComb(typ Type) bool {
+func (p Prim) CanUnfold(typ Type) bool {
 	// regular pairs (works for type and value trees)
 	if p.IsPair() {
 		return true
 	}
-
-	// if typ.IsPair() && (p.IsPair() || p.IsSequence()) {
-	// 	return true
-	// }
 
 	// Note: due to Tezos encoding issues, comb pairs in block receipts
 	// are naked sequences (they lack an enclosing pair wrapper), this means
@@ -484,153 +459,98 @@ func (p Prim) LooksLikeContainer() bool {
 	return true
 }
 
+func (p Prim) LooksLikeMap() bool {
+	// must be a sequence
+	if !p.IsSequence() || len(p.Args) == 0 {
+		return false
+	}
+
+	// contents must be Elt
+	return p.Args[0].IsElt()
+}
+
+func (p Prim) LooksLikeSet() bool {
+	// must be a sequence
+	if !p.IsSequence() || len(p.Args) == 0 {
+		return false
+	}
+
+	// all elements have the same prim type and opcode
+	// Note this mis-detects same-type records and ambiguous types
+	// like PrimInt (int, nat, timestamp, mutez), PrimString and PrimBytes
+	oc := p.Args[0].OpCode
+	typ := p.Args[0].Type
+	for _, v := range p.Args[1:] {
+		if v.OpCode != oc || v.Type != typ {
+			return false
+		}
+	}
+	return true
+}
+
 // Checks if a Prim looks like a lambda type.
 func (p Prim) LooksLikeLambda() bool {
 	if p.OpCode == T_LAMBDA || p.IsOperation() {
 		return true
 	}
 
-	return p.Type == PrimSequence && len(p.Args) > 0 && p.Args[0].IsOperation()
+	if p.Type != PrimSequence || len(p.Args) == 0 {
+		return false
+	}
+	p = p.Args[0]
+
+	// first non-pair value is operation
+	for {
+		if p.IsOperation() {
+			return true
+		}
+		if len(p.Args) == 0 || !(p.IsPair() || p.IsSequence()) {
+			return false
+		}
+		p = p.Args[0]
+	}
+	return false
 }
 
 // Converts a pair tree into a flattened sequence. While Michelson
 // optimized comb pairs are only used for right-side combs, this
-// function applies all pairs. It makes use of the type definition
+// function applies to all pairs. It makes use of the type definition
 // to identify which contained type is a regular pair, an already
-// converted comb pair or any other container type.
+// converted pair sequence or any other container type.
 //
 // - Works both on value trees and type trees.
 // - Will skip (i.e. reduce) annotated type pairs, so nested struct
 //   information will be lost.
 // - When called on already converted comb sequences this function is a noop.
 //
-func (p Prim) UnfoldComb(typ Type) []Prim {
+func (p Prim) UnfoldPair(typ Type) []Prim {
 	flat := make([]Prim, 0)
 
 	// FIXME: unclear if this is required; structural issue
 	// ensure value and type have same number of arguments
-	if p.IsSequence() || !p.OpCode.IsTypeCode() {
-		// if !p.OpCode.IsTypeCode() {
-		if len(p.Args) > len(typ.Args) {
-			typ2 := Type{tcomb(typ.UnfoldComb(typ)...)}
-			if len(typ2.Args) == len(p.Args) {
-				typ = typ2
-			}
-		}
-	}
-
-	// fmt.Printf("Unfold %d vals / %d typs\n", len(p.Args), len(typ.Args))
+	// if p.IsSequence() || !p.OpCode.IsTypeCode() {
+	// 	// if !p.OpCode.IsTypeCode() {
+	// 	if len(p.Args) > len(typ.Args) {
+	// 		typ2 := Type{tcomb(typ.UnfoldComb(typ)...)}
+	// 		if len(typ2.Args) == len(p.Args) {
+	// 			typ = typ2
+	// 		}
+	// 	}
+	// }
 
 	for i, v := range p.Args {
 		t := Type{}
 		if len(typ.Args) > i {
 			t = Type{typ.Args[i]}
 		}
-
-		// FIXME: structural issue
-		// some tests need this
-		if !v.WasPacked && v.IsComb(t) && !t.HasAnno() {
-
-			// other tests work only with this
-			// if !v.WasPacked && v.IsComb(t) {
-			flat = append(flat, v.UnfoldComb(t)...)
+		if !v.WasPacked && v.CanUnfold(t) && !t.HasAnno() {
+			flat = append(flat, v.UnfoldPair(t)...)
 		} else {
 			flat = append(flat, v)
 		}
 	}
 	return flat
 }
-
-type Stack []Prim
-
-func NewStack(args ...Prim) *Stack {
-	s := &Stack{}
-	s.Push(args...)
-	return s
-}
-
-func (s *Stack) Pop() Prim {
-	if s.Len() == 0 {
-		return InvalidPrim
-	}
-	p := (*s)[0]
-	*s = (*s)[1:]
-	return p
-}
-
-func (s *Stack) Push(args ...Prim) {
-	if len(args) > 0 {
-		*s = append(args, (*s)...)
-	}
-}
-
-func (s *Stack) Len() int {
-	return len(*s)
-}
-
-func (s *Stack) Empty() bool {
-	return len(*s) == 0
-}
-
-func (s *Stack) Peek() Prim {
-	if s.Len() == 0 {
-		return InvalidPrim
-	}
-	return (*s)[0]
-}
-
-// func NewComb(args []Prim) Prim {
-// 	return Prim{
-// 		Type:   PrimSequence,
-// 		OpCode: D_PAIR,
-// 		Args:   args,
-// 	}
-// }
-
-// func (p Prim) IsComb() bool {
-// 	return p.OpCode == D_PAIR && p.Type == PrimSequence
-// }
-
-// // Count non-pair children
-// func (p Prim) Count() int {
-// 	if !p.IsPair() {
-// 		return 1
-// 	}
-// 	var n int
-// 	for _, v := range p.Args {
-// 		n += v.Count()
-// 	}
-// 	return n
-// }
-
-// func (p Prim) CanUnfold() bool {
-// 	return p.IsPair() && p.Count() >= 4
-// }
-
-// func (p Prim) CheckAndUnfold() Prim {
-// 	if p.CanUnfold() {
-// 		return NewComb(p.Unfold()) // Pair(seq(c))
-// 	}
-// 	return p
-// }
-
-// func (p Prim) Unfold() []Prim {
-// 	c := make([]Prim, 0)
-// 	for i, v := range p.Args {
-// 		if i == 0 {
-// 			u := v.CheckAndUnfold()
-// 			if u.IsComb() {
-// 				c = append(c, u.Args...)
-// 			} else {
-// 				c = append(c, u)
-// 			}
-// 		} else {
-// 			// always unfold the right side
-// 			c = append(c, v.Unfold()...)
-// 		}
-// 	}
-// 	return c
-// }
 
 func (p Prim) IsPacked() bool {
 	return p.Type == PrimBytes &&
@@ -769,7 +689,6 @@ func (p Prim) Value(as OpCode) interface{} {
 			// case T_OPERATION:
 		}
 
-		// default is to render bytes as hex string
 		return hex.EncodeToString(p.Bytes)
 
 	case PrimUnary, PrimUnaryAnno:
@@ -1412,7 +1331,7 @@ func (p Prim) FindLabels(label string) ([]Prim, bool) {
 
 func (p Prim) Index(label string) ([]int, bool) {
 	if p.MatchesAnno(label) {
-		return nil, true
+		return []int{}, true
 	}
 	found := make([]int, 0)
 	for i := range p.Args {

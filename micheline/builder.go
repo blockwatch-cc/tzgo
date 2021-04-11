@@ -67,14 +67,6 @@ func dpair(l, r Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: D_PAIR, Args: []Prim{l, r}, Anno: anno}
 }
 
-func dcomb(args ...Prim) Prim {
-	return Prim{Type: PrimSequence, OpCode: D_PAIR, Args: args}
-}
-
-func tcomb(args ...Prim) Prim {
-	return Prim{Type: PrimSequence, OpCode: T_PAIR, Args: args}
-}
-
 func prim(c OpCode, anno ...string) Prim {
 	typ := PrimNullary
 	if len(anno) > 0 {

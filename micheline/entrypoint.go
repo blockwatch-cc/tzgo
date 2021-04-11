@@ -137,17 +137,17 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 	// process non-T_OR branches
 	cp := node.Clone()
 	ep := Entrypoint{
-		Id:      len(e),
-		Branch:  branch,
-		Call:    name,
-		Typedef: buildTypedef("", node).Args,
-		Prim:    &cp,
+		Id:     len(e),
+		Branch: branch,
+		Call:   name,
+		Prim:   &cp,
 	}
-	// if cp.HasAnno() {
-	// 	// drop entrypoint name annotation, keep any other annots (in case a single
-	// 	// value entrypoint has another variable name)
-	// 	ep.Prim.StripAnno(name)
-	// }
+	if node.IsScalarType() {
+		ep.Typedef = []Typedef{buildTypedef("", node)}
+		ep.Typedef[0].Name = ""
+	} else {
+		ep.Typedef = buildTypedef("", node).Args
+	}
 
 	e[name] = ep
 	return nil
