@@ -440,7 +440,7 @@ func (p Prim) LooksLikeContainer() bool {
 	// contains a single scalar
 	if len(p.Args) == 1 {
 		switch p.Args[0].Type {
-		case PrimInt, PrimString, PrimBytes, PrimNullary, PrimSequence:
+		case PrimInt, PrimString, PrimBytes, PrimNullary:
 			return true
 		}
 	}
@@ -451,7 +451,7 @@ func (p Prim) LooksLikeContainer() bool {
 	oc := p.Args[0].OpCode
 	typ := p.Args[0].Type
 	for _, v := range p.Args[1:] {
-		if v.OpCode != oc || v.Type != typ {
+		if v.OpCode != oc || v.Type != typ || v.IsSequence() {
 			return false
 		}
 	}

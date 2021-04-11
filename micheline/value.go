@@ -130,22 +130,38 @@ func (e Value) MarshalJSON() ([]byte, error) {
 }
 
 func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lvl int) error {
+	// abort infinite type recursions
+	if lvl > 99 {
+		return fmt.Errorf("micheline: max nesting level reached")
+	}
+
 	// take next value from stack
 	val := stack.Pop()
 
-	// reuse the existing stack and push unfolded values if we see a pair
-	if lvl > 0 && val.IsPair() && !val.WasPacked {
-		unfolded := val.UnfoldPair(typ)
-		// fmt.Printf("L%0d: %s UNFOLD VAL PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), seq(unfolded...).Dump())
-		stack.Push(unfolded...)
-		val = stack.Pop()
-	}
-
-	// if type is not a container, but value is a list, unwrap again
-	if val.IsSequence() && typ.IsScalarType() && !val.LooksLikeLambda() && !val.WasPacked {
-		// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
-		stack.Push(val.Args...)
-		val = stack.Pop()
+	// Unwrap pairs and pair-like values unless they are containers and push them
+	// onto the existing value stack. Skip all values that
+	//
+	// - are at the top-level of the value tree (we always start with the outermost type first)
+	// - look like lambdas or containers (list/set/map will be handled separatly)
+	// - have been unpacked (we will guess their type below)
+	//
+	// If we see an unfoldable type (i.e. one that looks like a container) but at the
+	// same time we also see that the next element type is scalar, then we unfold too.
+	// This helps resolve ambiguities in value trees.
+	//
+	for {
+		if lvl > 0 && !val.WasPacked && !val.LooksLikeLambda() && (val.CanUnfold(typ) || (val.IsSequence() && typ.IsScalarType())) {
+			// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
+			// stack.Push(val.Args...)
+			unfolded := val.UnfoldPair(typ)
+			stack.Push(unfolded...)
+			val = stack.Pop()
+		} else {
+			// fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscal=%t islambda=%t waspack=%t iscont=%t len=%d %s/%s\n",
+			// 	lvl, label, val.CanUnfold(typ), val.IsSequence(), typ.IsScalarType(), val.LooksLikeLambda(), val.WasPacked,
+			// 	val.LooksLikeContainer(), len(val.Args), val.Args[0].OpCode, val.Args[0].Type)
+			break
+		}
 	}
 
 	// // Trace Helper
@@ -164,12 +180,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	// fmt.Printf("L%0d: %s/%s %s typ=%s %s\n", lvl, label, typ.Label(), ps(typ.Prim), typ.OpCode, typ.Dump())
 	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), oc(val), val.Dump())
 
-	// abort infinite recursions
-	if lvl > 99 {
-		log.Warnf("L%0d: %s/%s typ=%s val=%s %s", lvl, label, typ.Label(), typ.OpCode, val.OpCode, val.Dump())
-		return fmt.Errorf("micheline: max nesting level reached")
-	}
-
 	// detect type for unpacked values
 	if val.WasPacked && (!val.IsScalar() || typ.OpCode == T_BYTES) {
 		labels := typ.Anno
@@ -178,12 +188,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		typ.Anno = labels
 	}
 
-	// make sure value matches type, accept pairs which will be recursively unfolded
+	// make sure value we're going to process actually matches next type
+	// we accept pairs which will be recursively unfolded
 	if !typ.IsPair() && !val.matchOpCode(typ.OpCode) {
 		return fmt.Errorf("micheline: type mismatch: type[%s]=%s value[%s/%d]=%s",
 			typ.OpCode, typ.DumpLimit(512), val.Type, val.OpCode, val.DumpLimit(512))
 	}
 
+	// get the label from our type tree
 	typeLabel := typ.Label()
 	haveTypeLabel := len(typeLabel) > 0
 	haveKeyLabel := label != EMPTY_LABEL && len(label) > 0
@@ -197,7 +209,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		}
 	}
 
-	// walk the type tree and add values if they exist
+	// based on the type code we attach new sub-records, array elements from values
 	switch typ.OpCode {
 	case T_SET:
 		// set <comparable type>
