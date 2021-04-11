@@ -230,25 +230,22 @@ func (p Prim) BuildType() Type {
 		}
 
 	case PrimSequence:
-
 		switch {
 		case p.LooksLikeMap():
-			// ELT can be T_MAP, T_SET, T_BIG_MAP: all same-type elements
 			t.OpCode = T_MAP
 			t.Type = PrimBinary
 			t.Args = []Prim{
 				p.Args[0].Args[0].BuildType().Prim, // key type
-				p.Args[0].Args[1].BuildType().Prim, // value type, breaks on polymorph types
+				p.Args[0].Args[1].BuildType().Prim, // value type
 			}
 		case p.LooksLikeLambda():
-			// sequences can be T_LIST, T_LAMBDA (if T_OPERATION is included)
 			t.Type = PrimNullary // we don't know in/out types
 			t.OpCode = T_LAMBDA
 		case p.LooksLikeSet():
 			t.OpCode = T_SET
 			t.Type = PrimUnary
 			t.Args = []Prim{
-				p.Args[0].BuildType().Prim, // set type
+				p.Args[0].BuildType().Prim, // single set type
 			}
 		default:
 			// walk the entire list and generate types for each element in-order
