@@ -1,0 +1,5013 @@
+[
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "0"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "544d3220536861726573"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "544d3253"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "total_supply"
+              },
+              {
+                "bytes": "313030303030"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070000020000006307040100000008646563696d616c730a0000000130070401000000046e616d650a0000000a544d32205368617265730704010000000673796d626f6c0a00000004544d32530704010000000c746f74616c5f737570706c790a00000006313030303030",
+    "key_hex": "0000",
+    "want_value": {
+      "token_id": "0",
+      "token_info": {
+        "decimals": "0",
+        "name": "TM2 Shares",
+        "symbol": "TM2S",
+        "total_supply": "100000"
+      }
+    },
+    "want_key": "0"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expru2dKqDfZG8hu4wNGkiyunvq2hdSKuVYtcKta7BWP6Q18oNxKjS",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "1"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070001020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0001",
+    "want_value": {
+      "token_id": "1",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "1"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtqoNj2hRg8PsPMaXLcy3dXjMM3B7nHKrRNqpfjbYpMbULbRj8k",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "5"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "5"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070005020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0005",
+    "want_value": {
+      "token_id": "5",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "5"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprvTHEWNUSkauLiNM7jYXa2hBbHLjWFLcRJzdX9xcmNFd4AiUosN",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "5"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "40"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070005020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0028",
+    "want_value": {
+      "token_id": "5",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "40"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtiLXc3cRJdgawiJAvKcrcXAbbmfqum51RmpNW6s4Po41MeJ3h9",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "5"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "41"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070005020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0029",
+    "want_value": {
+      "token_id": "5",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "41"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruwNseCvmCaubLARgm1uhXYUxw8pJkK7F6Mwk7Wp8qm5hi2eFko",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "581"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "581"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008509020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008509",
+    "want_value": {
+      "token_id": "581",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "581"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprv7UZsDYka7EJYJKopoHSmjH1sjtzhCLskvYASXKt65zQc9QaCg",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "582"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "582"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008609020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008609",
+    "want_value": {
+      "token_id": "582",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "582"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtdwiKyDQwrRYBA5Wo73LPu91RRxPjpingL8ZwZMK3nVhjmgckr",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "583"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "583"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008709020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008709",
+    "want_value": {
+      "token_id": "583",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "583"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruDZ48M1VBDHu7wB6PziHveFZX7KdHTjA1oLeuWngHWxVYKvWNW",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "584"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "584"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008809020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008809",
+    "want_value": {
+      "token_id": "584",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "584"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruoBE92DY5GmFp4uzbMfgimQdXHxuQZSeytp1g6DuFpUphDqHdd",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "580"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500afd1af860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "580"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008409020000008b07040100000004646174650a000000070500afd1af860c07040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008409",
+    "want_value": {
+      "token_id": "580",
+      "token_info": {
+        "date": "1617294447",
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "580"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtiLqSj1SEmomKAX7K78E2UfNzXyjEk3298sD6DK6BzjfJd9ouC",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "105"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "105"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "070700a901020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "00a901",
+    "want_value": {
+      "token_id": "105",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "105"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruh79T7SFZz9zsRybkndriNzTz7o3x4NCXgoh6SDKVQUQooBizo",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "83"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "83"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009301020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009301",
+    "want_value": {
+      "token_id": "83",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "83"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruEUjuT8r8vATTuj9wJ5Y2GRzoN46RZyd1oVF7bxnndTbYimmAy",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "81"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "81"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009101020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009101",
+    "want_value": {
+      "token_id": "81",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "81"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruFMSVW4hHm3CmBW8nthTkapTvkX6hX4U5wetCnpWMaWD3EAccF",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "82"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "82"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009201020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "009201",
+    "want_value": {
+      "token_id": "82",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "82"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprus7CTFsyDSn2C1SfUgnBirpPFuqY1g5hWw7U8xi2VRwsPeVhE5",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "102"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "102"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "070700a601020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "00a601",
+    "want_value": {
+      "token_id": "102",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "102"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprvFW5tJBbcQUhtABJ2ThMb6v5ufBaoanohBBBikEMBJDjEjKdS6",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "29"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "29"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707001d020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "001d",
+    "want_value": {
+      "token_id": "29",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "29"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprteF3MwJ5nfZXkJn3NGgExtFdw6UjHqvusBBNQhim9euSg61V2G",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "103"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "103"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "070700a701020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "00a701",
+    "want_value": {
+      "token_id": "103",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "103"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprubetXQFYjqtvrH54VhUFdDoFc33692kRtrNNBU2LYvypTyi44z",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "77"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "77"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008d01020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "008d01",
+    "want_value": {
+      "token_id": "77",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "77"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expru1ePoujT2fs8YWVmASHrSz5T15eFZc6uy22PaHPaDPiTToUBgx",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "87"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "87"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009701020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009701",
+    "want_value": {
+      "token_id": "87",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "87"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprubrcsHKY4Y139ooPwfmCDuEdmMQ1eeke77aLmXDd5eRi7AA6Zz",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "62"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "62"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707003e020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "003e",
+    "want_value": {
+      "token_id": "62",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "62"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruoaYeEtaYFbYVBP37vVp4BxHpVkqrAP6r4fJ8oUQEkzDxyC4wA",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "23"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "23"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070017020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0017",
+    "want_value": {
+      "token_id": "23",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "23"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruvwnJxJfwqF5c1a99vox3EnLWinZXEBiiHQcpkAyQCFqshS9UH",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "39"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "39"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070027020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0027",
+    "want_value": {
+      "token_id": "39",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "39"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprugKTLpCzQiTqwVEdyjCuhbufp4un7TLyeYxAqP4n2MyKUusFtf",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "585"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500affeb8860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "585"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008909020000008b07040100000004646174650a000000070500affeb8860c07040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008909",
+    "want_value": {
+      "token_id": "585",
+      "token_info": {
+        "date": "1617371055",
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "585"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruHSjus2EEj2vTo5xhJcyUCjSL46cUBfkPXASXs9uvbakTdcy2Q",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "92"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "92"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009c01020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009c01",
+    "want_value": {
+      "token_id": "92",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "92"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruhNuAyiRi61mCVNt1wuncci335k1ww1cbr3nxDa9FUvZXBWjqq",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "72"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "72"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008801020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008801",
+    "want_value": {
+      "token_id": "72",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "72"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruQEFexPf28H2VzX49KLRkzccBx5zUfW1KzCFpyLF4WoVEnj9RV",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "71"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "71"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008701020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "008701",
+    "want_value": {
+      "token_id": "71",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "71"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprvNnoZE4m3VE96JEqjFeLqenaygb1u1eYQBnsyzjdMZMbwBNtpw",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "34"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "34"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070022020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0022",
+    "want_value": {
+      "token_id": "34",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "34"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtcxWUdSoni6H8bX8H8fqioGCMsEZyqpkCHMZimZJqTCBseU1Yr",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "33"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "33"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070021020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0021",
+    "want_value": {
+      "token_id": "33",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "33"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expru3tLMAL5QSnWML2Kzt1UhyWpoptyZAPoRo3GCjpSnia3n2CwWG",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "586"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "artifactUri"
+              },
+              {
+                "bytes": "74657a6f732d73746f726167653a323441"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500abf9ba860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "576973646f6d2053696c656e636520486f7065"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "rarity"
+              },
+              {
+                "bytes": "556e69717565"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "shouldPreferSymbol"
+              },
+              {
+                "bytes": "66616c7365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "4d323441"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538362e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "586"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008a0902000001160704010000000b61727469666163745572690a0000001174657a6f732d73746f726167653a32344107040100000004646174650a000000070500abf9ba860c07040100000008646563696d616c730a0000000130070401000000046e616d650a00000013576973646f6d2053696c656e636520486f7065070401000000067261726974790a00000006556e697175650704010000001273686f756c6450726566657253796d626f6c0a0000000566616c73650704010000000673796d626f6c0a000000044d3234410704010000000c7468756d626e61696c5572690a0000002868747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538362e706e6707040100000001760a0000000132",
+    "key_hex": "008a09",
+    "want_value": {
+      "token_id": "586",
+      "token_info": {
+        "artifactUri": "tezos-storage:24A",
+        "date": "1617387115",
+        "decimals": "0",
+        "name": "Wisdom Silence Hope",
+        "rarity": "Unique",
+        "shouldPreferSymbol": "false",
+        "symbol": "M24A",
+        "thumbnailUri": "https://tezos-mandala.art/static/586.png",
+        "v": "2"
+      }
+    },
+    "want_key": "586"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtb47g6UEBfxdrPmGfAKS57tVmJebWyN1xxDQ3my3vHshfMKixB",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "587"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "artifactUri"
+              },
+              {
+                "bytes": "74657a6f732d73746f726167653a323442"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500899dbb860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "4f70656e6e657373204a757374696365204372656174696f6e"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "rarity"
+              },
+              {
+                "bytes": "556e69717565"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "shouldPreferSymbol"
+              },
+              {
+                "bytes": "66616c7365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "4d323442"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538372e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "587"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008b09020000011c0704010000000b61727469666163745572690a0000001174657a6f732d73746f726167653a32344207040100000004646174650a000000070500899dbb860c07040100000008646563696d616c730a0000000130070401000000046e616d650a000000194f70656e6e657373204a757374696365204372656174696f6e070401000000067261726974790a00000006556e697175650704010000001273686f756c6450726566657253796d626f6c0a0000000566616c73650704010000000673796d626f6c0a000000044d3234420704010000000c7468756d626e61696c5572690a0000002868747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538372e706e6707040100000001760a0000000132",
+    "key_hex": "008b09",
+    "want_value": {
+      "token_id": "587",
+      "token_info": {
+        "artifactUri": "tezos-storage:24B",
+        "date": "1617389385",
+        "decimals": "0",
+        "name": "Openness Justice Creation",
+        "rarity": "Unique",
+        "shouldPreferSymbol": "false",
+        "symbol": "M24B",
+        "thumbnailUri": "https://tezos-mandala.art/static/587.png",
+        "v": "2"
+      }
+    },
+    "want_key": "587"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruv5A8wcQQM73Ah7RmeijN1w5Wkeyr2UbBFB79qy6jecE2LfTpe",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "588"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "artifactUri"
+              },
+              {
+                "bytes": "74657a6f732d73746f726167653a323443"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500a39ebb860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "436c617269747920486f706520496e646570656e64656e6365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "rarity"
+              },
+              {
+                "bytes": "556e69717565"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "shouldPreferSymbol"
+              },
+              {
+                "bytes": "66616c7365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "4d323443"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538382e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "588"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008c09020000011c0704010000000b61727469666163745572690a0000001174657a6f732d73746f726167653a32344307040100000004646174650a000000070500a39ebb860c07040100000008646563696d616c730a0000000130070401000000046e616d650a00000019436c617269747920486f706520496e646570656e64656e6365070401000000067261726974790a00000006556e697175650704010000001273686f756c6450726566657253796d626f6c0a0000000566616c73650704010000000673796d626f6c0a000000044d3234430704010000000c7468756d626e61696c5572690a0000002868747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538382e706e6707040100000001760a0000000132",
+    "key_hex": "008c09",
+    "want_value": {
+      "token_id": "588",
+      "token_info": {
+        "artifactUri": "tezos-storage:24C",
+        "date": "1617389475",
+        "decimals": "0",
+        "name": "Clarity Hope Independence",
+        "rarity": "Unique",
+        "shouldPreferSymbol": "false",
+        "symbol": "M24C",
+        "thumbnailUri": "https://tezos-mandala.art/static/588.png",
+        "v": "2"
+      }
+    },
+    "want_key": "588"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtb3FKhAjZiWUmMAviSGCuQeVNQdi3PwfpZndQtzNBoVLsXVPvT",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "591"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "591"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008f09020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "008f09",
+    "want_value": {
+      "token_id": "591",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "591"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtny26xzj23pSLo5xvEPzmZhbD9BoNgW8vStNWf4T5vC1EeVPum",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "589"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "artifactUri"
+              },
+              {
+                "bytes": "74657a6f732d73746f726167653a323444"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "050085f9bf860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "4368617269736d6120436f6d666f727420436f756e74656e616e6365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "rarity"
+              },
+              {
+                "bytes": "556e69717565"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "shouldPreferSymbol"
+              },
+              {
+                "bytes": "66616c7365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "4d323444"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538392e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "589"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008d09020000011f0704010000000b61727469666163745572690a0000001174657a6f732d73746f726167653a32344407040100000004646174650a00000007050085f9bf860c07040100000008646563696d616c730a0000000130070401000000046e616d650a0000001c4368617269736d6120436f6d666f727420436f756e74656e616e6365070401000000067261726974790a00000006556e697175650704010000001273686f756c6450726566657253796d626f6c0a0000000566616c73650704010000000673796d626f6c0a000000044d3234440704010000000c7468756d626e61696c5572690a0000002868747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3538392e706e6707040100000001760a0000000132",
+    "key_hex": "008d09",
+    "want_value": {
+      "token_id": "589",
+      "token_info": {
+        "artifactUri": "tezos-storage:24D",
+        "date": "1617428037",
+        "decimals": "0",
+        "name": "Charisma Comfort Countenance",
+        "rarity": "Unique",
+        "shouldPreferSymbol": "false",
+        "symbol": "M24D",
+        "thumbnailUri": "https://tezos-mandala.art/static/589.png",
+        "v": "2"
+      }
+    },
+    "want_key": "589"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprvHTLmAK4Dk2Dfbxox5mE6c8zfrFVR5iZVmDtgFAwTfwoaS1iKZ",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "590"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "artifactUri"
+              },
+              {
+                "bytes": "74657a6f732d73746f726167653a323445"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "date"
+              },
+              {
+                "bytes": "0500adfebf860c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "466964656c69747920496e737069726174696f6e2053616e697479"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "rarity"
+              },
+              {
+                "bytes": "556e69717565"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "shouldPreferSymbol"
+              },
+              {
+                "bytes": "66616c7365"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "4d323445"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3539302e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "590"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707008e09020000011e0704010000000b61727469666163745572690a0000001174657a6f732d73746f726167653a32344507040100000004646174650a000000070500adfebf860c07040100000008646563696d616c730a0000000130070401000000046e616d650a0000001b466964656c69747920496e737069726174696f6e2053616e697479070401000000067261726974790a00000006556e697175650704010000001273686f756c6450726566657253796d626f6c0a0000000566616c73650704010000000673796d626f6c0a000000044d3234450704010000000c7468756d626e61696c5572690a0000002868747470733a2f2f74657a6f732d6d616e64616c612e6172742f7374617469632f3539302e706e6707040100000001760a0000000132",
+    "key_hex": "008e09",
+    "want_value": {
+      "token_id": "590",
+      "token_info": {
+        "artifactUri": "tezos-storage:24E",
+        "date": "1617428397",
+        "decimals": "0",
+        "name": "Fidelity Inspiration Sanity",
+        "rarity": "Unique",
+        "shouldPreferSymbol": "false",
+        "symbol": "M24E",
+        "thumbnailUri": "https://tezos-mandala.art/static/590.png",
+        "v": "2"
+      }
+    },
+    "want_key": "590"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruDuAZnFKqmLoisJqUGqrNzXTvw7PJM2rYk97JErM5FHCerQqgn",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "2"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "2"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070002020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0002",
+    "want_value": {
+      "token_id": "2",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "2"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprujyHLX2vacVy6AcFmAt5K3Y93aMtccrbNtcsCRik6fjxR8wL6x",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "3"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "3"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070003020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0003",
+    "want_value": {
+      "token_id": "3",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "3"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-expruhrcC4osJigCeAywh27e6iYerzr5LnhYDwnWJc7VrLg7SxJbtm",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "6"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "6"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070006020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0006",
+    "want_value": {
+      "token_id": "6",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "6"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprv1d5xmBww8CQpuSxyAE3g9m7x1Z15UTJ3zBTEFMVE9kqApyNDK",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "16"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "16"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070010020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0010",
+    "want_value": {
+      "token_id": "16",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "16"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprtYeQNTRz7VGLBUpmEPWFTtWBC5kegGJkM4Bru1ygRBDxZ6GuZw",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "20"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "31"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "20"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070014020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000131",
+    "key_hex": "0014",
+    "want_value": {
+      "token_id": "20",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "1"
+      }
+    },
+    "want_key": "20"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprv7xWJDSjARKQdcGbKmHt7DZ7rottczFKyeSPAXwpa6xNMMeMBx",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "31"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "31"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707001f020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "001f",
+    "want_value": {
+      "token_id": "31",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "31"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprutEDSQUwyxo81jG2M2XUQ5BZ392Ca8SDU3BcD1MTfwtGzbKSjd",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "21"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "21"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070015020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "0015",
+    "want_value": {
+      "token_id": "21",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "21"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprvGb9GKPyu9gzt7Pe2p8K8EGsS2hvnvhgvPebLfts7zp1YrKksr",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "89"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "89"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009901020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009901",
+    "want_value": {
+      "token_id": "89",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "89"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48969-exprui73gbYLJAoLAAMGfXtspA4ZgfbxnECZAMnnQx7SQq99Y6FpTV",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "88"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "53656564"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "v"
+              },
+              {
+                "bytes": "32"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "88"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707009801020000007407040100000008646563696d616c730a0000000130070401000000046e616d650a00000004536565640704010000000c7468756d626e61696c5572690a0000002568747470733a2f2f74657a6f732d6d616e64616c612e6172742f66617669636f6e2e706e6707040100000001760a0000000132",
+    "key_hex": "009801",
+    "want_value": {
+      "token_id": "88",
+      "token_info": {
+        "decimals": "0",
+        "name": "Seed",
+        "thumbnailUri": "https://tezos-mandala.art/favicon.png",
+        "v": "2"
+      }
+    },
+    "want_key": "88"
+  }
+]

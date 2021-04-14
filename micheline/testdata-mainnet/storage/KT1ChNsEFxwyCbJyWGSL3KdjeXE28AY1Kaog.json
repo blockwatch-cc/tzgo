@@ -1,0 +1,255 @@
+[{
+  "name": "Mainnet/KT1ChNsEFxwyCbJyWGSL3KdjeXE28AY1Kaog",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "prim": "key_hash"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%data"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%bakerName"
+                                    ],
+                                    "prim": "bytes"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%openForDelegation"
+                                    ],
+                                    "prim": "bool"
+                                  }
+                                ],
+                                "prim": "pair"
+                              },
+                              {
+                                "annots": [
+                                  "%bakerOffchainRegistryUrl"
+                                ],
+                                "prim": "bytes"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%split"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%bakerPaysFromAccounts"
+                                    ],
+                                    "args": [
+                                      {
+                                        "prim": "address"
+                                      }
+                                    ],
+                                    "prim": "list"
+                                  }
+                                ],
+                                "prim": "pair"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "args": [
+                                      {
+                                        "args": [
+                                          {
+                                            "annots": [
+                                              "%minDelegation"
+                                            ],
+                                            "prim": "nat"
+                                          },
+                                          {
+                                            "annots": [
+                                              "%subtractPayoutsLessThanMin"
+                                            ],
+                                            "prim": "bool"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "annots": [
+                                              "%payoutDelay"
+                                            ],
+                                            "prim": "int"
+                                          },
+                                          {
+                                            "args": [
+                                              {
+                                                "annots": [
+                                                  "%payoutFrequency"
+                                                ],
+                                                "prim": "nat"
+                                              },
+                                              {
+                                                "annots": [
+                                                  "%minPayout"
+                                                ],
+                                                "prim": "int"
+                                              }
+                                            ],
+                                            "prim": "pair"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "args": [
+                                          {
+                                            "annots": [
+                                              "%bakerChargesTransactionFee"
+                                            ],
+                                            "prim": "bool"
+                                          },
+                                          {
+                                            "annots": [
+                                              "%paymentConfigMask"
+                                            ],
+                                            "prim": "nat"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "annots": [
+                                              "%overDelegationThreshold"
+                                            ],
+                                            "prim": "nat"
+                                          },
+                                          {
+                                            "annots": [
+                                              "%subtractRewardsFromUninvitedDelegation"
+                                            ],
+                                            "prim": "bool"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "option"
+                  },
+                  {
+                    "annots": [
+                      "%reporterAccount"
+                    ],
+                    "args": [
+                      {
+                        "prim": "address"
+                      }
+                    ],
+                    "prim": "option"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "annots": [
+                  "%last_update"
+                ],
+                "prim": "timestamp"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "big_map"
+      },
+      {
+        "args": [
+          {
+            "annots": [
+              "%owner"
+            ],
+            "prim": "address"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%signup_fee"
+                ],
+                "prim": "mutez"
+              },
+              {
+                "annots": [
+                  "%update_fee"
+                ],
+                "prim": "mutez"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "int": "17"
+    },
+    {
+      "bytes": "0000176e8f231f39c20a1cbd1ce3cee7806abf52914e"
+    },
+    {
+      "int": "1500000"
+    },
+    {
+      "int": "500000"
+    }
+  ],
+  "type_hex": "07650761035d07650765066307650765076504690000000a2562616b65724e616d65045900000012256f70656e466f7244656c65676174696f6e0469000000192562616b65724f6666636861696e526567697374727955726c076507650462000000062573706c6974065f036e000000162562616b65725061797346726f6d4163636f756e747307650765076504620000000e256d696e44656c65676174696f6e04590000001b2573756274726163745061796f7574734c6573735468616e4d696e0765045b0000000c257061796f757444656c61790765046200000010257061796f75744672657175656e6379045b0000000a256d696e5061796f75740765076504590000001b2562616b6572436861726765735472616e73616374696f6e466565046200000012257061796d656e74436f6e6669674d61736b0765046200000018256f76657244656c65676174696f6e5468726573686f6c640459000000272573756274726163745265776172647346726f6d556e696e766974656444656c65676174696f6e0000000525646174610663036e00000010257265706f727465724163636f756e74046b0000000c256c6173745f7570646174650765046e00000006256f776e65720765046a0000000b257369676e75705f666565046a0000000b257570646174655f666565",
+  "value_hex": "020000002600110a000000160000176e8f231f39c20a1cbd1ce3cee7806abf52914e00a08db70100a0843d",
+  "want_value": {
+    "0": "17",
+    "owner": "tz1MmvgKBXw3NnUJF7jtZuv91U12CPFRabkp",
+    "signup_fee": "1500000",
+    "update_fee": "500000"
+  }
+}]

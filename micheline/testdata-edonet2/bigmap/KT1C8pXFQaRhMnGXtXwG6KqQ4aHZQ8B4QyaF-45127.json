@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Edonet2/KT1C8pXFQaRhMnGXtXwG6KqQ4aHZQ8B4QyaF-45127-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%auctionByToken"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "1"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "0861036203620000000f2561756374696f6e4279546f6b656e",
+    "value_hex": "0001",
+    "key_hex": "0000",
+    "want_value": "1",
+    "want_key": "0"
+  }
+]

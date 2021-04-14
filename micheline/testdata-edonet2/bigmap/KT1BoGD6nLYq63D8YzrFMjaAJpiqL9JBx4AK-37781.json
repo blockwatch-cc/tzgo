@@ -1,0 +1,438 @@
+[
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37781-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "0"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "050000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "0501000000095265642053616c7361"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "0501000000045253414c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "05010000002e68747470733a2f2f6b6f6c696272692d646174612e73332e616d617a6f6e6177732e636f6d2f6c6f676f2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070000020000009e07040100000008646563696d616c730a00000003050000070401000000046e616d650a0000000f0501000000095265642053616c73610704010000000673796d626f6c0a0000000a0501000000045253414c0704010000000c7468756d626e61696c5572690a0000003405010000002e68747470733a2f2f6b6f6c696272692d646174612e73332e616d617a6f6e6177732e636f6d2f6c6f676f2e706e67",
+    "key_hex": "0000",
+    "want_value": {
+      "token_id": "0",
+      "token_info": {
+        "decimals": "0",
+        "name": "Red Salsa",
+        "symbol": "RSAL",
+        "thumbnailUri": "https://kolibri-data.s3.amazonaws.com/logo.png"
+      }
+    },
+    "want_key": "0"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37781-expru2dKqDfZG8hu4wNGkiyunvq2hdSKuVYtcKta7BWP6Q18oNxKjS",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "050000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "0501000000095265642053616c7361"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "0501000000045253414c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "1"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707000102000000a107040100000008646563696d616c730a00000003050000070401000000046e616d650a0000000f0501000000095265642053616c73610704010000000673796d626f6c0a0000000a0501000000045253414c0704010000000c7468756d626e61696c5572690a0000003768747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67",
+    "key_hex": "0001",
+    "want_value": {
+      "token_id": "1",
+      "token_info": {
+        "decimals": "0",
+        "name": "Red Salsa",
+        "symbol": "RSAL",
+        "thumbnailUri": "https://taco-shop-cache.s3.amazonaws.com/salsa_logo.png"
+      }
+    },
+    "want_key": "1"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37781-expruDuAZnFKqmLoisJqUGqrNzXTvw7PJM2rYk97JErM5FHCerQqgn",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "2"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "050001"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "0501000000095265642053616c7361"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "0501000000045253414c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "2"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "0707000202000000a107040100000008646563696d616c730a00000003050001070401000000046e616d650a0000000f0501000000095265642053616c73610704010000000673796d626f6c0a0000000a0501000000045253414c0704010000000c7468756d626e61696c5572690a0000003768747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67",
+    "key_hex": "0002",
+    "want_value": {
+      "token_id": "2",
+      "token_info": {
+        "decimals": "1",
+        "name": "Red Salsa",
+        "symbol": "RSAL",
+        "thumbnailUri": "https://taco-shop-cache.s3.amazonaws.com/salsa_logo.png"
+      }
+    },
+    "want_key": "2"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37781-exprujyHLX2vacVy6AcFmAt5K3Y93aMtccrbNtcsCRik6fjxR8wL6x",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "3"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "30"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "5265642053616c7361"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "5253414c"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "68747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "3"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070003020000009307040100000008646563696d616c730a0000000130070401000000046e616d650a000000095265642053616c73610704010000000673796d626f6c0a000000045253414c0704010000000c7468756d626e61696c5572690a0000003768747470733a2f2f7461636f2d73686f702d63616368652e73332e616d617a6f6e6177732e636f6d2f73616c73615f6c6f676f2e706e67",
+    "key_hex": "0003",
+    "want_value": {
+      "token_id": "3",
+      "token_info": {
+        "decimals": "0",
+        "name": "Red Salsa",
+        "symbol": "RSAL",
+        "thumbnailUri": "https://taco-shop-cache.s3.amazonaws.com/salsa_logo.png"
+      }
+    },
+    "want_key": "3"
+  }
+]

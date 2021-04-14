@@ -1,0 +1,75 @@
+[
+  {
+    "name": "Mainnet/KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW-518-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_id"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%token_info"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "0"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": ""
+              },
+              {
+                "bytes": "050100000035697066733a2f2f516d535673667748386573375572326571746f3968567063643264665741536d45614e7854507063796d754a7a67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "08610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "070700000200000047070401000000000a0000003b050100000035697066733a2f2f516d535673667748386573375572326571746f3968567063643264665741536d45614e7854507063796d754a7a67",
+    "key_hex": "0000",
+    "want_value": {
+      "token_id": "0",
+      "token_info": {
+        "": "ipfs://QmSVsfwH8es7Ur2eqto9hVpcd2dfWASmEaNxTPpcymuJzg"
+      }
+    },
+    "want_key": "0"
+  }
+]

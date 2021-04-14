@@ -1,0 +1,967 @@
+[{
+  "name": "Edonet2/KT1A3i2oEwDQn3V95ptLDGX77wXReMVLdip3",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%active"
+                    ],
+                    "prim": "bool"
+                  },
+                  {
+                    "annots": [
+                      "%admin"
+                    ],
+                    "prim": "address"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%decimals"
+                    ],
+                    "prim": "nat"
+                  },
+                  {
+                    "annots": [
+                      "%latestRoundId"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%linkToken"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      "%maxSubmissions"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%metadata"
+                    ],
+                    "args": [
+                      {
+                        "prim": "string"
+                      },
+                      {
+                        "prim": "bytes"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%minSubmissions"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%oraclePayment"
+                    ],
+                    "prim": "nat"
+                  },
+                  {
+                    "annots": [
+                      "%oracles"
+                    ],
+                    "args": [
+                      {
+                        "prim": "address"
+                      },
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%adminAddress"
+                                ],
+                                "prim": "address"
+                              },
+                              {
+                                "annots": [
+                                  "%endingRound"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%lastStartedRound"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%startingRound"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%withdrawable"
+                                    ],
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "map"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%previousRoundDetails"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%activeOracles"
+                            ],
+                            "args": [
+                              {
+                                "prim": "address"
+                              }
+                            ],
+                            "prim": "set"
+                          },
+                          {
+                            "annots": [
+                              "%maxSubmissions"
+                            ],
+                            "prim": "nat"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%minSubmissions"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%submissions"
+                                ],
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  },
+                                  {
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "map"
+                              },
+                              {
+                                "annots": [
+                                  "%timeout"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "annots": [
+                      "%recordedFunds"
+                    ],
+                    "args": [
+                      {
+                        "annots": [
+                          "%allocated"
+                        ],
+                        "prim": "nat"
+                      },
+                      {
+                        "annots": [
+                          "%available"
+                        ],
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%reportingRoundDetails"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%activeOracles"
+                            ],
+                            "args": [
+                              {
+                                "prim": "address"
+                              }
+                            ],
+                            "prim": "set"
+                          },
+                          {
+                            "annots": [
+                              "%maxSubmissions"
+                            ],
+                            "prim": "nat"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%minSubmissions"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%submissions"
+                                ],
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  },
+                                  {
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "map"
+                              },
+                              {
+                                "annots": [
+                                  "%timeout"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "annots": [
+                      "%reportingRoundId"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%restartDelay"
+                    ],
+                    "prim": "nat"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%rounds"
+                        ],
+                        "args": [
+                          {
+                            "prim": "nat"
+                          },
+                          {
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%answer"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%answeredInRound"
+                                    ],
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "pair"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%roundId"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "annots": [
+                                          "%startedAt"
+                                        ],
+                                        "prim": "timestamp"
+                                      },
+                                      {
+                                        "annots": [
+                                          "%updatedAt"
+                                        ],
+                                        "prim": "timestamp"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "big_map"
+                      },
+                      {
+                        "annots": [
+                          "%timeout"
+                        ],
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "prim": "True"
+              },
+              {
+                "bytes": "01d336712cdcc5c2a03998d16bb024287cccace03500"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "8"
+              },
+              {
+                "int": "262"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "bytes": "017e9816c253b7106643b6e42a44852047263fc20300"
+          },
+          {
+            "int": "6"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "49530"
+      },
+      {
+        "int": "3"
+      }
+    ],
+    [
+      {
+        "args": [
+          {
+            "int": "1"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "262"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "339"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "0000307d661d1545f29ae105041605242b5b2182cd61"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "0000307d661d1545f29ae105041605242b5b2182cd61"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "374"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "000053dfa44489438013dec3de6e96b47cf6b550c9f8"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "000053dfa44489438013dec3de6e96b47cf6b550c9f8"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "261"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "396"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "248"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "395"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "94"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "398"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+                },
+                [
+                  {
+                    "args": [
+                      {
+                        "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+                      },
+                      {
+                        "int": "4294967295"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "260"
+                  },
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "int": "402"
+                  }
+                ]
+              ],
+              "prim": "Elt"
+            }
+          ]
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            [
+              {
+                "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+              },
+              {
+                "bytes": "0000307d661d1545f29ae105041605242b5b2182cd61"
+              },
+              {
+                "bytes": "000053dfa44489438013dec3de6e96b47cf6b550c9f8"
+              },
+              {
+                "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+              },
+              {
+                "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+              },
+              {
+                "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+              }
+            ],
+            {
+              "int": "6"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "3"
+        },
+        [
+          {
+            "args": [
+              {
+                "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+              },
+              {
+                "int": "452870000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "000053dfa44489438013dec3de6e96b47cf6b550c9f8"
+              },
+              {
+                "int": "453562000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+              },
+              {
+                "int": "452870000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+              },
+              {
+                "int": "454000000"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+              },
+              {
+                "int": "453656000"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ],
+        {
+          "int": "5"
+        }
+      ],
+      {
+        "int": "2356"
+      },
+      {
+        "int": "497644"
+      }
+    ],
+    {
+      "args": [
+        [
+          {
+            "args": [
+              [
+                {
+                  "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+                },
+                {
+                  "bytes": "0000307d661d1545f29ae105041605242b5b2182cd61"
+                },
+                {
+                  "bytes": "000053dfa44489438013dec3de6e96b47cf6b550c9f8"
+                },
+                {
+                  "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+                },
+                {
+                  "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+                },
+                {
+                  "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+                }
+              ],
+              {
+                "int": "6"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "int": "3"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "00001d0c1c01b2dfec703b53d3315102300746c1a648"
+                },
+                {
+                  "int": "453600000"
+                }
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "000067fccdb04a1c9550edbff2f3855b5b471f13cdd8"
+                },
+                {
+                  "int": "451740000"
+                }
+              ],
+              "prim": "Elt"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "00007b0ac5744520dc0e74d3da7c79ad38d49882eafd"
+                },
+                {
+                  "int": "455000000"
+                }
+              ],
+              "prim": "Elt"
+            }
+          ],
+          {
+            "int": "5"
+          }
+        ],
+        {
+          "int": "262"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "1"
+    },
+    {
+      "int": "49531"
+    },
+    {
+      "int": "5"
+    }
+  ],
+  "type_hex": "076507650765076504590000000725616374697665046e000000062561646d696e076504620000000925646563696d616c7304620000000e256c6174657374526f756e64496407650765046e0000000a256c696e6b546f6b656e04620000000f256d61785375626d697373696f6e73076508610368036900000009256d6574616461746104620000000f256d696e5375626d697373696f6e7307650765076504620000000e256f7261636c655061796d656e740860036e07650765046e0000000d2561646d696e4164647265737304620000000c25656e64696e67526f756e640765046200000011256c61737453746172746564526f756e64076504620000000e257374617274696e67526f756e6404620000000d25776974686472617761626c6500000008256f7261636c65730765086507650666036e0000000e256163746976654f7261636c657304620000000f256d61785375626d697373696f6e73076504620000000f256d696e5375626d697373696f6e7307650860036e03620000000c257375626d697373696f6e730462000000082574696d656f7574000000152570726576696f7573526f756e6444657461696c73086504620000000a25616c6c6f636174656404620000000a25617661696c61626c650000000e257265636f7264656446756e647307650765086507650666036e0000000e256163746976654f7261636c657304620000000f256d61785375626d697373696f6e73076504620000000f256d696e5375626d697373696f6e7307650860036e03620000000c257375626d697373696f6e730462000000082574696d656f757400000016257265706f7274696e67526f756e6444657461696c73046200000011257265706f7274696e67526f756e644964076504620000000d257265737461727444656c61790765086103620765076504620000000725616e7377657204620000001025616e737765726564496e526f756e64076504620000000825726f756e6449640765046b0000000a25737461727465644174046b0000000a257570646174656441740000000725726f756e64730462000000082574696d656f7574",
+  "value_hex": "02000004cb020000004d07070707030a0a0000001601d336712cdcc5c2a03998d16bb024287cccace035000707000800860407070a00000016017e9816c253b7106643b6e42a44852047263fc20300000600ba8506000302000003450707000102000001cd07040a0000001600001d0c1c01b2dfec703b53d3315102300746c1a648020000002b07070a0000001600001d0c1c01b2dfec703b53d3315102300746c1a64800bfffffff1f008604000000930507040a000000160000307d661d1545f29ae105041605242b5b2182cd61020000002a07070a000000160000307d661d1545f29ae105041605242b5b2182cd6100bfffffff1f0000000000b60507040a00000016000053dfa44489438013dec3de6e96b47cf6b550c9f8020000002b07070a00000016000053dfa44489438013dec3de6e96b47cf6b550c9f800bfffffff1f0085040000008c0607040a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd8020000002b07070a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd800bfffffff1f00b8030000008b0607040a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd020000002b07070a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd00bfffffff1f009e010000008e0607040a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d4020000002b07070a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d400bfffffff1f00840400000092060200000163070702000000a20a0000001600001d0c1c01b2dfec703b53d3315102300746c1a6480a000000160000307d661d1545f29ae105041605242b5b2182cd610a00000016000053dfa44489438013dec3de6e96b47cf6b550c9f80a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd80a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd0a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d40006000302000000af07040a0000001600001d0c1c01b2dfec703b53d3315102300746c1a64800b0fdf1af0307040a00000016000053dfa44489438013dec3de6e96b47cf6b550c9f80090bac6b00307040a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd800b0fdf1af0307040a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd0080f6fbb00307040a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d40080f7d1b003000500b42400acdf3c0707020000011d070702000000a20a0000001600001d0c1c01b2dfec703b53d3315102300746c1a6480a000000160000307d661d1545f29ae105041605242b5b2182cd610a00000016000053dfa44489438013dec3de6e96b47cf6b550c9f80a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd80a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd0a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d400060003020000006907040a0000001600001d0c1c01b2dfec703b53d3315102300746c1a64800808ccbb00307040a00000016000067fccdb04a1c9550edbff2f3855b5b471f13cdd800a085e8ae0307040a0000001600007b0ac5744520dc0e74d3da7c79ad38d49882eafd0080fff5b1030005008604000100bb85060005",
+  "want_value": {
+    "active": true,
+    "admin": "KT1TqZMwjEzaQiKV5vJsCBtKxWur7UkwLoLK",
+    "decimals": "8",
+    "latestRoundId": "262",
+    "linkToken": "KT1L88uFw2PygVSRPyt7Q6P17SQ8P8TkSZCK",
+    "maxSubmissions": "6",
+    "metadata": "49530",
+    "minSubmissions": "3",
+    "oraclePayment": "1",
+    "oracles": {
+      "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff": {
+        "adminAddress": "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff",
+        "endingRound": "4294967295",
+        "lastStartedRound": "262",
+        "startingRound": "0",
+        "withdrawable": "339"
+      },
+      "tz1Q4RMCD7Buzd9NRBfCmYaZ8vNP5NjftAdL": {
+        "adminAddress": "tz1Q4RMCD7Buzd9NRBfCmYaZ8vNP5NjftAdL",
+        "endingRound": "4294967295",
+        "lastStartedRound": "0",
+        "startingRound": "0",
+        "withdrawable": "374"
+      },
+      "tz1THWgwHiDfCBk2cjipYPLE3DA6hWqmgEBX": {
+        "adminAddress": "tz1THWgwHiDfCBk2cjipYPLE3DA6hWqmgEBX",
+        "endingRound": "4294967295",
+        "lastStartedRound": "261",
+        "startingRound": "0",
+        "withdrawable": "396"
+      },
+      "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na": {
+        "adminAddress": "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na",
+        "endingRound": "4294967295",
+        "lastStartedRound": "248",
+        "startingRound": "0",
+        "withdrawable": "395"
+      },
+      "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61": {
+        "adminAddress": "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61",
+        "endingRound": "4294967295",
+        "lastStartedRound": "94",
+        "startingRound": "0",
+        "withdrawable": "398"
+      },
+      "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t": {
+        "adminAddress": "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t",
+        "endingRound": "4294967295",
+        "lastStartedRound": "260",
+        "startingRound": "0",
+        "withdrawable": "402"
+      }
+    },
+    "previousRoundDetails": {
+      "activeOracles": [
+        "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff",
+        "tz1Q4RMCD7Buzd9NRBfCmYaZ8vNP5NjftAdL",
+        "tz1THWgwHiDfCBk2cjipYPLE3DA6hWqmgEBX",
+        "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na",
+        "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61",
+        "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t"
+      ],
+      "maxSubmissions": "6",
+      "minSubmissions": "3",
+      "submissions": {
+        "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff": "452870000",
+        "tz1THWgwHiDfCBk2cjipYPLE3DA6hWqmgEBX": "453562000",
+        "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na": "452870000",
+        "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61": "454000000",
+        "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t": "453656000"
+      },
+      "timeout": "5"
+    },
+    "recordedFunds": {
+      "allocated": "2356",
+      "available": "497644"
+    },
+    "reportingRoundDetails": {
+      "activeOracles": [
+        "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff",
+        "tz1Q4RMCD7Buzd9NRBfCmYaZ8vNP5NjftAdL",
+        "tz1THWgwHiDfCBk2cjipYPLE3DA6hWqmgEBX",
+        "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na",
+        "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61",
+        "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t"
+      ],
+      "maxSubmissions": "6",
+      "minSubmissions": "3",
+      "submissions": {
+        "tz1NHco4L3SqhC8RboiSqXPZCRZsEgym3mff": "453600000",
+        "tz1V7s8yGAkvYwnCpvvsvXLG8qWgLb89f9na": "451740000",
+        "tz1Wrci7nNmUTNLrWaFHUjw4At5fwXjzrc61": "455000000"
+      },
+      "timeout": "5"
+    },
+    "reportingRoundId": "262",
+    "restartDelay": "1",
+    "rounds": "49531",
+    "timeout": "5"
+  }
+}]

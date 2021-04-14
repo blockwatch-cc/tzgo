@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48968-exprtgwFRdyXNw6XCgX3xh4RDALn7bQdNfd5P6tGd7CqsbykuQxGVE",
+    "type": {
+      "annots": [
+        "%shareholders"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "nat"
+            },
+            {
+              "prim": "mutez"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "90000"
+        },
+        {
+          "int": "135000000"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "000069242cd5609305367d4c3b1eaeeef27d0bdd501a"
+    },
+    "type_hex": "0861036e07650362036a0000000d257368617265686f6c64657273",
+    "value_hex": "07070090fe0a0080bfdf8001",
+    "key_hex": "0a00000016000069242cd5609305367d4c3b1eaeeef27d0bdd501a",
+    "want_value": {
+      "0": "90000",
+      "1": "135000000"
+    },
+    "want_key": "tz1VDxykfBK5TZ1GKNtJ82PYoXJQso7W2Yjz"
+  },
+  {
+    "name": "Edonet2/KT195Mo1aBBLvzMVGQhiSWRDngp5PoQANavy-48968-expru7JKFrDmGLNBfkXqJdHffQnf8c4KwuQz75rLHDWgYMNGvCXisC",
+    "type": {
+      "annots": [
+        "%shareholders"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "nat"
+            },
+            {
+              "prim": "mutez"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "10000"
+        },
+        {
+          "int": "15000000"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000b01df6826da714e86b2068307e1046f98ab1caac"
+    },
+    "type_hex": "0861036e07650362036a0000000d257368617265686f6c64657273",
+    "value_hex": "070700909c01008087a70e",
+    "key_hex": "0a000000160000b01df6826da714e86b2068307e1046f98ab1caac",
+    "want_value": {
+      "0": "10000",
+      "1": "15000000"
+    },
+    "want_key": "tz1bhFWjzYLw9uDnHLaQAYLo4ydfuCkVZaBr"
+  }
+]

@@ -1,0 +1,105 @@
+[
+  {
+    "name": "Mainnet/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV-382-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%token_metadata"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "map"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "0"
+        },
+        [
+          {
+            "args": [
+              {
+                "string": "decimals"
+              },
+              {
+                "bytes": "3138"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "name"
+              },
+              {
+                "bytes": "4b6f6c6962726920555344"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "symbol"
+              },
+              {
+                "bytes": "6b555344"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "thumbnailUri"
+              },
+              {
+                "bytes": "2068747470733a2f2f6b6f6c696272692d646174612e73332e616d617a6f6e6177732e636f6d2f6c6f676f2e706e67"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "08610362076503620760036803690000000f25746f6b656e5f6d65746164617461",
+    "value_hex": "07070000020000008e07040100000008646563696d616c730a000000023138070401000000046e616d650a0000000b4b6f6c69627269205553440704010000000673796d626f6c0a000000046b5553440704010000000c7468756d626e61696c5572690a0000002f2068747470733a2f2f6b6f6c696272692d646174612e73332e616d617a6f6e6177732e636f6d2f6c6f676f2e706e67",
+    "key_hex": "0000",
+    "want_value": {
+      "0": "0",
+      "1": {
+        "decimals": "18",
+        "name": "Kolibri USD",
+        "symbol": "kUSD",
+        "thumbnailUri": " https://kolibri-data.s3.amazonaws.com/logo.png"
+      }
+    },
+    "want_key": "0"
+  }
+]

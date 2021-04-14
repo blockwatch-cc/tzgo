@@ -1,0 +1,206 @@
+[{
+  "name": "Mainnet/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%administrator"
+                ],
+                "prim": "address"
+              },
+              {
+                "annots": [
+                  "%balances"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%approvals"
+                        ],
+                        "args": [
+                          {
+                            "prim": "address"
+                          },
+                          {
+                            "prim": "nat"
+                          }
+                        ],
+                        "prim": "map"
+                      },
+                      {
+                        "annots": [
+                          "%balance"
+                        ],
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "big_map"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%debtCeiling"
+                ],
+                "prim": "nat"
+              },
+              {
+                "annots": [
+                  "%governorContractAddress"
+                ],
+                "prim": "address"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%metadata"
+                ],
+                "args": [
+                  {
+                    "prim": "string"
+                  },
+                  {
+                    "prim": "bytes"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "annots": [
+                  "%paused"
+                ],
+                "prim": "bool"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%token_metadata"
+                ],
+                "args": [
+                  {
+                    "prim": "nat"
+                  },
+                  {
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "args": [
+                          {
+                            "prim": "string"
+                          },
+                          {
+                            "prim": "bytes"
+                          }
+                        ],
+                        "prim": "map"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "annots": [
+                  "%totalSupply"
+                ],
+                "prim": "nat"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "args": [
+        {
+          "args": [
+            {
+              "bytes": "01d4a05778c3b8380cffddf6ec231a46cc577ab19100"
+            },
+            {
+              "int": "380"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "int": "1500000000000000000000000"
+            },
+            {
+              "bytes": "016957b767c0d09c6376afef66728edd59fca059ac00"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "args": [
+        {
+          "int": "381"
+        },
+        {
+          "prim": "False"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "382"
+    },
+    {
+      "int": "1271426512951438679120124"
+    }
+  ],
+  "type_hex": "076507650765046e0000000e2561646d696e6973747261746f720861036e07650860036e03620000000a25617070726f76616c730462000000082562616c616e6365000000092562616c616e636573076504620000000c25646562744365696c696e67046e0000001825676f7665726e6f72436f6e7472616374416464726573730765076508610368036900000009256d6574616461746104590000000725706175736564076508610362076503620760036803690000000f25746f6b656e5f6d6574616461746104620000000c25746f74616c537570706c79",
+  "value_hex": "0200000063070707070a0000001601d4a05778c3b8380cffddf6ec231a46cc577ab1910000bc05070700808080988ed999b6d38ced130a00000016016957b767c0d09c6376afef66728edd59fca059ac00070700bd05030300be0500bce3b4a4cfbd93dcd6f0e910",
+  "want_value": {
+    "administrator": "KT1Ty2uAmF5JxWyeGrVpk17MEyzVB8cXs8aJ",
+    "balances": "380",
+    "debtCeiling": "1500000000000000000000000",
+    "governorContractAddress": "KT1JBmbYxTv3xptk2CadgEdMfjUCUXKEfe5u",
+    "metadata": "381",
+    "paused": false,
+    "token_metadata": "382",
+    "totalSupply": "1271426512951438679120124"
+  }
+}]

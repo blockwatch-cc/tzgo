@@ -1,0 +1,1375 @@
+[
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtxcQXJiJWzb5PvjHzkf2LKvnvmbvKdNDSvWzegiTMAKsvTgijL",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "0501000000044e4c4576"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000a0501000000044e4c4576",
+    "want_value": "0",
+    "want_key": "NLEv"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtpvmHQSdsTfi817fL68X6AsugsEBPbdDbYs2JHDbxfMuopRcsE",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "05008090dfc04a"
+    },
+    "key": {
+      "bytes": "05010000000473436170"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a0000000705008090dfc04a",
+    "key_hex": "0a0000000a05010000000473436170",
+    "want_value": "10000000000",
+    "want_key": "sCap"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprupRyLDyQCCK2jxCTQaSpNDKU9XhprJtCBTMh1fNScU1f2aGGaw",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050707010000000d4453205465737420546f6b656e07070100000003445354000c"
+    },
+    "key": {
+      "bytes": "050100000005734d657461"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000021050707010000000d4453205465737420546f6b656e07070100000003445354000c",
+    "key_hex": "0a0000000b050100000005734d657461",
+    "want_value": {
+      "0": "DS Test Token",
+      "1": "DST",
+      "2": "12"
+    },
+    "want_key": "sMeta"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruvzFy6cVMt99xFG6DkJ9jFBtTg372KsfYLQfmAxs3nmi9kFjTX",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "05010000000673546f74616c"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000c05010000000673546f74616c",
+    "want_value": "0",
+    "want_key": "sTotal"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvBKvHeW2mqKSNG8gFibAhybGBoLx5Jv8z2WYDRKDaGZZE8CPyF",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050a00000016000055ef1b7187b649eb7ce7eb78763a44a1cbb2f95f"
+    },
+    "key": {
+      "bytes": "050100000007734d6173746572"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a0000001c050a00000016000055ef1b7187b649eb7ce7eb78763a44a1cbb2f95f",
+    "key_hex": "0a0000000d050100000007734d6173746572",
+    "want_value": "tz1TUQZtFFZ4Eh7TsYzrL7qFVvabTM63qAqY",
+    "want_key": "sMaster"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtsxbocUu4mMERJzv1ufBTqqWwk7G496BCmk732NzwMfVi1vs4h",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050303"
+    },
+    "key": {
+      "bytes": "05010000000773506175736564"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050303",
+    "key_hex": "0a0000000d05010000000773506175736564",
+    "want_value": false,
+    "want_key": "sPaused"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvSgo36Zk7gT3tiPyZqxkRkQ2BRdR5L8jPzxfugtNLCAxGw9anc",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "05010000000c73546f74616c4d696e746564"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000001205010000000c73546f74616c4d696e746564",
+    "want_value": "0",
+    "want_key": "sTotalMinted"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruULtAS27Uuhi2GVcpyoRMxjUaD8weBNdbyfHZHSzwmgovhEU5S",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "0500a401"
+    },
+    "key": {
+      "bytes": "050100000014734d61784c6f636b73506572496e766573746f72"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a000000040500a401",
+    "key_hex": "0a0000001a050100000014734d61784c6f636b73506572496e766573746f72",
+    "want_value": "100",
+    "want_key": "sMaxLocksPerInvestor"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruYxnowmWKdLswU7GHU4WCLWiWnSbRVnGrpao1UwERRAYEXQ5yC",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050001"
+    },
+    "key": {
+      "bytes": "050707010000000673526f6c65730a00000016000055ef1b7187b649eb7ce7eb78763a44a1cbb2f95f"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050001",
+    "key_hex": "0a00000029050707010000000673526f6c65730a00000016000055ef1b7187b649eb7ce7eb78763a44a1cbb2f95f",
+    "want_value": "1",
+    "want_key": {
+      "0": "sRoles",
+      "1": "tz1TUQZtFFZ4Eh7TsYzrL7qFVvabTM63qAqY"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruLoov17ndGNFCNRmC3jwN6S55dWHGKFBrm91dsjFrJk3qsP5Ns",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050707070707070707000000000707000000000707070700000000070700a401000007070707070700000000070700000000070707070000000007070303070703030303"
+    },
+    "key": {
+      "bytes": "0501000000024349"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000044050707070707070707000000000707000000000707070700000000070700a401000007070707070700000000070700000000070707070000000007070303070703030303",
+    "key_hex": "0a000000080501000000024349",
+    "want_value": {
+      "0": "0",
+      "10": "0",
+      "11": "0",
+      "12": "0",
+      "13": "0",
+      "14": false,
+      "15": false,
+      "16": false,
+      "1": "0",
+      "2": "0",
+      "3": "0",
+      "4": "0",
+      "5": "0",
+      "6": "100",
+      "7": "0",
+      "8": "0",
+      "9": "0"
+    },
+    "want_key": "CI"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvEiBikjEhrMViD5cWWxCX4o25hw7YJgi3gCJpXZ77fGmTohvDS",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "0501000000044e455552"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000a0501000000044e455552",
+    "want_value": "0",
+    "want_key": "NEUR"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruDvr4jWdxb6J1UrXPBqXnn2Qn7F5uJCi1AFVkq92jkH5qgPNn8",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "0501000000044e496e76"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000a0501000000044e496e76",
+    "want_value": "0",
+    "want_key": "NInv"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expru74JzsUChU1Hh8FzwiRFSTZmV8yjQ2WJXG38xw8AL9CubXr4xE",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "0501000000064e5553496e76"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000c0501000000064e5553496e76",
+    "want_value": "0",
+    "want_key": "NUSInv"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expru78dusE1B2gGTfHGEvnDZ8CUGgg5NsXstzx21A1nFd43mVkmQq",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "050100000007734e5553416363"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000d050100000007734e5553416363",
+    "want_value": "0",
+    "want_key": "sNUSAcc"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprttn3fMwgeQkA6tj6epsxpJUVzrii3rCW1P8ESsRX7UxAVswUre",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050000"
+    },
+    "key": {
+      "bytes": "050100000008734e4e6f6e416363"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050000",
+    "key_hex": "0a0000000e050100000008734e4e6f6e416363",
+    "want_value": "0",
+    "want_key": "sNNonAcc"
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruUpu2CsGK5W2uabTe7ixQE8Lcho9VTB2yzX3tMrgiVFpwm41ck",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024154"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024154",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "AT"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruRWgqS5yhyBLS6YPC4YfjwXd7r5Jqr11fbmMwQJRbBjSK4CYrr",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024245"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024245",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "BE"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprucrdvfEe9kTPH6HFvbKNjwfEXns96rpgiwoXVa6AKoZpXc8uYE",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024247"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024247",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "BG"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtdRGvVpYcehTKw83cAN6djVFopRi2uKY1jFD7YBAgCdNdYQr39",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024348"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024348",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "CH"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruVRcU8QWSXzfkwndvonebiqsCL3ExTppARM7hatoTADmcsGgsf",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024359"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024359",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "CY"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprure8hL5kUiVYjy7PKBpnKbcCKCqYLRxniH82C2xBwgAGm6KkYh",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "05070701000000034353730100000002435a"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a0000001205070701000000034353730100000002435a",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "CZ"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruZAwRbJwFTDP1ZpcUUrvwTvz4sLSxhxC9hcsagg8gzGtRYSHfn",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024445"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024445",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "DE"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvC8jar5Ywd4bndmpDRdjvgYkYscYBkmZyfUSjkLipBG9WKcLPj",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "05070701000000034353730100000002444b"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a0000001205070701000000034353730100000002444b",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "DK"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtstnb6wj6fYokLXLuG5fG4bHiSCatZ2jh6T623gnALj9isUcbN",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024545"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024545",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "EE"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruDhxna3jnrBkfqXRpfxUtmGmpTcNHqtVkAvZ1CD7fbocKoZSxV",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024553"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024553",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "ES"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruWucfQNzjBQ6Xz218nWytSx1uBafeERG9CvjDd6g1KcgUmu9S4",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024649"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024649",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "FI"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvBEKZ59XLyqQWc67mFT76AbzXRBph7QgFZc5u8osZ6itGYgcnG",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024652"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024652",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "FR"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprudegPxd7R6cUwyf6wqWMyAM3taZUD78bZL1essjg2k4WyNYBQ1",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024742"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024742",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "GB"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruCMj3ZkCP9KHjZDf1C5neSP74fwQEd6hkng1LfD7fzUH9ivHTJ",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024752"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024752",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "GR"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruMUgK8SYB1t38i82yrTkpY7zpHUqTvrhkP6yasXS2A6MZMVAwa",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024852"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024852",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "HR"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprv3f7diwjPQoFUGooc1giw9Z9HJTGSDLFSbAWkPSEpeEQqjVPNb",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024855"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024855",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "HU"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprusQdjBY8Qso9QKTm4MHuZK5YhiRRjY9zgvUZcY7dFtSWDsBszg",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024945"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024945",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "IE"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruockQZNiRN8vqC8EMeedHqbzzWa2JhN9Gq3Pv9X2NnYmCt25LF",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024953"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024953",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "IS"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruSSmq8uQYfFnR72RPW4n8vtmV7JHmqw6t4TaCeD3sxXPW7BjCY",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024954"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024954",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "IT"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruXqUr5v6UJeLtVU2WZU1iUZ7heUnLgawPPvc53y2WDpetZH3wY",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024c49"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024c49",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "LI"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruFbkR45xUuL8NFWvNJ5nHipSzxhHoVEBb4PvQbMg1oMgomtsAb",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024c54"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024c54",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "LT"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruf6cYpc4UdnobGbFqoi7xLnP2mGBawEZjfttU7MaZ3wf3D1CWx",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024c55"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024c55",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "LU"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expru2o7phYwoUtc8RxjrNTJtPqJig6kbnB9DnPCpt7MNr8jP6Xz6n",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024c56"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024c56",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "LV"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvApXCbo7nvveiMWiMRgePejApbNDMucbq1c499kUKhYK61Lixy",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024d54"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024d54",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "MT"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprttgMr9cdhMv97E9HHGXkLzWzGjd8sZHktgm3BfXH4tngyux8aj",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024e4c"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024e4c",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "NL"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprv3ysTVFHjG6EV63QZR2vTRkNrtjVBhiavxorjUVR4sJbjo88Jk",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000024e4f"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000024e4f",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "NO"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprv4WBmojLCmJqugD82Qap3q5a6VNCHnWcdGwYMkZNKLc6gwS2vv",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "05070701000000034353730100000002504c"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a0000001205070701000000034353730100000002504c",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "PL"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprtsydeY63NR7jyeXVKQBLmuQA95QFPTivcxFpFXKNDahvTue83y",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000025054"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000025054",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "PT"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruHgo2mmfAf7NTvQck3mm9MVpFZQvLMSBXdkeXmSfTYSBCzJs3t",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "05070701000000034353730100000002524f"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a0000001205070701000000034353730100000002524f",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "RO"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprto2zg3E57qDoFUsx2V2svgVMWfjYMd5hR8rYt91hX7CR1jGbcZ",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000025345"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000025345",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "SE"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprvDdhFQQ8YvXEM6Hkd7YoEFmWS5suxdFA3eppt36jLCFACnJgW9",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000025349"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a00000012050707010000000343537301000000025349",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "SI"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruZEGvBPTmtfxSGMSDoeSB3foL861pfNZ1LLdczZuZf4VGGfcDX",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050002"
+    },
+    "key": {
+      "bytes": "05070701000000034353730100000002534b"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050002",
+    "key_hex": "0a0000001205070701000000034353730100000002534b",
+    "want_value": "2",
+    "want_key": {
+      "0": "CSs",
+      "1": "SK"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-expruFNTGbgSf72rettA4MsTcf1DvMHpzJxDu6qwbBW9h36V6weBHs",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "050001"
+    },
+    "key": {
+      "bytes": "050707010000000343537301000000025553"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a00000003050001",
+    "key_hex": "0a00000012050707010000000343537301000000025553",
+    "want_value": "1",
+    "want_key": {
+      "0": "CSs",
+      "1": "US"
+    }
+  },
+  {
+    "name": "Mainnet/KT1NQfJvo9v8hXmEgqos8NP7sS8V4qaEfvRF-12-exprts1DraXN8WoBhS842vEirex4U1ZA2ViHufENoQWJskG9v65GDm",
+    "type": {
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "0502000000270316031607430368010000001655706172616d4e6f53756368456e747279506f696e7403420327"
+    },
+    "key": {
+      "bytes": "05010000000866616c6c6261636b"
+    },
+    "type_hex": "076103690369",
+    "value_hex": "0a0000002d0502000000270316031607430368010000001655706172616d4e6f53756368456e747279506f696e7403420327",
+    "key_hex": "0a0000000e05010000000866616c6c6261636b",
+    "want_value": [
+      {
+        "prim": "CAR"
+      },
+      {
+        "prim": "CAR"
+      },
+      {
+        "args": [
+          {
+            "prim": "string"
+          },
+          {
+            "string": "UparamNoSuchEntryPoint"
+          }
+        ],
+        "prim": "PUSH"
+      },
+      {
+        "prim": "PAIR"
+      },
+      {
+        "prim": "FAILWITH"
+      }
+    ],
+    "want_key": "fallback"
+  }
+]

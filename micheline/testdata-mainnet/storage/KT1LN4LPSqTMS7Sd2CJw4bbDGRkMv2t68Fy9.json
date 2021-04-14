@@ -1,0 +1,103 @@
+[{
+  "name": "Mainnet/KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9",
+  "type": {
+    "args": [
+      {
+        "annots": [
+          "%ledger"
+        ],
+        "args": [
+          {
+            "annots": [
+              ":user"
+            ],
+            "prim": "address"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  ":balance"
+                ],
+                "prim": "nat"
+              },
+              {
+                "annots": [
+                  ":approvals"
+                ],
+                "args": [
+                  {
+                    "annots": [
+                      ":spender"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      ":value"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "map"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "big_map"
+      },
+      {
+        "args": [
+          {
+            "annots": [
+              "%admin"
+            ],
+            "prim": "address"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%paused"
+                ],
+                "prim": "bool"
+              },
+              {
+                "annots": [
+                  "%totalSupply"
+                ],
+                "prim": "nat"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "int": "36"
+    },
+    {
+      "bytes": "000024e6abbd990e6bbf280861eeaef3e6985f7e30d4"
+    },
+    {
+      "prim": "False"
+    },
+    {
+      "int": "332223016970"
+    }
+  ],
+  "type_hex": "07650861046e000000053a7573657207650462000000083a62616c616e63650860046e000000083a7370656e6465720462000000063a76616c75650000000a3a617070726f76616c7300000007256c65646765720765046e000000062561646d696e07650459000000072570617573656404620000000c25746f74616c537570706c79",
+  "value_hex": "020000002600240a00000016000024e6abbd990e6bbf280861eeaef3e6985f7e30d40303008ac0c7a0ab13",
+  "want_value": {
+    "admin": "tz1P19MKNTwB7qxoU47bvsu2c3u54vdM8R4m",
+    "ledger": "36",
+    "paused": false,
+    "totalSupply": "332223016970"
+  }
+}]

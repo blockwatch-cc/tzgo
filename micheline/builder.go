@@ -7,7 +7,7 @@ import (
 	"math/big"
 )
 
-func code(c OpCode, args ...Prim) Prim {
+func NewCode(c OpCode, args ...Prim) Prim {
 	typ := PrimNullary
 	switch len(args) {
 	case 0:
@@ -22,8 +22,8 @@ func code(c OpCode, args ...Prim) Prim {
 	return Prim{Type: typ, OpCode: c, Args: args}
 }
 
-func code_anno(c OpCode, anno string, args ...Prim) Prim {
-	p := code(c, args...)
+func NewCodeAnno(c OpCode, anno string, args ...Prim) Prim {
+	p := NewCode(c, args...)
 	p.Anno = []string{anno}
 	if p.Type != PrimVariadicAnno {
 		p.Type++
@@ -31,27 +31,27 @@ func code_anno(c OpCode, anno string, args ...Prim) Prim {
 	return p
 }
 
-func seq(args ...Prim) Prim {
+func NewSeq(args ...Prim) Prim {
 	return Prim{Type: PrimSequence, Args: args}
 }
 
-func i64(i int64) Prim {
-	return ibig(big.NewInt(i))
+func NewInt64(i int64) Prim {
+	return NewBig(big.NewInt(i))
 }
 
-func ibig(i *big.Int) Prim {
+func NewBig(i *big.Int) Prim {
 	return Prim{Type: PrimInt, Int: i}
 }
 
-func pbytes(b []byte) Prim {
+func NewBytes(b []byte) Prim {
 	return Prim{Type: PrimBytes, Bytes: b}
 }
 
-func pstring(s string) Prim {
+func NewString(s string) Prim {
 	return Prim{Type: PrimString, String: s}
 }
 
-func tpair(l, r Prim, anno ...string) Prim {
+func NewPairType(l, r Prim, anno ...string) Prim {
 	typ := PrimBinary
 	if len(anno) > 0 {
 		typ = PrimBinaryAnno
@@ -59,7 +59,7 @@ func tpair(l, r Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: T_PAIR, Args: []Prim{l, r}, Anno: anno}
 }
 
-func dpair(l, r Prim, anno ...string) Prim {
+func NewPairValue(l, r Prim, anno ...string) Prim {
 	typ := PrimBinary
 	if len(anno) > 0 {
 		typ = PrimBinaryAnno
@@ -67,7 +67,7 @@ func dpair(l, r Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: D_PAIR, Args: []Prim{l, r}, Anno: anno}
 }
 
-func prim(c OpCode, anno ...string) Prim {
+func NewPrim(c OpCode, anno ...string) Prim {
 	typ := PrimNullary
 	if len(anno) > 0 {
 		typ = PrimNullaryAnno
@@ -77,28 +77,28 @@ func prim(c OpCode, anno ...string) Prim {
 
 // Macros
 func ASSERT_CMPEQ() Prim {
-	return seq(
-		seq(code(I_COMPARE), code(I_EQ)),
-		code(I_IF, seq(), seq(seq(code(I_UNIT), code(I_FAILWITH)))),
+	return NewSeq(
+		NewSeq(NewCode(I_COMPARE), NewCode(I_EQ)),
+		NewCode(I_IF, NewSeq(), NewSeq(NewSeq(NewCode(I_UNIT), NewCode(I_FAILWITH)))),
 	)
 }
 
 func DUUP() Prim {
-	return seq(code(I_DIP, seq(code(I_DUP)), code(I_SWAP)))
+	return NewSeq(NewCode(I_DIP, NewSeq(NewCode(I_DUP)), NewCode(I_SWAP)))
 }
 
 func IFCMPNEQ(left, right Prim) Prim {
-	return seq(
-		code(I_COMPARE),
-		code(I_EQ),
-		code(I_IF, left, right),
+	return NewSeq(
+		NewCode(I_COMPARE),
+		NewCode(I_EQ),
+		NewCode(I_IF, left, right),
 	)
 }
 
 func UNPAIR() Prim {
-	return seq(seq(
-		code(I_DUP),
-		code(I_CAR),
-		code(I_DIP, seq(code(I_CDR))),
+	return NewSeq(NewSeq(
+		NewCode(I_DUP),
+		NewCode(I_CAR),
+		NewCode(I_DIP, NewSeq(NewCode(I_CDR))),
 	))
 }

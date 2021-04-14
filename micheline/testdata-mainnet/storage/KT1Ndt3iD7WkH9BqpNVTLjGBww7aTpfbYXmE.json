@@ -1,0 +1,229 @@
+[{
+  "name": "Mainnet/KT1Ndt3iD7WkH9BqpNVTLjGBww7aTpfbYXmE",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "annots": [
+              "%admin"
+            ],
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%admin"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      "%paused"
+                    ],
+                    "prim": "bool"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "annots": [
+                  "%pending_admin"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  }
+                ],
+                "prim": "option"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "annots": [
+              "%assets"
+            ],
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%ledger"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "prim": "address"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%next_token_id"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%operators"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "prim": "address"
+                          },
+                          {
+                            "args": [
+                              {
+                                "prim": "address"
+                              },
+                              {
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "prim": "unit"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%token_metadata"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%token_id"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "annots": [
+                              "%token_info"
+                            ],
+                            "args": [
+                              {
+                                "prim": "string"
+                              },
+                              {
+                                "prim": "bytes"
+                              }
+                            ],
+                            "prim": "map"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "big_map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "annots": [
+          "%metadata"
+        ],
+        "args": [
+          {
+            "prim": "string"
+          },
+          {
+            "prim": "bytes"
+          }
+        ],
+        "prim": "big_map"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": {
+    "args": [
+      [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "bytes": "0000e8d3c27c9921fb220d45744e1017a33018c7a8dc"
+                },
+                {
+                  "prim": "False"
+                }
+              ],
+              "prim": "Pair"
+            },
+            {
+              "prim": "None"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "int": "643"
+            },
+            {
+              "int": "1"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "644"
+        },
+        {
+          "int": "645"
+        }
+      ],
+      {
+        "int": "646"
+      }
+    ],
+    "prim": "Pair"
+  },
+  "type_hex": "0765076508650765046e000000062561646d696e045900000007257061757365640663036e0000000e2570656e64696e675f61646d696e000000062561646d696e0865076508610362036e00000007256c656467657204620000000e256e6578745f746f6b656e5f6964076508610765036e0765036e0362036c0000000a256f70657261746f727308610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461000000072561737365747308610368036900000009256d65746164617461",
+  "value_hex": "07070200000030070707070a000000160000e8d3c27c9921fb220d45744e1017a33018c7a8dc03030306070700830a000100840a00850a00860a",
+  "want_value": {
+    "admin": {
+      "admin": "tz1gs78wrxS34XhGPECmN5fABKpEuhUGwAXS",
+      "paused": false,
+      "pending_admin": null
+    },
+    "assets": {
+      "ledger": "643",
+      "next_token_id": "1",
+      "operators": "644",
+      "token_metadata": "645"
+    },
+    "metadata": "646"
+  }
+}]

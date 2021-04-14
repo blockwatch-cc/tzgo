@@ -1,0 +1,426 @@
+[{
+  "name": "Mainnet/KT1PYnvMA8Tso6G5LjHufuEemNJQXKfnxdGf",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "annots": [
+              "%admin"
+            ],
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%admin"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      "%paused"
+                    ],
+                    "prim": "bool"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "annots": [
+                  "%pending_admin"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  }
+                ],
+                "prim": "option"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "annots": [
+              "%assets"
+            ],
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%ledger"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "prim": "address"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%operators"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "prim": "address"
+                          },
+                          {
+                            "args": [
+                              {
+                                "prim": "address"
+                              },
+                              {
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "prim": "unit"
+                      }
+                    ],
+                    "prim": "big_map"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%permissions"
+                    ],
+                    "args": [
+                      {
+                        "annots": [
+                          "%operator"
+                        ],
+                        "args": [
+                          {
+                            "annots": [
+                              "%no_transfer"
+                            ],
+                            "prim": "unit"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%owner_transfer"
+                                ],
+                                "prim": "unit"
+                              },
+                              {
+                                "annots": [
+                                  "%owner_or_operator_transfer"
+                                ],
+                                "prim": "unit"
+                              }
+                            ],
+                            "prim": "or"
+                          }
+                        ],
+                        "prim": "or"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%receiver"
+                            ],
+                            "args": [
+                              {
+                                "annots": [
+                                  "%owner_no_hook"
+                                ],
+                                "prim": "unit"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%optional_owner_hook"
+                                    ],
+                                    "prim": "unit"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%required_owner_hook"
+                                    ],
+                                    "prim": "unit"
+                                  }
+                                ],
+                                "prim": "or"
+                              }
+                            ],
+                            "prim": "or"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%sender"
+                                ],
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%owner_no_hook"
+                                    ],
+                                    "prim": "unit"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "annots": [
+                                          "%optional_owner_hook"
+                                        ],
+                                        "prim": "unit"
+                                      },
+                                      {
+                                        "annots": [
+                                          "%required_owner_hook"
+                                        ],
+                                        "prim": "unit"
+                                      }
+                                    ],
+                                    "prim": "or"
+                                  }
+                                ],
+                                "prim": "or"
+                              },
+                              {
+                                "annots": [
+                                  "%custom"
+                                ],
+                                "args": [
+                                  {
+                                    "args": [
+                                      {
+                                        "annots": [
+                                          "%tag"
+                                        ],
+                                        "prim": "string"
+                                      },
+                                      {
+                                        "annots": [
+                                          "%config_api"
+                                        ],
+                                        "args": [
+                                          {
+                                            "prim": "address"
+                                          }
+                                        ],
+                                        "prim": "option"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "option"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "annots": [
+                      "%token_metadata"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%token_id"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "annots": [
+                              "%token_info"
+                            ],
+                            "args": [
+                              {
+                                "prim": "string"
+                              },
+                              {
+                                "prim": "bytes"
+                              }
+                            ],
+                            "prim": "map"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "big_map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "annots": [
+              "%metadata"
+            ],
+            "args": [
+              {
+                "prim": "string"
+              },
+              {
+                "prim": "bytes"
+              }
+            ],
+            "prim": "big_map"
+          },
+          {
+            "annots": [
+              "%minting_closed"
+            ],
+            "prim": "bool"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": {
+    "args": [
+      [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "bytes": "0000dba836684a9611334a491eec05b9be88298a324d"
+                },
+                {
+                  "prim": "False"
+                }
+              ],
+              "prim": "Pair"
+            },
+            {
+              "prim": "None"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "int": "781"
+            },
+            {
+              "int": "782"
+            }
+          ],
+          "prim": "Pair"
+        },
+        [
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "prim": "Unit"
+                  }
+                ],
+                "prim": "Right"
+              }
+            ],
+            "prim": "Right"
+          },
+          {
+            "args": [
+              {
+                "prim": "Unit"
+              }
+            ],
+            "prim": "Left"
+          },
+          {
+            "args": [
+              {
+                "prim": "Unit"
+              }
+            ],
+            "prim": "Left"
+          },
+          {
+            "prim": "None"
+          }
+        ],
+        {
+          "int": "783"
+        }
+      ],
+      {
+        "args": [
+          {
+            "int": "784"
+          },
+          {
+            "prim": "True"
+          }
+        ],
+        "prim": "Pair"
+      }
+    ],
+    "prim": "Pair"
+  },
+  "type_hex": "0765076508650765046e000000062561646d696e045900000007257061757365640663036e0000000e2570656e64696e675f61646d696e000000062561646d696e0865076508610362036e00000007256c656467657208610765036e0765036e0362036c0000000a256f70657261746f7273076508650864046c0000000c256e6f5f7472616e736665720764046c0000000f256f776e65725f7472616e73666572046c0000001b256f776e65725f6f725f6f70657261746f725f7472616e7366657200000009256f70657261746f7207650864046c0000000e256f776e65725f6e6f5f686f6f6b0764046c00000014256f7074696f6e616c5f6f776e65725f686f6f6b046c000000142572657175697265645f6f776e65725f686f6f6b0000000925726563656976657207650864046c0000000e256f776e65725f6e6f5f686f6f6b0764046c00000014256f7074696f6e616c5f6f776e65725f686f6f6b046c000000142572657175697265645f6f776e65725f686f6f6b000000072573656e64657206630765046800000004257461670663036e0000000b25636f6e6669675f6170690000000725637573746f6d0000000c257065726d697373696f6e7308610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d657461646174610000000725617373657473076508610368036900000009256d6574616461746104590000000f256d696e74696e675f636c6f736564",
+  "value_hex": "07070200000043070707070a000000160000dba836684a9611334a491eec05b9be88298a324d030303060707008d0c008e0c020000001005080508030b0505030b0505030b0306008f0c070700900c030a",
+  "want_value": {
+    "admin": {
+      "admin": "tz1ffUBjxWwCTS1QTxzL7PAdUYWYMavWngoA",
+      "paused": false,
+      "pending_admin": null
+    },
+    "assets": {
+      "ledger": "781",
+      "operators": "782",
+      "permissions": {
+        "custom": null,
+        "operator": {
+          "owner_or_operator_transfer": null
+        },
+        "receiver": {
+          "owner_no_hook": null
+        },
+        "sender": {
+          "owner_no_hook": null
+        }
+      },
+      "token_metadata": "783"
+    },
+    "metadata": "784",
+    "minting_closed": true
+  }
+}]

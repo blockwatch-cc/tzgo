@@ -1,0 +1,618 @@
+[{
+  "name": "Edonet2/KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%active"
+                ],
+                "prim": "bool"
+              },
+              {
+                "annots": [
+                  "%admin"
+                ],
+                "prim": "address"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%currentRound"
+                ],
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%activeOracles"
+                        ],
+                        "args": [
+                          {
+                            "prim": "address"
+                          }
+                        ],
+                        "prim": "set"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%maxSubmissions"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "annots": [
+                              "%minSubmissions"
+                            ],
+                            "prim": "nat"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%startedAt"
+                        ],
+                        "prim": "timestamp"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%submissions"
+                            ],
+                            "args": [
+                              {
+                                "prim": "address"
+                              },
+                              {
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "map"
+                          },
+                          {
+                            "annots": [
+                              "%timeout"
+                            ],
+                            "prim": "int"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "annots": [
+                  "%futureRounds"
+                ],
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%maxSubmissions"
+                        ],
+                        "prim": "nat"
+                      },
+                      {
+                        "annots": [
+                          "%minSubmissions"
+                        ],
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%timeout"
+                        ],
+                        "prim": "int"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%toActivate"
+                            ],
+                            "args": [
+                              {
+                                "prim": "nat"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  }
+                                ],
+                                "prim": "set"
+                              }
+                            ],
+                            "prim": "big_map"
+                          },
+                          {
+                            "annots": [
+                              "%toDeactivate"
+                            ],
+                            "args": [
+                              {
+                                "prim": "nat"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  }
+                                ],
+                                "prim": "set"
+                              }
+                            ],
+                            "prim": "big_map"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%latestRoundData"
+                ],
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%answer"
+                        ],
+                        "prim": "nat"
+                      },
+                      {
+                        "annots": [
+                          "%answeredInRound"
+                        ],
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%roundId"
+                        ],
+                        "prim": "nat"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%startedAt"
+                            ],
+                            "prim": "timestamp"
+                          },
+                          {
+                            "annots": [
+                              "%updatedAt"
+                            ],
+                            "prim": "timestamp"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "annots": [
+                  "%metaData"
+                ],
+                "args": [
+                  {
+                    "prim": "string"
+                  },
+                  {
+                    "prim": "bytes"
+                  }
+                ],
+                "prim": "big_map"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%oracles"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%endingRound"
+                        ],
+                        "prim": "nat"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%lastStartedRound"
+                            ],
+                            "prim": "int"
+                          },
+                          {
+                            "annots": [
+                              "%startingRound"
+                            ],
+                            "prim": "nat"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%previousRound"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%activeOracles"
+                            ],
+                            "args": [
+                              {
+                                "prim": "address"
+                              }
+                            ],
+                            "prim": "set"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%maxSubmissions"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "annots": [
+                                  "%minSubmissions"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%startedAt"
+                            ],
+                            "prim": "timestamp"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%submissions"
+                                ],
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  },
+                                  {
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "map"
+                              },
+                              {
+                                "annots": [
+                                  "%timeout"
+                                ],
+                                "prim": "int"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "annots": [
+                      "%restartDelay"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    [
+      {
+        "args": [
+          {
+            "prim": "True"
+          },
+          {
+            "bytes": "0000a7fd3953914a1a2a705eaaf454da3afb85913847"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            [
+              {
+                "bytes": "0000939a3242990b706eda7f6198ab35d9c39f40bd09"
+              },
+              {
+                "bytes": "0000a7fd3953914a1a2a705eaaf454da3afb85913847"
+              },
+              {
+                "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+              },
+              {
+                "bytes": "0000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc"
+              }
+            ],
+            {
+              "args": [
+                {
+                  "int": "3"
+                },
+                {
+                  "int": "2"
+                }
+              ],
+              "prim": "Pair"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "0"
+        },
+        [
+          {
+            "args": [
+              {
+                "bytes": "0000939a3242990b706eda7f6198ab35d9c39f40bd09"
+              },
+              {
+                "int": "3419700"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+              },
+              {
+                "int": "3466050"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "bytes": "0000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc"
+              },
+              {
+                "int": "3466050"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ],
+        {
+          "int": "10"
+        }
+      ],
+      {
+        "args": [
+          {
+            "int": "3"
+          },
+          {
+            "int": "2"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "10"
+      },
+      {
+        "int": "28134"
+      },
+      {
+        "int": "28135"
+      }
+    ],
+    {
+      "args": [
+        [
+          {
+            "args": [
+              {
+                "int": "3466050"
+              },
+              {
+                "int": "1"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "int": "1"
+          },
+          {
+            "int": "0"
+          },
+          {
+            "int": "1615468949"
+          }
+        ],
+        {
+          "int": "28136"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "28137"
+    },
+    [
+      {
+        "args": [
+          [],
+          {
+            "args": [
+              {
+                "int": "3"
+              },
+              {
+                "int": "2"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "-600"
+      },
+      [],
+      {
+        "int": "10"
+      }
+    ],
+    {
+      "int": "2"
+    }
+  ],
+  "type_hex": "07650765076504590000000725616374697665046e000000062561646d696e0765086507650666036e0000000e256163746976654f7261636c6573076504620000000f256d61785375626d697373696f6e7304620000000f256d696e5375626d697373696f6e730765046b0000000a2573746172746564417407650860036e03620000000c257375626d697373696f6e73045b000000082574696d656f75740000000d2563757272656e74526f756e640865076504620000000f256d61785375626d697373696f6e7304620000000f256d696e5375626d697373696f6e730765045b000000082574696d656f75740765086103620566036e0000000b25746f4163746976617465086103620566036e0000000d25746f446561637469766174650000000d25667574757265526f756e6473076507650865076504620000000725616e7377657204620000001025616e737765726564496e526f756e64076504620000000825726f756e6449640765046b0000000a25737461727465644174046b0000000a2575706461746564417400000010256c6174657374526f756e644461746108610368036900000009256d6574614461746107650861036e076504620000000c25656e64696e67526f756e640765045b00000011256c61737453746172746564526f756e6404620000000e257374617274696e67526f756e6400000008256f7261636c65730765086507650666036e0000000e256163746976654f7261636c6573076504620000000f256d61785375626d697373696f6e7304620000000f256d696e5375626d697373696f6e730765046b0000000a2573746172746564417407650860036e03620000000c257375626d697373696f6e73045b000000082574696d656f75740000000e2570726576696f7573526f756e6404620000000d257265737461727444656c6179",
+  "value_hex": "0200000161020000011c0707030a0a000000160000a7fd3953914a1a2a705eaaf454da3afb8591384702000000e80707020000006c0a000000160000939a3242990b706eda7f6198ab35d9c39f40bd090a000000160000a7fd3953914a1a2a705eaaf454da3afb859138470a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d40a000000160000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc0707000300020000020000006607040a000000160000939a3242990b706eda7f6198ab35d9c39f40bd0900b4b8a10307040a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d400828da70307040a000000160000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc00828da703000a070700030002000a00a6b70300a7b70307070200000013070700828da7030001000100000095e6d0840c00a8b70300a9b70302000000170707020000000007070003000200d8090200000000000a0002",
+  "want_value": {
+    "active": true,
+    "admin": "tz1axGtTkg1hJvGenTrhqpFbW1S8GcQpPdve",
+    "currentRound": {
+      "activeOracles": [
+        "tz1Z6Uk4qfdAJLJuCdGzL8aheqedW8sBQv2T",
+        "tz1axGtTkg1hJvGenTrhqpFbW1S8GcQpPdve",
+        "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t",
+        "tz1eWtg7YQb5iLX2HvrHPGbhiCQZ8n98aUh5"
+      ],
+      "maxSubmissions": "3",
+      "minSubmissions": "2",
+      "startedAt": "1970-01-01T00:00:00Z",
+      "submissions": {
+        "tz1Z6Uk4qfdAJLJuCdGzL8aheqedW8sBQv2T": "3419700",
+        "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t": "3466050",
+        "tz1eWtg7YQb5iLX2HvrHPGbhiCQZ8n98aUh5": "3466050"
+      },
+      "timeout": "10"
+    },
+    "futureRounds": {
+      "maxSubmissions": "3",
+      "minSubmissions": "2",
+      "timeout": "10",
+      "toActivate": "28134",
+      "toDeactivate": "28135"
+    },
+    "latestRoundData": {
+      "answer": "3466050",
+      "answeredInRound": "1",
+      "roundId": "1",
+      "startedAt": "1970-01-01T00:00:00Z",
+      "updatedAt": "2021-03-11T13:22:29Z"
+    },
+    "metaData": "28136",
+    "oracles": "28137",
+    "previousRound": {
+      "activeOracles": [],
+      "maxSubmissions": "3",
+      "minSubmissions": "2",
+      "startedAt": "1969-12-31T23:50:00Z",
+      "submissions": {},
+      "timeout": "10"
+    },
+    "restartDelay": "2"
+  }
+}]

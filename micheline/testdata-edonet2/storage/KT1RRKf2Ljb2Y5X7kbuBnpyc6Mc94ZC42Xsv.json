@@ -1,0 +1,407 @@
+[{
+  "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%LPMembers"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  }
+                ],
+                "prim": "set"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%balances"
+                    ],
+                    "args": [
+                      {
+                        "prim": "address"
+                      },
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%approvals"
+                                ],
+                                "args": [
+                                  {
+                                    "prim": "address"
+                                  },
+                                  {
+                                    "prim": "nat"
+                                  }
+                                ],
+                                "prim": "map"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%balance"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%dividends"
+                                    ],
+                                    "args": [
+                                      {
+                                        "prim": "nat"
+                                      },
+                                      {
+                                        "prim": "nat"
+                                      }
+                                    ],
+                                    "prim": "map"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%liquidity"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%role"
+                                    ],
+                                    "prim": "string"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%whitelisted"
+                                    ],
+                                    "prim": "bool"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%investors"
+                    ],
+                    "args": [
+                      {
+                        "prim": "address"
+                      }
+                    ],
+                    "prim": "set"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%lambdaEntryPoints"
+                    ],
+                    "args": [
+                      {
+                        "prim": "bytes"
+                      },
+                      {
+                        "prim": "bytes"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%lastDivYear"
+                    ],
+                    "prim": "int"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%lastNavDate"
+                    ],
+                    "prim": "nat"
+                  },
+                  {
+                    "annots": [
+                      "%nav"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "big_map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%owner"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      "%paused"
+                    ],
+                    "prim": "bool"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%roles"
+                    ],
+                    "args": [
+                      {
+                        "prim": "string"
+                      }
+                    ],
+                    "prim": "set"
+                  },
+                  {
+                    "annots": [
+                      "%totalIncome"
+                    ],
+                    "prim": "int"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%totalInvDiv"
+                    ],
+                    "prim": "int"
+                  },
+                  {
+                    "annots": [
+                      "%totalInvested"
+                    ],
+                    "prim": "int"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%totalLPDiv"
+                    ],
+                    "prim": "int"
+                  },
+                  {
+                    "annots": [
+                      "%totalSupply"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    [
+      {
+        "args": [
+          [
+            {
+              "bytes": "0000887fa2baecb23d7a24d4e8be864762eec3159702"
+            }
+          ],
+          {
+            "args": [
+              {
+                "int": "26540"
+              },
+              [
+                {
+                  "bytes": "00000244fdda0aba3c8727bdda12a82ed304996ceecf"
+                },
+                {
+                  "bytes": "0000887fa2baecb23d7a24d4e8be864762eec3159702"
+                }
+              ]
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "26541"
+          },
+          {
+            "int": "0"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "0"
+      },
+      {
+        "int": "26542"
+      }
+    ],
+    {
+      "args": [
+        {
+          "args": [
+            {
+              "bytes": "0000d2d3df86e53a01527b144eb1a51d365a6476d12a"
+            },
+            {
+              "prim": "False"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            [
+              {
+                "string": "ADVISOR"
+              },
+              {
+                "string": "ELECTED_INVESTOR"
+              },
+              {
+                "string": "INVESTOR"
+              },
+              {
+                "string": "MANAGEMENT_COMPANY"
+              }
+            ],
+            {
+              "int": "0"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "args": [
+        {
+          "int": "0"
+        },
+        {
+          "int": "0"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "0"
+    },
+    {
+      "int": "6000"
+    }
+  ],
+  "type_hex": "0765076507650666036e0000000a254c504d656d6265727307650861036e076507650860036e03620000000a25617070726f76616c7307650462000000082562616c616e63650860036203620000000a256469766964656e6473076504620000000a256c6971756964697479076504680000000525726f6c6504590000000c2577686974656c6973746564000000092562616c616e6365730666036e0000000a25696e766573746f72730765076508610369036900000012256c616d626461456e747279506f696e7473045b0000000c256c61737444697659656172076504620000000c256c6173744e61764461746508610362036200000004256e6176076507650765046e00000006256f776e6572045900000007257061757365640765066603680000000625726f6c6573045b0000000c25746f74616c496e636f6d6507650765045b0000000c25746f74616c496e76446976045b0000000e25746f74616c496e7665737465640765045b0000000b25746f74616c4c5044697604620000000c25746f74616c537570706c79",
+  "value_hex": "02000000f002000000710707020000001b0a000000160000887fa2baecb23d7a24d4e8be864762eec3159702070700ac9e0302000000360a0000001600000244fdda0aba3c8727bdda12a82ed304996ceecf0a000000160000887fa2baecb23d7a24d4e8be864762eec3159702070700ad9e030000000000ae9e03070707070a000000160000d2d3df86e53a01527b144eb1a51d365a6476d12a030307070200000045010000000741445649534f520100000010454c45435445445f494e564553544f520100000008494e564553544f5201000000124d414e4147454d454e545f434f4d50414e590000070700000000000000b05d",
+  "want_value": {
+    "LPMembers": [
+      "tz1Y5mVVME7BbAa9YHqLgPfdmZ91P3KhkSDo"
+    ],
+    "balances": "26540",
+    "investors": [
+      "tz1Kr2h88qgEWGbru7Egd1jnvXZs7AWePw6Z",
+      "tz1Y5mVVME7BbAa9YHqLgPfdmZ91P3KhkSDo"
+    ],
+    "lambdaEntryPoints": "26541",
+    "lastDivYear": "0",
+    "lastNavDate": "0",
+    "nav": "26542",
+    "owner": "tz1ernQcEU7qqR1t9R4mPFUCSkp9DLQqA7hW",
+    "paused": false,
+    "roles": [
+      "ADVISOR",
+      "ELECTED_INVESTOR",
+      "INVESTOR",
+      "MANAGEMENT_COMPANY"
+    ],
+    "totalIncome": "0",
+    "totalInvDiv": "0",
+    "totalInvested": "0",
+    "totalLPDiv": "0",
+    "totalSupply": "6000"
+  }
+}]

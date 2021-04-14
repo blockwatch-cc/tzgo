@@ -1,0 +1,810 @@
+[{
+  "name": "Edonet2/KT1K36wjZ3VwQ54sKctXZYvkQ8mvF8jmZJY9",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%ledger"
+                ],
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "prim": "address"
+                      },
+                      {
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%operators"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              ":owner"
+                            ],
+                            "prim": "address"
+                          },
+                          {
+                            "annots": [
+                              ":operator"
+                            ],
+                            "prim": "address"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "prim": "unit"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%token_address"
+                    ],
+                    "prim": "address"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%admin"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      "%pending_owner"
+                    ],
+                    "prim": "address"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%migration_status"
+                    ],
+                    "args": [
+                      {
+                        "annots": [
+                          "%notInMigration"
+                        ],
+                        "prim": "unit"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%migratingTo"
+                            ],
+                            "prim": "address"
+                          },
+                          {
+                            "annots": [
+                              "%migratedTo"
+                            ],
+                            "prim": "address"
+                          }
+                        ],
+                        "prim": "or"
+                      }
+                    ],
+                    "prim": "or"
+                  },
+                  {
+                    "annots": [
+                      "%voting_period"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%quorum_threshold"
+                ],
+                "prim": "nat"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%extra"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%frozen_scale_value"
+                            ],
+                            "prim": "nat"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%frozen_extra_value"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "annots": [
+                                  "%slash_scale_value"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%slash_division_value"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "annots": [
+                                  "%min_xtz_amount"
+                                ],
+                                "prim": "mutez"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%max_xtz_amount"
+                                ],
+                                "prim": "mutez"
+                              },
+                              {
+                                "annots": [
+                                  "%max_proposal_size"
+                                ],
+                                "prim": "nat"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "annots": [
+                      "%proposals"
+                    ],
+                    "args": [
+                      {
+                        "prim": "bytes"
+                      },
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%upvotes"
+                                ],
+                                "prim": "nat"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%downvotes"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%start_date"
+                                    ],
+                                    "prim": "timestamp"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%metadata"
+                                    ],
+                                    "args": [
+                                      {
+                                        "annots": [
+                                          "%agora_post_id"
+                                        ],
+                                        "prim": "nat"
+                                      },
+                                      {
+                                        "annots": [
+                                          "%transfers"
+                                        ],
+                                        "args": [
+                                          {
+                                            "args": [
+                                              {
+                                                "args": [
+                                                  {
+                                                    "annots": [
+                                                      "%amount"
+                                                    ],
+                                                    "prim": "mutez"
+                                                  },
+                                                  {
+                                                    "annots": [
+                                                      "%recipient"
+                                                    ],
+                                                    "prim": "address"
+                                                  }
+                                                ],
+                                                "prim": "pair"
+                                              },
+                                              {
+                                                "args": [
+                                                  {
+                                                    "annots": [
+                                                      "%contract_address"
+                                                    ],
+                                                    "prim": "address"
+                                                  },
+                                                  {
+                                                    "annots": [
+                                                      "%transfer_list"
+                                                    ],
+                                                    "args": [
+                                                      {
+                                                        "args": [
+                                                          {
+                                                            "annots": [
+                                                              "%from_"
+                                                            ],
+                                                            "prim": "address"
+                                                          },
+                                                          {
+                                                            "annots": [
+                                                              "%txs"
+                                                            ],
+                                                            "args": [
+                                                              {
+                                                                "args": [
+                                                                  {
+                                                                    "annots": [
+                                                                      "%to_"
+                                                                    ],
+                                                                    "prim": "address"
+                                                                  },
+                                                                  {
+                                                                    "args": [
+                                                                      {
+                                                                        "annots": [
+                                                                          "%token_id"
+                                                                        ],
+                                                                        "prim": "nat"
+                                                                      },
+                                                                      {
+                                                                        "annots": [
+                                                                          "%amount"
+                                                                        ],
+                                                                        "prim": "nat"
+                                                                      }
+                                                                    ],
+                                                                    "prim": "pair"
+                                                                  }
+                                                                ],
+                                                                "prim": "pair"
+                                                              }
+                                                            ],
+                                                            "prim": "list"
+                                                          }
+                                                        ],
+                                                        "prim": "pair"
+                                                      }
+                                                    ],
+                                                    "prim": "list"
+                                                  }
+                                                ],
+                                                "prim": "pair"
+                                              }
+                                            ],
+                                            "prim": "or"
+                                          }
+                                        ],
+                                        "prim": "list"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%proposer"
+                                    ],
+                                    "prim": "address"
+                                  }
+                                ],
+                                "prim": "pair"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%proposer_frozen_token"
+                                    ],
+                                    "prim": "nat"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%voters"
+                                    ],
+                                    "args": [
+                                      {
+                                        "args": [
+                                          {
+                                            "prim": "address"
+                                          },
+                                          {
+                                            "prim": "nat"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      }
+                                    ],
+                                    "prim": "list"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "big_map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%proposal_key_list_sort_by_date"
+                    ],
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "prim": "timestamp"
+                          },
+                          {
+                            "prim": "bytes"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "set"
+                  },
+                  {
+                    "annots": [
+                      "%permits_counter"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%metadata"
+                    ],
+                    "args": [
+                      {
+                        "prim": "string"
+                      },
+                      {
+                        "prim": "bytes"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "annots": [
+                      "%total_supply"
+                    ],
+                    "args": [
+                      {
+                        "prim": "nat"
+                      },
+                      {
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    [
+      {
+        "args": [
+          {
+            "int": "44831"
+          },
+          {
+            "args": [
+              {
+                "int": "44832"
+              },
+              {
+                "bytes": "0000a26828841890d3f3a2a1d4083839c7a882fe0501"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "bytes": "0000acfb87662be0b1444b139eea3240001d77353a74"
+          },
+          {
+            "bytes": "0000a26828841890d3f3a2a1d4083839c7a882fe0501"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "prim": "Unit"
+          }
+        ],
+        "prim": "Left"
+      },
+      {
+        "int": "600"
+      }
+    ],
+    {
+      "args": [
+        {
+          "int": "0"
+        },
+        {
+          "args": [
+            [
+              {
+                "args": [
+                  {
+                    "int": "0"
+                  },
+                  {
+                    "args": [
+                      {
+                        "int": "1"
+                      },
+                      {
+                        "int": "10"
+                      }
+                    ],
+                    "prim": "Pair"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "args": [
+                  {
+                    "int": "100"
+                  },
+                  {
+                    "int": "1000000"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "int": "10000000000000"
+              },
+              {
+                "int": "1000000"
+              }
+            ],
+            {
+              "int": "44833"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "args": [
+        [
+          {
+            "args": [
+              {
+                "int": "1616798293"
+              },
+              {
+                "bytes": "c9700c1f05d42b37abeac0db415f2ee63832d16a7be54e7581b7c196fe038e69"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616799013"
+              },
+              {
+                "bytes": "b12780c89797d8175ea0ddb38bf608ccbd5442137a1ecb04fc28fe29bb91d862"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616799433"
+              },
+              {
+                "bytes": "71c68fca3687b70bd2c794bfcae638445d4a40f089947733cbde6dec6e75c641"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616800063"
+              },
+              {
+                "bytes": "50bf5d5ed1776b8beb34b173e9518234556f62ae90df21ed9893373b33471eed"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616800653"
+              },
+              {
+                "bytes": "8acef3106e9b6963e600abcb003170a53ad1ade3a5a2394e479486d2d6c99f94"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616801053"
+              },
+              {
+                "bytes": "96536778bab402643af9b090a8dc4274e4e4b6f0f4aa7644a5b74ce6754109d5"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616842223"
+              },
+              {
+                "bytes": "ebc8751692f6ca1060cb3da2cdbe18b550968cc2326fd55567efa07da3bdae8a"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616843283"
+              },
+              {
+                "bytes": "1a80e493c5550449a668011496574dcae5eb88d61c229e096b41357521180b79"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "1616843933"
+              },
+              {
+                "bytes": "a25df28895da57b6aaacff66dea8512090dec88b381f445954472e81f712e109"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        {
+          "int": "0"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "44834"
+    },
+    [
+      {
+        "args": [
+          {
+            "int": "0"
+          },
+          {
+            "int": "1474"
+          }
+        ],
+        "prim": "Elt"
+      },
+      {
+        "args": [
+          {
+            "int": "1"
+          },
+          {
+            "int": "26"
+          }
+        ],
+        "prim": "Elt"
+      }
+    ]
+  ],
+  "type_hex": "07650765076508610765036e0362036200000007256c6564676572076508610765046e000000063a6f776e6572046e000000093a6f70657261746f72036c0000000a256f70657261746f7273046e0000000e25746f6b656e5f6164647265737307650765046e000000062561646d696e046e0000000e2570656e64696e675f6f776e657207650864046c0000000f256e6f74496e4d6967726174696f6e0764046e0000000c256d6967726174696e67546f046e0000000b256d69677261746564546f00000011256d6967726174696f6e5f73746174757304620000000e25766f74696e675f706572696f64076507650462000000112571756f72756d5f7468726573686f6c640765086507650462000000132566726f7a656e5f7363616c655f76616c756507650462000000132566726f7a656e5f65787472615f76616c756504620000001225736c6173685f7363616c655f76616c75650765076504620000001525736c6173685f6469766973696f6e5f76616c7565046a0000000f256d696e5f78747a5f616d6f756e740765046a0000000f256d61785f78747a5f616d6f756e74046200000012256d61785f70726f706f73616c5f73697a65000000062565787472610861036907650765046200000008257570766f746573076504620000000a25646f776e766f746573046b0000000b2573746172745f6461746507650765086504620000000e2561676f72615f706f73745f6964065f07640765046a0000000725616d6f756e74046e0000000a25726563697069656e740765046e0000001125636f6e74726163745f61646472657373065f0765046e000000062566726f6d5f065f0765046e0000000425746f5f076504620000000925746f6b656e5f696404620000000725616d6f756e7400000004257478730000000e257472616e736665725f6c6973740000000a257472616e736665727300000009256d65746164617461046e000000092570726f706f73657207650462000000162570726f706f7365725f66726f7a656e5f746f6b656e065f0765036e03620000000725766f746572730000000a2570726f706f73616c730765076506660765036b03690000001f2570726f706f73616c5f6b65795f6c6973745f736f72745f62795f64617465046200000010257065726d6974735f636f756e746572076508610368036900000009256d657461646174610860036203620000000d25746f74616c5f737570706c79",
+  "value_hex": "020000024d02000000660707009fbc05070700a0bc050a000000160000a26828841890d3f3a2a1d4083839c7a882fe050107070a000000160000acfb87662be0b1444b139eea3240001d77353a740a000000160000a26828841890d3f3a2a1d4083839c7a882fe05010505030b009809070700000707020000001f0707000007070001000a070700a4010080897a00808095e789c6040080897a00a1bc05070702000001950707009589f3850c0a00000020c9700c1f05d42b37abeac0db415f2ee63832d16a7be54e7581b7c196fe038e69070700a594f3850c0a00000020b12780c89797d8175ea0ddb38bf608ccbd5442137a1ecb04fc28fe29bb91d862070700899bf3850c0a0000002071c68fca3687b70bd2c794bfcae638445d4a40f089947733cbde6dec6e75c641070700bfa4f3850c0a0000002050bf5d5ed1776b8beb34b173e9518234556f62ae90df21ed9893373b33471eed0707008daef3850c0a000000208acef3106e9b6963e600abcb003170a53ad1ade3a5a2394e479486d2d6c99f940707009db4f3850c0a0000002096536778bab402643af9b090a8dc4274e4e4b6f0f4aa7644a5b74ce6754109d5070700afb7f8850c0a00000020ebc8751692f6ca1060cb3da2cdbe18b550968cc2326fd55567efa07da3bdae8a07070093c8f8850c0a000000201a80e493c5550449a668011496574dcae5eb88d61c229e096b41357521180b790707009dd2f8850c0a00000020a25df28895da57b6aaacff66dea8512090dec88b381f445954472e81f712e109000000a2bc05020000000d0704000000821707040001001a",
+  "want_value": {
+    "admin": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB",
+    "extra": {
+      "frozen_extra_value": "1",
+      "frozen_scale_value": "0",
+      "max_proposal_size": "1000000",
+      "max_xtz_amount": "10000000000000",
+      "min_xtz_amount": "1000000",
+      "slash_division_value": "100",
+      "slash_scale_value": "10"
+    },
+    "ledger": "44831",
+    "metadata": "44834",
+    "migration_status": {
+      "notInMigration": null
+    },
+    "operators": "44832",
+    "pending_owner": "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
+    "permits_counter": "0",
+    "proposal_key_list_sort_by_date": [
+      {
+        "0": "2021-03-26T22:38:13Z",
+        "1": "c9700c1f05d42b37abeac0db415f2ee63832d16a7be54e7581b7c196fe038e69"
+      },
+      {
+        "0": "2021-03-26T22:50:13Z",
+        "1": "b12780c89797d8175ea0ddb38bf608ccbd5442137a1ecb04fc28fe29bb91d862"
+      },
+      {
+        "0": "2021-03-26T22:57:13Z",
+        "1": "71c68fca3687b70bd2c794bfcae638445d4a40f089947733cbde6dec6e75c641"
+      },
+      {
+        "0": "2021-03-26T23:07:43Z",
+        "1": "50bf5d5ed1776b8beb34b173e9518234556f62ae90df21ed9893373b33471eed"
+      },
+      {
+        "0": "2021-03-26T23:17:33Z",
+        "1": "8acef3106e9b6963e600abcb003170a53ad1ade3a5a2394e479486d2d6c99f94"
+      },
+      {
+        "0": "2021-03-26T23:24:13Z",
+        "1": "96536778bab402643af9b090a8dc4274e4e4b6f0f4aa7644a5b74ce6754109d5"
+      },
+      {
+        "0": "2021-03-27T10:50:23Z",
+        "1": "ebc8751692f6ca1060cb3da2cdbe18b550968cc2326fd55567efa07da3bdae8a"
+      },
+      {
+        "0": "2021-03-27T11:08:03Z",
+        "1": "1a80e493c5550449a668011496574dcae5eb88d61c229e096b41357521180b79"
+      },
+      {
+        "0": "2021-03-27T11:18:53Z",
+        "1": "a25df28895da57b6aaacff66dea8512090dec88b381f445954472e81f712e109"
+      }
+    ],
+    "proposals": "44833",
+    "quorum_threshold": "0",
+    "token_address": "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
+    "total_supply": {
+      "0": "1474",
+      "1": "26"
+    },
+    "voting_period": "600"
+  }
+}]

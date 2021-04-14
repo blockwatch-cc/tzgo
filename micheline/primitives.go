@@ -17,6 +17,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"math/big"
@@ -231,10 +232,15 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 // traversing a prim tree in read-only mode.
 type PrimWalkerFunc func(p Prim) error
 
+var PrimSkip = errors.New("skip branch")
+
 // Walk traverses the prim tree in pre-order in read-only mode, forwarding
 // value copies to the callback.
 func (p Prim) Walk(f PrimWalkerFunc) error {
 	if err := f(p); err != nil {
+		if err == PrimSkip {
+			return nil
+		}
 		return err
 	}
 	for _, v := range p.Args {
@@ -254,6 +260,9 @@ type PrimVisitorFunc func(p *Prim) error
 // alter the contents of a visited node.
 func (p *Prim) Visit(f PrimVisitorFunc) error {
 	if err := f(p); err != nil {
+		if err == PrimSkip {
+			return nil
+		}
 		return err
 	}
 	for _, v := range p.Args {
@@ -512,15 +521,13 @@ func (p Prim) LooksLikeLambda() bool {
 	return false
 }
 
-// Converts a pair tree into a flattened sequence. While Michelson
+// Converts a pair tree into a flat sequence. While Michelson
 // optimized comb pairs are only used for right-side combs, this
 // function applies to all pairs. It makes use of the type definition
 // to identify which contained type is a regular pair, an already
-// converted pair sequence or any other container type.
+// unfolded pair sequence or anther container type.
 //
 // - Works both on value trees and type trees.
-// - Will skip (i.e. reduce) annotated type pairs, so nested struct
-//   information will be lost.
 // - When called on already converted comb sequences this function is a noop.
 //
 func (p Prim) UnfoldPair(typ Type) []Prim {
@@ -552,11 +559,15 @@ func (p Prim) UnfoldPair(typ Type) []Prim {
 	return flat
 }
 
+// Checks if a primitve contains a packed value such as a byte sequence
+// generated with PACK (starting with 0x05), an address or ascii/utf string.
 func (p Prim) IsPacked() bool {
 	return p.Type == PrimBytes &&
 		(isPackedBytes(p.Bytes) || tezos.IsAddressBytes(p.Bytes) || isASCIIBytes(p.Bytes))
 }
 
+// Unpacks all primitive contents that looks like packed and returns a new primitive
+// tree.
 func (p Prim) Unpack() (pp Prim, err error) {
 	if !p.IsPacked() {
 		return p, fmt.Errorf("prim is not packed")
@@ -627,6 +638,7 @@ func (p Prim) UnpackAll() (Prim, error) {
 	return pp, nil
 }
 
+// Returns a typed/decoded value from an encoded primitive.
 func (p Prim) Value(as OpCode) interface{} {
 	var warn bool
 	switch p.Type {

@@ -1,0 +1,48 @@
+[{
+  "name": "Mainnet/KT1E8Qzgx3C5AAE4iGuXvqSQjdd21LK2aXAk",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "annots": [
+              "%sale_seller"
+            ],
+            "prim": "address"
+          },
+          {
+            "annots": [
+              "%sale_token"
+            ],
+            "args": [
+              {
+                "annots": [
+                  "%token_for_sale_address"
+                ],
+                "prim": "address"
+              },
+              {
+                "annots": [
+                  "%token_for_sale_token_id"
+                ],
+                "prim": "nat"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "prim": "mutez"
+      }
+    ],
+    "prim": "big_map"
+  },
+  "value": {
+    "int": "750"
+  },
+  "type_hex": "07610765046e0000000c2573616c655f73656c6c65720865046e0000001725746f6b656e5f666f725f73616c655f6164647265737304620000001825746f6b656e5f666f725f73616c655f746f6b656e5f69640000000b2573616c655f746f6b656e036a",
+  "value_hex": "00ae0b",
+  "want_value": "750"
+}]

@@ -1,0 +1,291 @@
+[
+  {
+    "name": "Edonet2/KT1C8pXFQaRhMnGXtXwG6KqQ4aHZQ8B4QyaF",
+    "type": {
+      "args": [
+        {
+          "annots": [
+            "%auctions"
+          ],
+          "args": [
+            {
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%creator"
+                  ],
+                  "prim": "address"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%tokenParams"
+                      ],
+                      "args": [
+                        {
+                          "annots": [
+                            "%tokenId"
+                          ],
+                          "prim": "nat"
+                        },
+                        {
+                          "args": [
+                            {
+                              "annots": [
+                                "%initialPrice"
+                              ],
+                              "prim": "mutez"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%minBidStep"
+                                  ],
+                                  "prim": "mutez"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "annots": [
+                                        "%lifetime"
+                                      ],
+                                      "prim": "nat"
+                                    },
+                                    {
+                                      "annots": [
+                                        "%extensionTime"
+                                      ],
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%lastBid"
+                          ],
+                          "args": [
+                            {
+                              "annots": [
+                                "%user"
+                              ],
+                              "prim": "address"
+                            },
+                            {
+                              "annots": [
+                                "%bid"
+                              ],
+                              "prim": "mutez"
+                            }
+                          ],
+                          "prim": "pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "annots": [
+                                "%createdAt"
+                              ],
+                              "prim": "timestamp"
+                            },
+                            {
+                              "annots": [
+                                "%finished"
+                              ],
+                              "prim": "bool"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "big_map"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%auctionByToken"
+              ],
+              "args": [
+                {
+                  "prim": "nat"
+                },
+                {
+                  "prim": "nat"
+                }
+              ],
+              "prim": "big_map"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%auctionsByUser"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    },
+                    {
+                      "args": [
+                        {
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "set"
+                    }
+                  ],
+                  "prim": "big_map"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%tokensByUser"
+                      ],
+                      "args": [
+                        {
+                          "prim": "address"
+                        },
+                        {
+                          "args": [
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "set"
+                        }
+                      ],
+                      "prim": "big_map"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%admin"
+                          ],
+                          "prim": "address"
+                        },
+                        {
+                          "args": [
+                            {
+                              "annots": [
+                                "%token"
+                              ],
+                              "prim": "address"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%lastAuctionId"
+                                  ],
+                                  "prim": "nat"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "annots": [
+                                        "%minAuctionLifetime"
+                                      ],
+                                      "prim": "nat"
+                                    },
+                                    {
+                                      "annots": [
+                                        "%maxExtensionTime"
+                                      ],
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": [
+      {
+        "int": "45126"
+      },
+      {
+        "int": "45127"
+      },
+      {
+        "int": "45128"
+      },
+      {
+        "int": "45129"
+      },
+      {
+        "bytes": "0000c201d70c22f5d75f7b2246efb471d67a24ab0bc0"
+      },
+      {
+        "bytes": "0174869a6b39c4a183127363da438f16bef0b4941d00"
+      },
+      {
+        "int": "1"
+      },
+      {
+        "int": "3600"
+      },
+      {
+        "int": "21600"
+      }
+    ],
+    "type_hex": "0765086103620765046e000000082563726561746f720765086504620000000825746f6b656e49640765046a0000000d25696e697469616c50726963650765046a0000000b256d696e426964537465700765046200000009256c69666574696d6504620000000e25657874656e73696f6e54696d650000000c25746f6b656e506172616d7307650865046e000000052575736572046a000000042562696400000008256c6173744269640765046b0000000a256372656174656441740459000000092566696e6973686564000000092561756374696f6e7307650861036203620000000f2561756374696f6e4279546f6b656e07650861036e056603620000000f2561756374696f6e7342795573657207650861036e056603620000000d25746f6b656e734279557365720765046e000000062561646d696e0765046e0000000625746f6b656e076504620000000e256c61737441756374696f6e49640765046200000013256d696e41756374696f6e4c69666574696d65046200000011256d6178457874656e73696f6e54696d65",
+    "value_hex": "020000004f0086c1050087c1050088c1050089c1050a000000160000c201d70c22f5d75f7b2246efb471d67a24ab0bc00a000000160174869a6b39c4a183127363da438f16bef0b4941d00000100903800a0d102",
+    "want_value": {
+      "admin": "tz1dKqzBVeZBDUx5UvTJyjuKckLjdNLjfdBY",
+      "auctionByToken": "45127",
+      "auctions": "45126",
+      "auctionsByUser": "45128",
+      "lastAuctionId": "1",
+      "maxExtensionTime": "21600",
+      "minAuctionLifetime": "3600",
+      "token": "KT1KCuCQqzvF2wiiXgT3qktZfyVjTeXRXx6B",
+      "tokensByUser": "45129"
+    }
+  }
+]

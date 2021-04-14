@@ -1,0 +1,149 @@
+[
+  {
+    "name": "Mainnet/opVW5n7gca2w9myUreVQTTDKLUaPdAVAVz3WAksSatjCL7iLj6u/0/0/0-515",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "36717660"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "00009c180e9afa7ea881e3f08777fea57bb1ed1f01a3"
+        },
+        {
+          "int": "0"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "009c918223",
+    "key_hex": "07070a0000001600009c180e9afa7ea881e3f08777fea57bb1ed1f01a30000",
+    "want_value": "36717660",
+    "want_key": {
+      "0": "tz1ZsNvZKUveN7FjRhMHTm9NiAUNAmrwdFKV",
+      "1": "0"
+    }
+  },
+  {
+    "name": "Mainnet/opVW5n7gca2w9myUreVQTTDKLUaPdAVAVz3WAksSatjCL7iLj6u/0/0/1-515",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "116877"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "01d4bbb83486df92642008e9ce812481f4d564611100"
+        },
+        {
+          "int": "0"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "008da20e",
+    "key_hex": "07070a0000001601d4bbb83486df92642008e9ce812481f4d5646111000000",
+    "want_value": "116877",
+    "want_key": {
+      "0": "KT1TybhR7XraG75JFYKSrh7KnxukMBT5dor6",
+      "1": "0"
+    }
+  },
+  {
+    "name": "Mainnet/opVW5n7gca2w9myUreVQTTDKLUaPdAVAVz3WAksSatjCL7iLj6u/0/1/0-519",
+    "type": {
+      "annots": [
+        "%curations"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%hDAO_balance"
+              ],
+              "prim": "nat"
+            },
+            {
+              "annots": [
+                "%issuer"
+              ],
+              "prim": "address"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "3100"
+        },
+        {
+          "bytes": "00009c180e9afa7ea881e3f08777fea57bb1ed1f01a3"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "int": "15181"
+    },
+    "type_hex": "08610362076504620000000d256844414f5f62616c616e6365046e00000007256973737565720000000a256375726174696f6e73",
+    "value_hex": "0707009c300a0000001600009c180e9afa7ea881e3f08777fea57bb1ed1f01a3",
+    "key_hex": "008ded01",
+    "want_value": {
+      "hDAO_balance": "3100",
+      "issuer": "tz1ZsNvZKUveN7FjRhMHTm9NiAUNAmrwdFKV"
+    },
+    "want_key": "15181"
+  }
+]

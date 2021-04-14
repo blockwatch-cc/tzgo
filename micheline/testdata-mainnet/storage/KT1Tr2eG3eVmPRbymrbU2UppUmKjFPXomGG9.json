@@ -1,0 +1,175 @@
+[{
+  "name": "Mainnet/KT1Tr2eG3eVmPRbymrbU2UppUmKjFPXomGG9",
+  "type": {
+    "args": [
+      {
+        "annots": [
+          "%accounts"
+        ],
+        "args": [
+          {
+            "annots": [
+              ":owner"
+            ],
+            "prim": "address"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  ":balance"
+                ],
+                "prim": "nat"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      ":spender"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      ":allowance"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "map"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "big_map"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  ":selfIsUpdatingTokenPool"
+                ],
+                "prim": "bool"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      ":freezeBaker"
+                    ],
+                    "prim": "bool"
+                  },
+                  {
+                    "annots": [
+                      ":lqtTotal"
+                    ],
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "annots": [
+                      ":manager"
+                    ],
+                    "prim": "address"
+                  },
+                  {
+                    "annots": [
+                      ":tokenAddress"
+                    ],
+                    "prim": "address"
+                  }
+                ],
+                "prim": "pair"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      ":tokenPool"
+                    ],
+                    "prim": "nat"
+                  },
+                  {
+                    "annots": [
+                      ":xtzPool"
+                    ],
+                    "prim": "mutez"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "int": "543"
+    },
+    {
+      "args": [
+        {
+          "prim": "False"
+        },
+        {
+          "args": [
+            {
+              "prim": "False"
+            },
+            {
+              "int": "31453459404"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "args": [
+        {
+          "bytes": "011b5edfd90cc62eaf4299bdc2eedae4306bea9fe200"
+        },
+        {
+          "bytes": "01813a19aa1cb96fe5b039c0bfc1633e61daf0ae3f00"
+        }
+      ],
+      "prim": "Pair"
+    },
+    {
+      "int": "135239712463"
+    },
+    {
+      "int": "26882520377"
+    }
+  ],
+  "type_hex": "07650861046e000000063a6f776e657207650462000000083a62616c616e63650760046e000000083a7370656e64657204620000000a3a616c6c6f77616e636500000009256163636f756e7473076507650459000000183a73656c6649735570646174696e67546f6b656e506f6f6c076504590000000c3a667265657a6542616b65720462000000093a6c7174546f74616c07650765046e000000083a6d616e61676572046e0000000d3a746f6b656e41646472657373076504620000000a3a746f6b656e506f6f6c046a000000083a78747a506f6f6c",
+  "value_hex": "0200000058009f080707030307070303008ccfadacea0107070a00000016011b5edfd90cc62eaf4299bdc2eedae4306bea9fe2000a0000001601813a19aa1cb96fe5b039c0bfc1633e61daf0ae3f00008ffbd1ceef0700b9d495a5c801",
+  "want_value": {
+    "accounts": "543",
+    "freezeBaker": false,
+    "lqtTotal": "31453459404",
+    "manager": "KT1B5VTw8ZSMnrjhy337CEvAm4tnT8Gu8Geu",
+    "selfIsUpdatingTokenPool": false,
+    "tokenAddress": "KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9",
+    "tokenPool": "135239712463",
+    "xtzPool": "26882520377"
+  }
+}]

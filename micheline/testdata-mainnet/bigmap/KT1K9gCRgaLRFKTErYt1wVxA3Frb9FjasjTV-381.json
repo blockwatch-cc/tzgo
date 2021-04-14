@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Mainnet/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV-381-expru5X1yxJG6ezR2uHMotwMLNmSzQyh5t1vUnhjx4cS6Pv9qE1Sdo",
+    "type": {
+      "annots": [
+        "%metadata"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "74657a6f732d73746f726167653a64617461"
+    },
+    "key": {
+      "string": ""
+    },
+    "type_hex": "08610368036900000009256d65746164617461",
+    "value_hex": "0a0000001274657a6f732d73746f726167653a64617461",
+    "key_hex": "0100000000",
+    "want_value": "tezos-storage:data",
+    "want_key": ""
+  },
+  {
+    "name": "Mainnet/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV-381-expru2AkMcQZfQC9jzDCGgAaT9wa3ko5DzR4p5kAh6JoPYac4VR6U7",
+    "type": {
+      "annots": [
+        "%metadata"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "7b20226e616d65223a20224b6f6c6962726920546f6b656e20436f6e7472616374222c20226465736372697074696f6e223a20224641312e3220496d706c656d656e746174696f6e206f66206b555344222c2022617574686f7273223a205b22486f766572204c616273203c68656c6c6f40686f7665722e656e67696e656572696e673e225d2c2022686f6d6570616765223a20202268747470733a2f2f6b6f6c696272692e66696e616e6365222c2022696e7465726661636573223a205b2022545a49502d3030372d323032312d30312d3239225d207d"
+    },
+    "key": {
+      "string": "data"
+    },
+    "type_hex": "08610368036900000009256d65746164617461",
+    "value_hex": "0a000000d87b20226e616d65223a20224b6f6c6962726920546f6b656e20436f6e7472616374222c20226465736372697074696f6e223a20224641312e3220496d706c656d656e746174696f6e206f66206b555344222c2022617574686f7273223a205b22486f766572204c616273203c68656c6c6f40686f7665722e656e67696e656572696e673e225d2c2022686f6d6570616765223a20202268747470733a2f2f6b6f6c696272692e66696e616e6365222c2022696e7465726661636573223a205b2022545a49502d3030372d323032312d30312d3239225d207d",
+    "key_hex": "010000000464617461",
+    "want_value": "{ \"name\": \"Kolibri Token Contract\", \"description\": \"FA1.2 Implementation of kUSD\", \"authors\": [\"Hover Labs \u003chello@hover.engineering\u003e\"], \"homepage\":  \"https://kolibri.finance\", \"interfaces\": [ \"TZIP-007-2021-01-29\"] }",
+    "want_key": "data"
+  }
+]

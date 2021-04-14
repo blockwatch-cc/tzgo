@@ -1,0 +1,458 @@
+[{
+  "name": "Mainnet/KT1EctCuorV2NfVb1XTQgvzJ88MQtWP8cMMv",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "prim": "address"
+              },
+              {
+                "args": [
+                  {
+                    "prim": "key_hash"
+                  }
+                ],
+                "prim": "set"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "prim": "string"
+                  },
+                  {
+                    "args": [
+                      {
+                        "prim": "bytes"
+                      },
+                      {
+                        "prim": "string"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "map"
+              },
+              {
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "prim": "string"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "prim": "string"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "prim": "bytes"
+                                      },
+                                      {
+                                        "prim": "string"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "map"
+                              }
+                            ],
+                            "prim": "pair"
+                          },
+                          {
+                            "prim": "bytes"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "list"
+                  },
+                  {
+                    "args": [
+                      {
+                        "prim": "key_hash"
+                      },
+                      {
+                        "prim": "nat"
+                      }
+                    ],
+                    "prim": "map"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "prim": "nat"
+              },
+              {
+                "prim": "nat"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "args": [
+                  {
+                    "prim": "address"
+                  },
+                  {
+                    "prim": "nat"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "args": [
+                  {
+                    "prim": "bool"
+                  },
+                  {
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "args": [
+                                      {
+                                        "prim": "nat"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "prim": "key"
+                                          },
+                                          {
+                                            "prim": "signature"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "prim": "address"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "prim": "nat"
+                                          }
+                                        ],
+                                        "prim": "contract"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "or"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "args": [
+                                      {
+                                        "prim": "unit"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "prim": "nat"
+                                          }
+                                        ],
+                                        "prim": "contract"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  },
+                                  {
+                                    "prim": "bytes"
+                                  }
+                                ],
+                                "prim": "or"
+                              }
+                            ],
+                            "prim": "or"
+                          },
+                          {
+                            "prim": "operation"
+                          }
+                        ],
+                        "prim": "lambda"
+                      }
+                    ],
+                    "prim": "option"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": {
+    "args": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "bytes": "0158963b4895bb34f5f04323955088252919d49e1700"
+              },
+              [
+                {
+                  "bytes": "003faad22c22aeb4d0b2c92930bc5c0d5d5cf3b685"
+                },
+                {
+                  "bytes": "00478ab1562c55ccfc169f66090d5627c8a4cc39bc"
+                },
+                {
+                  "bytes": "005f2931ed67ef176421fe74b3a58199bad671072e"
+                },
+                {
+                  "bytes": "0098c82adedb98b85ac32f8d5da333171c03bb924a"
+                },
+                {
+                  "bytes": "00c578052f1748383d913d82d84b0f0df50a56c0a0"
+                }
+              ]
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "string": "url1"
+                    },
+                    {
+                      "args": [
+                        {
+                          "bytes": "b3a65f0735db981999703c92bd7911875d566ff64998dc346b339eb5a12dd05a"
+                        },
+                        {
+                          "string": "https://forum.stakerdao.com/uploads/short-url/raIVnfLG57WwhwJGwxqu1ZeM3q7.pdf"
+                        }
+                      ],
+                      "prim": "Pair"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "args": [
+                  [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "string": "Proposal 009 - Wrapped Algorand"
+                            },
+                            [
+                              {
+                                "args": [
+                                  {
+                                    "string": "url1"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "bytes": "e0d4b70ee086881027a99ebd25132ff63b05a4824aaf79dc3d031362d69c31b1"
+                                      },
+                                      {
+                                        "string": "https://forum.stakerdao.com/uploads/short-url/zJgvlKIPGBZUx5Oz47zCcUz3nCu.pdf"
+                                      }
+                                    ],
+                                    "prim": "Pair"
+                                  }
+                                ],
+                                "prim": "Elt"
+                              }
+                            ]
+                          ],
+                          "prim": "Pair"
+                        },
+                        {
+                          "bytes": "e6dcc9ec95f2fb10de95cdbfa61ba340b06e7f2c029f8b29a84c7566080231e8"
+                        }
+                      ],
+                      "prim": "Pair"
+                    }
+                  ],
+                  [
+                    {
+                      "args": [
+                        {
+                          "bytes": "003faad22c22aeb4d0b2c92930bc5c0d5d5cf3b685"
+                        },
+                        {
+                          "int": "0"
+                        }
+                      ],
+                      "prim": "Elt"
+                    },
+                    {
+                      "args": [
+                        {
+                          "bytes": "00478ab1562c55ccfc169f66090d5627c8a4cc39bc"
+                        },
+                        {
+                          "int": "0"
+                        }
+                      ],
+                      "prim": "Elt"
+                    },
+                    {
+                      "args": [
+                        {
+                          "bytes": "005f2931ed67ef176421fe74b3a58199bad671072e"
+                        },
+                        {
+                          "int": "0"
+                        }
+                      ],
+                      "prim": "Elt"
+                    },
+                    {
+                      "args": [
+                        {
+                          "bytes": "0098c82adedb98b85ac32f8d5da333171c03bb924a"
+                        },
+                        {
+                          "int": "0"
+                        }
+                      ],
+                      "prim": "Elt"
+                    }
+                  ]
+                ],
+                "prim": "Pair"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "42"
+              },
+              {
+                "int": "1500000"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              {
+                "int": "20"
+              },
+              {
+                "args": [
+                  {
+                    "prim": "False"
+                  },
+                  {
+                    "prim": "None"
+                  }
+                ],
+                "prim": "Pair"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      }
+    ],
+    "prim": "Pair"
+  },
+  "type_hex": "076507650765036e0566035d0765076003680765036903680765055f0765076503680760036807650369036803690760035d0362076507650362036207650761036e0362076503590563075e07640764076503620765035c03670765036e055a036207640765036c055a03620369036d",
+  "value_hex": "0707070707070a000000160158963b4895bb34f5f04323955088252919d49e170002000000820a00000015003faad22c22aeb4d0b2c92930bc5c0d5d5cf3b6850a0000001500478ab1562c55ccfc169f66090d5627c8a4cc39bc0a00000015005f2931ed67ef176421fe74b3a58199bad671072e0a000000150098c82adedb98b85ac32f8d5da333171c03bb924a0a0000001500c578052f1748383d913d82d84b0f0df50a56c0a0070702000000840704010000000475726c3107070a00000020b3a65f0735db981999703c92bd7911875d566ff64998dc346b339eb5a12dd05a010000004d68747470733a2f2f666f72756d2e7374616b657264616f2e636f6d2f75706c6f6164732f73686f72742d75726c2f726149566e664c473537577768774a4777787175315a654d3371372e706466070702000000d607070707010000001f50726f706f73616c20303039202d205772617070656420416c676f72616e6402000000840704010000000475726c3107070a00000020e0d4b70ee086881027a99ebd25132ff63b05a4824aaf79dc3d031362d69c31b1010000004d68747470733a2f2f666f72756d2e7374616b657264616f2e636f6d2f75706c6f6164732f73686f72742d75726c2f7a4a67766c4b495047425a5578354f7a34377a4363557a336e43752e7064660a00000020e6dcc9ec95f2fb10de95cdbfa61ba340b06e7f2c029f8b29a84c7566080231e8020000007807040a00000015003faad22c22aeb4d0b2c92930bc5c0d5d5cf3b685000007040a0000001500478ab1562c55ccfc169f66090d5627c8a4cc39bc000007040a00000015005f2931ed67ef176421fe74b3a58199bad671072e000007040a000000150098c82adedb98b85ac32f8d5da333171c03bb924a000007070707002a00a08db70107070014070703030306",
+  "want_value": {
+    "0": "KT1GfAzvH7aUtVPbqRw6WbYMbd77dFPErQUg",
+    "1": [
+      "tz1RSfu48E1yHvs1abx7yv8QTTpzis3W3Kt9",
+      "tz1SAJpH6eeSdPU7WJPXxgdPLYPhFVCiHwDx",
+      "tz1UKCEd8vWm9v85TxKssT9ZndqchBpy9VsM",
+      "tz1ZZsCA2xPonKH13UhWVnhehc74vxx5ZKZM",
+      "tz1de9b4byQpmHuEYtHXzE2bAvJAbpwR9gEB"
+    ],
+    "2": {
+      "url1": {
+        "0": "b3a65f0735db981999703c92bd7911875d566ff64998dc346b339eb5a12dd05a",
+        "1": "https://forum.stakerdao.com/uploads/short-url/raIVnfLG57WwhwJGwxqu1ZeM3q7.pdf"
+      }
+    },
+    "3": [
+      {
+        "0": "Proposal 009 - Wrapped Algorand",
+        "1": {
+          "url1": {
+            "0": "e0d4b70ee086881027a99ebd25132ff63b05a4824aaf79dc3d031362d69c31b1",
+            "1": "https://forum.stakerdao.com/uploads/short-url/zJgvlKIPGBZUx5Oz47zCcUz3nCu.pdf"
+          }
+        },
+        "2": "e6dcc9ec95f2fb10de95cdbfa61ba340b06e7f2c029f8b29a84c7566080231e8"
+      }
+    ],
+    "4": {
+      "tz1RSfu48E1yHvs1abx7yv8QTTpzis3W3Kt9": "0",
+      "tz1SAJpH6eeSdPU7WJPXxgdPLYPhFVCiHwDx": "0",
+      "tz1UKCEd8vWm9v85TxKssT9ZndqchBpy9VsM": "0",
+      "tz1ZZsCA2xPonKH13UhWVnhehc74vxx5ZKZM": "0"
+    },
+    "5": "42",
+    "6": "1500000",
+    "7": "20",
+    "8": false,
+    "9": null
+  }
+}]

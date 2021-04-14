@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Edonet2/KT1C8pXFQaRhMnGXtXwG6KqQ4aHZQ8B4QyaF-45128-expruVGmxbULgQ8w6AqTXcXJrtC8e6Cd5rGWf3B8QBHwA6GdJu8m4b",
+    "type": {
+      "annots": [
+        "%auctionsByUser"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "set"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "int": "1"
+      }
+    ],
+    "key": {
+      "bytes": "00003141c9868e7518b007bf94663147dea07df36750"
+    },
+    "type_hex": "0861036e056603620000000f2561756374696f6e73427955736572",
+    "value_hex": "02000000020001",
+    "key_hex": "0a0000001600003141c9868e7518b007bf94663147dea07df36750",
+    "want_value": [
+      "1"
+    ],
+    "want_key": "tz1Q8UcVdB5iyuN3DDjwcK7igjVjcvZTSTVM"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Mainnet/KT1EpGgjQs73QfFJs9z7m1Mxm5MTnpC2tqse-858-expru5X1yxJG6ezR2uHMotwMLNmSzQyh5t1vUnhjx4cS6Pv9qE1Sdo",
+    "type": {
+      "annots": [
+        "%metadata"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": ""
+    },
+    "key": {
+      "string": ""
+    },
+    "type_hex": "08610368036900000009256d65746164617461",
+    "value_hex": "0a00000000",
+    "key_hex": "0100000000",
+    "want_value": "",
+    "want_key": ""
+  }
+]

@@ -1,0 +1,198 @@
+[
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-expru2dKqDfZG8hu4wNGkiyunvq2hdSKuVYtcKta7BWP6Q18oNxKjS",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "0153bec69924a52fa90e30e6c2f3a49d29d5293a5e00"
+    },
+    "key": {
+      "int": "1"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a000000160153bec69924a52fa90e30e6c2f3a49d29d5293a5e00",
+    "key_hex": "0001",
+    "want_value": "KT1GDaC29FDxPM26XxnSVSi7riV4pzx7gMM9",
+    "want_key": "1"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-expruDuAZnFKqmLoisJqUGqrNzXTvw7PJM2rYk97JErM5FHCerQqgn",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "01689af1ebf36e6e8c53be2e513e65e711d674af9100"
+    },
+    "key": {
+      "int": "2"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a0000001601689af1ebf36e6e8c53be2e513e65e711d674af9100",
+    "key_hex": "0002",
+    "want_value": "KT1J7sTUzxZgK3xNULpdv1HxwuTbnmLQEYQz",
+    "want_key": "2"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-exprujyHLX2vacVy6AcFmAt5K3Y93aMtccrbNtcsCRik6fjxR8wL6x",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00"
+    },
+    "key": {
+      "int": "3"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00",
+    "key_hex": "0003",
+    "want_value": "KT1P4aoPkSMuejGjct9TwrQDSwt3pG8Ykhj5",
+    "want_key": "3"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-exprtkcv5vD1Ct4y91FvZFgXVHCxebKhorSVs8hFmXYgmGsEMo4qdp",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00"
+    },
+    "key": {
+      "int": "4"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00",
+    "key_hex": "0004",
+    "want_value": "KT1P4aoPkSMuejGjct9TwrQDSwt3pG8Ykhj5",
+    "want_key": "4"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-exprtqoNj2hRg8PsPMaXLcy3dXjMM3B7nHKrRNqpfjbYpMbULbRj8k",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00"
+    },
+    "key": {
+      "int": "5"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00",
+    "key_hex": "0005",
+    "want_value": "KT1P4aoPkSMuejGjct9TwrQDSwt3pG8Ykhj5",
+    "want_key": "5"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-expruhrcC4osJigCeAywh27e6iYerzr5LnhYDwnWJc7VrLg7SxJbtm",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "014fca55465867ca89e0995b9b2be961d1fa5b362d00"
+    },
+    "key": {
+      "int": "6"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016014fca55465867ca89e0995b9b2be961d1fa5b362d00",
+    "key_hex": "0006",
+    "want_value": "KT1FrfLGeUjt71LixpdLoKZkmjxT1aw2mwaw",
+    "want_key": "6"
+  },
+  {
+    "name": "Edonet2/KT1BeEf292EPCsCXW8ge6wa2ciewx2xezapo-46369-exprufunBN3FAVpZ21WXquoqiNyWB2PvYy1njkP4wHGtMexdKtcJEM",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00"
+    },
+    "key": {
+      "int": "7"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016019ed46bf47f1527eaeb5f0060d8876aa0a99bbf5a00",
+    "key_hex": "0007",
+    "want_value": "KT1P4aoPkSMuejGjct9TwrQDSwt3pG8Ykhj5",
+    "want_key": "7"
+  }
+]

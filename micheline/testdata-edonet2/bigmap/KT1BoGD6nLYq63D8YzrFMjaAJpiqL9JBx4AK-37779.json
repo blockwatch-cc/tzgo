@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37779-expruH6udUv4hSCy8GhBAnasiAQokKqqpfbKHN3rTF4M6aJF952FqR",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "00007aeceae4d35ac8c91dc036db4ca11d7c138bbb57"
+        },
+        {
+          "int": "1"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "07070a0000001600007aeceae4d35ac8c91dc036db4ca11d7c138bbb570001",
+    "want_value": "100000000000",
+    "want_key": {
+      "0": "tz1WqzwqqGBtJucJFUxzaYMSUyPVK3vMDRUW",
+      "1": "1"
+    }
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37779-expruPqRcXkUiVaubgde9ntMTGA3ocZPqGRgzX5A6nxCiHRZYknyp9",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "00007aeceae4d35ac8c91dc036db4ca11d7c138bbb57"
+        },
+        {
+          "int": "2"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "07070a0000001600007aeceae4d35ac8c91dc036db4ca11d7c138bbb570002",
+    "want_value": "100000000000",
+    "want_key": {
+      "0": "tz1WqzwqqGBtJucJFUxzaYMSUyPVK3vMDRUW",
+      "1": "2"
+    }
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37779-expruqWvbtNgEC5RR1eZbTgr1PXw5UEA4c5oeVgCQc8TbAhnJDb7GT",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "00007aeceae4d35ac8c91dc036db4ca11d7c138bbb57"
+        },
+        {
+          "int": "3"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "07070a0000001600007aeceae4d35ac8c91dc036db4ca11d7c138bbb570003",
+    "want_value": "100000000000",
+    "want_key": {
+      "0": "tz1WqzwqqGBtJucJFUxzaYMSUyPVK3vMDRUW",
+      "1": "3"
+    }
+  }
+]

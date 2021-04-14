@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Edonet2/KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e-45795-expruvd2zXoeWf7vfqnDRrdd9F7UbVUxKgqey4jkm9UZvLk2SJA9fe",
+    "type": {
+      "annots": [
+        "%nicknames"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "timestamp"
+            },
+            {
+              "prim": "string"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1617043995"
+        },
+        {
+          "string": "tz1cp2TFke4GdtSYVBtuTPfvawnemu"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000bc5e19311fb2c20bdd0553900e99f9f74bb10ec3"
+    },
+    "type_hex": "0861036e0765036b03680000000a256e69636b6e616d6573",
+    "value_hex": "0707009b8891860c010000001e747a3163703254466b65344764745359564274755450667661776e656d75",
+    "key_hex": "0a000000160000bc5e19311fb2c20bdd0553900e99f9f74bb10ec3",
+    "want_value": {
+      "0": "2021-03-29T18:53:15Z",
+      "1": "tz1cp2TFke4GdtSYVBtuTPfvawnemu"
+    },
+    "want_key": "tz1cp2TFke4GdtSYVBtuTPfvawnemuaJwSno"
+  },
+  {
+    "name": "Edonet2/KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e-45795-exprtemNUNtDHVL4gX1jrTfCxeJReER9ZTRmp1AbWep2DUrhdbaQCP",
+    "type": {
+      "annots": [
+        "%nicknames"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "timestamp"
+            },
+            {
+              "prim": "string"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1617085445"
+        },
+        {
+          "string": "TacosForClaude"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "000015ef21933d3b7a787b833bb94527fdfbd9ad5a56"
+    },
+    "type_hex": "0861036e0765036b03680000000a256e69636b6e616d6573",
+    "value_hex": "070700859096860c010000000e5461636f73466f72436c61756465",
+    "key_hex": "0a00000016000015ef21933d3b7a787b833bb94527fdfbd9ad5a56",
+    "want_value": {
+      "0": "2021-03-30T06:24:05Z",
+      "1": "TacosForClaude"
+    },
+    "want_key": "tz1Me1MGhK7taay748h4gPnX2cXvbgL6xsYL"
+  },
+  {
+    "name": "Edonet2/KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e-45795-expruNz8GN9wQV4qXzpYFgYMxkzj7HrJ7yoKrdjrnu4EUVuv28dhu4",
+    "type": {
+      "annots": [
+        "%nicknames"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "prim": "timestamp"
+            },
+            {
+              "prim": "string"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1617459417"
+        },
+        {
+          "string": "\u003cBODY ONLOAD =alert('XSS')\u003e"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000b0c4a60ca66668d1335534ae359e3c958614905a"
+    },
+    "type_hex": "0861036e0765036b03680000000a256e69636b6e616d6573",
+    "value_hex": "07070099e3c3860c010000001b3c424f4459204f4e4c4f4144203d616c657274282758535327293e",
+    "key_hex": "0a000000160000b0c4a60ca66668d1335534ae359e3c958614905a",
+    "want_value": {
+      "0": "2021-04-03T14:16:57Z",
+      "1": "\u003cBODY ONLOAD =alert('XSS')\u003e"
+    },
+    "want_key": "tz1bkhCGUuA5bveCsMqXe9tEkopkZX3hiB9i"
+  }
+]

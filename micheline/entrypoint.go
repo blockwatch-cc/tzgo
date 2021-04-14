@@ -131,7 +131,11 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 
 	// need unique entrypoint name
 	if name == "" {
-		name = fmt.Sprintf("__entry_%02d__", len(e))
+		if len(e) == 0 {
+			name = "default"
+		} else {
+			name = fmt.Sprintf("__entry_%02d__", len(e))
+		}
 	}
 
 	// process non-T_OR branches
@@ -146,7 +150,12 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 		ep.Typedef = []Typedef{buildTypedef("", node)}
 		ep.Typedef[0].Name = ""
 	} else {
-		ep.Typedef = buildTypedef("", node).Args
+		td := buildTypedef("", node)
+		if len(td.Args) > 0 {
+			ep.Typedef = td.Args
+		} else {
+			ep.Typedef = []Typedef{td}
+		}
 	}
 
 	e[name] = ep

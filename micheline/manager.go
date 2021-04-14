@@ -54,7 +54,7 @@ func IsManagerTz(buf []byte) bool {
 }
 
 func (p Prim) MigrateToBabylonStorage(managerHash []byte) Prim {
-	return code(D_PAIR, pbytes(managerHash), p)
+	return NewCode(D_PAIR, NewBytes(managerHash), p)
 }
 
 // Patch params, storage and code
@@ -69,34 +69,34 @@ func (s *Script) MigrateToBabylonAddDo(managerHash []byte) {
 	}
 
 	// wrap params
-	s.Code.Param.Args[0] = code(
+	s.Code.Param.Args[0] = NewCode(
 		T_OR,
-		code_anno(T_LAMBDA, "%do", code(T_UNIT), code(T_LIST, code(T_OPERATION))),
+		NewCodeAnno(T_LAMBDA, "%do", NewCode(T_UNIT), NewCode(T_LIST, NewCode(T_OPERATION))),
 		s.Code.Param.Args[0],
 	)
 
 	// wrap storage
-	s.Code.Storage.Args[0] = code(T_PAIR, code(T_KEY_HASH), s.Code.Storage.Args[0])
+	s.Code.Storage.Args[0] = NewCode(T_PAIR, NewCode(T_KEY_HASH), s.Code.Storage.Args[0])
 
 	// wrap code
-	s.Code.Code.Args[0] = seq(
-		code(I_DUP),
-		code(I_CAR),
-		code(I_IF_LEFT,
+	s.Code.Code.Args[0] = NewSeq(
+		NewCode(I_DUP),
+		NewCode(I_CAR),
+		NewCode(I_IF_LEFT,
 			DO_ENTRY(),
-			seq(
+			NewSeq(
 				// # Transform the inputs to the original script types
-				code(I_DIP, seq(code(I_CDR), code(I_DUP), code(I_CDR))),
-				code(I_PAIR),
+				NewCode(I_DIP, NewSeq(NewCode(I_CDR), NewCode(I_DUP), NewCode(I_CDR))),
+				NewCode(I_PAIR),
 				// # 'default' entrypoint - original code
 				s.Code.Code.Args[0],
 				// # Transform the outputs to the new script types
-				code(I_SWAP),
-				code(I_CAR),
-				code(I_SWAP),
+				NewCode(I_SWAP),
+				NewCode(I_CAR),
+				NewCode(I_SWAP),
 				UNPAIR(),
-				code(I_DIP, seq(code(I_SWAP), code(I_PAIR))),
-				code(I_PAIR),
+				NewCode(I_DIP, NewSeq(NewCode(I_SWAP), NewCode(I_PAIR))),
+				NewCode(I_PAIR),
 			),
 		),
 	)
@@ -116,37 +116,37 @@ func (s *Script) MigrateToBabylonSetDelegate(managerHash []byte) {
 	}
 
 	// wrap params
-	s.Code.Param.Args[0] = code(
+	s.Code.Param.Args[0] = NewCode(
 		T_OR,
-		code(T_OR,
-			code_anno(T_KEY_HASH, "%set_delegate"),
-			code_anno(T_UNIT, "%remove_delegate"),
+		NewCode(T_OR,
+			NewCodeAnno(T_KEY_HASH, "%set_delegate"),
+			NewCodeAnno(T_UNIT, "%remove_delegate"),
 		),
 		s.Code.Param.Args[0],
 	)
 
 	// wrap storage
-	s.Code.Storage.Args[0] = code(T_PAIR, code(T_KEY_HASH), s.Code.Storage.Args[0])
+	s.Code.Storage.Args[0] = NewCode(T_PAIR, NewCode(T_KEY_HASH), s.Code.Storage.Args[0])
 
 	// wrap code
-	s.Code.Code.Args[0] = seq(
-		code(I_DUP),
-		code(I_CAR),
-		code(I_IF_LEFT,
+	s.Code.Code.Args[0] = NewSeq(
+		NewCode(I_DUP),
+		NewCode(I_CAR),
+		NewCode(I_IF_LEFT,
 			DELEGATE_ENTRY(),
-			seq(
+			NewSeq(
 				// # Transform the inputs to the original script types
-				code(I_DIP, seq(code(I_CDR), code(I_DUP), code(I_CDR))),
-				code(I_PAIR),
+				NewCode(I_DIP, NewSeq(NewCode(I_CDR), NewCode(I_DUP), NewCode(I_CDR))),
+				NewCode(I_PAIR),
 				// # 'default' entrypoint - original code
 				s.Code.Code.Args[0],
 				// # Transform the outputs to the new script types
-				code(I_SWAP),
-				code(I_CAR),
-				code(I_SWAP),
+				NewCode(I_SWAP),
+				NewCode(I_CAR),
+				NewCode(I_SWAP),
 				UNPAIR(),
-				code(I_DIP, seq(code(I_SWAP), code(I_PAIR))),
-				code(I_PAIR),
+				NewCode(I_DIP, NewSeq(NewCode(I_SWAP), NewCode(I_PAIR))),
+				NewCode(I_PAIR),
 			),
 		),
 	)
@@ -157,30 +157,30 @@ func (s *Script) MigrateToBabylonSetDelegate(managerHash []byte) {
 
 // Macros
 func DO_ENTRY() Prim {
-	return seq(
+	return NewSeq(
 		// # Assert no token was sent:
-		code(I_PUSH, code(T_MUTEZ), i64(0)), // PUSH mutez 0 ;
-		code(I_AMOUNT),                      // AMOUNT ;
-		ASSERT_CMPEQ(),                      // ASSERT_CMPEQ ;
+		NewCode(I_PUSH, NewCode(T_MUTEZ), NewInt64(0)), // PUSH mutez 0 ;
+		NewCode(I_AMOUNT), // AMOUNT ;
+		ASSERT_CMPEQ(),    // ASSERT_CMPEQ ;
 		// # Assert that the sender is the manager
-		DUUP(),                   // DUUP ;
-		code(I_CDR),              // CDR ;
-		code(I_CAR),              // CAR ;
-		code(I_IMPLICIT_ACCOUNT), // IMPLICIT_ACCOUNT ;
-		code(I_ADDRESS),          // ADDRESS ;
-		code(I_SENDER),           // SENDER ;
+		DUUP(),                      // DUUP ;
+		NewCode(I_CDR),              // CDR ;
+		NewCode(I_CAR),              // CAR ;
+		NewCode(I_IMPLICIT_ACCOUNT), // IMPLICIT_ACCOUNT ;
+		NewCode(I_ADDRESS),          // ADDRESS ;
+		NewCode(I_SENDER),           // SENDER ;
 		IFCMPNEQ( // IFCMPNEQ
-			seq(
-				code(I_SENDER), //   { SENDER ;
-				code(I_PUSH, code(T_STRING), pstring("Only the owner can operate.")), // PUSH string "" ;
-				code(I_PAIR),     //     PAIR ;
-				code(I_FAILWITH), //     FAILWITH ;
+			NewSeq(
+				NewCode(I_SENDER), //   { SENDER ;
+				NewCode(I_PUSH, NewCode(T_STRING), NewString("Only the owner can operate.")), // PUSH string "" ;
+				NewCode(I_PAIR),     //     PAIR ;
+				NewCode(I_FAILWITH), //     FAILWITH ;
 			),
-			seq( // # Execute the lambda argument
-				code(I_UNIT),                  //     UNIT ;
-				code(I_EXEC),                  //     EXEC ;
-				code(I_DIP, seq(code(I_CDR))), //     DIP { CDR } ;
-				code(I_PAIR),                  //     PAIR ;
+			NewSeq( // # Execute the lambda argument
+				NewCode(I_UNIT),                        //     UNIT ;
+				NewCode(I_EXEC),                        //     EXEC ;
+				NewCode(I_DIP, NewSeq(NewCode(I_CDR))), //     DIP { CDR } ;
+				NewCode(I_PAIR),                        //     PAIR ;
 			),
 		),
 	)
@@ -188,42 +188,42 @@ func DO_ENTRY() Prim {
 
 // 'set_delegate'/'remove_delegate' entrypoints
 func DELEGATE_ENTRY() Prim {
-	return seq(
+	return NewSeq(
 		// # Assert no token was sent:
-		code(I_PUSH, code(T_MUTEZ), i64(0)), // PUSH mutez 0 ;
-		code(I_AMOUNT),                      // AMOUNT ;
-		ASSERT_CMPEQ(),                      // ASSERT_CMPEQ ;
+		NewCode(I_PUSH, NewCode(T_MUTEZ), NewInt64(0)), // PUSH mutez 0 ;
+		NewCode(I_AMOUNT), // AMOUNT ;
+		ASSERT_CMPEQ(),    // ASSERT_CMPEQ ;
 		// # Assert that the sender is the manager
-		DUUP(),                   // DUUP ;
-		code(I_CDR),              // CDR ;
-		code(I_CAR),              // CAR ;
-		code(I_IMPLICIT_ACCOUNT), // IMPLICIT_ACCOUNT ;
-		code(I_ADDRESS),          // ADDRESS ;
-		code(I_SENDER),           // SENDER ;
+		DUUP(),                      // DUUP ;
+		NewCode(I_CDR),              // CDR ;
+		NewCode(I_CAR),              // CAR ;
+		NewCode(I_IMPLICIT_ACCOUNT), // IMPLICIT_ACCOUNT ;
+		NewCode(I_ADDRESS),          // ADDRESS ;
+		NewCode(I_SENDER),           // SENDER ;
 		IFCMPNEQ( // IFCMPNEQ
-			seq(
-				code(I_SENDER), // SENDER ;
-				code(I_PUSH, code(T_STRING), pstring("Only the owner can operate.")), // PUSH string "" ;
-				code(I_PAIR),     // PAIR ;
-				code(I_FAILWITH), // FAILWITH ;
+			NewSeq(
+				NewCode(I_SENDER), // SENDER ;
+				NewCode(I_PUSH, NewCode(T_STRING), NewString("Only the owner can operate.")), // PUSH string "" ;
+				NewCode(I_PAIR),     // PAIR ;
+				NewCode(I_FAILWITH), // FAILWITH ;
 			),
-			seq( // # entrypoints
-				code(I_DIP, seq(code(I_CDR), code(I_NIL, code(T_OPERATION)))), // DIP { CDR ; NIL operation } ;
-				code(I_IF_LEFT,
+			NewSeq( // # entrypoints
+				NewCode(I_DIP, NewSeq(NewCode(I_CDR), NewCode(I_NIL, NewCode(T_OPERATION)))), // DIP { CDR ; NIL operation } ;
+				NewCode(I_IF_LEFT,
 					// # 'set_delegate' entrypoint
-					seq(
-						code(I_SOME),         // SOME ;
-						code(I_SET_DELEGATE), // SET_DELEGATE ;
-						code(I_CONS),         // CONS ;
-						code(I_PAIR),         // PAIR ;
+					NewSeq(
+						NewCode(I_SOME),         // SOME ;
+						NewCode(I_SET_DELEGATE), // SET_DELEGATE ;
+						NewCode(I_CONS),         // CONS ;
+						NewCode(I_PAIR),         // PAIR ;
 					),
 					// # 'remove_delegate' entrypoint
-					seq(
-						code(I_DROP),                   // DROP ;
-						code(I_NONE, code(T_KEY_HASH)), // NONE key_hash ;
-						code(I_SET_DELEGATE),           // SET_DELEGATE ;
-						code(I_CONS),                   // CONS ;
-						code(I_PAIR),                   // PAIR ;
+					NewSeq(
+						NewCode(I_DROP),                      // DROP ;
+						NewCode(I_NONE, NewCode(T_KEY_HASH)), // NONE key_hash ;
+						NewCode(I_SET_DELEGATE),              // SET_DELEGATE ;
+						NewCode(I_CONS),                      // CONS ;
+						NewCode(I_PAIR),                      // PAIR ;
 					),
 				),
 			),

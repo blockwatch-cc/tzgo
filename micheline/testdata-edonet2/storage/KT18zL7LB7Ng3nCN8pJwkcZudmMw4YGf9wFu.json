@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Edonet2/KT18zL7LB7Ng3nCN8pJwkcZudmMw4YGf9wFu",
+    "type": {
+      "args": [
+        {
+          "int": "8"
+        }
+      ],
+      "prim": "sapling_state"
+    },
+    "value": {
+      "int": "542"
+    },
+    "type_hex": "05830008",
+    "value_hex": "009e08",
+    "want_value": {
+      "memo_size": "8",
+      "content": "542"
+    }
+  }
+]

@@ -1,0 +1,234 @@
+[{
+  "name": "Edonet2/KT1PRfJARc2o5pUoKd1zcVD8nEoecjUWWu1e",
+  "type": {
+    "args": [
+      {
+        "annots": [
+          "%tickets"
+        ],
+        "args": [
+          {
+            "args": [
+              {
+                "annots": [
+                  "%owner"
+                ],
+                "prim": "address"
+              },
+              {
+                "annots": [
+                  "%ticket_type"
+                ],
+                "prim": "string"
+              }
+            ],
+            "prim": "pair"
+          },
+          {
+            "args": [
+              {
+                "prim": "timestamp"
+              }
+            ],
+            "prim": "ticket"
+          }
+        ],
+        "prim": "big_map"
+      },
+      {
+        "annots": [
+          "%data"
+        ],
+        "args": [
+          {
+            "annots": [
+              "%admin"
+            ],
+            "prim": "address"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%pool_addresses"
+                ],
+                "args": [
+                  {
+                    "prim": "address"
+                  },
+                  {
+                    "prim": "string"
+                  }
+                ],
+                "prim": "big_map"
+              },
+              {
+                "args": [
+                  {
+                    "annots": [
+                      "%nicknames"
+                    ],
+                    "args": [
+                      {
+                        "prim": "address"
+                      },
+                      {
+                        "args": [
+                          {
+                            "prim": "timestamp"
+                          },
+                          {
+                            "prim": "string"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "big_map"
+                  },
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%ticket_types"
+                        ],
+                        "args": [
+                          {
+                            "prim": "string"
+                          }
+                        ],
+                        "prim": "set"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%ticket_price"
+                            ],
+                            "prim": "mutez"
+                          },
+                          {
+                            "args": [
+                              {
+                                "annots": [
+                                  "%ticket_validity"
+                                ],
+                                "prim": "int"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%nickname_fee"
+                                    ],
+                                    "prim": "mutez"
+                                  },
+                                  {
+                                    "args": [
+                                      {
+                                        "annots": [
+                                          "%kolibri"
+                                        ],
+                                        "prim": "address"
+                                      },
+                                      {
+                                        "args": [
+                                          {
+                                            "annots": [
+                                              "%kolibri_ticket_price"
+                                            ],
+                                            "prim": "nat"
+                                          },
+                                          {
+                                            "annots": [
+                                              "%tx_to_kolibri"
+                                            ],
+                                            "prim": "bool"
+                                          }
+                                        ],
+                                        "prim": "pair"
+                                      }
+                                    ],
+                                    "prim": "pair"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "int": "45793"
+    },
+    {
+      "bytes": "0000218a8208ba1757455251049290234adae2267b43"
+    },
+    {
+      "int": "45794"
+    },
+    {
+      "int": "45795"
+    },
+    [
+      {
+        "string": "standard"
+      }
+    ],
+    {
+      "int": "2000000"
+    },
+    {
+      "int": "2592000"
+    },
+    {
+      "int": "1000000"
+    },
+    {
+      "bytes": "019817b84b2e02776ecc83c154f6d7540bcfc7a91200"
+    },
+    {
+      "int": "5000000000000000000"
+    },
+    {
+      "prim": "False"
+    }
+  ],
+  "type_hex": "076508610765046e00000006256f776e657204680000000c257469636b65745f747970650587036b00000008257469636b6574730865046e000000062561646d696e07650861036e03680000000f25706f6f6c5f61646472657373657307650861036e0765036b03680000000a256e69636b6e616d65730765066603680000000d257469636b65745f74797065730765046a0000000d257469636b65745f70726963650765045b00000010257469636b65745f76616c69646974790765046a0000000d256e69636b6e616d655f6665650765046e00000008256b6f6c696272690765046200000015256b6f6c696272695f7469636b65745f707269636504590000000e2574785f746f5f6b6f6c69627269000000052564617461",
+  "value_hex": "020000006f00a1cb050a000000160000218a8208ba1757455251049290234adae2267b4300a2cb0500a3cb05020000000d01000000087374616e64617264008092f4010080b4bc020080897a0a00000016019817b84b2e02776ecc83c154f6d7540bcfc7a91200008080a0cfc8e0c8e38a010303",
+  "want_value": {
+    "data": {
+      "admin": "tz1NhNv9g7rtcjyNsH8Zqu79giY5aTqDDrzB",
+      "kolibri": "KT1NSxh1bBJxHkT5ScXwzg4LcuNYQY1abrjR",
+      "kolibri_ticket_price": "5000000000000000000",
+      "nickname_fee": "1000000",
+      "nicknames": "45795",
+      "pool_addresses": "45794",
+      "ticket_price": "2000000",
+      "ticket_types": [
+        "standard"
+      ],
+      "ticket_validity": "2592000",
+      "tx_to_kolibri": false
+    },
+    "tickets": "45793"
+  }
+}]

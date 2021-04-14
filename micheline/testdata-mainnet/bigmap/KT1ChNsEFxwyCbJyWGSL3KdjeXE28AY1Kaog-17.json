@@ -1,0 +1,1048 @@
+[
+  {
+    "name": "Mainnet/KT1ChNsEFxwyCbJyWGSL3KdjeXE28AY1Kaog-17-exprtyDajtX61LBnSYHX3R4VaXxUJ8mqzXpExBNpvTjPiUDSdtKqav",
+    "type": {
+      "args": [
+        {
+          "prim": "key_hash"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%data"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%bakerName"
+                                  ],
+                                  "prim": "bytes"
+                                },
+                                {
+                                  "annots": [
+                                    "%openForDelegation"
+                                  ],
+                                  "prim": "bool"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "annots": [
+                                "%bakerOffchainRegistryUrl"
+                              ],
+                              "prim": "bytes"
+                            }
+                          ],
+                          "prim": "pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%split"
+                                  ],
+                                  "prim": "nat"
+                                },
+                                {
+                                  "annots": [
+                                    "%bakerPaysFromAccounts"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "address"
+                                    }
+                                  ],
+                                  "prim": "list"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%minDelegation"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractPayoutsLessThanMin"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%payoutDelay"
+                                          ],
+                                          "prim": "int"
+                                        },
+                                        {
+                                          "args": [
+                                            {
+                                              "annots": [
+                                                "%payoutFrequency"
+                                              ],
+                                              "prim": "nat"
+                                            },
+                                            {
+                                              "annots": [
+                                                "%minPayout"
+                                              ],
+                                              "prim": "int"
+                                            }
+                                          ],
+                                          "prim": "pair"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%bakerChargesTransactionFee"
+                                          ],
+                                          "prim": "bool"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%paymentConfigMask"
+                                          ],
+                                          "prim": "nat"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%overDelegationThreshold"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractRewardsFromUninvitedDelegation"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "option"
+                },
+                {
+                  "annots": [
+                    "%reporterAccount"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    }
+                  ],
+                  "prim": "option"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%last_update"
+              ],
+              "prim": "timestamp"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "bytes": "42616b696e67205465616d"
+                            },
+                            {
+                              "prim": "False"
+                            }
+                          ],
+                          "prim": "Pair"
+                        },
+                        {
+                          "bytes": "68747470733a2f2f62616b696e672e7465616d2f72656769737472792e6a736f6e"
+                        }
+                      ],
+                      "prim": "Pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "int": "9800"
+                            },
+                            [
+                              {
+                                "bytes": "00002b4c733c139bdfdfd3b23823b61b491c9f3ad222"
+                              }
+                            ]
+                          ],
+                          "prim": "Pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "int": "10000000"
+                                    },
+                                    {
+                                      "prim": "False"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "int": "6"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "int": "1"
+                                        },
+                                        {
+                                          "int": "0"
+                                        }
+                                      ],
+                                      "prim": "Pair"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                }
+                              ],
+                              "prim": "Pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "prim": "True"
+                                    },
+                                    {
+                                      "int": "16383"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "int": "100"
+                                    },
+                                    {
+                                      "prim": "False"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                }
+                              ],
+                              "prim": "Pair"
+                            }
+                          ],
+                          "prim": "Pair"
+                        }
+                      ],
+                      "prim": "Pair"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Some"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "00002b4c733c139bdfdfd3b23823b61b491c9f3ad222"
+                }
+              ],
+              "prim": "Some"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "1611253603"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "00d7a65a64734fda77378e05925fd621aaa92dc7cb"
+    },
+    "type_hex": "0761035d07650765066307650765076504690000000a2562616b65724e616d65045900000012256f70656e466f7244656c65676174696f6e0469000000192562616b65724f6666636861696e526567697374727955726c076507650462000000062573706c6974065f036e000000162562616b65725061797346726f6d4163636f756e747307650765076504620000000e256d696e44656c65676174696f6e04590000001b2573756274726163745061796f7574734c6573735468616e4d696e0765045b0000000c257061796f757444656c61790765046200000010257061796f75744672657175656e6379045b0000000a256d696e5061796f75740765076504590000001b2562616b6572436861726765735472616e73616374696f6e466565046200000012257061796d656e74436f6e6669674d61736b0765046200000018256f76657244656c65676174696f6e5468726573686f6c640459000000272573756274726163745265776172647346726f6d556e696e766974656444656c65676174696f6e0000000525646174610663036e00000010257265706f727465724163636f756e74046b0000000c256c6173745f757064617465",
+    "value_hex": "0707070705090707070707070a0000000b42616b696e67205465616d03030a0000002168747470733a2f2f62616b696e672e7465616d2f72656769737472792e6a736f6e0707070700889901020000001b0a0000001600002b4c733c139bdfdfd3b23823b61b491c9f3ad2220707070707070080dac40903030707000607070001000007070707030a00bfff01070700a401030305090a0000001600002b4c733c139bdfdfd3b23823b61b491c9f3ad22200a39dce800c",
+    "key_hex": "0a0000001500d7a65a64734fda77378e05925fd621aaa92dc7cb",
+    "want_value": {
+      "data": {
+        "bakerChargesTransactionFee": true,
+        "bakerName": "Baking Team",
+        "bakerOffchainRegistryUrl": "https://baking.team/registry.json",
+        "bakerPaysFromAccounts": [
+          "tz1PayLDWLg39fbkwKejnT3aijz4QEd5kgt3"
+        ],
+        "minDelegation": "10000000",
+        "minPayout": "0",
+        "openForDelegation": false,
+        "overDelegationThreshold": "100",
+        "paymentConfigMask": "16383",
+        "payoutDelay": "6",
+        "payoutFrequency": "1",
+        "split": "9800",
+        "subtractPayoutsLessThanMin": false,
+        "subtractRewardsFromUninvitedDelegation": false
+      },
+      "last_update": "2021-01-21T18:26:43Z",
+      "reporterAccount": "tz1PayLDWLg39fbkwKejnT3aijz4QEd5kgt3"
+    },
+    "want_key": "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g"
+  },
+  {
+    "name": "Mainnet/KT1ChNsEFxwyCbJyWGSL3KdjeXE28AY1Kaog-17-exprvPcQ6uQ9Ze1dyknkct3ZJVJY3m6QCYa9L4TqAmHfCnkASGMbPa",
+    "type": {
+      "args": [
+        {
+          "prim": "key_hash"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%data"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%bakerName"
+                                  ],
+                                  "prim": "bytes"
+                                },
+                                {
+                                  "annots": [
+                                    "%openForDelegation"
+                                  ],
+                                  "prim": "bool"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "annots": [
+                                "%bakerOffchainRegistryUrl"
+                              ],
+                              "prim": "bytes"
+                            }
+                          ],
+                          "prim": "pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%split"
+                                  ],
+                                  "prim": "nat"
+                                },
+                                {
+                                  "annots": [
+                                    "%bakerPaysFromAccounts"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "address"
+                                    }
+                                  ],
+                                  "prim": "list"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%minDelegation"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractPayoutsLessThanMin"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%payoutDelay"
+                                          ],
+                                          "prim": "int"
+                                        },
+                                        {
+                                          "args": [
+                                            {
+                                              "annots": [
+                                                "%payoutFrequency"
+                                              ],
+                                              "prim": "nat"
+                                            },
+                                            {
+                                              "annots": [
+                                                "%minPayout"
+                                              ],
+                                              "prim": "int"
+                                            }
+                                          ],
+                                          "prim": "pair"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%bakerChargesTransactionFee"
+                                          ],
+                                          "prim": "bool"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%paymentConfigMask"
+                                          ],
+                                          "prim": "nat"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%overDelegationThreshold"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractRewardsFromUninvitedDelegation"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "option"
+                },
+                {
+                  "annots": [
+                    "%reporterAccount"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    }
+                  ],
+                  "prim": "option"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%last_update"
+              ],
+              "prim": "timestamp"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "bytes": "54657373656c6c617465642047656f6d65747279"
+                            },
+                            {
+                              "prim": "False"
+                            }
+                          ],
+                          "prim": "Pair"
+                        },
+                        {
+                          "bytes": "687474703a2f2f74657373656c6c6174656467656f6d657472792e636f6d2f74657a6f732d62616b65722e6a736f6e"
+                        }
+                      ],
+                      "prim": "Pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "int": "8500"
+                            },
+                            [
+                              {
+                                "bytes": "0000a41cc731b0e7ae29d904d6e3df2fa573bf20f1c0"
+                              }
+                            ]
+                          ],
+                          "prim": "Pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "int": "500000"
+                                    },
+                                    {
+                                      "prim": "True"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "int": "6"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "int": "1"
+                                        },
+                                        {
+                                          "int": "0"
+                                        }
+                                      ],
+                                      "prim": "Pair"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                }
+                              ],
+                              "prim": "Pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "prim": "True"
+                                    },
+                                    {
+                                      "int": "16383"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "int": "100"
+                                    },
+                                    {
+                                      "prim": "False"
+                                    }
+                                  ],
+                                  "prim": "Pair"
+                                }
+                              ],
+                              "prim": "Pair"
+                            }
+                          ],
+                          "prim": "Pair"
+                        }
+                      ],
+                      "prim": "Pair"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Some"
+            },
+            {
+              "prim": "None"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "1612556347"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "00a41cc731b0e7ae29d904d6e3df2fa573bf20f1c0"
+    },
+    "type_hex": "0761035d07650765066307650765076504690000000a2562616b65724e616d65045900000012256f70656e466f7244656c65676174696f6e0469000000192562616b65724f6666636861696e526567697374727955726c076507650462000000062573706c6974065f036e000000162562616b65725061797346726f6d4163636f756e747307650765076504620000000e256d696e44656c65676174696f6e04590000001b2573756274726163745061796f7574734c6573735468616e4d696e0765045b0000000c257061796f757444656c61790765046200000010257061796f75744672657175656e6379045b0000000a256d696e5061796f75740765076504590000001b2562616b6572436861726765735472616e73616374696f6e466565046200000012257061796d656e74436f6e6669674d61736b0765046200000018256f76657244656c65676174696f6e5468726573686f6c640459000000272573756274726163745265776172647346726f6d556e696e766974656444656c65676174696f6e0000000525646174610663036e00000010257265706f727465724163636f756e74046b0000000c256c6173745f757064617465",
+    "value_hex": "0707070705090707070707070a0000001454657373656c6c617465642047656f6d6574727903030a0000002f687474703a2f2f74657373656c6c6174656467656f6d657472792e636f6d2f74657a6f732d62616b65722e6a736f6e0707070700b48401020000001b0a000000160000a41cc731b0e7ae29d904d6e3df2fa573bf20f1c007070707070700a0843d030a0707000607070001000007070707030a00bfff01070700a4010303030600bba0ed810c",
+    "key_hex": "0a0000001500a41cc731b0e7ae29d904d6e3df2fa573bf20f1c0",
+    "want_value": {
+      "data": {
+        "bakerChargesTransactionFee": true,
+        "bakerName": "Tessellated Geometry",
+        "bakerOffchainRegistryUrl": "http://tessellatedgeometry.com/tezos-baker.json",
+        "bakerPaysFromAccounts": [
+          "tz1abmz7jiCV2GH2u81LRrGgAFFgvQgiDiaf"
+        ],
+        "minDelegation": "500000",
+        "minPayout": "0",
+        "openForDelegation": false,
+        "overDelegationThreshold": "100",
+        "paymentConfigMask": "16383",
+        "payoutDelay": "6",
+        "payoutFrequency": "1",
+        "split": "8500",
+        "subtractPayoutsLessThanMin": true,
+        "subtractRewardsFromUninvitedDelegation": false
+      },
+      "last_update": "2021-02-05T20:19:07Z",
+      "reporterAccount": null
+    },
+    "want_key": "tz1abmz7jiCV2GH2u81LRrGgAFFgvQgiDiaf"
+  },
+  {
+    "name": "Mainnet/KT1ChNsEFxwyCbJyWGSL3KdjeXE28AY1Kaog-17-exprua39DnmpJYXcQgNkzF158EEzGzRs5Ck6HtDmSr8VJ49UZtgbct",
+    "type": {
+      "args": [
+        {
+          "prim": "key_hash"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%data"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%bakerName"
+                                  ],
+                                  "prim": "bytes"
+                                },
+                                {
+                                  "annots": [
+                                    "%openForDelegation"
+                                  ],
+                                  "prim": "bool"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "annots": [
+                                "%bakerOffchainRegistryUrl"
+                              ],
+                              "prim": "bytes"
+                            }
+                          ],
+                          "prim": "pair"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%split"
+                                  ],
+                                  "prim": "nat"
+                                },
+                                {
+                                  "annots": [
+                                    "%bakerPaysFromAccounts"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "address"
+                                    }
+                                  ],
+                                  "prim": "list"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%minDelegation"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractPayoutsLessThanMin"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%payoutDelay"
+                                          ],
+                                          "prim": "int"
+                                        },
+                                        {
+                                          "args": [
+                                            {
+                                              "annots": [
+                                                "%payoutFrequency"
+                                              ],
+                                              "prim": "nat"
+                                            },
+                                            {
+                                              "annots": [
+                                                "%minPayout"
+                                              ],
+                                              "prim": "int"
+                                            }
+                                          ],
+                                          "prim": "pair"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%bakerChargesTransactionFee"
+                                          ],
+                                          "prim": "bool"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%paymentConfigMask"
+                                          ],
+                                          "prim": "nat"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    },
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%overDelegationThreshold"
+                                          ],
+                                          "prim": "nat"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%subtractRewardsFromUninvitedDelegation"
+                                          ],
+                                          "prim": "bool"
+                                        }
+                                      ],
+                                      "prim": "pair"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "option"
+                },
+                {
+                  "annots": [
+                    "%reporterAccount"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    }
+                  ],
+                  "prim": "option"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%last_update"
+              ],
+              "prim": "timestamp"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                [
+                  {
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "bytes": "46726573682054657a6f73"
+                          },
+                          {
+                            "prim": "False"
+                          }
+                        ],
+                        "prim": "Pair"
+                      },
+                      {
+                        "bytes": ""
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "args": [
+                      {
+                        "int": "8001"
+                      },
+                      [
+                        {
+                          "bytes": "0000fb09cf4761ff663de3aa52c8b99c85589d69dab5"
+                        }
+                      ]
+                    ],
+                    "prim": "Pair"
+                  },
+                  [
+                    {
+                      "args": [
+                        {
+                          "int": "5000000"
+                        },
+                        {
+                          "prim": "False"
+                        }
+                      ],
+                      "prim": "Pair"
+                    },
+                    {
+                      "int": "6"
+                    },
+                    {
+                      "int": "1"
+                    },
+                    {
+                      "int": "0"
+                    }
+                  ],
+                  {
+                    "args": [
+                      {
+                        "prim": "False"
+                      },
+                      {
+                        "int": "16383"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "int": "100"
+                  },
+                  {
+                    "prim": "False"
+                  }
+                ]
+              ],
+              "prim": "Some"
+            },
+            {
+              "prim": "None"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "1613970262"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "003389796f3b7c883b53b1071bc28303abe9b93e78"
+    },
+    "type_hex": "0761035d07650765066307650765076504690000000a2562616b65724e616d65045900000012256f70656e466f7244656c65676174696f6e0469000000192562616b65724f6666636861696e526567697374727955726c076507650462000000062573706c6974065f036e000000162562616b65725061797346726f6d4163636f756e747307650765076504620000000e256d696e44656c65676174696f6e04590000001b2573756274726163745061796f7574734c6573735468616e4d696e0765045b0000000c257061796f757444656c61790765046200000010257061796f75744672657175656e6379045b0000000a256d696e5061796f75740765076504590000001b2562616b6572436861726765735472616e73616374696f6e466565046200000012257061796d656e74436f6e6669674d61736b0765046200000018256f76657244656c65676174696f6e5468726573686f6c640459000000272573756274726163745265776172647346726f6d556e696e766974656444656c65676174696f6e0000000525646174610663036e00000010257265706f727465724163636f756e74046b0000000c256c6173745f757064617465",
+    "value_hex": "0707070705090200000061070707070a0000000b46726573682054657a6f7303030a00000000070700817d020000001b0a000000160000fb09cf4761ff663de3aa52c8b99c85589d69dab5020000000f07070080ade20403030006000100000707030300bfff0100a401030303060096ed99830c",
+    "key_hex": "0a00000015003389796f3b7c883b53b1071bc28303abe9b93e78",
+    "want_value": {
+      "data": {
+        "bakerChargesTransactionFee": false,
+        "bakerName": "Fresh Tezos",
+        "bakerOffchainRegistryUrl": "",
+        "bakerPaysFromAccounts": [
+          "tz1iXQ3rgNt3rNHt9iNTm2muQYg1Msw2faFq"
+        ],
+        "minDelegation": "5000000",
+        "minPayout": "0",
+        "openForDelegation": false,
+        "overDelegationThreshold": "100",
+        "paymentConfigMask": "16383",
+        "payoutDelay": "6",
+        "payoutFrequency": "1",
+        "split": "8001",
+        "subtractPayoutsLessThanMin": false,
+        "subtractRewardsFromUninvitedDelegation": false
+      },
+      "last_update": "2021-02-22T05:04:22Z",
+      "reporterAccount": null
+    },
+    "want_key": "tz1QLXqnfN51dkjeghXvKHkJfhvGiM5gK4tc"
+  }
+]

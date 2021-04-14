@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37782-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%token_total_supply"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "0"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "0861036203620000001325746f6b656e5f746f74616c5f737570706c79",
+    "value_hex": "0000",
+    "key_hex": "0000",
+    "want_value": "0",
+    "want_key": "0"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37782-expru2dKqDfZG8hu4wNGkiyunvq2hdSKuVYtcKta7BWP6Q18oNxKjS",
+    "type": {
+      "annots": [
+        "%token_total_supply"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "int": "1"
+    },
+    "type_hex": "0861036203620000001325746f6b656e5f746f74616c5f737570706c79",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "0001",
+    "want_value": "100000000000",
+    "want_key": "1"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37782-expruDuAZnFKqmLoisJqUGqrNzXTvw7PJM2rYk97JErM5FHCerQqgn",
+    "type": {
+      "annots": [
+        "%token_total_supply"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "int": "2"
+    },
+    "type_hex": "0861036203620000001325746f6b656e5f746f74616c5f737570706c79",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "0002",
+    "want_value": "100000000000",
+    "want_key": "2"
+  },
+  {
+    "name": "Edonet2/KT1BoGD6nLYq63D8YzrFMjaAJpiqL9JBx4AK-37782-exprujyHLX2vacVy6AcFmAt5K3Y93aMtccrbNtcsCRik6fjxR8wL6x",
+    "type": {
+      "annots": [
+        "%token_total_supply"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "100000000000"
+    },
+    "key": {
+      "int": "3"
+    },
+    "type_hex": "0861036203620000001325746f6b656e5f746f74616c5f737570706c79",
+    "value_hex": "0080a0b787e905",
+    "key_hex": "0003",
+    "want_value": "100000000000",
+    "want_key": "3"
+  }
+]

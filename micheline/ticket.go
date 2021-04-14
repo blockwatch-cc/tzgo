@@ -3,7 +3,10 @@
 
 package micheline
 
-// call with inner value, not outer ticket type
+// Wraps ticket value type into type structure that is compatible
+// with ticket values. This is necessary because T_TICKET uses an
+// implicit structure (extra fields amount, ticketer) in addition
+// to the defined value.
 func TicketType(t Prim) Type {
 	tt := t.Clone()
 	if len(tt.Anno) == 0 || tt.Anno[0] == "" {
@@ -13,11 +16,11 @@ func TicketType(t Prim) Type {
 			tt.Type++
 		}
 	}
-	return Type{tpair(
-		prim(T_ADDRESS, ":ticketer"),
-		tpair(
+	return Type{NewPairType(
+		NewPrim(T_ADDRESS, ":ticketer"),
+		NewPairType(
 			tt,
-			prim(T_INT, ":amount"),
+			NewPrim(T_INT, ":amount"),
 		),
 	)}
 }

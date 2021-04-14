@@ -1,0 +1,510 @@
+[{
+  "name": "Edonet2/KT19fRB3uiUyqXfwdVQB4DG1DATN16zBuSe9",
+  "type": {
+    "args": [
+      {
+        "args": [
+          {
+            "annots": [
+              "%escrow_states"
+            ],
+            "args": [
+              {
+                "prim": "int"
+              },
+              {
+                "prim": "string"
+              }
+            ],
+            "prim": "map"
+          },
+          {
+            "annots": [
+              "%escrow_types"
+            ],
+            "args": [
+              {
+                "prim": "string"
+              },
+              {
+                "prim": "nat"
+              }
+            ],
+            "prim": "map"
+          }
+        ],
+        "prim": "pair"
+      },
+      {
+        "args": [
+          {
+            "annots": [
+              "%exchanges"
+            ],
+            "args": [
+              {
+                "prim": "string"
+              },
+              {
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "annots": [
+                          "%buyer"
+                        ],
+                        "prim": "address"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%domain_name"
+                            ],
+                            "prim": "string"
+                          },
+                          {
+                            "annots": [
+                              "%exchange_type"
+                            ],
+                            "prim": "string"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  },
+                  {
+                    "args": [
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%lastUpdate"
+                            ],
+                            "prim": "timestamp"
+                          },
+                          {
+                            "annots": [
+                              "%paid_price"
+                            ],
+                            "args": [
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%asked_price"
+                                    ],
+                                    "prim": "mutez"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%commission"
+                                    ],
+                                    "prim": "mutez"
+                                  }
+                                ],
+                                "prim": "pair"
+                              },
+                              {
+                                "args": [
+                                  {
+                                    "annots": [
+                                      "%escrow"
+                                    ],
+                                    "prim": "mutez"
+                                  },
+                                  {
+                                    "annots": [
+                                      "%slashing"
+                                    ],
+                                    "prim": "mutez"
+                                  }
+                                ],
+                                "prim": "pair"
+                              }
+                            ],
+                            "prim": "pair"
+                          }
+                        ],
+                        "prim": "pair"
+                      },
+                      {
+                        "args": [
+                          {
+                            "annots": [
+                              "%seller"
+                            ],
+                            "prim": "address"
+                          },
+                          {
+                            "annots": [
+                              "%state"
+                            ],
+                            "prim": "string"
+                          }
+                        ],
+                        "prim": "pair"
+                      }
+                    ],
+                    "prim": "pair"
+                  }
+                ],
+                "prim": "pair"
+              }
+            ],
+            "prim": "map"
+          },
+          {
+            "args": [
+              {
+                "annots": [
+                  "%owner"
+                ],
+                "prim": "address"
+              },
+              {
+                "annots": [
+                  "%slashing_rate"
+                ],
+                "prim": "nat"
+              }
+            ],
+            "prim": "pair"
+          }
+        ],
+        "prim": "pair"
+      }
+    ],
+    "prim": "pair"
+  },
+  "value": [
+    {
+      "args": [
+        [
+          {
+            "args": [
+              {
+                "int": "0"
+              },
+              {
+                "string": "WAITING_FOR_TRANSFER"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "int": "1"
+              },
+              {
+                "string": "WAITING_FOR_VALIDATION"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "int": "2"
+              },
+              {
+                "string": "VALIDATED"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "int": "3"
+              },
+              {
+                "string": "CANCELLED"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ],
+        [
+          {
+            "args": [
+              {
+                "string": "DOMAIN_NAME"
+              },
+              {
+                "int": "3"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "OBJECT"
+              },
+              {
+                "int": "2"
+              }
+            ],
+            "prim": "Elt"
+          },
+          {
+            "args": [
+              {
+                "string": "OTHER"
+              },
+              {
+                "int": "1"
+              }
+            ],
+            "prim": "Elt"
+          }
+        ]
+      ],
+      "prim": "Pair"
+    },
+    [
+      {
+        "args": [
+          {
+            "string": "1"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "000018c4a561fe031561772768db355e66dfd1ef33f2"
+                },
+                {
+                  "args": [
+                    {
+                      "string": "domain_name1.com"
+                    },
+                    {
+                      "string": "DOMAIN_NAME"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Pair"
+            },
+            [
+              {
+                "int": "1617309729"
+              },
+              {
+                "args": [
+                  {
+                    "int": "30000000"
+                  },
+                  {
+                    "int": "900000"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "int": "31200000"
+              },
+              {
+                "int": "300000"
+              }
+            ],
+            {
+              "bytes": "00006a52523f87ccfdc8270f163e622e05fc06e73a88"
+            },
+            {
+              "string": "WAITING_FOR_TRANSFER"
+            }
+          ]
+        ],
+        "prim": "Elt"
+      },
+      {
+        "args": [
+          {
+            "string": "4"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "000018c4a561fe031561772768db355e66dfd1ef33f2"
+                },
+                {
+                  "args": [
+                    {
+                      "string": "item 2"
+                    },
+                    {
+                      "string": "OBJECT"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Pair"
+            },
+            [
+              {
+                "int": "1617310209"
+              },
+              {
+                "args": [
+                  {
+                    "int": "490000000"
+                  },
+                  {
+                    "int": "9800000"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "int": "504700000"
+              },
+              {
+                "int": "4900000"
+              }
+            ],
+            {
+              "bytes": "00006a52523f87ccfdc8270f163e622e05fc06e73a88"
+            },
+            {
+              "string": "WAITING_FOR_TRANSFER"
+            }
+          ]
+        ],
+        "prim": "Elt"
+      },
+      {
+        "args": [
+          {
+            "string": "6"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "000018c4a561fe031561772768db355e66dfd1ef33f2"
+                },
+                {
+                  "args": [
+                    {
+                      "string": "domain_name2.com"
+                    },
+                    {
+                      "string": "DOMAIN_NAME"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Pair"
+            },
+            [
+              {
+                "int": "1617310149"
+              },
+              {
+                "args": [
+                  {
+                    "int": "290000000"
+                  },
+                  {
+                    "int": "8700000"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "int": "301600000"
+              },
+              {
+                "int": "2900000"
+              }
+            ],
+            {
+              "bytes": "00006a52523f87ccfdc8270f163e622e05fc06e73a88"
+            },
+            {
+              "string": "WAITING_FOR_VALIDATION"
+            }
+          ]
+        ],
+        "prim": "Elt"
+      }
+    ],
+    {
+      "bytes": "000018c4a561fe031561772768db355e66dfd1ef33f2"
+    },
+    {
+      "int": "1"
+    }
+  ],
+  "type_hex": "076507650860035b03680000000e25657363726f775f7374617465730860036803620000000d25657363726f775f747970657307650860036807650765046e00000006256275796572076504680000000c25646f6d61696e5f6e616d6504680000000e2565786368616e67655f7479706507650765046b0000000b256c61737455706461746508650765046a0000000c2561736b65645f7072696365046a0000000b25636f6d6d697373696f6e0765046a0000000725657363726f77046a0000000925736c617368696e670000000b25706169645f70726963650765046e000000072573656c6c65720468000000062573746174650000000a2565786368616e6765730765046e00000006256f776e657204620000000e25736c617368696e675f72617465",
+  "value_hex": "02000002a60707020000006007040000010000001457414954494e475f464f525f5452414e5346455207040001010000001657414954494e475f464f525f56414c49444154494f4e07040002010000000956414c49444154454407040003010000000943414e43454c4c454402000000310704010000000b444f4d41494e5f4e414d450003070401000000064f424a4543540002070401000000054f54484552000102000001e70704010000000131020000009707070a00000016000018c4a561fe031561772768db355e66dfd1ef33f207070100000010646f6d61696e5f6e616d65312e636f6d010000000b444f4d41494e5f4e414d45020000001a00a1c0b1860c070700808ece1c00a0ee6d0080cce01d00a0cf240a0000001600006a52523f87ccfdc8270f163e622e05fc06e73a88010000001457414954494e475f464f525f5452414e534645520704010000000134020000008c07070a00000016000018c4a561fe031561772768db355e66dfd1ef33f2070701000000066974656d203201000000064f424a454354020000001e0081c8b1860c07070080baa6d3030080a5ac0900a0f1a8e10300a092d6040a0000001600006a52523f87ccfdc8270f163e622e05fc06e73a88010000001457414954494e475f464f525f5452414e534645520704010000000136020000009d07070a00000016000018c4a561fe031561772768db355e66dfd1ef33f207070100000010646f6d61696e5f6e616d65322e636f6d010000000b444f4d41494e5f4e414d45020000001e0085c7b1860c07070080b2c8940200a081a6080080b4d09f0200a080e2020a0000001600006a52523f87ccfdc8270f163e622e05fc06e73a88010000001657414954494e475f464f525f56414c49444154494f4e0a00000016000018c4a561fe031561772768db355e66dfd1ef33f20001",
+  "want_value": {
+    "escrow_states": {
+      "0": "WAITING_FOR_TRANSFER",
+      "1": "WAITING_FOR_VALIDATION",
+      "2": "VALIDATED",
+      "3": "CANCELLED"
+    },
+    "escrow_types": {
+      "DOMAIN_NAME": "3",
+      "OBJECT": "2",
+      "OTHER": "1"
+    },
+    "exchanges": {
+      "1": {
+        "buyer": "tz1MtzUvoywewbY8axwHqSoeVo91w4XhPZV8",
+        "domain_name": "domain_name1.com",
+        "exchange_type": "DOMAIN_NAME",
+        "lastUpdate": "2021-04-01T20:42:09Z",
+        "paid_price": {
+          "asked_price": "30000000",
+          "commission": "900000",
+          "escrow": "31200000",
+          "slashing": "300000"
+        },
+        "seller": "tz1VLCwEegxpLH9gepjWbyqwn9w1qbcmRN3U",
+        "state": "WAITING_FOR_TRANSFER"
+      },
+      "4": {
+        "buyer": "tz1MtzUvoywewbY8axwHqSoeVo91w4XhPZV8",
+        "domain_name": "item 2",
+        "exchange_type": "OBJECT",
+        "lastUpdate": "2021-04-01T20:50:09Z",
+        "paid_price": {
+          "asked_price": "490000000",
+          "commission": "9800000",
+          "escrow": "504700000",
+          "slashing": "4900000"
+        },
+        "seller": "tz1VLCwEegxpLH9gepjWbyqwn9w1qbcmRN3U",
+        "state": "WAITING_FOR_TRANSFER"
+      },
+      "6": {
+        "buyer": "tz1MtzUvoywewbY8axwHqSoeVo91w4XhPZV8",
+        "domain_name": "domain_name2.com",
+        "exchange_type": "DOMAIN_NAME",
+        "lastUpdate": "2021-04-01T20:49:09Z",
+        "paid_price": {
+          "asked_price": "290000000",
+          "commission": "8700000",
+          "escrow": "301600000",
+          "slashing": "2900000"
+        },
+        "seller": "tz1VLCwEegxpLH9gepjWbyqwn9w1qbcmRN3U",
+        "state": "WAITING_FOR_VALIDATION"
+      }
+    },
+    "owner": "tz1MtzUvoywewbY8axwHqSoeVo91w4XhPZV8",
+    "slashing_rate": "1"
+  }
+}]

@@ -155,7 +155,7 @@ func ParseKeyType(typ string) (OpCode, error) {
 // query string parsing used for lookup (does not support Pair keys)
 func ParseKey(typ, val string) (Key, error) {
 	var err error
-	key := Key{Type: NewType()}
+	key := Key{Type: Type{}}
 	key.Hash, err = tezos.ParseExprHash(val)
 	if err == nil {
 		key.Type.OpCode = T_KEY
@@ -209,10 +209,10 @@ func ParseKey(typ, val string) (Key, error) {
 			prims = append(prims, parsed.Prim())
 		}
 		if len(prims) == 2 {
-			key.PrimKey = dpair(prims[0], prims[1])
+			key.PrimKey = NewPairValue(prims[0], prims[1])
 			key.Type.Type = PrimBinary
 		} else {
-			key.PrimKey = seq(prims...)
+			key.PrimKey = NewSeq(prims...)
 			key.Type.Type = PrimSequence
 		}
 

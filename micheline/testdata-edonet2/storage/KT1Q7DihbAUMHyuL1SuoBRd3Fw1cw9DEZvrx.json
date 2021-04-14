@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Edonet2/KT1Q7DihbAUMHyuL1SuoBRd3Fw1cw9DEZvrx",
+    "type": {
+      "args": [
+        {
+          "annots": [
+            "%data"
+          ],
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%admin"
+                  ],
+                  "prim": "address"
+                },
+                {
+                  "annots": [
+                    "%control"
+                  ],
+                  "prim": "address"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%ticket_types"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                }
+              ],
+              "prim": "set"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "annots": [
+            "%tickets"
+          ],
+          "args": [
+            {
+              "args": [
+                {
+                  "prim": "address"
+                },
+                {
+                  "prim": "string"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "prim": "timestamp"
+                },
+                {
+                  "args": [
+                    {
+                      "prim": "string"
+                    }
+                  ],
+                  "prim": "ticket"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "big_map"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "bytes": "0000218a8208ba1757455251049290234adae2267b43"
+                },
+                {
+                  "bytes": "0119f755bf0ffadd514f26eecf5cf6827c962e3a2000"
+                }
+              ],
+              "prim": "Pair"
+            },
+            [
+              {
+                "string": "standard"
+              }
+            ]
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "50532"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "076508650765046e000000062561646d696e046e0000000825636f6e74726f6c066603680000000d257469636b65745f747970657300000005256461746108610765036e03680765036b0587036800000008257469636b657473",
+    "value_hex": "0707070707070a000000160000218a8208ba1757455251049290234adae2267b430a000000160119f755bf0ffadd514f26eecf5cf6827c962e3a2000020000000d01000000087374616e6461726400a49506",
+    "want_value": {
+      "data": {
+        "admin": "tz1NhNv9g7rtcjyNsH8Zqu79giY5aTqDDrzB",
+        "control": "KT1Ax4khEfXzv7qkA8TVTfXBM4Qyir2S14CJ",
+        "ticket_types": [
+          "standard"
+        ]
+      },
+      "tickets": "50532"
+    }
+  }
+]

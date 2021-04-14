@@ -134,37 +134,37 @@ var michelsonInterfaces = map[Interface][]Prim{
 	// manager.tz
 	IManager: []Prim{
 		// 1 (lambda %do unit (list operation))
-		code_anno(T_LAMBDA, "%do", code(T_UNIT), code(T_LIST, code(T_OPERATION))),
+		NewCodeAnno(T_LAMBDA, "%do", NewCode(T_UNIT), NewCode(T_LIST, NewCode(T_OPERATION))),
 		// 2 (unit %default)
-		code_anno(T_UNIT, "%default"),
+		NewCodeAnno(T_UNIT, "%default"),
 	},
 	// generic set delegate interface
 	ISetDelegate: []Prim{
 		// option %setDelegate key_hash
-		code_anno(T_OPTION, "%setDelegate", code(T_KEY_HASH)),
+		NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
 	},
 	// Tzip 5 a.k.a FA1
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-5/tzip-5.md
 	ITzip5: []Prim{
 		// (address :from, (address :to, nat :value)) %transfer
-		tpair(
-			code_anno(T_ADDRESS, ":from"),
-			tpair(
-				code_anno(T_ADDRESS, ":to"),
-				code_anno(T_NAT, ":value"),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":from"),
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":to"),
+				NewCodeAnno(T_NAT, ":value"),
 			),
 			"%transfer",
 		),
 		// view (address :owner) nat %getBalance
-		tpair(
-			code_anno(T_ADDRESS, ":owner"),
-			code(T_CONTRACT, code(T_NAT)),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":owner"),
+			NewCode(T_CONTRACT, NewCode(T_NAT)),
 			"%getBalance",
 		),
 		// view unit nat %getTotalSupply
-		tpair(
-			code(T_UNIT),
-			code(T_CONTRACT, code(T_NAT)),
+		NewPairType(
+			NewCode(T_UNIT),
+			NewCode(T_CONTRACT, NewCode(T_NAT)),
 			"%getTotalSupply",
 		),
 	},
@@ -172,39 +172,39 @@ var michelsonInterfaces = map[Interface][]Prim{
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md
 	ITzip7: []Prim{
 		// (address :from, (address :to, nat :value)) %transfer
-		tpair(
-			code_anno(T_ADDRESS, ":from"),
-			tpair(
-				code_anno(T_ADDRESS, ":to"),
-				code_anno(T_NAT, ":value"),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":from"),
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":to"),
+				NewCodeAnno(T_NAT, ":value"),
 			),
 			"%transfer",
 		),
 		// (address :spender, nat :value) %approve
-		tpair(
-			code_anno(T_ADDRESS, ":spender"),
-			code_anno(T_NAT, ":value"),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":spender"),
+			NewCodeAnno(T_NAT, ":value"),
 			"%approve",
 		),
 		// (view (address :owner, address :spender) nat) %getAllowance
-		tpair(
-			tpair(
-				code_anno(T_ADDRESS, ":owner"),
-				code_anno(T_ADDRESS, ":spender"),
+		NewPairType(
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":owner"),
+				NewCodeAnno(T_ADDRESS, ":spender"),
 			),
-			code(T_CONTRACT, code(T_NAT)),
+			NewCode(T_CONTRACT, NewCode(T_NAT)),
 			"%getAllowance",
 		),
 		// (view (address :owner) nat) %getBalance
-		tpair(
-			code_anno(T_ADDRESS, ":owner"),
-			code(T_CONTRACT, code(T_NAT)),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":owner"),
+			NewCode(T_CONTRACT, NewCode(T_NAT)),
 			"%getBalance",
 		),
 		// (view unit nat) %getTotalSupply
-		tpair(
-			code(T_UNIT),
-			code(T_CONTRACT, code(T_NAT)),
+		NewPairType(
+			NewCode(T_UNIT),
+			NewCode(T_CONTRACT, NewCode(T_NAT)),
 			"%getTotalSupply",
 		),
 	},
@@ -225,15 +225,15 @@ var michelsonInterfaces = map[Interface][]Prim{
 		//     )
 		//   )
 		// )
-		code_anno(T_LIST, "%transfer",
-			tpair(
-				code_anno(T_ADDRESS, ":from_"),
-				code_anno(T_LIST, ":txs",
-					tpair(
-						code_anno(T_ADDRESS, ":to_"),
-						tpair(
-							code_anno(T_NAT, ":token_id"),
-							code_anno(T_NAT, ":amount"),
+		NewCodeAnno(T_LIST, "%transfer",
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":from_"),
+				NewCodeAnno(T_LIST, ":txs",
+					NewPairType(
+						NewCodeAnno(T_ADDRESS, ":to_"),
+						NewPairType(
+							NewCodeAnno(T_NAT, ":token_id"),
+							NewCodeAnno(T_NAT, ":amount"),
 						),
 					),
 				),
@@ -258,22 +258,22 @@ var michelsonInterfaces = map[Interface][]Prim{
 		//     )
 		//   )
 		// )
-		tpair(
-			code_anno(T_LIST, ":requests",
-				tpair(
-					code_anno(T_ADDRESS, ":owner"),
-					code_anno(T_NAT, ":token_id"),
+		NewPairType(
+			NewCodeAnno(T_LIST, ":requests",
+				NewPairType(
+					NewCodeAnno(T_ADDRESS, ":owner"),
+					NewCodeAnno(T_NAT, ":token_id"),
 				),
 			),
-			code_anno(T_CONTRACT, ":callback",
-				code(T_LIST,
-					tpair(
-						tpair(
-							code_anno(T_ADDRESS, ":owner"),
-							code_anno(T_NAT, ":token_id"),
+			NewCodeAnno(T_CONTRACT, ":callback",
+				NewCode(T_LIST,
+					NewPairType(
+						NewPairType(
+							NewCodeAnno(T_ADDRESS, ":owner"),
+							NewCodeAnno(T_NAT, ":token_id"),
 							":request",
 						),
-						code_anno(T_NAT, ":balance"),
+						NewCodeAnno(T_NAT, ":balance"),
 					),
 				),
 			),
@@ -297,21 +297,21 @@ var michelsonInterfaces = map[Interface][]Prim{
 		//     )
 		//   )
 		// )
-		code_anno(T_LIST, "%update_operators",
-			code(T_OR,
-				tpair(
-					code_anno(T_ADDRESS, ":owner"),
-					tpair(
-						code_anno(T_ADDRESS, ":operator"),
-						code_anno(T_NAT, ":token_id"),
+		NewCodeAnno(T_LIST, "%update_operators",
+			NewCode(T_OR,
+				NewPairType(
+					NewCodeAnno(T_ADDRESS, ":owner"),
+					NewPairType(
+						NewCodeAnno(T_ADDRESS, ":operator"),
+						NewCodeAnno(T_NAT, ":token_id"),
 					),
 					":add_operator",
 				),
-				tpair(
-					code_anno(T_ADDRESS, ":owner"),
-					tpair(
-						code_anno(T_ADDRESS, ":operator"),
-						code_anno(T_NAT, ":token_id"),
+				NewPairType(
+					NewCodeAnno(T_ADDRESS, ":owner"),
+					NewPairType(
+						NewCodeAnno(T_ADDRESS, ":operator"),
+						NewCodeAnno(T_NAT, ":token_id"),
 					),
 					":remove_operator",
 				),
@@ -322,11 +322,11 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 1 ( pair %approve
 		//     ( address :spender )
 		//     ( pair ( nat :allowance ) ( nat :currentAllowance ) ) )
-		tpair(
-			code_anno(T_ADDRESS, ":spender"),
-			tpair(
-				code_anno(T_NAT, ":allowance"),
-				code_anno(T_NAT, ":currentAllowance"),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":spender"),
+			NewPairType(
+				NewCodeAnno(T_NAT, ":allowance"),
+				NewCodeAnno(T_NAT, ":currentAllowance"),
 			),
 			"%approve",
 		),
@@ -334,14 +334,14 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 2 ( pair %addLiquidity
 		//     ( pair ( address :owner ) ( nat :minLqtMinted ) )
 		//     ( pair ( nat :maxTokensDeposited ) ( timestamp :deadline ) ) ) )
-		tpair(
-			tpair(
-				code_anno(T_ADDRESS, ":owner"),
-				code_anno(T_NAT, ":minLqtMinted"),
+		NewPairType(
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":owner"),
+				NewCodeAnno(T_NAT, ":minLqtMinted"),
 			),
-			tpair(
-				code_anno(T_NAT, ":maxTokensDeposited"),
-				code_anno(T_TIMESTAMP, ":deadline"),
+			NewPairType(
+				NewCodeAnno(T_NAT, ":maxTokensDeposited"),
+				NewCodeAnno(T_TIMESTAMP, ":deadline"),
 			),
 			"%addLiquidity",
 		),
@@ -349,19 +349,19 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 3 ( pair %removeLiquidity
 		//     ( pair ( address :owner ) ( pair ( address :to ) ( nat :lqtBurned ) ) )
 		//     ( pair ( mutez :minXtzWithdrawn ) ( pair ( nat :minTokensWithdrawn ) ( timestamp :deadline ) ) ) )
-		tpair(
-			tpair(
-				code_anno(T_ADDRESS, ":owner"),
-				tpair(
-					code_anno(T_ADDRESS, ":to"),
-					code_anno(T_NAT, ":lqtBurned"),
+		NewPairType(
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":owner"),
+				NewPairType(
+					NewCodeAnno(T_ADDRESS, ":to"),
+					NewCodeAnno(T_NAT, ":lqtBurned"),
 				),
 			),
-			tpair(
-				code_anno(T_MUTEZ, ":minXtzWithdrawn"),
-				tpair(
-					code_anno(T_NAT, ":minTokensWithdrawn"),
-					code_anno(T_TIMESTAMP, ":deadline"),
+			NewPairType(
+				NewCodeAnno(T_MUTEZ, ":minXtzWithdrawn"),
+				NewPairType(
+					NewCodeAnno(T_NAT, ":minTokensWithdrawn"),
+					NewCodeAnno(T_TIMESTAMP, ":deadline"),
 				),
 			),
 			"%removeLiquidity",
@@ -370,11 +370,11 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 4 ( pair %xtzToToken
 		//     ( address :to )
 		//     ( pair ( nat :minTokensBought ) ( timestamp :deadline ) ) )
-		tpair(
-			code_anno(T_ADDRESS, ":to"),
-			tpair(
-				code_anno(T_NAT, ":minTokensBought"),
-				code_anno(T_TIMESTAMP, ":deadline"),
+		NewPairType(
+			NewCodeAnno(T_ADDRESS, ":to"),
+			NewPairType(
+				NewCodeAnno(T_NAT, ":minTokensBought"),
+				NewCodeAnno(T_TIMESTAMP, ":deadline"),
 			),
 			"%xtzToToken",
 		),
@@ -382,16 +382,16 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 5 pair %tokenToXtz
 		//     ( pair ( address :owner ) ( address :to ) )
 		//     ( pair ( nat :tokensSold ) ( pair ( mutez :minXtzBought ) ( timestamp :deadline ) ) ) ) ) ) )
-		tpair(
-			tpair(
-				code_anno(T_ADDRESS, ":owner"),
-				code_anno(T_ADDRESS, ":to"),
+		NewPairType(
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":owner"),
+				NewCodeAnno(T_ADDRESS, ":to"),
 			),
-			tpair(
-				code_anno(T_NAT, ":tokensSold"),
-				tpair(
-					code_anno(T_MUTEZ, ":minXtzBought"),
-					code_anno(T_TIMESTAMP, ":deadline"),
+			NewPairType(
+				NewCodeAnno(T_NAT, ":tokensSold"),
+				NewPairType(
+					NewCodeAnno(T_MUTEZ, ":minXtzBought"),
+					NewCodeAnno(T_TIMESTAMP, ":deadline"),
 				),
 			),
 			"%tokenToXtz",
@@ -400,39 +400,39 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// 6 pair %tokenToToken
 		//     ( pair ( address :outputDexterContract ) ( pair ( nat :minTokensBought ) ( address :owner ) ) )
 		//     ( pair ( address :to ) ( pair ( nat :tokensSold ) ( timestamp :deadline ) ) ) )
-		tpair(
-			tpair(
-				code_anno(T_ADDRESS, ":outputDexterContract"),
-				tpair(
-					code_anno(T_NAT, ":minTokensBought"),
-					code_anno(T_ADDRESS, ":owner"),
+		NewPairType(
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":outputDexterContract"),
+				NewPairType(
+					NewCodeAnno(T_NAT, ":minTokensBought"),
+					NewCodeAnno(T_ADDRESS, ":owner"),
 				),
 			),
-			tpair(
-				code_anno(T_ADDRESS, ":to"),
-				tpair(
-					code_anno(T_NAT, ":tokensSold"),
-					code_anno(T_TIMESTAMP, ":deadline"),
+			NewPairType(
+				NewCodeAnno(T_ADDRESS, ":to"),
+				NewPairType(
+					NewCodeAnno(T_NAT, ":tokensSold"),
+					NewCodeAnno(T_TIMESTAMP, ":deadline"),
 				),
 			),
 			"%tokenToToken",
 		),
 
 		// 7 ( key_hash %updateTokenPool )
-		code_anno(T_KEY_HASH, "%updateTokenPool"),
+		NewCodeAnno(T_KEY_HASH, "%updateTokenPool"),
 
 		// 8 ( nat %updateTokenPoolInternal ) )
-		code_anno(T_NAT, "%updateTokenPoolInternal"),
+		NewCodeAnno(T_NAT, "%updateTokenPoolInternal"),
 
 		// 9 pair %setBaker ( option key_hash ) bool
-		tpair(
-			code(T_OPTION, code(T_KEY_HASH)),
-			code(T_BOOL),
+		NewPairType(
+			NewCode(T_OPTION, NewCode(T_KEY_HASH)),
+			NewCode(T_BOOL),
 			"%setBaker",
 		),
 
 		// 10 address %setManager
-		code_anno(T_ADDRESS, "%setManager"),
+		NewCodeAnno(T_ADDRESS, "%setManager"),
 	},
 
 	// Note: Kolibri and wXTZ vault interfaces are ambiguous, i.e. wXTZ is a
@@ -440,40 +440,40 @@ var michelsonInterfaces = map[Interface][]Prim{
 	// detection is disabled until we know any better
 	// IKolibriVault: []Prim{
 	// 	// 0 borrow
-	// 	code_anno(T_NAT, "%borrow"),
+	// 	NewCodeAnno(T_NAT, "%borrow"),
 	// 	// 1 default
-	// 	code_anno(T_UNIT, "%default"),
+	// 	NewCodeAnno(T_UNIT, "%default"),
 	// 	// 2 liquidate
-	// 	code_anno(T_UNIT, "%liquidate"),
+	// 	NewCodeAnno(T_UNIT, "%liquidate"),
 	// 	// 3 repay
-	// 	code_anno(T_NAT, "%repay"),
+	// 	NewCodeAnno(T_NAT, "%repay"),
 	// 	// 4 setDelegate
-	// 	code_anno(T_OPTION, "%setDelegate", code(T_KEY_HASH)),
+	// 	NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
 	// 	// 5 updateState
-	// 	tpair(
-	// 		code(T_ADDRESS),
-	// 		tpair(
-	// 			code(T_NAT),
-	// 			tpair(
-	// 				code(T_INT),
-	// 				tpair(
-	// 					code(T_INT),
-	// 					code(T_BOOL),
+	// 	NewPairType(
+	// 		NewCode(T_ADDRESS),
+	// 		NewPairType(
+	// 			NewCode(T_NAT),
+	// 			NewPairType(
+	// 				NewCode(T_INT),
+	// 				NewPairType(
+	// 					NewCode(T_INT),
+	// 					NewCode(T_BOOL),
 	// 				),
 	// 			),
 	// 		),
 	// 		"%updateState",
 	// 	),
 	// 	// 6 withdraw
-	// 	code_anno(T_MUTEZ, "%withdraw"),
+	// 	NewCodeAnno(T_MUTEZ, "%withdraw"),
 	// },
 	// // https://medium.com/stakerdao/the-wrapped-tezos-wxtz-beta-guide-6917fa70116e
 	// IWXTZVault: []*Prim{
 	// 	// 1 default
-	// 	code_anno(T_UNIT, "%default"),
+	// 	NewCodeAnno(T_UNIT, "%default"),
 	// 	// 2 setDelegate
-	// 	code_anno(T_OPTION, "%setDelegate", code(T_KEY_HASH)),
+	// 	NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
 	// 	// 3 withdraw
-	// 	code_anno(T_MUTEZ, "%withdraw"),
+	// 	NewCodeAnno(T_MUTEZ, "%withdraw"),
 	// },
 }

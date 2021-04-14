@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Mainnet/KT1Ndt3iD7WkH9BqpNVTLjGBww7aTpfbYXmE-643-exprtZBwZUeYYYfUs9B9Rg2ywHezVHnCCnmF9WsDQVrs582dSK63dC",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "prim": "nat"
+        },
+        {
+          "prim": "address"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "000017948a6f6957697a40931b4fa525bc9c06c581d0"
+    },
+    "key": {
+      "int": "0"
+    },
+    "type_hex": "08610362036e00000007256c6564676572",
+    "value_hex": "0a00000016000017948a6f6957697a40931b4fa525bc9c06c581d0",
+    "key_hex": "0000",
+    "want_value": "tz1MniBKmZNK3eADSSyDZxjchwXxgWFhy4cR",
+    "want_key": "0"
+  }
+]

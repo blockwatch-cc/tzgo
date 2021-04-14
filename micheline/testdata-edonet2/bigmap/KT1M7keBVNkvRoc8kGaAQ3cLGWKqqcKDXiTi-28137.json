@@ -1,0 +1,294 @@
+[
+  {
+    "name": "Edonet2/KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi-28137-exprvETTAbwLdDQziq7V9La7HXwa7H54z4vh3vdcfYA9bxaeexBqek",
+    "type": {
+      "annots": [
+        "%oracles"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%endingRound"
+              ],
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%lastStartedRound"
+                  ],
+                  "prim": "int"
+                },
+                {
+                  "annots": [
+                    "%startingRound"
+                  ],
+                  "prim": "nat"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "4294967295"
+        },
+        {
+          "args": [
+            {
+              "int": "0"
+            },
+            {
+              "int": "1"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000a7fd3953914a1a2a705eaaf454da3afb85913847"
+    },
+    "type_hex": "0861036e076504620000000c25656e64696e67526f756e640765045b00000011256c61737453746172746564526f756e6404620000000e257374617274696e67526f756e6400000008256f7261636c6573",
+    "value_hex": "070700bfffffff1f070700000001",
+    "key_hex": "0a000000160000a7fd3953914a1a2a705eaaf454da3afb85913847",
+    "want_value": {
+      "endingRound": "4294967295",
+      "lastStartedRound": "0",
+      "startingRound": "1"
+    },
+    "want_key": "tz1axGtTkg1hJvGenTrhqpFbW1S8GcQpPdve"
+  },
+  {
+    "name": "Edonet2/KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi-28137-exprtxCNBHPNghspv8untftS3d87anZeTjc6WN9ZX4LsgmxvTJMXcW",
+    "type": {
+      "annots": [
+        "%oracles"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%endingRound"
+              ],
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%lastStartedRound"
+                  ],
+                  "prim": "int"
+                },
+                {
+                  "annots": [
+                    "%startingRound"
+                  ],
+                  "prim": "nat"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "4294967295"
+        },
+        {
+          "args": [
+            {
+              "int": "0"
+            },
+            {
+              "int": "1"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000939a3242990b706eda7f6198ab35d9c39f40bd09"
+    },
+    "type_hex": "0861036e076504620000000c25656e64696e67526f756e640765045b00000011256c61737453746172746564526f756e6404620000000e257374617274696e67526f756e6400000008256f7261636c6573",
+    "value_hex": "070700bfffffff1f070700000001",
+    "key_hex": "0a000000160000939a3242990b706eda7f6198ab35d9c39f40bd09",
+    "want_value": {
+      "endingRound": "4294967295",
+      "lastStartedRound": "0",
+      "startingRound": "1"
+    },
+    "want_key": "tz1Z6Uk4qfdAJLJuCdGzL8aheqedW8sBQv2T"
+  },
+  {
+    "name": "Edonet2/KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi-28137-exprtimZLoULaKMsethS7GcJnEx4WruzCcfATv7GR3eH1uR8DK1t6A",
+    "type": {
+      "annots": [
+        "%oracles"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%endingRound"
+              ],
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%lastStartedRound"
+                  ],
+                  "prim": "int"
+                },
+                {
+                  "annots": [
+                    "%startingRound"
+                  ],
+                  "prim": "nat"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "4294967295"
+        },
+        {
+          "args": [
+            {
+              "int": "0"
+            },
+            {
+              "int": "1"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000befe21b3a595cb6e3cf6bfdb4850da464adde1d4"
+    },
+    "type_hex": "0861036e076504620000000c25656e64696e67526f756e640765045b00000011256c61737453746172746564526f756e6404620000000e257374617274696e67526f756e6400000008256f7261636c6573",
+    "value_hex": "070700bfffffff1f070700000001",
+    "key_hex": "0a000000160000befe21b3a595cb6e3cf6bfdb4850da464adde1d4",
+    "want_value": {
+      "endingRound": "4294967295",
+      "lastStartedRound": "0",
+      "startingRound": "1"
+    },
+    "want_key": "tz1d3uWwfpgUjaP9s4J6YxJq1xZzuQTyAW6t"
+  },
+  {
+    "name": "Edonet2/KT1M7keBVNkvRoc8kGaAQ3cLGWKqqcKDXiTi-28137-exprtkSNfegxRdVMCXg6DMuNmNGJMyjZQ2nZUkoDGHaznoG9RBqecU",
+    "type": {
+      "annots": [
+        "%oracles"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%endingRound"
+              ],
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%lastStartedRound"
+                  ],
+                  "prim": "int"
+                },
+                {
+                  "annots": [
+                    "%startingRound"
+                  ],
+                  "prim": "nat"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "4294967295"
+        },
+        {
+          "args": [
+            {
+              "int": "0"
+            },
+            {
+              "int": "1"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "key": {
+      "bytes": "0000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc"
+    },
+    "type_hex": "0861036e076504620000000c25656e64696e67526f756e640765045b00000011256c61737453746172746564526f756e6404620000000e257374617274696e67526f756e6400000008256f7261636c6573",
+    "value_hex": "070700bfffffff1f070700000001",
+    "key_hex": "0a000000160000cf10c91e91a8f001f6c3007459fe3f05e9a3c0fc",
+    "want_value": {
+      "endingRound": "4294967295",
+      "lastStartedRound": "0",
+      "startingRound": "1"
+    },
+    "want_key": "tz1eWtg7YQb5iLX2HvrHPGbhiCQZ8n98aUh5"
+  }
+]

@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 )
 
 type Script struct {
@@ -26,16 +27,12 @@ type Code struct {
 
 func NewScript() *Script {
 	return &Script{
-		Code:    NewCode(),
+		Code: Code{
+			Param:   Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
+			Storage: Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
+			Code:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_CODE}}},
+		},
 		Storage: Prim{},
-	}
-}
-
-func NewCode() Code {
-	return Code{
-		Param:   Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
-		Storage: Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
-		Code:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_CODE}}},
 	}
 }
 
@@ -43,23 +40,84 @@ func (s *Script) StorageType() Type {
 	return Type{s.Code.Storage.Args[0]}
 }
 
-// first 4 bytes of sha256(encode_binary(parameters))
+// Returns the first 4 bytes of the SHA256 hash from a binary encoded parameter type
+// definition. This value is sufficiently unique to identify contracts with exactly
+// the same entrypoints including annotations.
+//
+// To identify syntactically equal entrypoints with or without annotations use
+// `IsEqual()`, `IsEqualWithAnno()` or `IsEqualPrim()`.
 func (s *Script) InterfaceHash() []byte {
 	buf, _ := s.Code.Param.MarshalBinary()
 	h := sha256.Sum256(buf)
 	return h[:4]
 }
 
+// Returns the first 4 bytes of the SHA256 hash from a binary encoded storage type
+// definition. This value is sufficiently unique to identify contracts with exactly
+// the same entrypoints including annotations.
 func (s *Script) StorageHash() []byte {
 	buf, _ := s.Code.Storage.MarshalBinary()
 	h := sha256.Sum256(buf)
 	return h[:4]
 }
 
+// Returns the first 4 bytes of the SHA256 hash from a binary encoded code section
+// of a contract.
 func (s *Script) CodeHash() []byte {
 	buf, _ := s.Code.Code.MarshalBinary()
 	h := sha256.Sum256(buf)
 	return h[:4]
+}
+
+// Returns a list of bigmaps referenced by a contracts current storage. Note that
+// in rare cases when storage type uses a T_OR branch above its bigmap type definitions
+// and the relevant branch is inactive/hidden the storage value lacks bigmap
+// references and this function will return an empty list, even though bigmaps exist.
+func (s *Script) BigmapsById() []int64 {
+	ids := make([]int64, 0)
+	stack := NewStack(s.Storage)
+	_ = s.Code.Storage.Walk(func(p Prim) error {
+		val := stack.Pop()
+		// fmt.Printf("WALK typ=%s\n", p.Dump())
+		// fmt.Printf("WALK val=%s\n", val.Dump())
+		if p.OpCode == T_BIG_MAP && val.IsValid() && val.Type == PrimInt {
+			ids = append(ids, val.Int.Int64())
+			return PrimSkip
+		}
+		switch p.OpCode {
+		case T_OR, T_PAIR, T_OPTION, K_STORAGE:
+			// recurse
+			// fmt.Printf("WALK recurse\n")
+			if val.IsScalar() {
+				stack.Push(val)
+			} else {
+				stack.Push(val.Args...)
+			}
+			return nil
+		default:
+			// ignore
+			// fmt.Printf("WALK skip\n")
+			return PrimSkip
+		}
+	})
+	return ids
+}
+
+// Returns a named map containing all bigmaps currently referenced by a contracts
+// storage value. Names are derived from Michelson type annotations and if missing,
+// a sequence number.
+func (s *Script) BigmapByName() map[string]int64 {
+	ids := s.BigmapsById()
+	named := make(map[string]int64)
+	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
+	for i := 0; i < min(len(ids), len(bigmaps)); i++ {
+		n := bigmaps[i].GetVarAnnoAny()
+		if n == "" {
+			n = strconv.Itoa(i)
+		}
+		named[n] = ids[i]
+	}
+	return named
 }
 
 func (p Script) MarshalBinary() ([]byte, error) {

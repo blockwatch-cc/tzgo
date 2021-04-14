@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Mainnet/opaMeiEwG1ccuLHWRNzMRSdCqhsVLT2tf2qRqbkaJuj7qMvbzLk/0/0",
+    "type": {
+      "annots": [
+        "%mint"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%token_metadata"
+              ],
+              "args": [
+                {
+                  "annots": [
+                    "%token_id"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%token_info"
+                  ],
+                  "args": [
+                    {
+                      "prim": "string"
+                    },
+                    {
+                      "prim": "bytes"
+                    }
+                  ],
+                  "prim": "map"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%owner"
+              ],
+              "prim": "address"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "list"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "0"
+              },
+              [
+                {
+                  "args": [
+                    {
+                      "string": ""
+                    },
+                    {
+                      "bytes": "697066733a2f2f516d613959757531426e763737655147414e586a714e6a6634646b65773546355257624c643832586d5152793437"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ]
+            ],
+            "prim": "Pair"
+          },
+          {
+            "string": "tz1gs78wrxS34XhGPECmN5fABKpEuhUGwAXS"
+          }
+        ],
+        "prim": "Pair"
+      }
+    ],
+    "type_hex": "065f0765086504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d65746164617461046e00000006256f776e657200000005256d696e74",
+    "value_hex": "02000000750707070700000200000041070401000000000a00000035697066733a2f2f516d613959757531426e763737655147414e586a714e6a6634646b65773546355257624c643832586d51527934370100000024747a31677337387772785333345868475045436d4e356641424b70457568554777415853",
+    "want_value": {
+      "mint": [
+        {
+          "owner": "tz1gs78wrxS34XhGPECmN5fABKpEuhUGwAXS",
+          "token_metadata": {
+            "token_id": "0",
+            "token_info": {
+              "": "ipfs://Qma9Yuu1Bnv77eQGANXjqNjf4dkew5F5RWbLd82XmQRy47"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

@@ -29,12 +29,12 @@ type Typedef struct {
 	Args     []Typedef `json:"args,omitempty"`
 }
 
-func NewType() Type {
-	return Type{Prim{}}
+func NewType(p Prim) Type {
+	return Type{p.Clone()}
 }
 
-func NewTypePtr() *Type {
-	return &Type{Prim{}}
+func NewTypePtr(p Prim) *Type {
+	return &Type{p.Clone()}
 }
 
 func (t *Type) UnmarshalBinary(buf []byte) error {

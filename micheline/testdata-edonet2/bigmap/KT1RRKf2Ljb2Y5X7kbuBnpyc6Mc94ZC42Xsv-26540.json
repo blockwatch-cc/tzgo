@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv-26540-exprvHznb93bhYfx5oBTFqnVLTokhUwGwfXRAn6aQ8neCnVrrTXNBH",
+    "type": {
+      "annots": [
+        "%balances"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%approvals"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    },
+                    {
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "map"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%balance"
+                      ],
+                      "prim": "nat"
+                    },
+                    {
+                      "annots": [
+                        "%dividends"
+                      ],
+                      "args": [
+                        {
+                          "prim": "nat"
+                        },
+                        {
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "map"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%liquidity"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%role"
+                      ],
+                      "prim": "string"
+                    },
+                    {
+                      "annots": [
+                        "%whitelisted"
+                      ],
+                      "prim": "bool"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          [],
+          {
+            "args": [
+              {
+                "int": "3000"
+              },
+              []
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "3000"
+      },
+      {
+        "string": "MANAGEMENT_COMPANY"
+      },
+      {
+        "prim": "True"
+      }
+    ],
+    "key": {
+      "bytes": "0000887fa2baecb23d7a24d4e8be864762eec3159702"
+    },
+    "type_hex": "0861036e076507650860036e03620000000a25617070726f76616c7307650462000000082562616c616e63650860036203620000000a256469766964656e6473076504620000000a256c6971756964697479076504680000000525726f6c6504590000000c2577686974656c6973746564000000092562616c616e636573",
+    "value_hex": "020000002d07070200000000070700b82e020000000000b82e01000000124d414e4147454d454e545f434f4d50414e59030a",
+    "key_hex": "0a000000160000887fa2baecb23d7a24d4e8be864762eec3159702",
+    "want_value": {
+      "approvals": {},
+      "balance": "3000",
+      "dividends": {},
+      "liquidity": "3000",
+      "role": "MANAGEMENT_COMPANY",
+      "whitelisted": true
+    },
+    "want_key": "tz1Y5mVVME7BbAa9YHqLgPfdmZ91P3KhkSDo"
+  },
+  {
+    "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv-26540-exprtYTe3TZ74YD4rN8q6t6QvPBJxF9xNLtqZh3LJb4cMuUFxZNHUN",
+    "type": {
+      "annots": [
+        "%balances"
+      ],
+      "args": [
+        {
+          "prim": "address"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%approvals"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    },
+                    {
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "map"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%balance"
+                      ],
+                      "prim": "nat"
+                    },
+                    {
+                      "annots": [
+                        "%dividends"
+                      ],
+                      "args": [
+                        {
+                          "prim": "nat"
+                        },
+                        {
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "map"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%liquidity"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%role"
+                      ],
+                      "prim": "string"
+                    },
+                    {
+                      "annots": [
+                        "%whitelisted"
+                      ],
+                      "prim": "bool"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          [],
+          {
+            "args": [
+              {
+                "int": "3000"
+              },
+              []
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "int": "3000"
+      },
+      {
+        "string": "INVESTOR"
+      },
+      {
+        "prim": "True"
+      }
+    ],
+    "key": {
+      "bytes": "00000244fdda0aba3c8727bdda12a82ed304996ceecf"
+    },
+    "type_hex": "0861036e076507650860036e03620000000a25617070726f76616c7307650462000000082562616c616e63650860036203620000000a256469766964656e6473076504620000000a256c6971756964697479076504680000000525726f6c6504590000000c2577686974656c6973746564000000092562616c616e636573",
+    "value_hex": "020000002307070200000000070700b82e020000000000b82e0100000008494e564553544f52030a",
+    "key_hex": "0a0000001600000244fdda0aba3c8727bdda12a82ed304996ceecf",
+    "want_value": {
+      "approvals": {},
+      "balance": "3000",
+      "dividends": {},
+      "liquidity": "3000",
+      "role": "INVESTOR",
+      "whitelisted": true
+    },
+    "want_key": "tz1Kr2h88qgEWGbru7Egd1jnvXZs7AWePw6Z"
+  }
+]

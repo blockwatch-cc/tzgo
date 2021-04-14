@@ -379,18 +379,13 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			mm = make(map[string]interface{})
 		}
 
-		// idea: pair stack and match type tree
-		// 1. unfold value
-		// 2. push all data on a stack
-		// 3. render pair stack along type tree, pop values as required by type
-
-		// // reuse the existing stack and push unfolded values if we see a pair
+		// Try unfolding value (again) when type is T_PAIR,
+		// reuse the existing stack and push unfolded values
 		if val.IsPair() {
 			// unfold regular pair
 			unfolded := val.UnfoldPair(typ)
 			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), seq(unfolded...).Dump())
 			stack.Push(unfolded...)
-
 		} else if val.CanUnfold(typ) {
 			// comb pair
 			// fmt.Printf("L%0d: %s PUSH COMB args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
@@ -466,7 +461,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_SAPLING_STATE:
 		mm := make(map[string]interface{})
-		if err := walkTree(mm, "memo_size", Type{prim(T_INT)}, NewStack(typ.Args[0]), lvl+1); err != nil {
+		if err := walkTree(mm, "memo_size", Type{NewPrim(T_INT)}, NewStack(typ.Args[0]), lvl+1); err != nil {
 			return err
 		}
 		if err := walkTree(mm, "content", val.BuildType(), NewStack(val), lvl+1); err != nil {
