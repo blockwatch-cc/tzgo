@@ -182,10 +182,10 @@ c, _ := rpc.NewClient(nil, "https://mainnet-tezos.giganode.io")
 script, _ := c.GetContractScript(ctx, addr)
 
 // bigmap pointers as []int64
-ids := script.BigmapById()
+ids := script.BigmapsById()
 
 // bigmap pointers as named map[string]int64 (names from type annotations)
-named := script.BigmapByName()
+named := script.BigmapsByName()
 
 ```
 

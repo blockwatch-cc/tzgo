@@ -427,7 +427,7 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 	fmt.Printf("Storage:\n  %v\n", string(buf))
 
 	// identify bigmaps owned by the contract from contract type and storage
-	bm := script.BigmapByName()
+	bm := script.BigmapsByName()
 	if len(bm) == 0 {
 		fmt.Printf("Bigmaps  (none)\n")
 	} else {

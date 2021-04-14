@@ -106,7 +106,7 @@ func (s *Script) BigmapsById() []int64 {
 // Returns a named map containing all bigmaps currently referenced by a contracts
 // storage value. Names are derived from Michelson type annotations and if missing,
 // a sequence number.
-func (s *Script) BigmapByName() map[string]int64 {
+func (s *Script) BigmapsByName() map[string]int64 {
 	ids := s.BigmapsById()
 	named := make(map[string]int64)
 	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
