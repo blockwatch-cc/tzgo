@@ -414,14 +414,8 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 		return err
 	}
 
-	// fetch the contract's most recent storage
-	store, err := c.GetContractStorage(ctx, addr)
-	if err != nil {
-		return err
-	}
-
-	// unfold Michelson storage into human-readable form
-	val := micheline.NewValue(script.StorageType(), store)
+	// unfold Micheline storage into human-readable form
+	val := micheline.NewValue(script.StorageType(), script.Storage)
 	m, err := val.Map()
 	if err != nil {
 		return err
@@ -458,7 +452,7 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 				if err != nil {
 					return err
 				}
-				// unfold Michelson type into human readable form
+				// unfold Micheline type into human readable form
 				val := micheline.NewValue(micheline.NewType(biginfo.ValueType), bigval)
 				m, err := val.Map()
 				if err != nil {
