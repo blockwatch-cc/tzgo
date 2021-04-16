@@ -1356,21 +1356,21 @@ func (p Prim) Index(label string) ([]int, bool) {
 }
 
 func (p Prim) GetPath(path string) (Prim, error) {
-	index := make([]int, len(path))
+	index := make([]int, 0)
 	path = strings.TrimPrefix(path, "/")
 	path = strings.TrimSuffix(path, "/")
 	for i, v := range strings.Split(path, "/") {
 		switch v {
 		case "L", "l", "0":
-			index[i] = 0
+			index = append(index, 0)
 		case "R", "r", "1":
-			index[i] = 1
+			index = append(index, 1)
 		default:
 			idx, err := strconv.Atoi(v)
 			if err != nil {
 				return InvalidPrim, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
 			}
-			index[i] = idx
+			index = append(index, idx)
 		}
 	}
 	return p.GetIndex(index)
@@ -1379,7 +1379,7 @@ func (p Prim) GetPath(path string) (Prim, error) {
 func (p Prim) GetIndex(index []int) (Prim, error) {
 	prim := p
 	for _, v := range index {
-		if v < 0 || len(prim.Args) < v {
+		if v < 0 || len(prim.Args) <= v {
 			return InvalidPrim, fmt.Errorf("micheline: index %d out of bounds", v)
 		}
 		prim = prim.Args[v]
