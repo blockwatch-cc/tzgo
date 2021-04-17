@@ -178,6 +178,9 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, height, cycle int64)
 	if err := c.Get(ctx, u, idx); err != nil {
 		return nil, err
 	}
+	if idx.RandomSeed == "" {
+		return nil, fmt.Errorf("missing snapshot for cycle %d at height %d", cycle, height)
+	}
 	return idx, nil
 }
 
