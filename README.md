@@ -23,6 +23,10 @@ TzGo contains a set of features that allow developers to read, monitor, decode, 
 - an **RPC library** `tzgo/rpc` for accessing the Tezos Node RPC
 - helpers like an efficient base58 en/decoder, hash map
 
+### TzGo Versioning
+
+As long as TzGo is in beta status we will use major version 0.x. Once interfaces are stable we'll switch to 1.x. We'll use the minor version number to express compatibility with a Tezos protocol release, e.g. v0.9.0 supports all protocols up to Florence.
+
 ### TzGo Roadmap
 
 When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet, but will add support in the future as usage of these features becomes more widespread.
