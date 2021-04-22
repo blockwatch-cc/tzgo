@@ -87,11 +87,12 @@ func NewKey(typ Type, key Prim) (Key, error) {
 	case T_KEY:
 		k.Hash = tezos.NewExprHash(key.Bytes)
 
-	case T_PAIR, D_PAIR:
+	case T_PAIR, T_OPTION, T_OR:
 		k.PrimKey = key
 
 	default:
-		return Key{}, fmt.Errorf("micheline: big_map key type '%s' is not implemented", typ.OpCode)
+		k.PrimKey = key
+		return k, fmt.Errorf("micheline: big_map key type '%s' is not implemented", typ.OpCode)
 	}
 	return k, nil
 }

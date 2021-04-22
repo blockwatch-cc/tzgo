@@ -518,7 +518,6 @@ func (p Prim) LooksLikeLambda() bool {
 		}
 		p = p.Args[0]
 	}
-	return false
 }
 
 // Converts a pair tree into a flat sequence. While Michelson

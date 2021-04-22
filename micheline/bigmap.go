@@ -68,7 +68,6 @@ func (e BigmapDiffElem) GetKey(typ Type) Key {
 	if err != nil {
 		log.Error(err)
 	}
-	k.Type = typ
 	return k
 }
 
@@ -77,7 +76,6 @@ func (e BigmapDiffElem) GetKeyPtr(typ Type) *Key {
 	if err != nil {
 		log.Error(err)
 	}
-	k.Type = typ
 	return &k
 }
 
