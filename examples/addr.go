@@ -71,7 +71,7 @@ func run() error {
 			addr.Hash = hv
 			addr.Type = 1
 			key.Data = hv
-			key.Type = 1
+			key.Type = 0
 		}
 	} else {
 		addr = key.Address()
@@ -87,6 +87,7 @@ func run() error {
 		fmt.Printf("KeyData %x\n", key.Data)
 		fmt.Printf("AsHash  %x\n", hash.Hash)
 		fmt.Printf("HType   %s\n", hash.Type)
+		addr = key.Address()
 	}
 	fmt.Printf("Address %s\n", addr.String())
 	fmt.Printf("PkType  %s\n", addr.Type)
