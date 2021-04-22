@@ -245,6 +245,8 @@ func (a Address) Bytes() []byte {
 	return append([]byte{a.Type.Tag()}, a.Hash...)
 }
 
+// Tezos compatible binary encoding with padding for contracts and
+// leading 0-byte for EOAs
 func (a Address) Bytes22() []byte {
 	if !a.Type.IsValid() {
 		return nil
