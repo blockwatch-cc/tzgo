@@ -251,7 +251,20 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, NewStack(v), lvl+1); err != nil {
 					return err
 				}
-				arr = append(arr, mm)
+				// unpack nested list
+				unwrapped := false
+				if len(mm) == 1 {
+					if mval, ok := mm["0"]; ok {
+						if marr, ok := mval.([]interface{}); ok {
+							arr = append(arr, marr)
+							unwrapped = true
+						}
+					}
+				}
+				if !unwrapped {
+					arr = append(arr, mm)
+				}
+				// arr = append(arr, mm)
 			}
 		}
 		m[label] = arr

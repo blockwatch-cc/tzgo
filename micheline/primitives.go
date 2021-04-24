@@ -704,8 +704,20 @@ func (p Prim) Value(as OpCode) interface{} {
 
 	case PrimUnary, PrimUnaryAnno:
 		switch as {
-		case T_OR, T_OPTION:
-			// expected, just render as prim tree
+		case T_OR:
+			switch p.OpCode {
+			case D_LEFT:
+				return p.Args[0].Value(as)
+			case D_RIGHT:
+				return p.Args[1].Value(as)
+			}
+		case T_OPTION:
+			switch p.OpCode {
+			case D_NONE:
+				return nil
+			case D_SOME:
+				return p.Args[0].Value(as)
+			}
 		default:
 			warn = true
 		}
@@ -716,7 +728,7 @@ func (p Prim) Value(as OpCode) interface{} {
 			return false
 		case D_TRUE:
 			return true
-		case D_UNIT:
+		case D_UNIT, D_NONE:
 			return nil
 		default:
 			return p.OpCode.String()
