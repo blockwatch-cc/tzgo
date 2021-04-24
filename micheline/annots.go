@@ -144,3 +144,21 @@ func (p Prim) GetFieldAnnoAny() string {
 	}
 	return ""
 }
+
+func (p Prim) HasVarOrFieldAnno() bool {
+	for _, v := range p.Anno {
+		if strings.HasPrefix(v, FieldAnnoPrefix) || strings.HasPrefix(v, VarAnnoPrefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func (p Prim) GetVarOrFieldAnno() string {
+	for _, v := range p.Anno {
+		if strings.HasPrefix(v, FieldAnnoPrefix) || strings.HasPrefix(v, VarAnnoPrefix) {
+			return v[1:]
+		}
+	}
+	return ""
+}

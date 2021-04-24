@@ -419,7 +419,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			m[label] = nil
 		case D_SOME:
 			// with annots (name) use it for scalar or complex render
-			if val.IsScalar() {
+			// when next level annot equals this option annot, skip this annot
+			if val.IsScalar() || label == typ.Args[0].GetVarAnnoAny() {
 				if err := walkTree(m, label, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
 					return err
 				}
