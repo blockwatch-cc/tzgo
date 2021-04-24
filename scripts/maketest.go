@@ -22,7 +22,7 @@ import (
 
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
-	"blockwatch.cc/tzgo/tzstats"
+	"blockwatch.cc/tzstats-go"
 	"github.com/echa/log"
 )
 
