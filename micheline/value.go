@@ -122,8 +122,8 @@ func (e Value) MarshalJSON() ([]byte, error) {
 				Value:   e.Value,
 			},
 		}
-		buf, _ := json.Marshal(resp)
 		// FIXME: this is a good place to plug in an error reporting facility
+		buf, _ := json.Marshal(resp)
 		log.Errorf("RENDER: %s", string(buf))
 
 		// render the plain prim tree
@@ -264,7 +264,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				if !unwrapped {
 					arr = append(arr, mm)
 				}
-				// arr = append(arr, mm)
 			}
 		}
 		m[label] = arr
