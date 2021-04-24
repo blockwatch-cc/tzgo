@@ -20,7 +20,11 @@ func (e Entrypoint) Type() Type {
 	if e.Prim == nil {
 		e.Prim = &Prim{} // invalid
 	}
-	return Type{*e.Prim}
+	typ := NewType(*e.Prim)
+	if !typ.HasLabel() {
+		typ.Prim.Anno = []string{"@" + e.Call}
+	}
+	return typ
 }
 
 type Entrypoints map[string]Entrypoint
