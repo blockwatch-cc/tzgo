@@ -108,7 +108,6 @@ func (e *Value) Map() (interface{}, error) {
 func (e Value) MarshalJSON() ([]byte, error) {
 	m, err := e.Map()
 	if err != nil {
-		log.Errorf("RENDER: %v", err)
 		type xErrorMessage struct {
 			Message string `json:"message"`
 			Type    Prim   `json:"type"`
@@ -123,7 +122,12 @@ func (e Value) MarshalJSON() ([]byte, error) {
 				Value:   e.Value,
 			},
 		}
-		return json.Marshal(resp)
+		buf, _ := json.Marshal(resp)
+		// FIXME: this is a good place to plug in an error reporting facility
+		log.Errorf("RENDER: %s", string(buf))
+
+		// render the plain prim tree
+		return json.Marshal(e.Value)
 	}
 
 	return json.Marshal(m)
