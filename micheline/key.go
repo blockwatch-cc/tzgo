@@ -13,19 +13,22 @@ import (
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
+	"golang.org/x/crypto/blake2b"
 )
 
 // Comparable key as used in bigmaps and maps
 type Key struct {
-	Type      Type
-	Hash      tezos.ExprHash
-	IntKey    *big.Int
-	StringKey string
-	BytesKey  []byte
-	BoolKey   bool
-	AddrKey   tezos.Address
-	TimeKey   time.Time
-	PrimKey   Prim
+	Type Type
+	// TODO: refactor into simple Prim
+	IntKey       *big.Int
+	StringKey    string
+	BytesKey     []byte
+	BoolKey      bool
+	AddrKey      tezos.Address
+	KeyKey       tezos.Key
+	SignatureKey tezos.Signature
+	TimeKey      time.Time
+	PrimKey      Prim
 }
 
 func NewKey(typ Type, key Prim) (Key, error) {
@@ -83,12 +86,40 @@ func NewKey(typ Type, key Prim) (Key, error) {
 			}
 			k.AddrKey = a
 		}
-
 	case T_KEY:
-		k.Hash = tezos.NewExprHash(key.Bytes)
-
-	case T_PAIR, T_OPTION, T_OR:
+		if len(key.Bytes) == 0 && len(key.String) > 0 {
+			kk, err := tezos.ParseKey(key.String)
+			if err != nil {
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type key: %v", err)
+			}
+			k.KeyKey = kk
+		} else {
+			kk := tezos.Key{}
+			if err := kk.UnmarshalBinary(key.Bytes); err != nil {
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for type key: %v", err)
+			}
+			k.KeyKey = kk
+		}
+	case T_SIGNATURE:
+		if len(key.Bytes) == 0 && len(key.String) > 0 {
+			sk, err := tezos.ParseSignature(key.String)
+			if err != nil {
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type signature: %v", err)
+			}
+			k.SignatureKey = sk
+		} else {
+			sk := tezos.Signature{}
+			if err := sk.UnmarshalBinary(key.Bytes); err != nil {
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for type signature: %v", err)
+			}
+			k.SignatureKey = sk
+		}
+	case T_PAIR, T_OPTION, T_OR, T_CHAIN_ID:
 		k.PrimKey = key
+		// build type details when missing
+		if len(k.Type.Args) == 0 {
+			k.Type = key.BuildType()
+		}
 
 	default:
 		k.PrimKey = key
@@ -146,32 +177,24 @@ func ParseKeyType(typ string) (OpCode, error) {
 		return t, fmt.Errorf("micheline: invalid big_map key type '%s'", typ)
 	}
 	switch t {
-	case T_INT, T_NAT, T_MUTEZ, T_STRING, T_BYTES, T_BOOL, T_KEY_HASH, T_TIMESTAMP, T_ADDRESS, T_PAIR:
+	case T_INT, T_NAT, T_MUTEZ, T_STRING, T_BYTES, T_BOOL,
+		T_KEY_HASH, T_TIMESTAMP, T_ADDRESS, T_PAIR, T_KEY, T_SIGNATURE,
+		T_OPTION, T_OR, T_CHAIN_ID:
 		return t, nil
 	default:
-		return t, fmt.Errorf("micheline: unsupported big_map key type string '%s'", t)
+		return t, fmt.Errorf("micheline: unsupported big_map key type %s", t)
 	}
 }
 
-// query string parsing used for lookup (does not support Pair keys)
-func ParseKey(typ, val string) (Key, error) {
-	var err error
+// query string parsing used for lookup
+func ParseKey(typ OpCode, val string) (Key, error) {
 	key := Key{Type: Type{}}
-	key.Hash, err = tezos.ParseExprHash(val)
-	if err == nil {
-		key.Type.OpCode = T_KEY
-		key.Type.Type = PrimBytes
-		return key, nil
-	}
-	if typ == "" {
-		key.Type.OpCode = InferKeyType(val)
-		typ = key.Type.OpCode.String()
+	if typ.IsTypeCode() {
+		key.Type.OpCode = typ
 	} else {
-		key.Type.OpCode, err = ParseOpCode(typ)
-		if err != nil {
-			return Key{}, err
-		}
+		key.Type.OpCode = InferKeyType(val)
 	}
+	var err error
 	switch key.Type.OpCode {
 	case T_INT, T_NAT, T_MUTEZ:
 		key.Type.Type = PrimInt
@@ -199,30 +222,38 @@ func ParseKey(typ, val string) (Key, error) {
 	case T_KEY_HASH, T_ADDRESS:
 		key.Type.Type = PrimBytes
 		key.AddrKey, err = tezos.ParseAddress(val)
+	case T_KEY:
+		key.Type.Type = PrimBytes
+		key.KeyKey, err = tezos.ParseKey(val)
+	case T_SIGNATURE:
+		key.Type.Type = PrimBytes
+		key.SignatureKey, err = tezos.ParseSignature(val)
 	case T_PAIR:
-		// parse comma-separated list into a comb pair tree
+		// parse comma-separated list into a right-hand pair tree
 		prims := []Prim{}
 		for _, v := range strings.Split(val, ",") {
-			parsed, err := ParseKey(InferKeyType(v).String(), v)
+			parsed, err := ParseKey(InferKeyType(v), v)
 			if err != nil {
 				return Key{}, fmt.Errorf("micheline: decoding bigmap pair key element %s: %v", v, err)
 			}
 			prims = append(prims, parsed.Prim())
 		}
-		if len(prims) == 2 {
-			key.PrimKey = NewPairValue(prims[0], prims[1])
+		switch len(prims) {
+		case 0:
+			return Key{}, fmt.Errorf("micheline: empty bigmap pair key: %s", val)
+		case 1:
+			return Key{}, fmt.Errorf("micheline: single-value bigmap pair key: %s", val)
+		default:
+			key.PrimKey = NewSeq(prims...).FoldPair()
 			key.Type.Type = PrimBinary
-		} else {
-			key.PrimKey = NewSeq(prims...)
-			key.Type.Type = PrimSequence
 		}
 
 	default:
-		return Key{}, fmt.Errorf("micheline: unsupported big_map key %s type %s", key.Type.Label(), key.Type.OpCode)
+		return Key{}, fmt.Errorf("micheline: unsupported big_map key type %s", typ)
 	}
 
 	if err != nil {
-		return Key{}, fmt.Errorf("micheline: decoding bigmap key %s (%s): %v", val, typ, err)
+		return Key{}, fmt.Errorf("micheline: decoding bigmap key %s as %s: %v", val, typ, err)
 	}
 	return key, nil
 }
@@ -231,17 +262,22 @@ func InferKeyType(val string) OpCode {
 	if _, err := strconv.ParseBool(val); err == nil {
 		return T_BOOL
 	}
-	if a, err := tezos.ParseAddress(val); err == nil {
-		if a.Type == tezos.AddressTypeContract {
-			return T_ADDRESS
-		}
-		return T_KEY_HASH
+	if _, err := tezos.ParseAddress(val); err == nil {
+		// Note: can also be KEY_HASH, but used inconsistently
+		return T_ADDRESS
+	}
+	if _, err := tezos.ParseKey(val); err == nil {
+		return T_KEY
+	}
+	if _, err := tezos.ParseSignature(val); err == nil {
+		return T_SIGNATURE
 	}
 	if _, err := time.Parse(time.RFC3339, val); err == nil {
 		return T_TIMESTAMP
 	}
 	i := big.NewInt(0)
 	if err := i.UnmarshalText([]byte(val)); err == nil {
+		// can also be T_MUTEZ, T_NAT
 		return T_INT
 	}
 	if _, err := hex.DecodeString(val); err == nil {
@@ -253,19 +289,28 @@ func InferKeyType(val string) OpCode {
 	return T_STRING
 }
 
-func (k Key) Bytes() []byte {
-	p := Prim{
-		Type:   k.Type.Type,
-		OpCode: k.Type.OpCode,
+func DecodeKey(typ Type, b []byte) (Key, error) {
+	key := Prim{}
+	if err := key.UnmarshalBinary(b); err != nil {
+		return Key{}, err
 	}
+	return NewKey(typ, key)
+}
+
+func (k Key) Bytes() []byte {
+	p := Prim{}
 	switch k.Type.OpCode {
 	case T_INT, T_NAT, T_MUTEZ:
+		p.Type = PrimInt
 		p.Int = k.IntKey
 	case T_STRING:
+		p.Type = PrimString
 		p.String = k.StringKey
 	case T_BYTES:
+		p.Type = PrimBytes
 		p.Bytes = k.BytesKey
 	case T_BOOL:
+		p.Type = PrimNullary
 		if k.BoolKey {
 			p.OpCode = D_TRUE
 		} else {
@@ -274,67 +319,47 @@ func (k Key) Bytes() []byte {
 	case T_TIMESTAMP:
 		var z Z
 		z.SetInt64(k.TimeKey.Unix())
+		p.Type = PrimInt
 		p.Int = z.Big()
 	case T_ADDRESS:
+		p.Type = PrimBytes
 		p.Bytes, _ = k.AddrKey.MarshalBinary()
 	case T_KEY_HASH:
+		p.Type = PrimBytes
 		b, _ := k.AddrKey.MarshalBinary()
 		p.Bytes = b[1:] // strip leading flag
 	case T_KEY:
-		p.Bytes = k.Hash.Hash.Hash
-	case T_PAIR, D_PAIR:
-		b, _ := k.PrimKey.MarshalBinary()
-		p.Bytes = b
+		p.Type = PrimBytes
+		p.Bytes, _ = k.KeyKey.MarshalBinary()
+	case T_SIGNATURE:
+		p.Type = PrimBytes
+		p.Bytes, _ = k.SignatureKey.MarshalBinary()
 	default:
-		return nil
+		// anthing else comes from prim tree
+		if !k.PrimKey.IsValid() {
+			return nil
+		}
+		b, _ := k.PrimKey.MarshalBinary()
+		return b
 	}
 	buf, _ := p.MarshalBinary()
 	return buf
 }
 
-// Note: this is not the encoding stored in bigmap table! (prim wrapper is missing)
 func (k Key) MarshalBinary() ([]byte, error) {
-	switch k.Type.OpCode {
-	case T_INT, T_NAT, T_MUTEZ:
-		var z Z
-		return z.Set(k.IntKey).MarshalBinary()
-	case T_STRING:
-		return []byte(k.StringKey), nil
-	case T_BYTES:
-		return k.BytesKey, nil
-	case T_BOOL:
-		if k.BoolKey {
-			return []byte{byte(D_TRUE)}, nil
-		} else {
-			return []byte{byte(D_FALSE)}, nil
-		}
-	case T_TIMESTAMP:
-		var z Z
-		z.SetInt64(k.TimeKey.Unix())
-		return z.MarshalBinary()
-	case T_ADDRESS:
-		return k.AddrKey.MarshalBinary()
-	case T_KEY_HASH:
-		b, err := k.AddrKey.MarshalBinary()
-		if err != nil {
-			return nil, err
-		}
-		return b[1:], nil // strip leading flag
-	case T_KEY:
-		return k.Hash.Hash.Hash, nil
-	case T_PAIR, D_PAIR:
-		return k.PrimKey.MarshalBinary()
-	default:
-		return nil, fmt.Errorf("micheline: no binary marshaller for big_map key type '%s'", k.Type.OpCode)
-	}
+	return k.Bytes(), nil
 }
 
-func DecodeKey(typ Type, b []byte) (Key, error) {
-	key := Prim{}
-	if err := key.UnmarshalBinary(b); err != nil {
-		return Key{}, err
-	}
-	return NewKey(typ, key)
+func (k Key) Hash() tezos.ExprHash {
+	// encode and pack
+	buf := append([]byte{0x5}, k.Bytes()...)
+
+	// blake2b with digest size 32 byte
+	h, _ := blake2b.New(32, nil)
+	h.Write(buf)
+
+	// wrap in exprhash
+	return tezos.NewExprHash(h.Sum(nil))
 }
 
 func (k Key) String() string {
@@ -352,44 +377,47 @@ func (k Key) String() string {
 	case T_KEY_HASH, T_ADDRESS:
 		return k.AddrKey.String()
 	case T_KEY:
-		return k.Hash.String()
-	case T_PAIR, D_PAIR:
-		left := k.PrimKey.Args[0].Value(k.PrimKey.Args[0].OpCode)
-		if _, ok := left.(fmt.Stringer); !ok {
-			if _, ok := left.(string); !ok {
-				left = k.PrimKey.Args[0].OpCode.String()
-			}
+		return k.KeyKey.String()
+	case T_SIGNATURE:
+		return k.SignatureKey.String()
+	case T_PAIR:
+		// use value unfolding
+		val := Value{
+			Type:  k.Type, // real or guessed type tree
+			Value: k.PrimKey,
 		}
-		right := k.PrimKey.Args[1].Value(k.PrimKey.Args[1].OpCode)
-		if _, ok := right.(fmt.Stringer); !ok {
-			if _, ok := right.(string); !ok {
-				right = k.PrimKey.Args[1].OpCode.String()
+		var (
+			b strings.Builder
+			c int
+		)
+		val.Walk("", func(_ string, v interface{}) error {
+			if c > 0 {
+				b.WriteByte(',')
 			}
-		}
-		return fmt.Sprintf("%s,%s", left, right)
+			if stringer, ok := v.(fmt.Stringer); ok {
+				b.WriteString(stringer.String())
+			} else {
+				if str, ok := v.(string); ok {
+					b.WriteString(str)
+				} else {
+					b.WriteString(fmt.Sprint(v))
+				}
+			}
+			c++
+			return nil
+		})
+		return b.String()
+
+		// TODO: simpler, but requires value tree decoration
+		// return fmt.Sprint(k.PrimKey.Value(T_PAIR)
+
 	default:
 		return ""
 	}
 }
 
-func (k Key) Encode() string {
-	switch k.Type.OpCode {
-	case T_STRING:
-		return k.StringKey
-	case T_INT, T_NAT, T_MUTEZ:
-		return k.IntKey.Text(10)
-	case T_BYTES:
-		return hex.EncodeToString(k.BytesKey)
-	default:
-		buf, _ := k.MarshalBinary()
-		return hex.EncodeToString(buf)
-	}
-}
-
 func (k Key) Prim() Prim {
-	p := Prim{
-		OpCode: k.Type.OpCode,
-	}
+	p := Prim{}
 	switch k.Type.OpCode {
 	case T_INT, T_NAT, T_MUTEZ:
 		p.Int = k.IntKey
@@ -403,8 +431,14 @@ func (k Key) Prim() Prim {
 	case T_BYTES:
 		p.Bytes = k.BytesKey
 		p.Type = PrimBytes
-	case T_ADDRESS, T_KEY_HASH, T_KEY:
-		p.Bytes, _ = k.MarshalBinary()
+	case T_ADDRESS, T_KEY_HASH:
+		p.Bytes, _ = k.AddrKey.MarshalBinary()
+		p.Type = PrimBytes
+	case T_KEY:
+		p.Bytes, _ = k.KeyKey.MarshalBinary()
+		p.Type = PrimBytes
+	case T_SIGNATURE:
+		p.Bytes, _ = k.SignatureKey.MarshalBinary()
 		p.Type = PrimBytes
 	case T_BOOL:
 		p.Type = PrimNullary
@@ -421,7 +455,7 @@ func (k Key) Prim() Prim {
 				break
 			}
 		}
-		p.Bytes, _ = k.MarshalBinary()
+		p.Bytes = k.Bytes()
 		p.Type = PrimBytes
 	}
 	return p
@@ -450,7 +484,9 @@ func (k Key) MarshalJSON() ([]byte, error) {
 	case T_KEY_HASH, T_ADDRESS:
 		return []byte(strconv.Quote(k.AddrKey.String())), nil
 	case T_KEY:
-		return []byte(strconv.Quote(k.Hash.String())), nil
+		return []byte(strconv.Quote(k.KeyKey.String())), nil
+	case T_SIGNATURE:
+		return []byte(strconv.Quote(k.SignatureKey.String())), nil
 	case T_PAIR:
 		val := &Value{
 			Type:  k.Type,
@@ -458,10 +494,8 @@ func (k Key) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(val)
 	default:
-		key, _ := k.Type.MarshalJSON()
-		val, _ := k.PrimKey.MarshalJSON()
 		return nil, fmt.Errorf("micheline: unsupported big_map key type '%s': typ=%s val=%s",
-			k.Type.OpCode, string(key), string(val),
+			k.Type.OpCode, k.Type.Dump(), k.PrimKey.Dump(),
 		)
 	}
 }

@@ -558,6 +558,19 @@ func (p Prim) UnfoldPair(typ Type) []Prim {
 	return flat
 }
 
+// Turns a pair sequence into a right-hand pair tree
+func (p Prim) FoldPair() Prim {
+	if !p.IsSequence() || len(p.Args) < 2 {
+		return p
+	}
+	switch len(p.Args) {
+	case 2:
+		return NewPairValue(p.Args[0], p.Args[1])
+	default:
+		return NewPairValue(p.Args[0], NewSeq(p.Args[1:]...).FoldPair())
+	}
+}
+
 // Checks if a primitve contains a packed value such as a byte sequence
 // generated with PACK (starting with 0x05), an address or ascii/utf string.
 func (p Prim) IsPacked() bool {
@@ -737,6 +750,7 @@ func (p Prim) Value(as OpCode) interface{} {
 	case PrimBinary, PrimBinaryAnno:
 		switch p.OpCode {
 		case D_PAIR, T_PAIR:
+			// FIXME: requires value tree decoration (types in opcodes)
 			// mangle pair contents into string, used when rendering complex keys
 			left := p.Args[0].Value(p.Args[0].OpCode)
 			if _, ok := left.(fmt.Stringer); !ok {
@@ -756,6 +770,7 @@ func (p Prim) Value(as OpCode) interface{} {
 	case PrimSequence:
 		switch p.OpCode {
 		case D_PAIR, T_PAIR:
+			// FIXME: requires value tree decoration (types in opcodes)
 			var b strings.Builder
 			for i, v := range p.Args {
 				if i > 0 {
