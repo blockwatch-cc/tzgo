@@ -363,7 +363,8 @@ func NewBigMapKeyAs(typ *Prim, key *Prim) (*BigMapKey, error) {
 		k.PrimKey = key
 
 	default:
-		return nil, fmt.Errorf("micheline: big_map key type '%s' is not implemented", typ.OpCode)
+		k.PrimKey = key
+		return k, fmt.Errorf("micheline: big_map key type '%s' is not implemented", typ.OpCode)
 	}
 	return k, nil
 }
@@ -407,6 +408,9 @@ func (k *BigMapKey) String() string {
 		}
 		return fmt.Sprintf("%s#%s", left, right)
 	default:
+		if k.PrimKey != nil {
+			return k.PrimKey.Text()
+		}
 		return ""
 	}
 }
