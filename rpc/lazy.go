@@ -99,12 +99,12 @@ loop:
 		case LazyDiffKindBigMap:
 			(*d)[i] = &LazyBigMapDiff{}
 		default:
-			log.Warnf("unsupported lazy diff kind '%s'", tmp.Kind)
+			log.Warnf("unsupported lazy diff kind '%s'", tmp.Kind())
 			(*d)[i] = &tmp
 			continue loop
 		}
 		if err := json.Unmarshal(r, (*d)[i]); err != nil {
-			return fmt.Errorf("rpc: lazy diff %s: %v", tmp.Kind, err)
+			return fmt.Errorf("rpc: lazy diff %s: %v", tmp.Kind(), err)
 		}
 	}
 

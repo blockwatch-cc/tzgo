@@ -1374,7 +1374,7 @@ func (p *Prim) GetPathString(path string) (*Prim, error) {
 		case 'R', 'r', '1':
 			ipath[i] = 1
 		default:
-			return nil, fmt.Errorf("micheline: invalid path component '%s' at pos %d", v, i)
+			return nil, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
 		}
 	}
 	return p.GetPath(ipath)
