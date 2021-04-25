@@ -489,17 +489,18 @@ func (k *BigMapKey) MarshalJSON() ([]byte, error) {
 		return []byte(strconv.Quote(k.AddrKey.String())), nil
 	case T_KEY:
 		return []byte(strconv.Quote(k.Hash.String())), nil
-	case T_PAIR:
+		// case T_PAIR:
+	default:
 		val := &Value{
 			Type:  k.Type,
 			Value: k.PrimKey,
 		}
 		return json.Marshal(val)
-	default:
-		key, _ := k.Type.MarshalJSON()
-		val, _ := k.PrimKey.MarshalJSON()
-		return nil, fmt.Errorf("micheline: unsupported big_map key type '%s': typ=%s val=%s",
-			k.Type.OpCode, string(key), string(val),
-		)
+		// default:
+		// 	key, _ := k.Type.MarshalJSON()
+		// 	val, _ := k.PrimKey.MarshalJSON()
+		// 	return nil, fmt.Errorf("micheline: unsupported big_map key type '%s': typ=%s val=%s",
+		// 		k.Type.OpCode, string(key), string(val),
+		// 	)
 	}
 }
