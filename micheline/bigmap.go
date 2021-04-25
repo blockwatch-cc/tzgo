@@ -63,7 +63,6 @@ func (e *BigMapDiffElem) MapKeyAs(typ *Prim) *BigMapKey {
 	if err != nil {
 		log.Error(err)
 	}
-	k.Type = typ
 	return k
 }
 
@@ -101,7 +100,7 @@ func (e *BigMapDiffElem) UnmarshalJSON(data []byte) error {
 				for n, v := range key {
 					vv, ok := v.(string)
 					if !ok {
-						return fmt.Errorf("micheline: decoding bigmap key '%v': unexpected type %T", v, v, err)
+						return fmt.Errorf("micheline: decoding bigmap key '%v': unexpected type %T", v, v)
 					}
 					switch n {
 					case "int":
