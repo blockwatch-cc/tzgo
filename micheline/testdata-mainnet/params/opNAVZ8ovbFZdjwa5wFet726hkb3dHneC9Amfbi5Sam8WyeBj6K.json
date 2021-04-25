@@ -1,0 +1,149 @@
+[
+  {
+    "name": "Mainnet/opNAVZ8ovbFZdjwa5wFet726hkb3dHneC9Amfbi5Sam8WyeBj6K/0/0",
+    "type": {
+      "annots": [
+        "%collect"
+      ],
+      "args": [
+        {
+          "annots": [
+            "%objkt_amount"
+          ],
+          "prim": "nat"
+        },
+        {
+          "annots": [
+            "%swap_id"
+          ],
+          "prim": "nat"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "1"
+        },
+        {
+          "int": "68000"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "086504620000000d256f626a6b745f616d6f756e7404620000000825737761705f69640000000825636f6c6c656374",
+    "value_hex": "0707000100a0a608",
+    "want_value": {
+      "collect": {
+        "objkt_amount": "1",
+        "swap_id": "68000"
+      }
+    }
+  },
+  {
+    "name": "Mainnet/opNAVZ8ovbFZdjwa5wFet726hkb3dHneC9Amfbi5Sam8WyeBj6K/0/3",
+    "type": {
+      "annots": [
+        "%transfer"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%from_"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                "%txs"
+              ],
+              "args": [
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%to_"
+                      ],
+                      "prim": "address"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%token_id"
+                          ],
+                          "prim": "nat"
+                        },
+                        {
+                          "annots": [
+                            "%amount"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "list"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "list"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "bytes": "016498b7494a18a572c1d24484038545662c0454ed00"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "00005c56bbc501ad676afc27ae3d660232287a15b5e2"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "46111"
+                    },
+                    {
+                      "int": "1"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Pair"
+            }
+          ]
+        ],
+        "prim": "Pair"
+      }
+    ],
+    "type_hex": "065f0765046e000000062566726f6d5f065f0765046e0000000425746f5f076504620000000925746f6b656e5f696404620000000725616d6f756e74000000042574787300000009257472616e73666572",
+    "value_hex": "020000004707070a00000016016498b7494a18a572c1d24484038545662c0454ed00020000002507070a0000001600005c56bbc501ad676afc27ae3d660232287a15b5e20707009fd0050001",
+    "want_value": {
+      "transfer": [
+        {
+          "from_": "KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9",
+          "txs": [
+            {
+              "amount": "1",
+              "to_": "tz1U4Gm7dMYjvAG9UYH3vgb99MV4BbY7qkAb",
+              "token_id": "46111"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

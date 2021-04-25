@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Mainnet/opNAVZ8ovbFZdjwa5wFet726hkb3dHneC9Amfbi5Sam8WyeBj6K/0/3/0-511",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "1"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "00005c56bbc501ad676afc27ae3d660232287a15b5e2"
+        },
+        {
+          "int": "46111"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "0001",
+    "key_hex": "07070a0000001600005c56bbc501ad676afc27ae3d660232287a15b5e2009fd005",
+    "want_value": "1",
+    "want_key": {
+      "0": "tz1U4Gm7dMYjvAG9UYH3vgb99MV4BbY7qkAb",
+      "1": "46111"
+    }
+  },
+  {
+    "name": "Mainnet/opNAVZ8ovbFZdjwa5wFet726hkb3dHneC9Amfbi5Sam8WyeBj6K/0/3/1-511",
+    "type": {
+      "annots": [
+        "%ledger"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "prim": "address"
+            },
+            {
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "prim": "nat"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "int": "0"
+    },
+    "key": {
+      "args": [
+        {
+          "bytes": "016498b7494a18a572c1d24484038545662c0454ed00"
+        },
+        {
+          "int": "46111"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08610765036e0362036200000007256c6564676572",
+    "value_hex": "0000",
+    "key_hex": "07070a00000016016498b7494a18a572c1d24484038545662c0454ed00009fd005",
+    "want_value": "0",
+    "want_key": {
+      "0": "KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9",
+      "1": "46111"
+    }
+  }
+]
