@@ -114,7 +114,7 @@ func NewKey(typ Type, key Prim) (Key, error) {
 			}
 			k.SignatureKey = sk
 		}
-	case T_PAIR, T_OPTION, T_OR, T_CHAIN_ID:
+	case T_PAIR, T_OPTION, T_OR, T_CHAIN_ID, T_UNIT:
 		k.PrimKey = key
 		// build type details when missing
 		if len(k.Type.Args) == 0 {
@@ -123,6 +123,10 @@ func NewKey(typ Type, key Prim) (Key, error) {
 
 	default:
 		k.PrimKey = key
+		// build type details when missing
+		if len(k.Type.Args) == 0 {
+			k.Type = key.BuildType()
+		}
 		return k, fmt.Errorf("micheline: big_map key type '%s' is not implemented", typ.OpCode)
 	}
 	return k, nil
@@ -179,7 +183,7 @@ func ParseKeyType(typ string) (OpCode, error) {
 	switch t {
 	case T_INT, T_NAT, T_MUTEZ, T_STRING, T_BYTES, T_BOOL,
 		T_KEY_HASH, T_TIMESTAMP, T_ADDRESS, T_PAIR, T_KEY, T_SIGNATURE,
-		T_OPTION, T_OR, T_CHAIN_ID:
+		T_OPTION, T_OR, T_CHAIN_ID, T_UNIT:
 		return t, nil
 	default:
 		return t, fmt.Errorf("micheline: unsupported big_map key type %s", t)
@@ -247,6 +251,12 @@ func ParseKey(typ OpCode, val string) (Key, error) {
 			key.PrimKey = NewSeq(prims...).FoldPair()
 			key.Type.Type = PrimBinary
 		}
+	case T_UNIT:
+		if val != D_UNIT.String() {
+			return Key{}, fmt.Errorf("micheline: invalid bigmap pair key for Unit type: %s", val)
+		}
+		key.PrimKey = NewCode(D_UNIT)
+		key.Type.Type = PrimNullary
 
 	default:
 		return Key{}, fmt.Errorf("micheline: unsupported big_map key type %s", typ)
@@ -259,6 +269,9 @@ func ParseKey(typ OpCode, val string) (Key, error) {
 }
 
 func InferKeyType(val string) OpCode {
+	if val == D_UNIT.String() {
+		return T_UNIT
+	}
 	if _, err := strconv.ParseBool(val); err == nil {
 		return T_BOOL
 	}
@@ -381,7 +394,6 @@ func (k Key) String() string {
 	case T_SIGNATURE:
 		return k.SignatureKey.String()
 	case T_PAIR:
-		// use value unfolding
 		val := Value{
 			Type:  k.Type, // real or guessed type tree
 			Value: k.PrimKey,
@@ -411,7 +423,12 @@ func (k Key) String() string {
 		// TODO: simpler, but requires value tree decoration
 		// return fmt.Sprint(k.PrimKey.Value(T_PAIR)
 
+	case T_UNIT:
+		return D_UNIT.String()
 	default:
+		if k.PrimKey.IsValid() {
+			return k.PrimKey.OpCode.String()
+		}
 		return ""
 	}
 }
@@ -447,9 +464,13 @@ func (k Key) Prim() Prim {
 		} else {
 			p.OpCode = D_FALSE
 		}
-	case T_PAIR:
+	case T_PAIR, T_UNIT:
 		p = k.PrimKey
 	default:
+		if k.PrimKey.IsValid() {
+			p = k.PrimKey
+			break
+		}
 		if k.BytesKey != nil {
 			if err := p.UnmarshalBinary(k.BytesKey); err == nil {
 				break
@@ -487,15 +508,11 @@ func (k Key) MarshalJSON() ([]byte, error) {
 		return []byte(strconv.Quote(k.KeyKey.String())), nil
 	case T_SIGNATURE:
 		return []byte(strconv.Quote(k.SignatureKey.String())), nil
-	case T_PAIR:
+	default:
 		val := &Value{
 			Type:  k.Type,
 			Value: k.PrimKey,
 		}
 		return json.Marshal(val)
-	default:
-		return nil, fmt.Errorf("micheline: unsupported big_map key type '%s': typ=%s val=%s",
-			k.Type.OpCode, k.Type.Dump(), k.PrimKey.Dump(),
-		)
 	}
 }
