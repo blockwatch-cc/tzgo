@@ -446,25 +446,27 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_OR:
 		// or <type> <type>
-		mm := m
-		if haveTypeLabel || haveKeyLabel {
-			mm = make(map[string]interface{})
-		}
+		// always put into nested map to match type-path
+		mm := make(map[string]interface{})
 		switch val.OpCode {
 		case D_LEFT:
+			if !(haveTypeLabel || haveKeyLabel) {
+				label = "@or_0"
+			}
 			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
 				return err
 			}
 		case D_RIGHT:
+			if !(haveTypeLabel || haveKeyLabel) {
+				label = "@or_1"
+			}
 			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, NewStack(val.Args[0]), lvl+1); err != nil {
 				return err
 			}
 		default:
 			return fmt.Errorf("micheline: unexpected T_OR branch with value opcode %s", val.OpCode)
 		}
-		if haveTypeLabel || haveKeyLabel {
-			m[label] = mm
-		}
+		m[label] = mm
 
 	case T_TICKET:
 		// always Pair( ticketer:address, Pair( original_type, int ))

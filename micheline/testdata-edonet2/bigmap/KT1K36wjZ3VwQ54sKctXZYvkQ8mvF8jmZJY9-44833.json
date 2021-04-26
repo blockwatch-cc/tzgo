@@ -284,8 +284,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "1000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "1000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -587,8 +589,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "2000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "2000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -908,15 +912,17 @@
     "key_hex": "0a0000002071c68fca3687b70bd2c794bfcae638445d4a40f089947733cbde6dec6e75c641",
     "want_value": {
       "downvotes": "0",
-     "metadata": {
-       "agora_post_id": "0",
-       "transfers": [
-         {
-           "amount": "4000000",
-           "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
-         }
-       ]
-     },
+      "metadata": {
+        "agora_post_id": "0",
+        "transfers": [
+        {
+          "@or_0": {
+            "amount": "4000000",
+            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+          }
+        }
+      ]
+    },
       "proposer": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB",
       "proposer_frozen_token": "1",
       "start_date": "2021-03-26T22:57:13Z",
@@ -1234,8 +1240,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "8000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "8000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },      "proposer": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB",
@@ -1551,8 +1559,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "12000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "12000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -1846,8 +1856,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "17000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "17000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -2144,8 +2156,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "18000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "18000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -2458,8 +2472,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "20000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "20000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },
@@ -2765,8 +2781,10 @@
         "agora_post_id": "0",
         "transfers": [
           {
-            "amount": "23000000",
-            "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            "@or_0": {
+              "amount": "23000000",
+              "recipient": "tz1bQgEea45ciBpYdFj4y4P3hNyDM8aMF6WB"
+            }
           }
         ]
       },

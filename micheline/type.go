@@ -100,13 +100,13 @@ func buildTypedef(name string, typ Prim) Typedef {
 	switch typ.OpCode {
 	case T_LIST, T_SET:
 		td.Args = []Typedef{
-			buildTypedef("_item", typ.Args[0]),
+			buildTypedef("@item", typ.Args[0]),
 		}
 
 	case T_MAP, T_BIG_MAP:
 		td.Args = []Typedef{
-			buildTypedef("_key", typ.Args[0]),
-			buildTypedef("_value", typ.Args[1]),
+			buildTypedef("@key", typ.Args[0]),
+			buildTypedef("@value", typ.Args[1]),
 		}
 
 	case T_CONTRACT:
@@ -117,16 +117,16 @@ func buildTypedef(name string, typ Prim) Typedef {
 
 	case T_TICKET:
 		td.Args = []Typedef{
-			buildTypedef("_value", typ.Args[0]),
+			buildTypedef("@value", typ.Args[0]),
 		}
 
 	case T_LAMBDA:
 		td.Args = make([]Typedef, len(typ.Args))
 		if len(typ.Args) > 0 {
-			td.Args[0] = buildTypedef("_param", typ.Args[0])
+			td.Args[0] = buildTypedef("@param", typ.Args[0])
 		}
 		if len(typ.Args) > 1 {
-			td.Args[1] = buildTypedef("_return", typ.Args[1])
+			td.Args[1] = buildTypedef("@return", typ.Args[1])
 		}
 
 	case T_PAIR:
@@ -146,13 +146,15 @@ func buildTypedef(name string, typ Prim) Typedef {
 	case T_OR:
 		td.Type = TypeUnion
 		td.Args = make([]Typedef, 0)
+		label := "@or_0"
 		for _, v := range typ.Args {
-			child := buildTypedef("", v)
+			child := buildTypedef(label, v)
 			if child.Type == TypeUnion {
 				td.Args = append(td.Args, child.Args...)
 			} else {
 				td.Args = append(td.Args, child)
 			}
+			label = "@or_1"
 		}
 
 	case T_SAPLING_STATE, T_SAPLING_TRANSACTION:

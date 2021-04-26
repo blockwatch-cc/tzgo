@@ -138,7 +138,7 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 		if len(e) == 0 {
 			name = "default"
 		} else {
-			name = fmt.Sprintf("__entry_%02d__", len(e))
+			name = fmt.Sprintf("@entrypoint_%d", len(e))
 		}
 	}
 

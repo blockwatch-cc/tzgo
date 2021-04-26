@@ -12608,7 +12608,9 @@
       "max_voting_period": "2592000",
       "metadata": "36998",
       "migration_status": {
-        "migratingTo": "KT1V4HgvAt9PxjFbZFpvfgX3YTw5UL81c6cL"
+        "@or_0": {
+          "migratingTo": "KT1V4HgvAt9PxjFbZFpvfgX3YTw5UL81c6cL"
+        }
       },
       "min_quorum_threshold": "1",
       "min_voting_period": "1",

@@ -389,11 +389,17 @@
     "want_value": {
       "batchs": [
         {
-          "targetAdmin": [
-            {
-              "changeAdmin": "KT1RTX4Q8NsLJ4KdKMQET5oUPEirqNNYGcR4"
-            }
-          ]
+          "@or_1": {
+            "targetAdmin": [
+              {
+                "@or_0": {
+                  "@or_1": {
+                    "changeAdmin": "KT1RTX4Q8NsLJ4KdKMQET5oUPEirqNNYGcR4"
+                  }
+                }
+              }
+            ]
+          }
         }
       ],
       "canceled": false,

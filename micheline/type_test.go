@@ -114,20 +114,20 @@ var typedefInfo = []typedefTest{
 	typedefTest{
 		Name: "set",
 		Spec: `{"annots": ["%admins"],"prim": "set", "args": [{"prim": "key_hash"}]}`,
-		Want: `{"name":"admins","type":"set","args":[{"name":"_item","type":"key_hash"}]}`,
+		Want: `{"name":"admins","type":"set","args":[{"name":"@item","type":"key_hash"}]}`,
 	},
 	// map
 	typedefTest{
 		Name: "map",
 		Spec: `{"annots":["%approvals"],"prim":"map","args":[{"prim":"address"},{"prim":"nat"}]}`,
-		Want: `{"name":"approvals","type":"map","args":[{"name":"_key","type":"address"},{"name":"_value","type":"nat"}]}`,
+		Want: `{"name":"approvals","type":"map","args":[{"name":"@key","type":"address"},{"name":"@value","type":"nat"}]}`,
 	},
 	// bigmap with scalar key
 	// bigmap with pair key
 	typedefTest{
 		Name: "bigmap",
 		Spec: `{"annots": ["%ledger"],"args": [{"args": [{"prim": "address"},{"prim": "nat"}],"prim": "pair"},{"prim": "nat"}],"prim": "big_map"}`,
-		Want: `{"name": "ledger", "type": "big_map", "args":[{"name":"_key","type":"struct","args":[{"name":"0","type":"address"},{"name":"1","type":"nat"}]},{"name":"_value","type":"nat"}]}`,
+		Want: `{"name": "ledger", "type": "big_map", "args":[{"name":"@key","type":"struct","args":[{"name":"0","type":"address"},{"name":"1","type":"nat"}]},{"name":"@value","type":"nat"}]}`,
 	},
 	// contract
 	typedefTest{
@@ -139,13 +139,13 @@ var typedefInfo = []typedefTest{
 	typedefTest{
 		Name: "lambda",
 		Spec: `{"args": [{"args": [{"args": [{"prim": "string"},{"prim": "bytes"}],"prim": "pair"},{"args": [{"prim": "bytes"},{"prim": "bytes"}],"prim": "big_map"}],"prim": "pair"},{"args": [{"args": [{"prim": "operation"}],"prim": "list"},{"args": [{"prim": "bytes"},{"prim": "bytes"}],"prim": "big_map"}],"prim": "pair"}],"prim": "lambda"}`,
-		Want: `{"name":"","type":"lambda","args":[{"name":"_param","type":"struct","args":[{"name":"0","type":"string"},{"name":"1","type":"bytes"},{"name":"2","type":"big_map","args":[{"name":"_key","type":"bytes"},{"name":"_value","type":"bytes"}]}]},{"name":"_return","type":"struct","args":[{"name":"0","type":"list","args":[{"name":"_item","type":"operation"}]},{"name":"1","type":"big_map","args":[{"name":"_key","type":"bytes"},{"name":"_value","type":"bytes"}]}]}]}`,
+		Want: `{"name":"","type":"lambda","args":[{"name":"@param","type":"struct","args":[{"name":"0","type":"string"},{"name":"1","type":"bytes"},{"name":"2","type":"big_map","args":[{"name":"@key","type":"bytes"},{"name":"@value","type":"bytes"}]}]},{"name":"@return","type":"struct","args":[{"name":"0","type":"list","args":[{"name":"@item","type":"operation"}]},{"name":"1","type":"big_map","args":[{"name":"@key","type":"bytes"},{"name":"@value","type":"bytes"}]}]}]}`,
 	},
 	// ticket
 	typedefTest{
 		Name: "ticket",
 		Spec: `{"prim": "ticket", "args":[{"prim":"timestamp"}]}`,
-		Want: `{"name":"","type":"ticket","args":[{"name":"_value","type":"timestamp"}]}`,
+		Want: `{"name":"","type":"ticket","args":[{"name":"@value","type":"timestamp"}]}`,
 	},
 	// option
 	typedefTest{
@@ -153,23 +153,29 @@ var typedefInfo = []typedefTest{
 		Spec: `{"annots":["%reporterAccount"],"prim":"option","args":[{"prim":"address"}]}`,
 		Want: `{"name":"reporterAccount","type":"address","optional":true}`,
 	},
-	// union type
+	// named union type
 	typedefTest{
-		Name: "union",
+		Name: "named-union",
 		Spec: `{"args":[{"annots":["%do"],"args":[{"prim":"unit"},{"args":[{"prim":"operation"}],"prim":"list"}],"prim":"lambda"},{"annots":["%default"],"prim":"unit"}],"prim":"or"}`,
-		Want: `{"name":"","type":"union","args":[{"name":"do","type":"lambda","args":[{"name":"_param","type":"unit"},{"name":"_return","type":"list","args":[{"name":"_item","type":"operation"}]}]},{"name":"default","type":"unit"}]}`,
+		Want: `{"name":"","type":"union","args":[{"name":"do","type":"lambda","args":[{"name":"@param","type":"unit"},{"name":"@return","type":"list","args":[{"name":"@item","type":"operation"}]}]},{"name":"default","type":"unit"}]}`,
+	},
+	// anonymous union type
+	typedefTest{
+		Name: "anon-union",
+		Spec: `{"args":[{"args":[{"prim":"unit"},{"prim":"operation"}],"prim":"lambda"},{"args":[{"prim":"key_hash"}],"prim":"set"}],"prim":"or"}`,
+		Want: `{"name":"","type":"union","args":[{"name":"@or_0","type":"lambda","args":[{"name":"@param","type":"unit"},{"name":"@return","type":"operation"}]},{"name":"@or_1","type":"set","args":[{"name":"@item","type":"key_hash"}]}]}`,
 	},
 	// nested map
 	typedefTest{
 		Name: "nested_map",
 		Spec: `{"annots": ["%deck"],"args": [{"prim": "int"},{"args": [{"prim": "int"},{"prim": "int"}],"prim": "map"}],"prim": "map"}`,
-		Want: `{"name":"deck","type":"map","args":[{"name":"_key","type":"int"},{"name":"_value","type":"map","args":[{"name":"_key","type":"int"},{"name":"_value","type":"int"}]}]}`,
+		Want: `{"name":"deck","type":"map","args":[{"name":"@key","type":"int"},{"name":"@value","type":"map","args":[{"name":"@key","type":"int"},{"name":"@value","type":"int"}]}]}`,
 	},
 	// nested list (FA2)
 	typedefTest{
 		Name: "nested_list",
 		Spec: `{"annots": ["%transfer"],"args": [{"args": [{"annots": ["%from_"],"prim": "address"},{"annots": ["%txs"],"args": [{"args": [{"annots": ["%to_"],"prim": "address"},{"args": [{"annots": ["%token_id"],"prim": "nat"},{"annots": ["%amount"],"prim": "nat"}],"prim": "pair"}],"prim": "pair"}],"prim": "list"}],"prim": "pair"}],"prim": "list"}`,
-		Want: `{"name":"transfer","type":"list","args":[{"name":"_item","type":"struct","args":[{"name":"from_","type":"address"},{"name":"txs","type":"list","args":[{"name":"_item","type":"struct","args":[{"name":"to_","type":"address"},{"name":"token_id","type":"nat"},{"name":"amount","type":"nat"}]}]}]}]}`,
+		Want: `{"name":"transfer","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"from_","type":"address"},{"name":"txs","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"to_","type":"address"},{"name":"token_id","type":"nat"},{"name":"amount","type":"nat"}]}]}]}]}`,
 	},
 }
 
