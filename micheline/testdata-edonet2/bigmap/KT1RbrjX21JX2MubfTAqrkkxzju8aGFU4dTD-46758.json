@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Edonet2/KT1RbrjX21JX2MubfTAqrkkxzju8aGFU4dTD-46758-expru5X1yxJG6ezR2uHMotwMLNmSzQyh5t1vUnhjx4cS6Pv9qE1Sdo",
+    "type": {
+      "annots": [
+        "%metadata"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "68747470733a2f2f636c6f7564666c6172652d697066732e636f6d2f697066732f516d57474c57783470475a4272564639427a313270415433413544756e77336f394e4d414b5676574b3531436679"
+    },
+    "key": {
+      "string": ""
+    },
+    "type_hex": "08610368036900000009256d65746164617461",
+    "value_hex": "0a0000004f68747470733a2f2f636c6f7564666c6172652d697066732e636f6d2f697066732f516d57474c57783470475a4272564639427a313270415433413544756e77336f394e4d414b5676574b3531436679",
+    "key_hex": "0100000000",
+    "want_value": "https://cloudflare-ipfs.com/ipfs/QmWGLWx4pGZBrVF9Bz12pAT3A5Dunw3o9NMAKVvWK51Cfy",
+    "want_key": ""
+  }
+]

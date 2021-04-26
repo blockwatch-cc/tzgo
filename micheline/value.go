@@ -242,28 +242,25 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			if len(typ.Args) > i {
 				valType = typ.Args[i]
 			}
-			if v.IsScalar() && !v.IsSequence() {
-				// array of scalar types
-				arr = append(arr, v.Value(valType.OpCode))
-			} else {
-				// array of complex types
-				mm := make(map[string]interface{})
-				if err := walkTree(mm, EMPTY_LABEL, Type{valType}, NewStack(v), lvl+1); err != nil {
-					return err
-				}
-				// unpack nested list
-				unwrapped := false
-				if len(mm) == 1 {
-					if mval, ok := mm["0"]; ok {
-						if marr, ok := mval.([]interface{}); ok {
-							arr = append(arr, marr)
-							unwrapped = true
-						}
+			// unpack into map
+			mm := make(map[string]interface{})
+			if err := walkTree(mm, EMPTY_LABEL, Type{valType}, NewStack(v), lvl+1); err != nil {
+				return err
+			}
+			// lift scalar nested list and simple element
+			unwrapped := false
+			if len(mm) == 1 {
+				if mval, ok := mm["0"]; ok {
+					if marr, ok := mval.([]interface{}); ok {
+						arr = append(arr, marr)
+					} else {
+						arr = append(arr, mval)
 					}
+					unwrapped = true
 				}
-				if !unwrapped {
-					arr = append(arr, mm)
-				}
+			}
+			if !unwrapped {
+				arr = append(arr, mm)
 			}
 		}
 		m[label] = arr

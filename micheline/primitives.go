@@ -722,7 +722,11 @@ func (p Prim) Value(as OpCode) interface{} {
 			case D_LEFT:
 				return p.Args[0].Value(as)
 			case D_RIGHT:
-				return p.Args[1].Value(as)
+				if len(p.Args) > 1 {
+					return p.Args[1].Value(as)
+				} else {
+					return p.Args[0].Value(as)
+				}
 			}
 		case T_OPTION:
 			switch p.OpCode {

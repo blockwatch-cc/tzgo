@@ -1,0 +1,579 @@
+[
+  {
+    "name": "Edonet2/KT1RbrjX21JX2MubfTAqrkkxzju8aGFU4dTD",
+    "type": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%addrVoterId"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    },
+                    {
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "big_map"
+                },
+                {
+                  "annots": [
+                    "%keyVoterId"
+                  ],
+                  "args": [
+                    {
+                      "prim": "key"
+                    },
+                    {
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "big_map"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%lastVoteTimestamp"
+                  ],
+                  "prim": "timestamp"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%lastVoterId"
+                      ],
+                      "prim": "nat"
+                    },
+                    {
+                      "annots": [
+                        "%metadata"
+                      ],
+                      "args": [
+                        {
+                          "prim": "string"
+                        },
+                        {
+                          "prim": "bytes"
+                        }
+                      ],
+                      "prim": "big_map"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%nbVoters"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%proposals"
+                      ],
+                      "args": [
+                        {
+                          "prim": "nat"
+                        },
+                        {
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%batchs"
+                                  ],
+                                  "args": [
+                                    {
+                                      "args": [
+                                        {
+                                          "annots": [
+                                            "%selfAdmin"
+                                          ],
+                                          "args": [
+                                            {
+                                              "args": [
+                                                {
+                                                  "args": [
+                                                    {
+                                                      "annots": [
+                                                        "%changeQuorum"
+                                                      ],
+                                                      "prim": "nat"
+                                                    },
+                                                    {
+                                                      "annots": [
+                                                        "%changeTarget"
+                                                      ],
+                                                      "prim": "address"
+                                                    }
+                                                  ],
+                                                  "prim": "or"
+                                                },
+                                                {
+                                                  "args": [
+                                                    {
+                                                      "annots": [
+                                                        "%changeTimeout"
+                                                      ],
+                                                      "prim": "int"
+                                                    },
+                                                    {
+                                                      "annots": [
+                                                        "%changeVoters"
+                                                      ],
+                                                      "args": [
+                                                        {
+                                                          "annots": [
+                                                            "%added"
+                                                          ],
+                                                          "args": [
+                                                            {
+                                                              "args": [
+                                                                {
+                                                                  "annots": [
+                                                                    "%addr"
+                                                                  ],
+                                                                  "prim": "address"
+                                                                },
+                                                                {
+                                                                  "annots": [
+                                                                    "%publicKey"
+                                                                  ],
+                                                                  "prim": "key"
+                                                                }
+                                                              ],
+                                                              "prim": "pair"
+                                                            }
+                                                          ],
+                                                          "prim": "list"
+                                                        },
+                                                        {
+                                                          "annots": [
+                                                            "%removed"
+                                                          ],
+                                                          "args": [
+                                                            {
+                                                              "prim": "address"
+                                                            }
+                                                          ],
+                                                          "prim": "set"
+                                                        }
+                                                      ],
+                                                      "prim": "pair"
+                                                    }
+                                                  ],
+                                                  "prim": "or"
+                                                }
+                                              ],
+                                              "prim": "or"
+                                            }
+                                          ],
+                                          "prim": "list"
+                                        },
+                                        {
+                                          "annots": [
+                                            "%targetAdmin"
+                                          ],
+                                          "args": [
+                                            {
+                                              "args": [
+                                                {
+                                                  "args": [
+                                                    {
+                                                      "annots": [
+                                                        "%changeActive"
+                                                      ],
+                                                      "prim": "bool"
+                                                    },
+                                                    {
+                                                      "annots": [
+                                                        "%changeAdmin"
+                                                      ],
+                                                      "prim": "address"
+                                                    }
+                                                  ],
+                                                  "prim": "or"
+                                                },
+                                                {
+                                                  "args": [
+                                                    {
+                                                      "annots": [
+                                                        "%changeOracles"
+                                                      ],
+                                                      "args": [
+                                                        {
+                                                          "annots": [
+                                                            "%added"
+                                                          ],
+                                                          "args": [
+                                                            {
+                                                              "args": [
+                                                                {
+                                                                  "prim": "address"
+                                                                },
+                                                                {
+                                                                  "args": [
+                                                                    {
+                                                                      "annots": [
+                                                                        "%adminAddress"
+                                                                      ],
+                                                                      "prim": "address"
+                                                                    },
+                                                                    {
+                                                                      "args": [
+                                                                        {
+                                                                          "annots": [
+                                                                            "%endingRound"
+                                                                          ],
+                                                                          "args": [
+                                                                            {
+                                                                              "prim": "nat"
+                                                                            }
+                                                                          ],
+                                                                          "prim": "option"
+                                                                        },
+                                                                        {
+                                                                          "annots": [
+                                                                            "%startingRound"
+                                                                          ],
+                                                                          "prim": "nat"
+                                                                        }
+                                                                      ],
+                                                                      "prim": "pair"
+                                                                    }
+                                                                  ],
+                                                                  "prim": "pair"
+                                                                }
+                                                              ],
+                                                              "prim": "pair"
+                                                            }
+                                                          ],
+                                                          "prim": "list"
+                                                        },
+                                                        {
+                                                          "annots": [
+                                                            "%removed"
+                                                          ],
+                                                          "args": [
+                                                            {
+                                                              "prim": "address"
+                                                            }
+                                                          ],
+                                                          "prim": "list"
+                                                        }
+                                                      ],
+                                                      "prim": "pair"
+                                                    },
+                                                    {
+                                                      "annots": [
+                                                        "%updateFutureRounds"
+                                                      ],
+                                                      "args": [
+                                                        {
+                                                          "args": [
+                                                            {
+                                                              "annots": [
+                                                                "%maxSubmissions"
+                                                              ],
+                                                              "prim": "nat"
+                                                            },
+                                                            {
+                                                              "annots": [
+                                                                "%minSubmissions"
+                                                              ],
+                                                              "prim": "nat"
+                                                            }
+                                                          ],
+                                                          "prim": "pair"
+                                                        },
+                                                        {
+                                                          "args": [
+                                                            {
+                                                              "annots": [
+                                                                "%oraclePayment"
+                                                              ],
+                                                              "prim": "nat"
+                                                            },
+                                                            {
+                                                              "args": [
+                                                                {
+                                                                  "annots": [
+                                                                    "%restartDelay"
+                                                                  ],
+                                                                  "prim": "nat"
+                                                                },
+                                                                {
+                                                                  "annots": [
+                                                                    "%timeout"
+                                                                  ],
+                                                                  "prim": "nat"
+                                                                }
+                                                              ],
+                                                              "prim": "pair"
+                                                            }
+                                                          ],
+                                                          "prim": "pair"
+                                                        }
+                                                      ],
+                                                      "prim": "pair"
+                                                    }
+                                                  ],
+                                                  "prim": "or"
+                                                }
+                                              ],
+                                              "prim": "or"
+                                            }
+                                          ],
+                                          "prim": "list"
+                                        }
+                                      ],
+                                      "prim": "or"
+                                    }
+                                  ],
+                                  "prim": "list"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "annots": [
+                                        "%canceled"
+                                      ],
+                                      "prim": "bool"
+                                    },
+                                    {
+                                      "annots": [
+                                        "%id"
+                                      ],
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%nay"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "set"
+                                },
+                                {
+                                  "args": [
+                                    {
+                                      "annots": [
+                                        "%startedAt"
+                                      ],
+                                      "prim": "timestamp"
+                                    },
+                                    {
+                                      "annots": [
+                                        "%yay"
+                                      ],
+                                      "args": [
+                                        {
+                                          "prim": "nat"
+                                        }
+                                      ],
+                                      "prim": "set"
+                                    }
+                                  ],
+                                  "prim": "pair"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "big_map"
+                    },
+                    {
+                      "annots": [
+                        "%quorum"
+                      ],
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%target"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    }
+                  ],
+                  "prim": "option"
+                },
+                {
+                  "args": [
+                    {
+                      "annots": [
+                        "%timeout"
+                      ],
+                      "prim": "int"
+                    },
+                    {
+                      "annots": [
+                        "%voters"
+                      ],
+                      "args": [
+                        {
+                          "prim": "nat"
+                        },
+                        {
+                          "args": [
+                            {
+                              "annots": [
+                                "%addr"
+                              ],
+                              "prim": "address"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%lastProposalId"
+                                  ],
+                                  "prim": "nat"
+                                },
+                                {
+                                  "annots": [
+                                    "%publicKey"
+                                  ],
+                                  "prim": "key"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "big_map"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": [
+      [
+        {
+          "args": [
+            {
+              "int": "46756"
+            },
+            {
+              "int": "46757"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "int": "1617105591"
+        },
+        {
+          "int": "0"
+        },
+        {
+          "int": "46758"
+        }
+      ],
+      {
+        "args": [
+          {
+            "int": "1"
+          },
+          {
+            "args": [
+              {
+                "int": "46759"
+              },
+              {
+                "int": "1"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "bytes": "0145754d42b7b5c7cfb60db2a727d8f7a99684f8220061646d696e69737472617465"
+          }
+        ],
+        "prim": "Some"
+      },
+      {
+        "int": "5"
+      },
+      {
+        "int": "46760"
+      }
+    ],
+    "type_hex": "0765076507650861036e03620000000c2561646472566f74657249640861035c03620000000b256b6579566f74657249640765046b00000012256c617374566f746554696d657374616d70076504620000000c256c617374566f746572496408610368036900000009256d6574616461746107650765046200000009256e62566f7465727307650861036207650765065f0764065f0764076404620000000d256368616e676551756f72756d046e0000000d256368616e67655461726765740764045b0000000e256368616e676554696d656f75740865065f0765046e000000052561646472045c0000000a257075626c69634b6579000000062561646465640666036e000000082572656d6f7665640000000d256368616e6765566f746572730000000a2573656c6641646d696e065f0764076404590000000d256368616e6765416374697665046e0000000c256368616e676541646d696e07640865065f0765036e0765046e0000000d2561646d696e416464726573730765066303620000000c25656e64696e67526f756e6404620000000e257374617274696e67526f756e6400000006256164646564065f036e000000082572656d6f7665640000000e256368616e67654f7261636c65730865076504620000000f256d61785375626d697373696f6e7304620000000f256d696e5375626d697373696f6e73076504620000000e256f7261636c655061796d656e74076504620000000d257265737461727444656c61790462000000082574696d656f75740000001325757064617465467574757265526f756e64730000000c2574617267657441646d696e000000072562617463687307650459000000092563616e63656c656404620000000325696407650666036200000004256e61790765046b0000000a257374617274656441740666036200000004257961790000000a2570726f706f73616c730462000000072571756f72756d07650663036e00000007257461726765740765045b000000082574696d656f7574086103620765046e000000052561646472076504620000000f256c61737450726f706f73616c4964045c0000000a257075626c69634b65790000000725766f74657273",
+    "value_hex": "02000000560200000016070700a4da0500a5da0500b7ca98860c000000a6da0507070001070700a7da05000105090a000000220145754d42b7b5c7cfb60db2a727d8f7a99684f8220061646d696e69737472617465000500a8da05",
+    "want_value": {
+      "addrVoterId": "46756",
+      "keyVoterId": "46757",
+      "lastVoteTimestamp": "2021-03-30T11:59:51Z",
+      "lastVoterId": "0",
+      "metadata": "46758",
+      "nbVoters": "1",
+      "proposals": "46759",
+      "quorum": "1",
+      "target": "KT1Ev2iGpeo9ECEA9NEtEKPqPF3KtR9CJWs8",
+      "timeout": "5",
+      "voters": "46760"
+    }
+  }
+]
