@@ -807,9 +807,7 @@
       "permissions": {
         "custom": null,
         "operator": {
-          "@or_1": {
-            "owner_or_operator_transfer": null
-          }
+          "owner_or_operator_transfer": null
         },
         "receiver": {
           "owner_no_hook": null

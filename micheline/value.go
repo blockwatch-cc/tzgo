@@ -446,27 +446,68 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_OR:
 		// or <type> <type>
-		// always put into nested map to match type-path
+		// use map to capture nested names
 		mm := make(map[string]interface{})
 		switch val.OpCode {
 		case D_LEFT:
 			if !(haveTypeLabel || haveKeyLabel) {
-				label = "@or_0"
-			}
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
-				return err
+				mmm := make(map[string]interface{})
+				if err := walkTree(mmm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
+				}
+				// lift named content
+				if len(mmm) == 1 {
+					for n, v := range mmm {
+						switch n {
+						case "0":
+							mm["@or_0"] = v
+						default:
+							mm[n] = v
+						}
+					}
+				} else {
+					mm["@or_0"] = mmm
+				}
+			} else {
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[0]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
+				}
 			}
 		case D_RIGHT:
 			if !(haveTypeLabel || haveKeyLabel) {
-				label = "@or_1"
+				mmm := make(map[string]interface{})
+				if err := walkTree(mmm, EMPTY_LABEL, Type{typ.Args[1]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
+				}
+				// lift named content
+				if len(mmm) == 1 {
+					for n, v := range mmm {
+						switch n {
+						case "0":
+							mm["@or_1"] = v
+						default:
+							mm[n] = v
+						}
+					}
+				} else {
+					mm["@or_1"] = mmm
+				}
+			} else {
+				if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, NewStack(val.Args[0]), lvl+1); err != nil {
+					return err
+				}
 			}
-			if err := walkTree(mm, EMPTY_LABEL, Type{typ.Args[1]}, NewStack(val.Args[0]), lvl+1); err != nil {
-				return err
-			}
+
 		default:
 			return fmt.Errorf("micheline: unexpected T_OR branch with value opcode %s", val.OpCode)
 		}
-		m[label] = mm
+
+		// lift anon content
+		if v, ok := mm["0"]; ok && len(mm) == 1 {
+			m[label] = v
+		} else {
+			m[label] = mm
+		}
 
 	case T_TICKET:
 		// always Pair( ticketer:address, Pair( original_type, int ))
