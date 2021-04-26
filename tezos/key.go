@@ -321,3 +321,11 @@ func ParseKey(s string) (Key, error) {
 	k.Data = decoded
 	return k, nil
 }
+
+func MustParseKey(key string) Key {
+	k, err := ParseKey(key)
+	if err != nil {
+		panic(err)
+	}
+	return k
+}

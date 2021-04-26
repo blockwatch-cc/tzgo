@@ -55,7 +55,16 @@ var keyInfo = []keyTest{
 		String: "200206",
 		Prim:   NewInt64(200206),
 	},
-	//   bool
+	//   unit
+	keyTest{
+		Name:   "unit",
+		Type:   "unit",
+		Hash:   tezos.MustParseExprHash("expruaDPoTWXcTR6fiQPy4KZSW72U6Swc1rVmMiP1KdwmCceeEpVjd"),
+		Hex:    "030b",
+		Value:  []byte(`null`),
+		String: "Unit",
+		Prim:   NewCode(D_UNIT),
+	},
 	//   string
 	keyTest{
 		Name:   "string",
@@ -76,9 +85,6 @@ var keyInfo = []keyTest{
 		String: "9e2dce28b861646c13c2b9cf4245e483a837525f2d1547a410293e29c3734d6e",
 		Prim:   NewBytes([]byte{0x9e, 0x2d, 0xce, 0x28, 0xb8, 0x61, 0x64, 0x6c, 0x13, 0xc2, 0xb9, 0xcf, 0x42, 0x45, 0xe4, 0x83, 0xa8, 0x37, 0x52, 0x5f, 0x2d, 0x15, 0x47, 0xa4, 0x10, 0x29, 0x3e, 0x29, 0xc3, 0x73, 0x4d, 0x6e}),
 	},
-	//   timestamp as string
-	//   timestamp as unix seconds
-	//   timestamp with out-of-range year
 	//   key_hash
 	keyTest{
 		Name:   "tz1 key_hash",
@@ -108,8 +114,22 @@ var keyInfo = []keyTest{
 		String: "KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn",
 		Prim:   NewBytes(tezos.MustParseAddress("KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn").Bytes22()),
 	},
+
+	//   timestamp as string
+	//   timestamp as unix seconds
+	//   timestamp with out-of-range year
 	//   key
+	keyTest{
+		Name:   "key",
+		Type:   "key",
+		Hash:   tezos.MustParseExprHash("exprv1Vjr2jWEzSALFrHaoubi3jELpXvnMtGNG4ZJPDMRHxrQtyBDW"),
+		Hex:    "0a000000210078149c2d111816aaef9e329970c344fc32375dd5eff99eeeed3b37a9d51beacd",
+		Value:  []byte(`"edpkuZ7ERiU5B8knLqQsVMH86j9RLMUyHyL665oCXDkPQxF7HGqSeJ"`),
+		String: "edpkuZ7ERiU5B8knLqQsVMH86j9RLMUyHyL665oCXDkPQxF7HGqSeJ",
+		Prim:   NewBytes(tezos.MustParseKey("edpkuZ7ERiU5B8knLqQsVMH86j9RLMUyHyL665oCXDkPQxF7HGqSeJ").Bytes()),
+	},
 	//   signature
+	//   bool
 
 	// composites
 	//   pair
