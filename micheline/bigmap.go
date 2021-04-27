@@ -335,11 +335,11 @@ func (b BigmapDiff) MarshalBinary() ([]byte, error) {
 				Args: []Prim{
 					Prim{
 						Type: PrimInt,
-						Int:  big.NewInt(int64(v.SourceId)),
+						Int:  big.NewInt(v.SourceId),
 					},
 					Prim{
 						Type: PrimInt,
-						Int:  big.NewInt(int64(v.DestId)),
+						Int:  big.NewInt(v.DestId),
 					},
 				},
 			}
@@ -354,8 +354,9 @@ func (b BigmapDiff) MarshalBinary() ([]byte, error) {
 func (b *BigmapDiff) UnmarshalBinary(data []byte) error {
 	buf := bytes.NewBuffer(data)
 	for buf.Len() > 0 {
+		id := int32(binary.BigEndian.Uint32(buf.Next(4)))
 		elem := BigmapDiffElem{
-			Id:     int64(binary.BigEndian.Uint32(buf.Next(4))),
+			Id:     int64(id),
 			Action: DiffAction(buf.Next(1)[0]),
 		}
 		prim := Prim{}
