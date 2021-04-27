@@ -22,8 +22,20 @@ const (
 	TypeUnion  = "union"
 )
 
+// Default names
+const (
+	CONST_ENTRYPOINT  = "@entrypoint"
+	CONST_KEY         = "@key"
+	CONST_VALUE       = "@value"
+	CONST_ITEM        = "@item"
+	CONST_PARAM       = "@param"
+	CONST_RETURN      = "@return"
+	CONST_UNION_LEFT  = "@or_0"
+	CONST_UNION_RIGHT = "@or_1"
+)
+
 type Typedef struct {
-	Name     string    `json:"name"`               // annotation label | _key | _value | _item | _params | _return
+	Name     string    `json:"name"`               // annotation label | @key | @value | @item | @params | @return
 	Type     string    `json:"type"`               // opcode or struct | union
 	Optional bool      `json:"optional,omitempty"` // Union only
 	Args     []Typedef `json:"args,omitempty"`
@@ -100,13 +112,13 @@ func buildTypedef(name string, typ Prim) Typedef {
 	switch typ.OpCode {
 	case T_LIST, T_SET:
 		td.Args = []Typedef{
-			buildTypedef("@item", typ.Args[0]),
+			buildTypedef(CONST_ITEM, typ.Args[0]),
 		}
 
 	case T_MAP, T_BIG_MAP:
 		td.Args = []Typedef{
-			buildTypedef("@key", typ.Args[0]),
-			buildTypedef("@value", typ.Args[1]),
+			buildTypedef(CONST_KEY, typ.Args[0]),
+			buildTypedef(CONST_VALUE, typ.Args[1]),
 		}
 
 	case T_CONTRACT:
@@ -117,16 +129,16 @@ func buildTypedef(name string, typ Prim) Typedef {
 
 	case T_TICKET:
 		td.Args = []Typedef{
-			buildTypedef("@value", typ.Args[0]),
+			buildTypedef(CONST_VALUE, typ.Args[0]),
 		}
 
 	case T_LAMBDA:
 		td.Args = make([]Typedef, len(typ.Args))
 		if len(typ.Args) > 0 {
-			td.Args[0] = buildTypedef("@param", typ.Args[0])
+			td.Args[0] = buildTypedef(CONST_PARAM, typ.Args[0])
 		}
 		if len(typ.Args) > 1 {
-			td.Args[1] = buildTypedef("@return", typ.Args[1])
+			td.Args[1] = buildTypedef(CONST_RETURN, typ.Args[1])
 		}
 
 	case T_PAIR:
@@ -146,7 +158,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 	case T_OR:
 		td.Type = TypeUnion
 		td.Args = make([]Typedef, 0)
-		label := "@or_0"
+		label := CONST_UNION_LEFT
 		for _, v := range typ.Args {
 			child := buildTypedef(label, v)
 			if child.Type == TypeUnion {
@@ -154,7 +166,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 			} else {
 				td.Args = append(td.Args, child)
 			}
-			label = "@or_1"
+			label = CONST_UNION_RIGHT
 		}
 
 	case T_SAPLING_STATE, T_SAPLING_TRANSACTION:
