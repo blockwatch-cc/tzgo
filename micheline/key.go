@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -394,30 +395,43 @@ func (k Key) String() string {
 	case T_SIGNATURE:
 		return k.SignatureKey.String()
 	case T_PAIR:
+		type lv struct {
+			l string
+			v string
+		}
+		parts := make([]lv, 0)
+
 		val := Value{
 			Type:  k.Type, // real or guessed type tree
 			Value: k.PrimKey,
 		}
-		var (
-			b strings.Builder
-			c int
-		)
-		val.Walk("", func(_ string, v interface{}) error {
-			if c > 0 {
-				b.WriteByte(',')
-			}
+
+		// walk produces a non-deterministic order
+		val.Walk("", func(label string, v interface{}) error {
+			part := lv{l: label}
 			if stringer, ok := v.(fmt.Stringer); ok {
-				b.WriteString(stringer.String())
+				part.v = stringer.String()
 			} else {
 				if str, ok := v.(string); ok {
-					b.WriteString(str)
+					part.v = str
 				} else {
-					b.WriteString(fmt.Sprint(v))
+					part.v = fmt.Sprint(v)
 				}
 			}
-			c++
+			parts = append(parts, part)
 			return nil
 		})
+
+		// sort by label (works up to 10 pair values)
+		sort.Slice(parts, func(i, j int) bool { return parts[i].l < parts[j].l })
+
+		var b strings.Builder
+		for i, v := range parts {
+			if i > 0 {
+				b.WriteRune(',')
+			}
+			b.WriteString(v.v)
+		}
 		return b.String()
 
 		// TODO: simpler, but requires value tree decoration
