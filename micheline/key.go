@@ -365,11 +365,15 @@ func (k Key) MarshalBinary() ([]byte, error) {
 }
 
 func (k Key) Hash() tezos.ExprHash {
-	// encode and pack
-	buf := append([]byte{0x5}, k.Bytes()...)
+	return KeyHash(k.Bytes())
+}
 
+func KeyHash(buf []byte) tezos.ExprHash {
 	// blake2b with digest size 32 byte
 	h, _ := blake2b.New(32, nil)
+
+	// encode with pack byte
+	h.Write([]byte{0x5})
 	h.Write(buf)
 
 	// wrap in exprhash
