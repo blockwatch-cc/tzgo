@@ -75,7 +75,7 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c, err := rpc.NewClient(nil, node)
+	c, err := rpc.NewClient(node, nil)
 	if err != nil {
 		return err
 	}

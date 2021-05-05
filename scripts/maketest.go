@@ -125,7 +125,7 @@ func run() error {
 		return fmt.Errorf("expected contract or operation hash")
 	}
 
-	c, err := tzstats.NewClient(nil, index)
+	c, err := tzstats.NewClient(index, nil)
 	if err != nil {
 		return err
 	}

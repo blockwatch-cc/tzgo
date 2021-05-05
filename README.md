@@ -115,7 +115,7 @@ A Tezos node can notify applications when new blocks are attached to the chain. 
 import "blockwatch.cc/tzgo/rpc"
 
 // init SDK client
-c, _ := rpc.NewClient(nil, "https://mainnet-tezos.giganode.io")
+c, _ := rpc.NewClient("https://rpc.tzstats.com", nil)
 
 // create block header monitor
 mon := rpc.NewBlockHeaderMonitor()
@@ -155,7 +155,7 @@ import (
 addr := tezos.MustParseAddress("KT1ChNsEFxwyCbJyWGSL3KdjeXE28AY1Kaog")
 
 // init RPC client
-c, _ := rpc.NewClient(nil, "https://mainnet-tezos.giganode.io")
+c, _ := rpc.NewClient("https://rpc.tzstats.com", nil)
 
 // fetch the contract's script and most recent storage
 script, _ := c.GetContractScript(ctx, addr)
@@ -180,7 +180,7 @@ import (
 addr := tezos.MustParseAddress("KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9")
 
 // init RPC client
-c, _ := rpc.NewClient(nil, "https://mainnet-tezos.giganode.io")
+c, _ := rpc.NewClient("https://rpc.tzstats.com", nil)
 
 // fetch the contract's script and most recent storage
 script, _ := c.GetContractScript(ctx, addr)
@@ -197,7 +197,7 @@ named := script.BigmapsByName()
 
 ```go
 // init RPC client
-c, _ := rpc.NewClient(nil, "https://mainnet-tezos.giganode.io")
+c, _ := rpc.NewClient("https://rpc.tzstats.com", nil)
 
 // load bigmap type info (use the Baker Registry on mainnet as example)
 biginfo, _ := c.GetBigmapInfo(ctx, 17)
@@ -219,7 +219,7 @@ for _, key := range bigkeys {
 
 #### Custom RPC client configuration
 
-TzGo's `rpc.NewClient()` function takes a Go `http.Client` as parameter which you can configure before or after passing it to the library. The example below shows how to set custom timeouts and disable TLS certificate checks (not recommended in production, but useful if you use self-signed certificates during testing).
+TzGo's `rpc.NewClient()` function takes an optional Go `http.Client` as parameter which you can configure before or after passing it to the library. The example below shows how to set custom timeouts and disable TLS certificate checks (not recommended in production, but useful if you use self-signed certificates during testing).
 
 
 ```
@@ -246,7 +246,7 @@ func main() {
 		}
 	}
 
-	c, err := rpc.NewClient(hc, "https://my-private-node.local:8732")
+	c, err := rpc.NewClient("https://my-private-node.local:8732", hc)
 	if err != nil {
 		log.Fatalln(err)
 	}
