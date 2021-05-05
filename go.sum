@@ -1,5 +1,10 @@
+blockwatch.cc/tzgo v0.9.6-0.20210505091252-1b0d2a8501b7/go.mod h1:08teLq9uovmnxlSiZ4R3yQE4CoOpy6DdiEnF5jMYDjU=
+blockwatch.cc/tzstats-go v0.0.0-20210505100946-ba5035218171 h1:fQOUP81WcPcqg+K6PrVNOoOO06zqbZ1UZ4y52iv3ayg=
+blockwatch.cc/tzstats-go v0.0.0-20210505100946-ba5035218171/go.mod h1:0KhbQSSvDjaKxakfnl9vacQkm6+lNibeB0lz8SpdE+E=
 github.com/daviddengcn/go-colortext v1.0.0 h1:ANqDyC0ys6qCSvuEK7l3g5RaehL/Xck9EX8ATG8oKsE=
 github.com/daviddengcn/go-colortext v1.0.0/go.mod h1:zDqEI5NVUop5QPpVJUxE9UO10hRnmkD5G4Pmri9+m4c=
+github.com/echa/code v0.0.0-20201118130056-1878364e4ad4 h1:WYlhoQDiPM/AZVcIyskmvhfaqdhuK43yB2NuY+lx1Xk=
+github.com/echa/code v0.0.0-20201118130056-1878364e4ad4/go.mod h1:ZDcNR/KxbS2CCjtolHhGP5dl+9Ux7terHosEJNChm+U=
 github.com/echa/log v1.0.3 h1:2If0QCt2MF9byXeYHfeCcemfqxTPGZpaKyOvneXo8ho=
 github.com/echa/log v1.0.3/go.mod h1:V8lWE4YGcwDdg0IPBqDQ9eWp2MdsMHfvHpSjaIp4+VQ=
 github.com/go-bson/bson v0.0.0-20171017145622-6d291e839eca h1:jPdPq2xinuUF8i7qSJgGFGXYwLLrEun8Gkz2hnKl0AM=

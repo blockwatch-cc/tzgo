@@ -195,18 +195,22 @@ func writeFile(name string, content interface{}) error {
 }
 
 func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string) error {
+	addr, err := tezos.ParseAddress(hash)
+	if err != nil {
+		return err
+	}
 	// fetch data
-	log.Infof("Fetching contract %s", hash)
+	log.Infof("Fetching contract %s", addr)
 	params := tzstats.NewContractParams().WithPrim()
-	script, err := c.GetContractScript(ctx, hash, params)
+	script, err := c.GetContractScript(ctx, addr, params)
 	if err != nil {
 		return err
 	}
-	storage, err := c.GetContractStorage(ctx, hash, params)
+	storage, err := c.GetContractStorage(ctx, addr, params)
 	if err != nil {
 		return err
 	}
-	contract, err := c.GetContract(ctx, hash, params)
+	contract, err := c.GetContract(ctx, addr, params)
 	if err != nil {
 		return err
 	}
@@ -338,12 +342,16 @@ func fetchContractData(ctx context.Context, c *tzstats.Client, net, hash string)
 }
 
 func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string) error {
+	oh, err := tezos.ParseOpHash(hash)
+	if err != nil {
+		return err
+	}
 	log.Infof("Fetching op %s", hash)
 	p := tzstats.NewOpParams().WithPrim().WithMeta()
 	if !nounpack {
 		p = p.WithUnpack()
 	}
-	ops, err := c.GetOp(ctx, hash, p)
+	ops, err := c.GetOp(ctx, oh, p)
 	if err != nil {
 		return err
 	}
@@ -363,7 +371,7 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 
 		// fetch target contract
 		log.Infof("> receiver %s", v.Receiver)
-		contract, err := c.GetContract(ctx, v.Receiver.String(), tzstats.NewContractParams().WithPrim())
+		contract, err := c.GetContract(ctx, v.Receiver, tzstats.NewContractParams().WithPrim())
 		if err != nil {
 			return err
 		}
@@ -374,7 +382,7 @@ func fetchOperationData(ctx context.Context, c *tzstats.Client, net, hash string
 		sort.Slice(bmids, func(i, j int) bool { return bmids[i] < bmids[j] })
 
 		// fetch target contract script
-		script, err := c.GetContractScript(ctx, v.Receiver.String(), tzstats.NewContractParams().WithPrim())
+		script, err := c.GetContractScript(ctx, v.Receiver, tzstats.NewContractParams().WithPrim())
 		if err != nil {
 			return err
 		}

@@ -3,6 +3,7 @@ module blockwatch.cc/tzgo
 go 1.16
 
 require (
+	blockwatch.cc/tzstats-go v0.0.0-20210505100946-ba5035218171
 	github.com/daviddengcn/go-colortext v1.0.0 // indirect
 	github.com/echa/log v1.0.3
 	github.com/go-bson/bson v0.0.0-20171017145622-6d291e839eca
