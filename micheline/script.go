@@ -78,8 +78,6 @@ func (s *Script) BigmapsById() []int64 {
 	stack := NewStack(s.Storage)
 	_ = s.Code.Storage.Walk(func(p Prim) error {
 		val := stack.Pop()
-		// fmt.Printf("WALK typ=%s\n", p.Dump())
-		// fmt.Printf("WALK val=%s\n", val.Dump())
 		if p.OpCode == T_BIG_MAP && val.IsValid() && val.Type == PrimInt {
 			ids = append(ids, val.Int.Int64())
 			return PrimSkip
@@ -87,7 +85,6 @@ func (s *Script) BigmapsById() []int64 {
 		switch p.OpCode {
 		case T_OR, T_PAIR, T_OPTION, K_STORAGE:
 			// recurse
-			// fmt.Printf("WALK recurse\n")
 			if val.IsScalar() {
 				stack.Push(val)
 			} else {
@@ -96,7 +93,6 @@ func (s *Script) BigmapsById() []int64 {
 			return nil
 		default:
 			// ignore
-			// fmt.Printf("WALK skip\n")
 			return PrimSkip
 		}
 	})
@@ -105,7 +101,7 @@ func (s *Script) BigmapsById() []int64 {
 
 // Returns a named map containing all bigmaps currently referenced by a contracts
 // storage value. Names are derived from Michelson type annotations and if missing,
-// a sequence number.
+// a sequence number. Optionally appends a sequence number to prevent duplicate names.
 func (s *Script) BigmapsByName() map[string]int64 {
 	ids := s.BigmapsById()
 	named := make(map[string]int64)
@@ -114,6 +110,9 @@ func (s *Script) BigmapsByName() map[string]int64 {
 		n := bigmaps[i].GetVarAnnoAny()
 		if n == "" {
 			n = strconv.Itoa(i)
+		}
+		if _, ok := named[n]; ok {
+			n += "_" + strconv.Itoa(i)
 		}
 		named[n] = ids[i]
 	}
