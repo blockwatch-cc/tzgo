@@ -220,6 +220,9 @@ func (a Address) String() string {
 
 func (a Address) Short() string {
 	s := a.String()
+	if len(s) < 12 {
+		return s
+	}
 	return s[:8] + "..." + s[32:]
 }
 

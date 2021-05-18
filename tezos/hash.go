@@ -459,6 +459,9 @@ func (h Hash) String() string {
 
 func (h Hash) Short() string {
 	s := h.String()
+	if len(s) < 12 {
+		return s
+	}
 	return s[:8] + "..." + s[len(s)-4:]
 }
 
