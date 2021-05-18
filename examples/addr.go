@@ -90,6 +90,7 @@ func run() error {
 		addr = key.Address()
 	}
 	fmt.Printf("Address %s\n", addr.String())
+	fmt.Printf("Short   %s\n", addr.Short())
 	fmt.Printf("PkType  %s\n", addr.Type)
 	fmt.Printf("PkHash  %x\n", addr.Hash)
 	return nil

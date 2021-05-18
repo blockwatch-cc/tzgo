@@ -218,6 +218,11 @@ func (a Address) String() string {
 	return s
 }
 
+func (a Address) Short() string {
+	s := a.String()
+	return s[:8] + "..." + s[32:]
+}
+
 func (a *Address) UnmarshalText(data []byte) error {
 	astr := strings.Split(string(data), "%")[0]
 	addr, err := ParseAddress(astr)

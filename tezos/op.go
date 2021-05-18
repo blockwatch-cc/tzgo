@@ -255,6 +255,32 @@ func (t OpType) Tag(p *Params) byte {
 	return tag
 }
 
+func (t OpType) ListId() int {
+	switch t {
+	case OpTypeEndorsement:
+		return 0
+	case OpTypeProposals, OpTypeBallot:
+		return 1
+	case OpTypeActivateAccount,
+		OpTypeDoubleBakingEvidence,
+		OpTypeDoubleEndorsementEvidence,
+		OpTypeSeedNonceRevelation:
+		return 2
+	case OpTypeTransaction, // generic user operations
+		OpTypeOrigination,
+		OpTypeDelegation,
+		OpTypeReveal,
+		OpTypeBatch: // custom, indexer only
+		return 3
+	case OpTypeBake, OpTypeUnfreeze, OpTypeSeedSlash:
+		return -1 // block level ops
+	case OpTypeInvoice, OpTypeAirdrop, OpTypeMigration:
+		return -2 // migration ops
+	default:
+		return -255 // invalid
+	}
+}
+
 func ParseOpTag(t byte) OpType {
 	switch t {
 	case 0:
