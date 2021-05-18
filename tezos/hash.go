@@ -459,7 +459,7 @@ func (h Hash) String() string {
 
 func (h Hash) Short() string {
 	s := h.String()
-	return s[:8] + "..." + s[32:]
+	return s[:8] + "..." + s[len(s)-4:]
 }
 
 func ParseHash(s string) (Hash, error) {
