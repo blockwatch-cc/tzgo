@@ -156,7 +156,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	for {
 		if lvl > 0 && !val.WasPacked && !val.LooksLikeLambda() && (val.CanUnfold(typ) || (val.IsSequence() && typ.IsScalarType())) {
 			// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
-			// stack.Push(val.Args...)
 			unfolded := val.UnfoldPair(typ)
 			stack.Push(unfolded...)
 			val = stack.Pop()
@@ -267,32 +266,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_LAMBDA:
 		// LAMBDA <type> <type> { <instruction> ... }
-		// value_type, return_type, code
-		// fmt.Printf("LAMBDA typ=%s\n", typ.Dump())
-		// fmt.Printf("LAMBDA val=%s\n", val.Dump())
-		// if len(typ.Args) > 0 {
-		// 	// only well-defined lambdas have all data available
-		// 	mm := make(map[string]interface{})
-		// 	n := "_params"
-		// 	if typ.Args[0].HasAnno() {
-		// 		n = typ.Args[0].GetVarAnnoAny()
-		// 	}
-		// 	mm[n] = typ.Args[0]
-		// 	// n = "_code"
-		// 	// if typ.Args[1].Args[0].HasAnno() {
-		// 	// 	n = typ.Args[1].Args[0].GetVarAnnoAny()
-		// 	// }
-		// 	mm["_code"] = val
-		// 	n = "_return"
-		// 	if typ.Args[1].HasAnno() {
-		// 		n = typ.Args[1].GetVarAnnoAny()
-		// 	}
-		// 	mm[n] = typ.Args[1]
-		// 	m[label] = mm
-		// } else {
-		// 	// unpacked lambdas lack type info
-		// 	m[label] = val
-		// }
 		m[label] = val
 
 	case T_MAP, T_BIG_MAP:
@@ -302,7 +275,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 		// render bigmap reference
 		if typ.OpCode == T_BIG_MAP && len(val.Args) == 0 {
-			// log.Debugf("%*s> marshal %s ref key %s into map %p", lvl, "", typ.OpCode, label, m)
 			switch val.Type {
 			case PrimInt:
 				// Babylon bigmaps contain a reference here
@@ -317,7 +289,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 		switch val.Type {
 		case PrimBinary: // single ELT
-			// log.Debugf("%*s> T_MAP marshal single %s key %s len %d into map %p adding sub map %p", lvl, "", typ.OpCode, label, len(val.Args), m, mm)
 			keyType := Type{typ.Args[0]}
 			valType := Type{typ.Args[1]}
 
@@ -382,11 +353,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_PAIR:
 		// pair <type> <type> or COMB
-		// FIXME: does this catch all COMB pairs??
-		// - for n=2, [Pair x1 x2],
-		// - for n=3, [Pair x1 (Pair x2 x3)],
-		// - for n>=4, [{x1; x2; ...; xn}].
-
 		mm := m
 		if haveTypeLabel || haveKeyLabel {
 			mm = make(map[string]interface{})

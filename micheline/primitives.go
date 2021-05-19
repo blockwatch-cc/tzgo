@@ -531,19 +531,6 @@ func (p Prim) LooksLikeLambda() bool {
 //
 func (p Prim) UnfoldPair(typ Type) []Prim {
 	flat := make([]Prim, 0)
-
-	// FIXME: unclear if this is required; structural issue
-	// ensure value and type have same number of arguments
-	// if p.IsSequence() || !p.OpCode.IsTypeCode() {
-	// 	// if !p.OpCode.IsTypeCode() {
-	// 	if len(p.Args) > len(typ.Args) {
-	// 		typ2 := Type{tcomb(typ.UnfoldComb(typ)...)}
-	// 		if len(typ2.Args) == len(p.Args) {
-	// 			typ = typ2
-	// 		}
-	// 	}
-	// }
-
 	for i, v := range p.Args {
 		t := Type{}
 		if len(typ.Args) > i {

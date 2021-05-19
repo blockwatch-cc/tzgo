@@ -2,7 +2,7 @@
 
 TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keep interfaces stable, provide long-term support and update TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
-Our main focus is on **correctness**, **stability** and **compliance** with the Tezos protocol.
+Our main focus is on **correctness**, **stability** and **compliance** with the Tezos protocol. TzGo supports binary and JSON encoding for Tezos' Micheline types so its perfectly suited for high-performance applications.
 
 Current TzGo protocol support
 
@@ -31,7 +31,8 @@ As long as TzGo is in beta status we will use major version 0.x. Once interfaces
 
 When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet, but will add support in the future as usage of these features becomes more widespread.
 
-V1 of TzGo is focused on read-only data access. We're planning to add support for transaction creation, signing, simulation and injection in the next major release.
+- **v1** read-only access to Tezos on-chain data
+- **v2** transaction creation, signing, simulation and injection
 
 ### Usage
 
@@ -55,6 +56,8 @@ Tezos uses [Micheline](https://tezos.gitlab.io/shell/micheline.html) for encodin
 
 Micheline uses basic **primitives** for encoding types and values. These primitives can be expressed in JSON and binary format and TzGo can translate between them efficiently. Micheline also supports type **annotations** which are used by high-level languages to express complex data types like records and their field names.
 
+TzGo defines a basic `Prim` data type to work with Micheline primitives directly:
+
 ```go
 type Prim struct {
 	Type      PrimType // primitive type
@@ -68,13 +71,13 @@ type Prim struct {
 }
 ```
 
-Since Micheline value encoding is quite verbose and can be ambiguous, TzGo supports **unfolding** of raw Micheline into key/value maps using the following Go types and a few access helpers like the `Map()`, `GetInt64()`, `GetAddress()` functions.
+Since Micheline value encoding is quite verbose and can be ambiguous, TzGo supports **unfolding** of raw Micheline using the following TzGo wrapper types and their helper functions like `Map()`, `GetInt64()`, `GetAddress()`:
 
-- `Type` a simple or complex primitive representing annotated type info
-- `Value` a simple or complex primitive representing a Micheline value in combination with its Type
-- `Key` a special comparable value that is used as key in maps and bigmaps
+- `Type` is a TzGo wrapper for simple or complex primitives which contain annotated type info
+- `Value` is a TzGo wrapper for simple or complex primitives representing Micheline values in combination with their Type
+- `Key` is a TzGo wrapper for special comparable values that are used as maps or bigmap keys
 
-Sometimes values are packed into byte sequences using the Michelson PACK instruction and it is desirable to unpack them before processing (e.g. to retrieve UFT8 strings or nested records). TzGo supports `Unpack()` and `UnpackAll()` functions on primitives and values and can detect data types of packed data necessary for unfolding.
+Sometimes Micheline values have been packed into byte sequences with the Michelson PACK instruction and it is desirable to unpack them before processing (e.g. to retrieve UFT8 strings or nested records). TzGo supports `Unpack()` and `UnpackAll()` functions on primitives and values and also detects the internal type of packed data which is necessary for unfolding.
 
 
 ### Examples
@@ -82,8 +85,6 @@ Sometimes values are packed into byte sequences using the Michelson PACK instruc
 Below are a few examples showing how to use TzGo to easily access Tezos data in your application.
 
 #### Parsing an address
-
-TzGo comes with a low-level library for basic Tezos data types like protocol enums, addresses, keys, hashes, signatures, protocol parameters and more. All low-level types support encoding/decoding binary and text formats including the necessary validation.
 
 To parse/decode an address and output its components you can do the following:
 
