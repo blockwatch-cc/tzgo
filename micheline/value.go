@@ -760,14 +760,10 @@ func (v *Value) GetSignature(label string) (tezos.Signature, bool) {
 	return tezos.InvalidSignature, false
 }
 
-func (v *Value) Unmarshal(label string, val interface{}) error {
+func (v *Value) Unmarshal(val interface{}) error {
 	if m, err := v.Map(); err == nil {
-		if vv, ok := getPath(m, label); ok {
-			buf, _ := json.Marshal(vv)
-			return json.Unmarshal(buf, val)
-		} else {
-			return fmt.Errorf("micheline: invalid value path %s", label)
-		}
+		buf, _ := json.Marshal(m)
+		return json.Unmarshal(buf, val)
 	} else {
 		return err
 	}

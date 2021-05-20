@@ -223,7 +223,7 @@ for _, key := range bigkeys {
 TzGo's `rpc.NewClient()` function takes an optional Go `http.Client` as parameter which you can configure before or after passing it to the library. The example below shows how to set custom timeouts and disable TLS certificate checks (not recommended in production, but useful if you use self-signed certificates during testing).
 
 
-```
+```go
 import (
 	"crypto/tls"
 	"log"
