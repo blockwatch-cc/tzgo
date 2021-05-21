@@ -1,8 +1,8 @@
 ## TzGo – Go SDK for Tezos by Blockwatch Data
 
-TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keep interfaces stable, provide long-term support and update TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
+TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
-Our main focus is on **correctness**, **stability** and **compliance** with the Tezos protocol. TzGo supports binary and JSON encoding for Tezos' Micheline types so its perfectly suited for high-performance applications.
+Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encoding for Tezos' Micheline types so it's perfectly suited for high-performance applications.
 
 Current TzGo protocol support
 
@@ -29,10 +29,10 @@ As long as TzGo is in beta status we will use major version 0.x. Once interfaces
 
 ### TzGo Roadmap
 
-When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet, but will add support in the future as usage of these features becomes more widespread.
+When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet but will add support in the future as usage of these features becomes more widespread.
 
 - **v1** read-only access to Tezos on-chain data
-- **v2** transaction creation, signing, simulation and injection
+- **v2** transaction creation, signing, simulation, and injection
 
 ### Usage
 
@@ -52,7 +52,7 @@ import (
 
 ### Micheline Support
 
-Tezos uses [Micheline](https://tezos.gitlab.io/shell/micheline.html) for encoding smart contract data and code. The positive is that Micheline is strongly typed, the downside is its complex and has a few ambiguities that make it hard to use. TzGo contains a library that lets you decode, analyze and construct compliant Micheline data structures from Go.
+Tezos uses [Micheline](https://tezos.gitlab.io/shell/micheline.html) for encoding smart contract data and code. The positive is that Micheline is strongly typed, the downside is that it's complex and has a few ambiguities that make it hard to use. TzGo contains a library that lets you decode, analyze and construct compliant Micheline data structures from Go.
 
 Micheline uses basic **primitives** for encoding types and values. These primitives can be expressed in JSON and binary format and TzGo can translate between them efficiently. Micheline also supports type **annotations** which are used by high-level languages to express complex data types like records and their field names.
 
@@ -110,7 +110,7 @@ See [examples/addr.go](https://github.com/blockwatch-cc/tzgo/blob/master/example
 
 #### Monitoring for new blocks
 
-A Tezos node can notify applications when new blocks are attached to the chain. The Tezos RPC calls this monitor and technically its a long-poll implementation. Here's how to use this feature in TzGo:
+A Tezos node can notify applications when new blocks are attached to the chain. The Tezos RPC calls this monitor and technically it's a long-poll implementation. Here's how to use this feature in TzGo:
 
 ```go
 import "blockwatch.cc/tzgo/rpc"
