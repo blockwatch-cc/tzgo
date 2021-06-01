@@ -17,6 +17,7 @@ var (
 	ProtoV008_1 = ParseProtocolHashSafe("PtEdoTezd3RHSC31mpxxo1npxFjoWWcFgQtxapi51Z8TLu6v6Uq")
 	ProtoV008_2 = ParseProtocolHashSafe("PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA")
 	ProtoV009   = ParseProtocolHashSafe("PsFLorenaUUuikDWvMDr6fGBRG8kt3e3D3fHoXK1j1BFRxeSH4i")
+	ProtoV010   = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
 
 	Mainnet     = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Alphanet    = MustParseChainIdHash("NetXgtSLGNJvNye")
@@ -126,6 +127,13 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		// pp.Invoices = map[string]int64{
 		// 	"tz1abmz7jiCV2GH2u81LRrGgAFFgvQgiDiaf": 100 * 1000000,
 		// }
+	case ProtoV010.Equal(proto):
+		pp.Version = 10
+		pp.OperationTagsVersion = 1
+		pp.NumVotingPeriods = 5
+		if Mainnet.Equal(p.ChainId) {
+			pp.StartBlockOffset = 1343488
+		}
 	}
 	return pp
 }
