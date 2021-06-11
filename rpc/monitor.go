@@ -7,6 +7,7 @@ package rpc
 import (
 	"context"
 	"errors"
+	"io"
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -72,7 +73,7 @@ func (m *BootstrapMonitor) Recv(ctx context.Context) (*BootstrappedBlock, error)
 			if m.err != nil {
 				return nil, m.err
 			}
-			return nil, ErrMonitorClosed
+			return nil, io.EOF
 		}
 		return res, nil
 	}
@@ -169,7 +170,7 @@ func (m *BlockHeaderMonitor) Recv(ctx context.Context) (*BlockHeaderLogEntry, er
 			if m.err != nil {
 				return nil, m.err
 			}
-			return nil, ErrMonitorClosed
+			return nil, io.EOF
 		}
 		return res, nil
 	}
@@ -245,7 +246,7 @@ func (m *NetworkPeerMonitor) Recv(ctx context.Context) (*NetworkPeerLogEntry, er
 			if m.err != nil {
 				return nil, m.err
 			}
-			return nil, ErrMonitorClosed
+			return nil, io.EOF
 		}
 		return res, nil
 	}
@@ -320,7 +321,7 @@ func (m *NetworkPointMonitor) Recv(ctx context.Context) (*NetworkPointLogEntry, 
 			if m.err != nil {
 				return nil, m.err
 			}
-			return nil, ErrMonitorClosed
+			return nil, io.EOF
 		}
 		return res, nil
 	}
