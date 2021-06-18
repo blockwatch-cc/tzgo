@@ -119,6 +119,25 @@ func (s *Script) BigmapsByName() map[string]int64 {
 	return named
 }
 
+// Returns a named map containing all bigmaps defined in contracts storgae spec.
+// Names are derived from Michelson type annotations and if missing,
+// a sequence number. Optionally appends a sequence number to prevent duplicate names.
+func (s *Script) BigmapTypesByName() map[string]Type {
+	named := make(map[string]Type)
+	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
+	for i := range bigmaps {
+		n := bigmaps[i].GetVarAnnoAny()
+		if n == "" {
+			n = strconv.Itoa(i)
+		}
+		if _, ok := named[n]; ok {
+			n += "_" + strconv.Itoa(i)
+		}
+		named[n] = NewType(bigmaps[i])
+	}
+	return named
+}
+
 func (p Script) MarshalBinary() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 
