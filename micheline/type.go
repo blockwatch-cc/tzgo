@@ -97,6 +97,9 @@ func (t Type) TypedefPtr(name string) *Typedef {
 }
 
 func (t Type) MarshalJSON() ([]byte, error) {
+	if !t.IsValid() {
+		return []byte("{}"), nil
+	}
 	return json.Marshal(buildTypedef("", t.Prim))
 }
 

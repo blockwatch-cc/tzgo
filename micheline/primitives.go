@@ -815,6 +815,9 @@ func (p Prim) Value(as OpCode) interface{} {
 }
 
 func (p Prim) MarshalJSON() ([]byte, error) {
+	if !p.IsValid() {
+		return []byte("{}"), nil
+	}
 	m := make(map[string]interface{})
 	switch p.Type {
 	case PrimSequence:
