@@ -273,9 +273,6 @@ func InferKeyType(val string) OpCode {
 	if val == D_UNIT.String() {
 		return T_UNIT
 	}
-	if _, err := strconv.ParseBool(val); err == nil {
-		return T_BOOL
-	}
 	if _, err := tezos.ParseAddress(val); err == nil {
 		// Note: can also be KEY_HASH, but used inconsistently
 		return T_ADDRESS
@@ -299,6 +296,9 @@ func InferKeyType(val string) OpCode {
 	}
 	if strings.Contains(val, ",") {
 		return T_PAIR
+	}
+	if _, err := strconv.ParseBool(val); err == nil {
+		return T_BOOL
 	}
 	return T_STRING
 }
