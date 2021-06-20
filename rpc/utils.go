@@ -8,6 +8,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 // HexBytes represents bytes as a JSON string of hexadecimal digits
@@ -94,4 +97,23 @@ func jsonify(i interface{}) string {
 		log.Fatal(err)
 	}
 	return string(jsonb)
+}
+
+func GetBlockIDAsString(blockID interface{}) string {
+	switch v := blockID.(type) {
+	case tezos.BlockHash:
+		return blockID.(tezos.BlockHash).String()
+	case int64:
+		return strconv.FormatInt(blockID.(int64), 10)
+	case string:
+		if blockID.(string) == "head" {
+			return "head"
+		} else if blockID.(string) == "genesis" {
+			return "genesis"
+		} else {
+			return fmt.Sprintf("Block tag %s not supported.\n", v)
+		}
+	default:
+		return fmt.Sprintf("Type %s not supported as block identifier.\n", v)
+	}
 }

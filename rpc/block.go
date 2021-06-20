@@ -155,9 +155,10 @@ type BlockMetadata struct {
 
 // GetBlock returns information about a Tezos block
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id
-func (c *Client) GetBlock(ctx context.Context, blockID tezos.BlockHash) (*Block, error) {
+func (c *Client) GetBlock(ctx context.Context, blockID interface{}) (*Block, error) {
 	var block Block
-	u := fmt.Sprintf("chains/%s/blocks/%s", c.ChainID, blockID)
+
+	u := fmt.Sprintf("chains/%s/blocks/%s", c.ChainID, GetBlockIDAsString(blockID))
 	if err := c.Get(ctx, u, &block); err != nil {
 		return nil, err
 	}
