@@ -133,6 +133,19 @@ func ParseAddressTag(b byte) AddressType {
 	}
 }
 
+func (t *AddressType) UnmarshalText(data []byte) error {
+	typ := ParseAddressType(string(data))
+	if !typ.IsValid() {
+		return ErrUnknownAddressType
+	}
+	*t = typ
+	return nil
+}
+
+func (t AddressType) MarshalText() ([]byte, error) {
+	return []byte(t.String()), nil
+}
+
 func HasAddressPrefix(s string) bool {
 	for _, prefix := range []string{
 		ED25519_PUBLIC_KEY_HASH_PREFIX,
