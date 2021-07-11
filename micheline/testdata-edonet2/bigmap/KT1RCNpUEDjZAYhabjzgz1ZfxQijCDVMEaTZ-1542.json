@@ -1,0 +1,2932 @@
+[
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprtqUntj1ohCsEQCP2ggwU5m5gWJD5aqGZVv8RshXA5zRhUrh3A1",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "583999"
+          },
+          {
+            "int": "1625606820"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "49516"
+              },
+              {
+                "int": "49518"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "49516"
+                    },
+                    {
+                      "int": "23423280000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "49517"
+                    },
+                    {
+                      "int": "182134992000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "49518"
+                    },
+                    {
+                      "int": "9353664000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "214911936000000"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "49516"
+          },
+          {
+            "int": "49518"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "49516"
+            },
+            {
+              "int": "40000000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "49517"
+            },
+            {
+              "int": "312000000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "49518"
+            },
+            {
+              "int": "16000000"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "368000000"
+      }
+    ],
+    "key": {
+      "string": "BAT-USDC"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "0200000088070700bfa44700a4aaa68e0c0707070700ac850600ae85060707020000002a070400ac85060080b0c584b5d30a070400ad85060080d0feb7d3e952070400ae85060080c08f9dbaa0040080c0d3d9c2dd61070700ac850600ae85060200000022070400ac85060080e89226070400ad85060080f8c5a902070400ae8506008090a10f0080f0f9de02",
+    "key_hex": "01000000084241542d55534443",
+    "want_value": {
+      "computedPrice": "583999",
+      "lastUpdateTime": "2021-07-06T21:27:00Z",
+      "prices": {
+        "first": "49516",
+        "last": "49518",
+        "saved": {
+          "49516": "23423280000000",
+          "49517": "182134992000000",
+          "49518": "9353664000000"
+        },
+        "sum": "214911936000000"
+      },
+      "volumes": {
+        "first": "49516",
+        "last": "49518",
+        "saved": {
+          "49516": "40000000",
+          "49517": "312000000",
+          "49518": "16000000"
+        },
+        "sum": "368000000"
+      }
+    },
+    "want_key": "BAT-USDC"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-expruDEDcy5nG4V1Up1HToC5wXZGtZXHCYNsYHBgZyUJKA44e2qnhV",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "33913675652"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52687"
+              },
+              {
+                "int": "52689"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52687"
+                    },
+                    {
+                      "int": "194562934157266002"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52688"
+                    },
+                    {
+                      "int": "23147837582878000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52689"
+                    },
+                    {
+                      "int": "26800691336329726"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "244511463076473728"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52687"
+          },
+          {
+            "int": "52689"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52687"
+            },
+            {
+              "int": "5735997"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52688"
+            },
+            {
+              "int": "683000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52689"
+            },
+            {
+              "int": "790822"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "7209819"
+      }
+    ],
+    "key": {
+      "string": "BTC-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008d07070084feccd6fc010080b3a68e0c07070707008fb7060091b7060707020000002e0704008fb7060092b1b68ea6fd9cb30507040090b70600b09491c7bdb59e5207040091b70600bee7b1edc6c59b5f0080aef9c2aaf8d6e4060707008fb7060091b706020000001f0704008fb70600bd98bc0507040090b70600b8af5307040091b70600a6c460009b8df006",
+    "key_hex": "01000000074254432d555344",
+    "want_value": {
+      "computedPrice": "33913675652",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52687",
+        "last": "52689",
+        "saved": {
+          "52687": "194562934157266002",
+          "52688": "23147837582878000",
+          "52689": "26800691336329726"
+        },
+        "sum": "244511463076473728"
+      },
+      "volumes": {
+        "first": "52687",
+        "last": "52689",
+        "saved": {
+          "52687": "5735997",
+          "52688": "683000",
+          "52689": "790822"
+        },
+        "sum": "7209819"
+      }
+    },
+    "want_key": "BTC-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprtkNNzcMRGPYAVQbdXkp8UCJbrX1JgFgCBYcrrff5svE3xdu3KY",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "471211609"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52641"
+              },
+              {
+                "int": "52643"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52641"
+                    },
+                    {
+                      "int": "6416628524306000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52642"
+                    },
+                    {
+                      "int": "6533835088718000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52643"
+                    },
+                    {
+                      "int": "49896442331338000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "62846905944362000"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52641"
+          },
+          {
+            "int": "52643"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52641"
+            },
+            {
+              "int": "13541000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52642"
+            },
+            {
+              "int": "13846000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52643"
+            },
+            {
+              "int": "105986000"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "133373000"
+      }
+    ],
+    "key": {
+      "string": "COMP-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008e07070099f9b0c1030080b3a68e0c0707070700a1b60600a3b6060707020000002e070400a1b6060090b9c6fdf7f8e516070400a2b60600b0a2dff7a09f9b17070400a3b6060090d4b88b99a3a2b1010090b0de80b2bba3df01070700a1b60600a3b6060200000021070400a1b6060088faf40c070400a2b60600b0979a0d070400a3b6060090df89650088f1987f",
+    "key_hex": "0100000008434f4d502d555344",
+    "want_value": {
+      "computedPrice": "471211609",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52641",
+        "last": "52643",
+        "saved": {
+          "52641": "6416628524306000",
+          "52642": "6533835088718000",
+          "52643": "49896442331338000"
+        },
+        "sum": "62846905944362000"
+      },
+      "volumes": {
+        "first": "52641",
+        "last": "52643",
+        "saved": {
+          "52641": "13541000",
+          "52642": "13846000",
+          "52643": "105986000"
+        },
+        "sum": "133373000"
+      }
+    },
+    "want_key": "COMP-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprus7Hrujrc3xz8RVUfekxTqiDFcG8xRUQUYv3eunLkxruvNBMeD",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "1000545"
+          },
+          {
+            "int": "1625607060"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "41657"
+              },
+              {
+                "int": "41659"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "41657"
+                    },
+                    {
+                      "int": "2958737686684320"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "41658"
+                    },
+                    {
+                      "int": "102985785871000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "41659"
+                    },
+                    {
+                      "int": "24541040882930"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "3086264513438250"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "41657"
+          },
+          {
+            "int": "41659"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "41657"
+            },
+            {
+              "int": "2957108320"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "41658"
+            },
+            {
+              "int": "102942550"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "41659"
+            },
+            {
+              "int": "24532430"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "3084583300"
+      }
+    ],
+    "key": {
+      "string": "DAI-USDC"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008a070700a1917a0094aea68e0c0707070700b98a0500bb8a050707020000002b070400b98a0500a08ae3cc99bdc10a070400ba8a050098aaf8f2c7ea2e070400bb8a0500b2d3b180bd940b00aa888dc09ebcfb0a070700b98a0500bb8a050200000022070400b98a0500a0918f8416070400ba8a0500969d9662070400bb8a05008ed7b217008486d8fd16",
+    "key_hex": "01000000084441492d55534443",
+    "want_value": {
+      "computedPrice": "1000545",
+      "lastUpdateTime": "2021-07-06T21:31:00Z",
+      "prices": {
+        "first": "41657",
+        "last": "41659",
+        "saved": {
+          "41657": "2958737686684320",
+          "41658": "102985785871000",
+          "41659": "24541040882930"
+        },
+        "sum": "3086264513438250"
+      },
+      "volumes": {
+        "first": "41657",
+        "last": "41659",
+        "saved": {
+          "41657": "2957108320",
+          "41658": "102942550",
+          "41659": "24532430"
+        },
+        "sum": "3084583300"
+      }
+    },
+    "want_key": "DAI-USDC"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprv9NLX1skZHFM1i6eXc7eAazz25T1BVjkDzc47fWEEjn6y2Zsay",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "2299560092"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52679"
+              },
+              {
+                "int": "52681"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52679"
+                    },
+                    {
+                      "int": "96816176576006041"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52680"
+                    },
+                    {
+                      "int": "150913721338578854"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52681"
+                    },
+                    {
+                      "int": "32002161429000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "279732059343584895"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52679"
+          },
+          {
+            "int": "52681"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52679"
+            },
+            {
+              "int": "42051877"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52680"
+            },
+            {
+              "int": "65666719"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52681"
+            },
+            {
+              "int": "13927305"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "121645901"
+      }
+    ],
+    "key": {
+      "string": "ETH-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008f0707009c828491110080b3a68e0c070707070087b7060089b7060707020000002f07040087b70600999e98d596f3fad70207040088b70600a69ef281dcce93980407040089b7060080bda980fbf2d87100bff9b3d7edb4e7e10707070087b7060089b706020000002107040087b70600a5a48d2807040088b706009ffacf3e07040089b70600898ea40d008dad8174",
+    "key_hex": "01000000074554482d555344",
+    "want_value": {
+      "computedPrice": "2299560092",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52679",
+        "last": "52681",
+        "saved": {
+          "52679": "96816176576006041",
+          "52680": "150913721338578854",
+          "52681": "32002161429000000"
+        },
+        "sum": "279732059343584895"
+      },
+      "volumes": {
+        "first": "52679",
+        "last": "52681",
+        "saved": {
+          "52679": "42051877",
+          "52680": "65666719",
+          "52681": "13927305"
+        },
+        "sum": "121645901"
+      }
+    },
+    "want_key": "ETH-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprtfywZSkNmyonkwgKvcuiR6xV7X9ymvofbEHwBzMJKA7QxAQLXp",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "1586198"
+          },
+          {
+            "int": "1625607240"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "51948"
+              },
+              {
+                "int": "51950"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "51948"
+                    },
+                    {
+                      "int": "3652860000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "51949"
+                    },
+                    {
+                      "int": "3017111020000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "51950"
+                    },
+                    {
+                      "int": "178122735900000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "3198886615900000"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "51948"
+          },
+          {
+            "int": "51950"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "51948"
+            },
+            {
+              "int": "2300000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "51949"
+            },
+            {
+              "int": "1902100000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "51950"
+            },
+            {
+              "int": "112300000"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "2016700000"
+      }
+    ],
+    "key": {
+      "string": "KNC-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008b07070096d0c1010088b1a68e0c0707070700acab0600aeab060707020000002b070400acab060080dce1f6cfd401070400adab060080ccc2e9fc82dc0a070400aeab0600a0d5b2e68d805100a0fdd6c6dad7ae0b070700acab0600aeab060200000022070400acab0600a0e19802070400adab0600a0f8fd950e070400aeab0600a0bf8c6b00a099a3830f",
+    "key_hex": "01000000074b4e432d555344",
+    "want_value": {
+      "computedPrice": "1586198",
+      "lastUpdateTime": "2021-07-06T21:34:00Z",
+      "prices": {
+        "first": "51948",
+        "last": "51950",
+        "saved": {
+          "51948": "3652860000000",
+          "51949": "3017111020000000",
+          "51950": "178122735900000"
+        },
+        "sum": "3198886615900000"
+      },
+      "volumes": {
+        "first": "51948",
+        "last": "51950",
+        "saved": {
+          "51948": "2300000",
+          "51949": "1902100000",
+          "51950": "112300000"
+        },
+        "sum": "2016700000"
+      }
+    },
+    "want_key": "KNC-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-expruN2dG6bWSAUNefFCdJ244bEekeGkUMCNhcQGhzJXmAYpcbgnVG",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "19762374"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52644"
+              },
+              {
+                "int": "52646"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52644"
+                    },
+                    {
+                      "int": "11385183880440000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52645"
+                    },
+                    {
+                      "int": "8089043112480000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52646"
+                    },
+                    {
+                      "int": "651775182500000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "20126002175420000"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52644"
+          },
+          {
+            "int": "52646"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52644"
+            },
+            {
+              "int": "575880000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52645"
+            },
+            {
+              "int": "409530000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52646"
+            },
+            {
+              "int": "32990000"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "1018400000"
+      }
+    ],
+    "key": {
+      "string": "LINK-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008e07070086b3ec120080b3a68e0c0707070700a4b60600a6b6060707020000002d070400a4b6060080a3ab8ef6b0b928070400a5b6060080b4d6d4a3bcde1c070400a6b60600a0c2cfc3a7b2a80200a099d1a6c19fc047070700a4b60600a6b6060200000023070400a4b6060080ed99a504070400a5b6060090bac78603070400a6b60600b08cbb1f0080b49ccb07",
+    "key_hex": "01000000084c494e4b2d555344",
+    "want_value": {
+      "computedPrice": "19762374",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52644",
+        "last": "52646",
+        "saved": {
+          "52644": "11385183880440000",
+          "52645": "8089043112480000",
+          "52646": "651775182500000"
+        },
+        "sum": "20126002175420000"
+      },
+      "volumes": {
+        "first": "52644",
+        "last": "52646",
+        "saved": {
+          "52644": "575880000",
+          "52645": "409530000",
+          "52646": "32990000"
+        },
+        "sum": "1018400000"
+      }
+    },
+    "want_key": "LINK-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-expru4Xom8ojhm2xgG7LGHjW3mMemUFErPG81murPbfC4aA45gN9Dh",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "20653429"
+          },
+          {
+            "int": "1625607120"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "48014"
+              },
+              {
+                "int": "48016"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "48014"
+                    },
+                    {
+                      "int": "299435872340778"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "48015"
+                    },
+                    {
+                      "int": "20580000000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "48016"
+                    },
+                    {
+                      "int": "104211557910000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "424227430250778"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "48014"
+          },
+          {
+            "int": "48016"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "48014"
+            },
+            {
+              "int": "14488833"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "48015"
+            },
+            {
+              "int": "1000000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "48016"
+            },
+            {
+              "int": "5051457"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "20540290"
+      }
+    ],
+    "key": {
+      "string": "REP-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "0200000088070700b595d9130090afa68e0c07070707008eee050090ee050707020000002b0704008eee0500aaacee8cbb9588010704008fee050080a0b7f9f4ad0907040090ee0500b097a0cef4b12f009ae4c5d4a4f5c0010707008eee050090ee0502000000200704008eee050081d4e80d0704008fee050080897a07040090ee050081d1e8040082aecb13",
+    "key_hex": "01000000075245502d555344",
+    "want_value": {
+      "computedPrice": "20653429",
+      "lastUpdateTime": "2021-07-06T21:32:00Z",
+      "prices": {
+        "first": "48014",
+        "last": "48016",
+        "saved": {
+          "48014": "299435872340778",
+          "48015": "20580000000000",
+          "48016": "104211557910000"
+        },
+        "sum": "424227430250778"
+      },
+      "volumes": {
+        "first": "48014",
+        "last": "48016",
+        "saved": {
+          "48014": "14488833",
+          "48015": "1000000",
+          "48016": "5051457"
+        },
+        "sum": "20540290"
+      }
+    },
+    "want_key": "REP-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-exprukkbxD4rqiYFhFNSkLHfyEfbVEMirvDS9naHRjGKbzPsREJfmc",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "2849968"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52641"
+              },
+              {
+                "int": "52643"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52641"
+                    },
+                    {
+                      "int": "19174782629580000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52642"
+                    },
+                    {
+                      "int": "100862424000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52643"
+                    },
+                    {
+                      "int": "545631072000000"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "19821276125580000"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52641"
+          },
+          {
+            "int": "52643"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52641"
+            },
+            {
+              "int": "6727130000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52642"
+            },
+            {
+              "int": "35460000"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52643"
+            },
+            {
+              "int": "192320000"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "6954910000"
+      }
+    ],
+    "key": {
+      "string": "XTZ-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008d070700b0f2db020080b3a68e0c0707070700a1b60600a3b6060707020000002c070400a1b60600a0b3c0b49fd78f44070400a2b606008098a1cffbee2d070400a3b6060080e0cca3f48ff80100a0abaea78fd6b546070700a1b60600a3b6060200000023070400a1b6060090eebe8f32070400a2b60600a0cee821070400a3b6060080c8b4b70100b084dce833",
+    "key_hex": "010000000758545a2d555344",
+    "want_value": {
+      "computedPrice": "2849968",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52641",
+        "last": "52643",
+        "saved": {
+          "52641": "19174782629580000",
+          "52642": "100862424000000",
+          "52643": "545631072000000"
+        },
+        "sum": "19821276125580000"
+      },
+      "volumes": {
+        "first": "52641",
+        "last": "52643",
+        "saved": {
+          "52641": "6727130000",
+          "52642": "35460000",
+          "52643": "192320000"
+        },
+        "sum": "6954910000"
+      }
+    },
+    "want_key": "XTZ-USD"
+  },
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ-1542-expruhMtUwed1qV2jRCfgdaoVLF4eHWcnE12jhYbqibWLCUeNjKBaH",
+    "type": {
+      "annots": [
+        "%assetMap"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%computedPrice"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%lastUpdateTime"
+                  ],
+                  "prim": "timestamp"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%prices"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                },
+                {
+                  "annots": [
+                    "%volumes"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%first"
+                          ],
+                          "prim": "int"
+                        },
+                        {
+                          "annots": [
+                            "%last"
+                          ],
+                          "prim": "int"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%saved"
+                          ],
+                          "args": [
+                            {
+                              "prim": "int"
+                            },
+                            {
+                              "prim": "nat"
+                            }
+                          ],
+                          "prim": "map"
+                        },
+                        {
+                          "annots": [
+                            "%sum"
+                          ],
+                          "prim": "nat"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "int": "713085"
+          },
+          {
+            "int": "1625607360"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "args": [
+              {
+                "int": "52533"
+              },
+              {
+                "int": "52535"
+              }
+            ],
+            "prim": "Pair"
+          },
+          {
+            "args": [
+              [
+                {
+                  "args": [
+                    {
+                      "int": "52533"
+                    },
+                    {
+                      "int": "37034027665070"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52534"
+                    },
+                    {
+                      "int": "1145773243760380"
+                    }
+                  ],
+                  "prim": "Elt"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "52535"
+                    },
+                    {
+                      "int": "2010770816666450"
+                    }
+                  ],
+                  "prim": "Elt"
+                }
+              ],
+              {
+                "int": "3193578088091900"
+              }
+            ],
+            "prim": "Pair"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "args": [
+          {
+            "int": "52533"
+          },
+          {
+            "int": "52535"
+          }
+        ],
+        "prim": "Pair"
+      },
+      [
+        {
+          "args": [
+            {
+              "int": "52533"
+            },
+            {
+              "int": "51871510"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52534"
+            },
+            {
+              "int": "1604486230"
+            }
+          ],
+          "prim": "Elt"
+        },
+        {
+          "args": [
+            {
+              "int": "52535"
+            },
+            {
+              "int": "2822178050"
+            }
+          ],
+          "prim": "Elt"
+        }
+      ],
+      {
+        "int": "4478535790"
+      }
+    ],
+    "key": {
+      "string": "ZRX-USD"
+    },
+    "type_hex": "086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d6170",
+    "value_hex": "020000008c070700bd85570080b3a68e0c0707070700b5b40600b7b4060707020000002c070400b5b40600ae9a8281d5eb10070400b6b40600bcfbfff2e3848904070400b7b4060092ad8484a2b2920700bcc386f8daa2ac0b070700b5b40600b7b4060200000023070400b5b4060096fcbb31070400b6b40600969194fa0b070400b7b406008294b8831500aea188af21",
+    "key_hex": "01000000075a52582d555344",
+    "want_value": {
+      "computedPrice": "713085",
+      "lastUpdateTime": "2021-07-06T21:36:00Z",
+      "prices": {
+        "first": "52533",
+        "last": "52535",
+        "saved": {
+          "52533": "37034027665070",
+          "52534": "1145773243760380",
+          "52535": "2010770816666450"
+        },
+        "sum": "3193578088091900"
+      },
+      "volumes": {
+        "first": "52533",
+        "last": "52535",
+        "saved": {
+          "52533": "51871510",
+          "52534": "1604486230",
+          "52535": "2822178050"
+        },
+        "sum": "4478535790"
+      }
+    },
+    "want_key": "ZRX-USD"
+  }
+]

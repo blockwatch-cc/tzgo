@@ -160,9 +160,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			stack.Push(unfolded...)
 			val = stack.Pop()
 		} else {
-			// fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscal=%t islambda=%t waspack=%t iscont=%t len=%d %s/%s\n",
-			// 	lvl, label, val.CanUnfold(typ), val.IsSequence(), typ.IsScalarType(), val.LooksLikeLambda(), val.WasPacked,
-			// 	val.LooksLikeContainer(), len(val.Args), val.Args[0].OpCode, val.Args[0].Type)
+			// if len(val.Args) > 0 {
+			// 	fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscal=%t islambda=%t waspack=%t iscont=%t len=%d %s/%s\n",
+			// 		lvl, label, val.CanUnfold(typ), val.IsSequence(), typ.IsScalarType(), val.LooksLikeLambda(), val.WasPacked,
+			// 		val.LooksLikeContainer(), len(val.Args), val.Args[0].OpCode, val.Args[0].Type)
+			// }
 			break
 		}
 	}
@@ -191,8 +193,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		typ.Anno = labels
 	}
 
-	// make sure value we're going to process actually matches next type
-	// we accept pairs which will be recursively unfolded
+	// make sure value + type we're going to process actually match up
+	// accept any kind of pairs which will be recursively unfolded
 	if !typ.IsPair() && !val.matchOpCode(typ.OpCode) {
 		return fmt.Errorf("micheline: type mismatch: type[%s]=%s value[%s/%d]=%s",
 			typ.OpCode, typ.DumpLimit(512), val.Type, val.OpCode, val.DumpLimit(512))
@@ -407,7 +409,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				m[label] = mm
 			}
 		default:
-			return fmt.Errorf("micheline: unexpected T_OPTION code %s [%s]", val.OpCode, val.OpCode)
+			return fmt.Errorf("micheline: unexpected T_OPTION code %s [%s]: %s", val.OpCode, val.OpCode, val.Dump())
 		}
 
 	case T_OR:
@@ -568,13 +570,29 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 	default:
 		switch p.OpCode {
 		case D_PAIR:
-			mismatch = oc != T_PAIR && oc != T_OR && oc != T_LIST && oc != T_OPTION && oc != T_TICKET
+			switch oc {
+			case T_PAIR, T_OR, T_LIST, T_OPTION, T_TICKET:
+			default:
+				mismatch = true
+			}
 		case D_SOME, D_NONE:
-			mismatch = oc != T_OPTION
+			switch oc {
+			case T_OPTION:
+			default:
+				mismatch = true
+			}
 		case D_UNIT:
-			mismatch = oc != T_UNIT && oc != K_PARAMETER
+			switch oc {
+			case T_UNIT, K_PARAMETER:
+			default:
+				mismatch = true
+			}
 		case D_LEFT, D_RIGHT:
-			mismatch = oc != T_OR
+			switch oc {
+			case T_OR:
+			default:
+				mismatch = true
+			}
 		}
 	}
 

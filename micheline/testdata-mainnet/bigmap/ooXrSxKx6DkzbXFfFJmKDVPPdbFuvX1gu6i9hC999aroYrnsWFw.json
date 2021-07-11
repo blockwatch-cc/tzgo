@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Mainnet/ooXrSxKx6DkzbXFfFJmKDVPPdbFuvX1gu6i9hC999aroYrnsWFw/0/0/0-6543",
+    "type": {
+      "annots": [
+        "%known_handles_hash"
+      ],
+      "args": [
+        {
+          "prim": "bytes"
+        },
+        {
+          "prim": "unit"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "prim": "Unit"
+    },
+    "key": {
+      "bytes": "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"
+    },
+    "type_hex": "08610369036c00000013256b6e6f776e5f68616e646c65735f68617368",
+    "value_hex": "030b",
+    "key_hex": "0a000000200e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8",
+    "want_value": null,
+    "want_key": "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"
+  }
+]

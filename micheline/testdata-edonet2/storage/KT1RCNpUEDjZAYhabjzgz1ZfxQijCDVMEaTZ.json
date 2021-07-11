@@ -1,0 +1,256 @@
+[
+  {
+    "name": "Edonet2/KT1RCNpUEDjZAYhabjzgz1ZfxQijCDVMEaTZ",
+    "type": {
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%assetCodes"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                }
+              ],
+              "prim": "list"
+            },
+            {
+              "annots": [
+                "%assetMap"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%computedPrice"
+                          ],
+                          "prim": "nat"
+                        },
+                        {
+                          "annots": [
+                            "%lastUpdateTime"
+                          ],
+                          "prim": "timestamp"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "args": [
+                        {
+                          "annots": [
+                            "%prices"
+                          ],
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%first"
+                                  ],
+                                  "prim": "int"
+                                },
+                                {
+                                  "annots": [
+                                    "%last"
+                                  ],
+                                  "prim": "int"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%saved"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "int"
+                                    },
+                                    {
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "map"
+                                },
+                                {
+                                  "annots": [
+                                    "%sum"
+                                  ],
+                                  "prim": "nat"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        },
+                        {
+                          "annots": [
+                            "%volumes"
+                          ],
+                          "args": [
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%first"
+                                  ],
+                                  "prim": "int"
+                                },
+                                {
+                                  "annots": [
+                                    "%last"
+                                  ],
+                                  "prim": "int"
+                                }
+                              ],
+                              "prim": "pair"
+                            },
+                            {
+                              "args": [
+                                {
+                                  "annots": [
+                                    "%saved"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "int"
+                                    },
+                                    {
+                                      "prim": "nat"
+                                    }
+                                  ],
+                                  "prim": "map"
+                                },
+                                {
+                                  "annots": [
+                                    "%sum"
+                                  ],
+                                  "prim": "nat"
+                                }
+                              ],
+                              "prim": "pair"
+                            }
+                          ],
+                          "prim": "pair"
+                        }
+                      ],
+                      "prim": "pair"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "big_map"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%numDataPoints"
+              ],
+              "prim": "int"
+            },
+            {
+              "annots": [
+                "%oracleContract"
+              ],
+              "prim": "address"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            [
+              {
+                "string": "BAT-USDC"
+              },
+              {
+                "string": "BTC-USD"
+              },
+              {
+                "string": "COMP-USD"
+              },
+              {
+                "string": "DAI-USDC"
+              },
+              {
+                "string": "ETH-USD"
+              },
+              {
+                "string": "KNC-USD"
+              },
+              {
+                "string": "LINK-USD"
+              },
+              {
+                "string": "REP-USD"
+              },
+              {
+                "string": "XTZ-USD"
+              },
+              {
+                "string": "ZRX-USD"
+              }
+            ],
+            {
+              "int": "1542"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "int": "3"
+            },
+            {
+              "bytes": "0130b1cde323e1fd20039cc30da51e1f41f7f6abd300"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "07650765065f03680000000b256173736574436f646573086103680765076504620000000e25636f6d70757465645072696365046b0000000f256c61737455706461746554696d65076508650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d000000072570726963657308650765045b00000006256669727374045b00000005256c61737407650860035b0362000000062573617665640462000000042573756d0000000825766f6c756d6573000000092561737365744d61700765045b0000000e256e756d44617461506f696e7473046e0000000f256f7261636c65436f6e7472616374",
+    "value_hex": "07070707020000007c01000000084241542d5553444301000000074254432d5553440100000008434f4d502d55534401000000084441492d5553444301000000074554482d55534401000000074b4e432d55534401000000084c494e4b2d55534401000000075245502d555344010000000758545a2d55534401000000075a52582d555344008618070700030a000000160130b1cde323e1fd20039cc30da51e1f41f7f6abd300",
+    "want_value": {
+      "assetCodes": [
+        "BAT-USDC",
+        "BTC-USD",
+        "COMP-USD",
+        "DAI-USDC",
+        "ETH-USD",
+        "KNC-USD",
+        "LINK-USD",
+        "REP-USD",
+        "XTZ-USD",
+        "ZRX-USD"
+      ],
+      "assetMap": "1542",
+      "numDataPoints": "3",
+      "oracleContract": "KT1D2F12dbneCAJUXDxzYgoZu8gb5Mjf618m"
+    }
+  }
+]

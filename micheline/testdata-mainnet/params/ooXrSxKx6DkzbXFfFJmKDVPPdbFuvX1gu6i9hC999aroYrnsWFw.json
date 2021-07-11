@@ -1,0 +1,206 @@
+[
+  {
+    "name": "Mainnet/ooXrSxKx6DkzbXFfFJmKDVPPdbFuvX1gu6i9hC999aroYrnsWFw/0/0",
+    "type": {
+      "annots": [
+        "%update_root_hash"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%block_hash"
+                  ],
+                  "prim": "bytes"
+                },
+                {
+                  "annots": [
+                    "%block_height"
+                  ],
+                  "prim": "int"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%block_payload_hash"
+                  ],
+                  "prim": "bytes"
+                },
+                {
+                  "annots": [
+                    "%handles_hash"
+                  ],
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%signatures"
+                  ],
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "prim": "signature"
+                        }
+                      ],
+                      "prim": "option"
+                    }
+                  ],
+                  "prim": "list"
+                },
+                {
+                  "annots": [
+                    "%state_hash"
+                  ],
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "annots": [
+                "%validators"
+              ],
+              "args": [
+                {
+                  "prim": "key"
+                }
+              ],
+              "prim": "list"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "args": [
+                {
+                  "bytes": "761cf18d3c02680c2c20f7e59f94f78caabf53b1159c6c133b5e2f555dd4f32f"
+                },
+                {
+                  "int": "12662"
+                }
+              ],
+              "prim": "Pair"
+            },
+            {
+              "args": [
+                {
+                  "bytes": "7ff69809c537d49a331384d8c2769ae09a9ed05916c28531458e36d2bd0b9597"
+                },
+                {
+                  "bytes": "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"
+                }
+              ],
+              "prim": "Pair"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "args": [
+                [
+                  {
+                    "args": [
+                      {
+                        "string": "edsigtt15okG9b9Y5QmwoEHNZaTqjwM5QYrQSQZBHeMbGLLoRbx2PX5oKFXFR3UM88SmMsVDXcGfkqt67XrKMtMzs7uYAWfAjJr"
+                      }
+                    ],
+                    "prim": "Some"
+                  },
+                  {
+                    "prim": "None"
+                  },
+                  {
+                    "args": [
+                      {
+                        "string": "edsigtfyfwBWi4tf5kWx3UTLHDRtKPu13UEhhHT13QgPD9AcPzFi4GgZ5xZYcHuEnW3pa12AV6enBphUGRWzYtzy8rT52HbQ3w1"
+                      }
+                    ],
+                    "prim": "Some"
+                  },
+                  {
+                    "args": [
+                      {
+                        "string": "edsigthkJ3oj5NZoLQR8VrcEY7BfaZskEXCpUK3c2Pw2pF5HXVzFAozgGWpSQm1qYeks2bz24Nc47PY9s8jzNLyhnNNbq79QmqQ"
+                      }
+                    ],
+                    "prim": "Some"
+                  }
+                ],
+                {
+                  "bytes": "ad4456c11a2cd05526f59bb3db4767c85c4525171713a39b3fcc3c6c1375104f"
+                }
+              ],
+              "prim": "Pair"
+            },
+            [
+              {
+                "string": "edpkvQuAn9BeaDQLzudrPL2zigNRQSmFvKJ7xWN1QmjDjQHj3dBrEZ"
+              },
+              {
+                "string": "edpkvE3Ysq17HFzBBSQeAX87RE3smYZf1rHHpKu1LJdaFAhW8G7SNu"
+              },
+              {
+                "string": "edpktq5HiqUkHTyoBQETvzbyaiwtKQkaBEPkwgZyfMqhRajRuLpWR7"
+              },
+              {
+                "string": "edpkuNpThN8QeagEdvjN3o5R7PSic85cwiXHa61vNpRAE65FNV5mJH"
+              }
+            ]
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "08650765076504690000000b25626c6f636b5f68617368045b0000000d25626c6f636b5f686569676874076504690000001325626c6f636b5f7061796c6f61645f6861736804690000000d2568616e646c65735f6861736807650765065f056303670000000b257369676e61747572657304690000000b2573746174655f68617368065f035c0000000b2576616c696461746f727300000011257570646174655f726f6f745f68617368",
+    "value_hex": "0707070707070a00000020761cf18d3c02680c2c20f7e59f94f78caabf53b1159c6c133b5e2f555dd4f32f00b6c50107070a000000207ff69809c537d49a331384d8c2769ae09a9ed05916c28531458e36d2bd0b95970a000000200e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8070707070200000140050901000000636564736967747431356f6b473962395935516d776f45484e5a6154716a774d355159725153515a4248654d62474c4c6f526278325058356f4b4658465233554d3838536d4d735644586347666b7174363758724b4d744d7a73377559415766416a4a7203060509010000006365647369677466796677425769347466356b57783355544c484452744b50753133554568684854313351675044394163507a46693447675a35785a59634875456e573370613132415636656e427068554752577a59747a79387254353248625133773105090100000063656473696774686b4a336f6a354e5a6f4c5152385672634559374266615a736b45584370554b3363325077327046354858567a46416f7a6747577053516d317159656b7332627a32344e63343750593973386a7a4e4c79686e4e4e62713739516d71510a00000020ad4456c11a2cd05526f59bb3db4767c85c4525171713a39b3fcc3c6c1375104f02000000ec01000000366564706b765175416e3942656144514c7a756472504c327a69674e5251536d46764b4a3778574e31516d6a446a51486a33644272455a01000000366564706b764533597371313748467a424253516541583837524533736d595a6631724848704b75314c4a646146416857384737534e7501000000366564706b747135486971556b4854796f42514554767a6279616977744b516b614245506b77675a79664d716852616a52754c7057523701000000366564706b754e7054684e38516561674564766a4e336f3552375053696338356377695848613631764e705241453635464e56356d4a48",
+    "want_value": {
+      "update_root_hash": {
+        "block_hash": "761cf18d3c02680c2c20f7e59f94f78caabf53b1159c6c133b5e2f555dd4f32f",
+        "block_height": "12662",
+        "block_payload_hash": "7ff69809c537d49a331384d8c2769ae09a9ed05916c28531458e36d2bd0b9597",
+        "handles_hash": "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8",
+        "signatures": [
+          "edsigtt15okG9b9Y5QmwoEHNZaTqjwM5QYrQSQZBHeMbGLLoRbx2PX5oKFXFR3UM88SmMsVDXcGfkqt67XrKMtMzs7uYAWfAjJr",
+          null,
+          "edsigtfyfwBWi4tf5kWx3UTLHDRtKPu13UEhhHT13QgPD9AcPzFi4GgZ5xZYcHuEnW3pa12AV6enBphUGRWzYtzy8rT52HbQ3w1",
+          "edsigthkJ3oj5NZoLQR8VrcEY7BfaZskEXCpUK3c2Pw2pF5HXVzFAozgGWpSQm1qYeks2bz24Nc47PY9s8jzNLyhnNNbq79QmqQ"
+        ],
+        "state_hash": "ad4456c11a2cd05526f59bb3db4767c85c4525171713a39b3fcc3c6c1375104f",
+        "validators": [
+          "edpkvQuAn9BeaDQLzudrPL2zigNRQSmFvKJ7xWN1QmjDjQHj3dBrEZ",
+          "edpkvE3Ysq17HFzBBSQeAX87RE3smYZf1rHHpKu1LJdaFAhW8G7SNu",
+          "edpktq5HiqUkHTyoBQETvzbyaiwtKQkaBEPkwgZyfMqhRajRuLpWR7",
+          "edpkuNpThN8QeagEdvjN3o5R7PSic85cwiXHa61vNpRAE65FNV5mJH"
+        ]
+      }
+    }
+  }
+]

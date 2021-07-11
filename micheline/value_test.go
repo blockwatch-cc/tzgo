@@ -44,7 +44,7 @@ type testcase struct {
 
 func TestMain(m *testing.M) {
 	// call flag.Parse() here if TestMain uses flags
-	flag.StringVar(&testmask, "contract", "", "limit test to `contract`")
+	flag.StringVar(&testmask, "only", "", "limit test to contract or op")
 	flag.Parse()
 	os.Exit(m.Run())
 }

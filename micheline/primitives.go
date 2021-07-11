@@ -392,6 +392,12 @@ func (p Prim) IsContainerType() bool {
 func (p Prim) CanUnfold(typ Type) bool {
 	// regular pairs (works for type and value trees)
 	if p.IsPair() {
+		// none of the children must be a list container
+		for _, v := range p.Args {
+			if v.IsSequence() && !v.LooksLikeLambda() {
+				return false
+			}
+		}
 		return true
 	}
 
