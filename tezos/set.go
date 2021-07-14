@@ -66,10 +66,10 @@ func (s AddressSet) Map() map[uint64]Address {
 }
 
 func (s AddressSet) Slice() []Address {
-	if len(s) == 0 {
+	if len(s.set) == 0 {
 		return nil
 	}
-	a := make([]Address, 0, len(s))
+	a := make([]Address, 0, len(s.set))
 	for _, v := range s.Map() {
 		a = append(a, v)
 	}
