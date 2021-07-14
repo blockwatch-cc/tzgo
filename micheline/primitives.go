@@ -348,6 +348,10 @@ func (p Prim) IsNil() bool {
 	return false
 }
 
+func (p Prim) IsEmptyBigmap() bool {
+	return p.OpCode == I_EMPTY_BIG_MAP
+}
+
 func (p Prim) IsScalarType() bool {
 	switch p.OpCode {
 	case T_BOOL,

@@ -43,6 +43,7 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if isASCII(key.String) {
 			k.StringKey = key.String
 		} else {
+			// k.Type.OpCode = T_BYTES
 			key.Bytes = []byte(key.String)
 		}
 		// convert empty and non-ascii strings to bytes
@@ -115,7 +116,7 @@ func NewKey(typ Type, key Prim) (Key, error) {
 			}
 			k.SignatureKey = sk
 		}
-	case T_PAIR, T_OPTION, T_OR, T_CHAIN_ID, T_UNIT:
+	case T_PAIR, T_OPTION, T_OR, T_CHAIN_ID, T_UNIT, T_OPERATION:
 		k.PrimKey = key
 		// build type details when missing
 		if len(k.Type.Args) == 0 {
