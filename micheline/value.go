@@ -15,9 +15,10 @@ import (
 )
 
 const (
-	EMPTY_LABEL      = `@%%@` // illegal Michelson annotation value
-	RENDER_TYPE_PRIM = 0      // silently output primitive tree instead if human-readable
-	RENDER_TYPE_FAIL = 1      // return error if human-readable formatting fails
+	EMPTY_LABEL       = `@%%@` // illegal Michelson annotation value
+	RENDER_TYPE_PRIM  = 0      // silently output primitive tree instead if human-readable
+	RENDER_TYPE_FAIL  = 1      // return error if human-readable formatting fails
+	RENDER_TYPE_PANIC = 2      // panic with error if human-readable formatting fails
 )
 
 type Value struct {
@@ -130,12 +131,15 @@ func (e Value) MarshalJSON() ([]byte, error) {
 		// FIXME: this is a good place to plug in an error reporting facility
 		buf, _ := json.Marshal(resp)
 
-		if e.Render == RENDER_TYPE_PRIM {
+		switch e.Render {
+		default:
 			log.Errorf("RENDER: %s", string(buf))
 			// render the plain prim tree
 			return json.Marshal(e.Value)
-		} else {
+		case RENDER_TYPE_FAIL:
 			return buf, err
+		case RENDER_TYPE_PANIC:
+			panic(err)
 		}
 	}
 
