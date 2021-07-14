@@ -14,11 +14,16 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-const EMPTY_LABEL = `@%%@` // illegal Michelson annotation value
+const (
+	EMPTY_LABEL      = `@%%@` // illegal Michelson annotation value
+	RENDER_TYPE_PRIM = 0      // silently output primitive tree instead if human-readable
+	RENDER_TYPE_FAIL = 1      // return error if human-readable formatting fails
+)
 
 type Value struct {
 	Type   Type
 	Value  Prim
+	Render int
 	mapped interface{}
 }
 
@@ -124,10 +129,14 @@ func (e Value) MarshalJSON() ([]byte, error) {
 		}
 		// FIXME: this is a good place to plug in an error reporting facility
 		buf, _ := json.Marshal(resp)
-		log.Errorf("RENDER: %s", string(buf))
 
-		// render the plain prim tree
-		return json.Marshal(e.Value)
+		if e.Render == RENDER_TYPE_PRIM {
+			log.Errorf("RENDER: %s", string(buf))
+			// render the plain prim tree
+			return json.Marshal(e.Value)
+		} else {
+			return buf, err
+		}
 	}
 
 	return json.Marshal(m)
