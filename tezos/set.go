@@ -16,7 +16,10 @@ func NewAddressSet(addrs ...Address) *AddressSet {
 		set: make(map[uint64]Address),
 	}
 	for _, v := range addrs {
-		set.Add(v)
+		if !v.IsValid() {
+			continue
+		}
+		set.AddUnique(v)
 	}
 	return set
 }
@@ -58,6 +61,17 @@ func (s *AddressSet) Len() int {
 	return len(s.set)
 }
 
-func (s *AddressSet) Map() map[uint64]Address {
+func (s AddressSet) Map() map[uint64]Address {
 	return s.set
+}
+
+func (s AddressSet) Slice() []Address {
+	if len(s) == 0 {
+		return nil
+	}
+	a := make([]Address, 0, len(s))
+	for _, v := range s.Map() {
+		a = append(a, v)
+	}
+	return a
 }
