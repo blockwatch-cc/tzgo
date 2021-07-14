@@ -50,12 +50,12 @@ func (e Entrypoints) FindId(id int) (Entrypoint, bool) {
 	return Entrypoint{}, false
 }
 
-func (s *Script) Entrypoints(withPrim bool) (Entrypoints, error) {
+func (t Type) Entrypoints(withPrim bool) (Entrypoints, error) {
 	e := make(Entrypoints)
-	if s == nil || len(s.Code.Param.Args) == 0 {
+	if !t.IsValid() {
 		return e, nil
 	}
-	if err := listEntrypoints(e, "", s.Code.Param.Args[0]); err != nil {
+	if err := listEntrypoints(e, "", t.Prim); err != nil {
 		return nil, err
 	}
 	if !withPrim {
@@ -68,11 +68,11 @@ func (s *Script) Entrypoints(withPrim bool) (Entrypoints, error) {
 }
 
 // returns path to named entrypoint
-func (s *Script) SearchEntrypointName(name string) string {
-	if s == nil || len(s.Code.Param.Args) == 0 {
+func (t Type) SearchEntrypointName(name string) string {
+	if !t.IsValid() {
 		return ""
 	}
-	return searchEntrypointName(name, "", s.Code.Param.Args[0])
+	return searchEntrypointName(name, "", t.Prim)
 }
 
 func searchEntrypointName(name, branch string, node Prim) string {

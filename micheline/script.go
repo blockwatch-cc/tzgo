@@ -40,6 +40,18 @@ func (s *Script) StorageType() Type {
 	return Type{s.Code.Storage.Args[0]}
 }
 
+func (s *Script) ParamType() Type {
+	return Type{s.Code.Param.Args[0]}
+}
+
+func (s *Script) Entrypoints(withPrim bool) (Entrypoints, error) {
+	return s.ParamType().Entrypoints(withPrim)
+}
+
+func (s *Script) SearchEntrypointName(name string) string {
+	return s.ParamType().SearchEntrypointName(name)
+}
+
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded parameter type
 // definition. This value is sufficiently unique to identify contracts with exactly
 // the same entrypoints including annotations.
