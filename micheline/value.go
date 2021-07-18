@@ -167,14 +167,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	// This helps resolve ambiguities in value trees.
 	//
 	for {
-		if lvl > 0 && !val.WasPacked && !val.LooksLikeLambda() && (val.CanUnfold(typ) || (val.IsSequence() && typ.IsScalarType())) {
-			// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
+		if lvl > 0 && !typ.IsPair() && !val.WasPacked && !val.LooksLikeLambda() && (val.CanUnfold(typ) || (val.IsSequence() && typ.IsScalarType())) {
+			// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump(), typ.Dump())
 			unfolded := val.UnfoldPair(typ)
 			stack.Push(unfolded...)
 			val = stack.Pop()
 		} else {
 			// if len(val.Args) > 0 {
-			// 	fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscal=%t islambda=%t waspack=%t iscont=%t len=%d %s/%s\n",
+			// 	fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscalar=%t islambda=%t waspacked=%t iscontainer=%t len=%d %s/%s\n",
 			// 		lvl, label, val.CanUnfold(typ), val.IsSequence(), typ.IsScalarType(), val.LooksLikeLambda(), val.WasPacked,
 			// 		val.LooksLikeContainer(), len(val.Args), val.Args[0].OpCode, val.Args[0].Type)
 			// }
@@ -378,7 +378,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		if val.IsPair() {
 			// unfold regular pair
 			unfolded := val.UnfoldPair(typ)
-			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), seq(unfolded...).Dump())
+			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump())
 			stack.Push(unfolded...)
 		} else if val.CanUnfold(typ) {
 			// comb pair

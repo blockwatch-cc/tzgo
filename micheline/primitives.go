@@ -396,12 +396,6 @@ func (p Prim) IsContainerType() bool {
 func (p Prim) CanUnfold(typ Type) bool {
 	// regular pairs (works for type and value trees)
 	if p.IsPair() {
-		// none of the children must be a list container
-		for _, v := range p.Args {
-			if v.IsSequence() && !v.LooksLikeLambda() {
-				return false
-			}
-		}
 		return true
 	}
 
@@ -452,7 +446,7 @@ func (p Prim) LooksLikeContainer() bool {
 	}
 
 	// contains Elt's
-	if p.Args[0].IsElt() {
+	if p.Args[0].IsElt() && p.Args[len(p.Args)-1].IsElt() {
 		return true
 	}
 
@@ -470,7 +464,12 @@ func (p Prim) LooksLikeContainer() bool {
 	oc := p.Args[0].OpCode
 	typ := p.Args[0].Type
 	for _, v := range p.Args[1:] {
-		if v.OpCode != oc || v.Type != typ || v.IsSequence() {
+		isSame := v.OpCode == oc && v.Type == typ && !v.IsSequence()
+		switch v.OpCode {
+		case D_SOME, D_NONE, D_FALSE, D_TRUE, D_LEFT, D_RIGHT:
+			isSame = oc.TypeCode() == v.OpCode.TypeCode()
+		}
+		if !isSame {
 			return false
 		}
 	}
