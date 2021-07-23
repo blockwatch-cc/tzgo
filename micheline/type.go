@@ -145,7 +145,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 		}
 
 	case T_PAIR:
-		typs := typ.UnfoldPair(Type{typ})
+		typs := typ.UnfoldPairRecursive(Type{typ})
 		td.Type = TypeStruct
 		td.Args = make([]Typedef, len(typs))
 		for i, v := range typs {

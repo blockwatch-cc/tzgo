@@ -1,0 +1,176 @@
+[
+  {
+    "name": "Edonet2/op6PAMpJUeq2guCyQ4cAZpneRgKQVvkBatncCEuLEz5PagjzRLW/1/0",
+    "type": {
+      "annots": [
+        "%mint_OBJKT"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%address"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                "%amount"
+              ],
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "annots": [
+            "%metadata"
+          ],
+          "prim": "bytes"
+        },
+        {
+          "annots": [
+            "%royalties"
+          ],
+          "prim": "nat"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "string": "tz1cScvFuYSJDWphegYkzah4km5L71Xr5rFh"
+            },
+            {
+              "int": "2"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "bytes": "697066733a2f2f516d5875587972423656616f55646f337a7a65616e68374464786934484256627933433677397464484e37656d53"
+            },
+            {
+              "int": "150"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "09650000003c0765046e00000008256164647265737304620000000725616d6f756e74046900000009256d6574616461746104620000000a25726f79616c746965730000000b256d696e745f4f424a4b54",
+    "value_hex": "070707070100000024747a3163536376467559534a445770686567596b7a6168346b6d354c3731587235724668000207070a00000035697066733a2f2f516d5875587972423656616f55646f337a7a65616e68374464786934484256627933433677397464484e37656d53009602",
+    "want_value": {
+      "mint_OBJKT": {
+        "address": "tz1cScvFuYSJDWphegYkzah4km5L71Xr5rFh",
+        "amount": "2",
+        "metadata": "ipfs://QmXuXyrB6VaoUdo3zzeanh7Ddxi4HBVby3C6w9tdHN7emS",
+        "royalties": "150"
+      }
+    }
+  },
+  {
+    "name": "Edonet2/op6PAMpJUeq2guCyQ4cAZpneRgKQVvkBatncCEuLEz5PagjzRLW/1/0",
+    "type": {
+      "annots": [
+        "%mint"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%address"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                "%amount"
+              ],
+              "prim": "nat"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "annots": [
+            "%token_id"
+          ],
+          "prim": "nat"
+        },
+        {
+          "annots": [
+            "%token_info"
+          ],
+          "args": [
+            {
+              "prim": "string"
+            },
+            {
+              "prim": "bytes"
+            }
+          ],
+          "prim": "map"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            {
+              "bytes": "0000b851b7b7e03e8488c773df195127dc89f3e363b0"
+            },
+            {
+              "int": "2"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            {
+              "int": "4"
+            },
+            [
+              {
+                "args": [
+                  {
+                    "string": ""
+                  },
+                  {
+                    "bytes": "697066733a2f2f516d5875587972423656616f55646f337a7a65616e68374464786934484256627933433677397464484e37656d53"
+                  }
+                ],
+                "prim": "Elt"
+              }
+            ]
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "0965000000410765046e00000008256164647265737304620000000725616d6f756e7404620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f00000005256d696e74",
+    "value_hex": "070707070a000000160000b851b7b7e03e8488c773df195127dc89f3e363b00002070700040200000041070401000000000a00000035697066733a2f2f516d5875587972423656616f55646f337a7a65616e68374464786934484256627933433677397464484e37656d53",
+    "want_value": {
+      "mint": {
+        "address": "tz1cScvFuYSJDWphegYkzah4km5L71Xr5rFh",
+        "amount": "2",
+        "token_id": "4",
+        "token_info": {
+          "": "ipfs://QmXuXyrB6VaoUdo3zzeanh7Ddxi4HBVby3C6w9tdHN7emS"
+        }
+      }
+    }
+  }
+]

@@ -458,22 +458,41 @@ func (p Prim) LooksLikeContainer() bool {
 		}
 	}
 
-	// all elements have the same prim type and opcode
-	// Note this mis-detects same-type records and ambiguous types
-	// like PrimInt (int, nat, timestamp, mutez), PrimString and PrimBytes
+	// contains similar records
+	if !p.HasSimilarChildTypes() {
+		return false
+	}
+
+	return true
+}
+
+// Checks if all children have the same type by generating a type tree from
+// values. Can be used to identfy containers based on the existence of similar
+// records.
+//
+// Works for simple and nested primitives but may mis-detect ambiguous
+// simple types like PrimInt (used for int, nat, timestamp, mutez), or PrimString
+// resp. PrimBytes. May also misdetect when optional types like T_OR, T_OPTION are
+// used and their values are nil since we cannot detect embedded type here.
+func (p Prim) HasSimilarChildTypes() bool {
+	if len(p.Args) == 0 {
+		return true
+	}
 	oc := p.Args[0].OpCode
 	typ := p.Args[0].Type
+	firstType := p.Args[0].BuildType()
 	for _, v := range p.Args[1:] {
 		isSame := v.OpCode == oc && v.Type == typ && !v.IsSequence()
 		switch v.OpCode {
 		case D_SOME, D_NONE, D_FALSE, D_TRUE, D_LEFT, D_RIGHT:
 			isSame = oc.TypeCode() == v.OpCode.TypeCode()
+		default:
+			isSame = firstType.IsEqual(v.BuildType())
 		}
 		if !isSame {
 			return false
 		}
 	}
-
 	return true
 }
 
@@ -484,7 +503,7 @@ func (p Prim) LooksLikeMap() bool {
 	}
 
 	// contents must be Elt
-	return p.Args[0].IsElt()
+	return p.Args[0].IsElt() && p.Args[len(p.Args)-1].IsElt()
 }
 
 func (p Prim) LooksLikeSet() bool {
@@ -493,16 +512,11 @@ func (p Prim) LooksLikeSet() bool {
 		return false
 	}
 
-	// all elements have the same prim type and opcode
-	// Note this mis-detects same-type records and ambiguous types
-	// like PrimInt (int, nat, timestamp, mutez), PrimString and PrimBytes
-	oc := p.Args[0].OpCode
-	typ := p.Args[0].Type
-	for _, v := range p.Args[1:] {
-		if v.OpCode != oc || v.Type != typ {
-			return false
-		}
+	// contains similar records
+	if !p.HasSimilarChildTypes() {
+		return false
 	}
+
 	return true
 }
 
@@ -539,6 +553,23 @@ func (p Prim) LooksLikeLambda() bool {
 // - When called on already converted comb sequences this function is a noop.
 //
 func (p Prim) UnfoldPair(typ Type) []Prim {
+	flat := make([]Prim, 0)
+	for i, v := range p.Args {
+		t := Type{}
+		if len(typ.Args) > i {
+			t = Type{typ.Args[i]}
+		}
+		if !v.WasPacked && v.CanUnfold(t) && !t.HasAnno() {
+			// flat = append(flat, v.UnfoldPair(t)...)
+			flat = append(flat, v.Args...)
+		} else {
+			flat = append(flat, v)
+		}
+	}
+	return flat
+}
+
+func (p Prim) UnfoldPairRecursive(typ Type) []Prim {
 	flat := make([]Prim, 0)
 	for i, v := range p.Args {
 		t := Type{}

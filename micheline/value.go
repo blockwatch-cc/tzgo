@@ -30,8 +30,9 @@ type Value struct {
 
 func NewValue(typ Type, val Prim) Value {
 	return Value{
-		Type:  typ.Clone(),
-		Value: val.Clone(),
+		Type:   typ.Clone(),
+		Value:  val.Clone(),
+		Render: RENDER_TYPE_PANIC,
 	}
 }
 
@@ -61,8 +62,9 @@ func (v Value) Unpack() (Value, error) {
 		return v, err
 	}
 	vv := Value{
-		Type:  v.Type.Clone(),
-		Value: up,
+		Type:   v.Type.Clone(),
+		Value:  up,
+		Render: v.Render,
 	}
 	return vv, nil
 }
@@ -76,8 +78,9 @@ func (v Value) UnpackAll() (Value, error) {
 		return v, err
 	}
 	vv := Value{
-		Type:  v.Type.Clone(),
-		Value: up,
+		Type:   v.Type.Clone(),
+		Value:  up,
+		Render: v.Render,
 	}
 	return vv, nil
 }
@@ -155,33 +158,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	// take next value from stack
 	val := stack.Pop()
 
-	// Unwrap pairs and pair-like values unless they are containers and push them
-	// onto the existing value stack. Skip all values that
-	//
-	// - are at the top-level of the value tree (we always start with the outermost type first)
-	// - look like lambdas or containers (list/set/map will be handled separatly)
-	// - have been unpacked (we will guess their type below)
-	//
-	// If we see an unfoldable type (i.e. one that looks like a container) but at the
-	// same time we also see that the next element type is scalar, then we unfold too.
-	// This helps resolve ambiguities in value trees.
-	//
-	for {
-		if lvl > 0 && !typ.IsPair() && !val.WasPacked && !val.LooksLikeLambda() && (val.CanUnfold(typ) || (val.IsSequence() && typ.IsScalarType())) {
-			// fmt.Printf("L%0d: %s UNFOLD SEQ PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump(), typ.Dump())
-			unfolded := val.UnfoldPair(typ)
-			stack.Push(unfolded...)
-			val = stack.Pop()
-		} else {
-			// if len(val.Args) > 0 {
-			// 	fmt.Printf("L%0d: %s NO UNFOLD SEQ PAIR canunf=%t isseq=%t isscalar=%t islambda=%t waspacked=%t iscontainer=%t len=%d %s/%s\n",
-			// 		lvl, label, val.CanUnfold(typ), val.IsSequence(), typ.IsScalarType(), val.LooksLikeLambda(), val.WasPacked,
-			// 		val.LooksLikeContainer(), len(val.Args), val.Args[0].OpCode, val.Args[0].Type)
-			// }
-			break
-		}
-	}
-
 	// // Trace Helper
 	// ps := func(p Prim) string {
 	// 	if p.WasPacked {
@@ -197,6 +173,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	// }
 	// fmt.Printf("L%0d: %s/%s %s typ=%s %s\n", lvl, label, typ.Label(), ps(typ.Prim), typ.OpCode, typ.Dump())
 	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), oc(val), val.Dump())
+	// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
 
 	// detect type for unpacked values
 	if val.WasPacked && (!val.IsScalar() || typ.OpCode == T_BYTES) {
@@ -206,9 +183,18 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		typ.Anno = labels
 	}
 
+	// unfold unexpected pairs
+	if val.IsPair() && !typ.IsPair() {
+		unfolded := val.UnfoldPair(typ)
+		// fmt.Printf("L%0d: %s EXTRA UNFOLD PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump(), typ.Dump())
+		stack.Push(unfolded...)
+		// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+		val = stack.Pop()
+	}
+
 	// make sure value + type we're going to process actually match up
-	// accept any kind of pairs which will be recursively unfolded
-	if !typ.IsPair() && !val.matchOpCode(typ.OpCode) {
+	// accept any kind of pairs/seq which will be unfolded again below
+	if !typ.IsPair() && !val.IsSequence() && !val.matchOpCode(typ.OpCode) {
 		return fmt.Errorf("micheline: type mismatch: type[%s]=%s value[%s/%d]=%s",
 			typ.OpCode, typ.DumpLimit(512), val.Type, val.OpCode, val.DumpLimit(512))
 	}
@@ -227,7 +213,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		}
 	}
 
-	// based on the type code we attach new sub-records, array elements from values
+	// attach sub-records and array elements based on type code
 	switch typ.OpCode {
 	case T_SET:
 		// set <comparable type>
@@ -378,16 +364,20 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		if val.IsPair() {
 			// unfold regular pair
 			unfolded := val.UnfoldPair(typ)
-			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump())
+			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump(), typ.Dump())
 			stack.Push(unfolded...)
+			// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+
 		} else if val.CanUnfold(typ) {
 			// comb pair
 			// fmt.Printf("L%0d: %s PUSH COMB args[%d(+%d)]=%s\n", lvl, label, stack.Len(), len(val.Args), val.Dump())
 			stack.Push(val.Args...)
+			// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
 		} else {
 			// push value back on stack
 			// fmt.Printf("L%0d: %s PUSH VAL args[%d(+1)]=%s\n", lvl, label, stack.Len(), val.Dump())
 			stack.Push(val)
+			// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
 		}
 
 		for _, t := range typ.Args {
@@ -525,6 +515,16 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// chain_id
 		// never
 		// append scalar or other complex value
+
+		// comb-pair records might have slipped through our in LooksLikeContainer()
+		// so if we detect an unpack comb part (i.e. sequence) we unpack it here
+		if val.IsSequence() {
+			// fmt.Printf("L%0d: %s EXTRA UNPACK SEQU args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(val.Args), NewSeq(val.Args...).Dump(), typ.Dump())
+			stack.Push(val.Args...)
+			// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+			val = stack.Pop()
+		}
+
 		if val.IsScalar() {
 			m[label] = val.Value(typ.OpCode)
 		} else {

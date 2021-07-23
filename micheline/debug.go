@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 )
 
 func (p Prim) Dump() string {
@@ -32,6 +33,20 @@ func (e Value) DumpLimit(n int) string {
 
 func (e Value) DumpTo(w io.Writer) {
 	dumpTree(w, "", e.Type, e.Value)
+}
+
+func (s Stack) Dump() string {
+	return s.DumpIdent(0)
+}
+
+func (s Stack) DumpIdent(indent int) string {
+	idnt := strings.Repeat(" ", indent)
+	lines := make([]string, s.Len())
+	for i := range s {
+		n := len(s) - i - 1
+		lines[n] = idnt + fmt.Sprintf("%02d  ", n+1) + s[i].Dump()
+	}
+	return strings.Join(lines, "\n")
 }
 
 // TODO: improve tree output

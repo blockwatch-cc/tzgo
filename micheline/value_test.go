@@ -260,8 +260,9 @@ func TestBigmapValues(t *testing.T) {
 
 				// test bigmap value
 				v := Value{
-					Type:  typ1.Right(), // from binary (use value type)
-					Value: val1,         // from binary
+					Type:   typ1.Right(), // from binary (use value type)
+					Value:  val1,         // from binary
+					Render: RENDER_TYPE_FAIL,
 				}
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
@@ -310,13 +311,15 @@ func TestStorageValues(t *testing.T) {
 
 				// test storage value
 				v := Value{
-					Type:  typ1, // from binary
-					Value: val1, // from binary
+					Type:   typ1, // from binary
+					Value:  val1, // from binary
+					Render: RENDER_TYPE_FAIL,
 				}
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
 					if err != nil {
 						T.Errorf("value unpack error: %v", err)
+						t.FailNow()
 					}
 					v = up
 				}
@@ -324,6 +327,7 @@ func TestStorageValues(t *testing.T) {
 				buf, err := v.MarshalJSON()
 				if err != nil {
 					T.Errorf("value render error: %v", err)
+					t.FailNow()
 				}
 				if !jsonDiff(t, buf, test.WantValue) {
 					T.Error("value render mismatch, see log for details")
@@ -360,8 +364,9 @@ func TestParamsValues(t *testing.T) {
 
 				// test storage value
 				v := Value{
-					Type:  typ1, // from binary
-					Value: val1, // from binary
+					Type:   typ1, // from binary
+					Value:  val1, // from binary
+					Render: RENDER_TYPE_FAIL,
 				}
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
