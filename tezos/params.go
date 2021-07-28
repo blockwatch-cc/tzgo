@@ -61,6 +61,12 @@ type Params struct {
 	// New in Delphi v007
 	MaxAnonOpsPerBlock int `json:"max_anon_ops_per_block"` // was max_revelations_per_block
 
+	// New in Granada v010
+	LiquidityBakingEscapeEmaThreshold int64         `json:"liquidity_baking_escape_ema_threshold"`
+	LiquidityBakingSubsidy            int64         `json:"liquidity_baking_subsidy"`
+	LiquidityBakingSunsetLevel        int64         `json:"liquidity_baking_sunset_level"`
+	MinimalBlockDelay                 time.Duration `json:"minimal_block_delay"`
+
 	// hidden invoice feature
 	Invoices map[string]int64 `json:"invoices,omitempty"`
 
@@ -70,7 +76,9 @@ type Params struct {
 	ReactivateByTx       bool  `json:"reactivate_by_tx"`
 	OperationTagsVersion int   `json:"operation_tags_version"`
 	NumVotingPeriods     int   `json:"num_voting_periods"`
-	StartBlockOffset     int64 `json:"vote_block_offset"` // correct voting start/end detection
+	VoteBlockOffset      int64 `json:"vote_block_offset"`  // correct voting start/end detection
+	StartBlockOffset     int64 `json:"start_block_offset"` // correct start/end cycle since Granada
+	StartCycle           int64 `json:"start_cycle"`        // correction since Granada v10
 }
 
 func NewParams() *Params {
@@ -109,33 +117,82 @@ func (p *Params) ConvertValue(amount int64) float64 {
 }
 
 func (p *Params) IsCycleStart(height int64) bool {
-	return height > 0 && (height-1)%p.BlocksPerCycle == 0
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height > 0 && (height-pp.StartBlockOffset-1)%pp.BlocksPerCycle == 0
 }
 
 func (p *Params) IsCycleEnd(height int64) bool {
-	return height > 0 && height%p.BlocksPerCycle == 0
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height > 0 && (height-pp.StartBlockOffset)%pp.BlocksPerCycle == 0
+}
+
+func (p *Params) IsSnapshotBlock(height int64) bool {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return (height-pp.StartBlockOffset)%pp.BlocksPerRollSnapshot == 0
+}
+
+func (p *Params) IsSeedRequired(height int64) bool {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return (height-pp.StartBlockOffset)%pp.BlocksPerCommitment == 0
 }
 
 func (p *Params) CycleFromHeight(height int64) int64 {
 	if height == 0 {
 		return 0
 	}
-	return (height - 1) / p.BlocksPerCycle
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return pp.StartCycle + (height-pp.StartBlockOffset-1)/pp.BlocksPerCycle
 }
 
 func (p *Params) CycleStartHeight(cycle int64) int64 {
-	return cycle*p.BlocksPerCycle + 1
+	pp := p
+	if !p.ContainsCycle(cycle) {
+		pp = p.ForCycle(cycle)
+	}
+	return pp.StartBlockOffset + (cycle-pp.StartCycle)*pp.BlocksPerCycle + 1
 }
 
 func (p *Params) CycleEndHeight(cycle int64) int64 {
-	return (cycle + 1) * p.BlocksPerCycle
+	pp := p
+	if !p.ContainsCycle(cycle) {
+		pp = p.ForCycle(cycle)
+	}
+	return pp.StartBlockOffset + (cycle-pp.StartCycle+1)*pp.BlocksPerCycle
 }
 
 func (p *Params) SnapshotBlock(cycle, index int64) int64 {
 	if cycle < p.PreservedCycles+2 {
 		return 0
 	}
-	return p.CycleStartHeight(cycle-(p.PreservedCycles+2)) + (index+1)*p.BlocksPerRollSnapshot - 1
+	baseCycle := cycle - (p.PreservedCycles + 2)
+	pp := p
+	if !p.ContainsCycle(cycle) {
+		pp = p.ForCycle(baseCycle)
+	}
+	return pp.CycleStartHeight(baseCycle) + (index+1)*pp.BlocksPerRollSnapshot - 1
+}
+
+func (p *Params) SnapshotIndex(height int64) int64 {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return ((height - pp.StartBlockOffset - pp.BlocksPerRollSnapshot) % pp.BlocksPerCycle) / pp.BlocksPerRollSnapshot
 }
 
 func (p *Params) MaxSnapshotIndex() int64 {
@@ -143,17 +200,45 @@ func (p *Params) MaxSnapshotIndex() int64 {
 }
 
 func (p *Params) VotingStartCycleFromHeight(height int64) int64 {
-	currentCycle := p.CycleFromHeight(height)
-	offset := (height - p.StartBlockOffset) % p.BlocksPerVotingPeriod
-	return currentCycle - offset/p.BlocksPerCycle
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	currentCycle := pp.CycleFromHeight(height - pp.VoteBlockOffset)
+	offset := (height - pp.StartBlockOffset - 1) % pp.BlocksPerVotingPeriod
+	return currentCycle - (offset-pp.VoteBlockOffset)/pp.BlocksPerCycle
 }
 
 func (p *Params) IsVoteStart(height int64) bool {
-	return height > 0 && (height-p.StartBlockOffset-1)%p.BlocksPerVotingPeriod == 0
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height > 0 && (height-pp.StartBlockOffset+pp.VoteBlockOffset-1)%pp.BlocksPerVotingPeriod == 0
 }
 
 func (p *Params) IsVoteEnd(height int64) bool {
-	return height > 0 && (height-p.StartBlockOffset)%p.BlocksPerVotingPeriod == 0
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height > 0 && (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod == 0
+}
+
+func (p *Params) VoteStartHeight(height int64) int64 {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height - (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod
+}
+
+func (p *Params) VoteEndHeight(height int64) int64 {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height - (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod + pp.BlocksPerVotingPeriod
 }
 
 func (p *Params) MaxBlockReward() int64 {
@@ -166,6 +251,10 @@ func (p *Params) ContainsHeight(height int64) bool {
 		(p.StartHeight <= height && (p.EndHeight < 0 || p.EndHeight >= height))
 }
 
+func (p *Params) ContainsCycle(cycle int64) bool {
+	return p.StartCycle == 0 || p.StartCycle <= cycle
+}
+
 func (p *Params) IsMainnet() bool {
 	return p.ChainId.Equal(Mainnet)
 }
@@ -176,4 +265,11 @@ func (p *Params) IsPostBabylon() bool {
 
 func (p *Params) IsPreBabylonHeight(height int64) bool {
 	return p.IsMainnet() && height < 655360
+}
+
+func (p *Params) BlockTime() time.Duration {
+	if p.MinimalBlockDelay > 0 {
+		return p.MinimalBlockDelay
+	}
+	return p.TimeBetweenBlocks[0]
 }
