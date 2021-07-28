@@ -61,6 +61,12 @@ type Constants struct {
 
 	// New in v7
 	MaxAnonOpsPerBlock int `json:"max_anon_ops_per_block"` // was max_revelations_per_block
+
+	// New in v10
+	LiquidityBakingEscapeEmaThreshold int64 `json:"liquidity_baking_escape_ema_threshold"`
+	LiquidityBakingSubsidy            int64 `json:"liquidity_baking_subsidy,string"`
+	LiquidityBakingSunsetLevel        int64 `json:"liquidity_baking_sunset_level"`
+	MinimalBlockDelay                 int   `json:"minimal_block_delay,string"`
 }
 
 func (c Constants) HaveV6Rewards() bool {
@@ -201,6 +207,10 @@ func (c Constants) MapToChainParams() *tezos.Params {
 	p.QuorumMin = c.QuorumMin
 	p.QuorumMax = c.QuorumMax
 	p.MaxAnonOpsPerBlock = c.MaxAnonOpsPerBlock
+	p.LiquidityBakingEscapeEmaThreshold = c.LiquidityBakingEscapeEmaThreshold
+	p.LiquidityBakingSubsidy = c.LiquidityBakingSubsidy
+	p.LiquidityBakingSunsetLevel = c.LiquidityBakingSunsetLevel
+	p.MinimalBlockDelay = time.Duration(c.MinimalBlockDelay) * time.Second
 
 	for i, v := range c.TimeBetweenBlocks {
 		if i > 1 {

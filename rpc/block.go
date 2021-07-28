@@ -44,6 +44,36 @@ func (b Block) GetCycle() int64 {
 	return 0
 }
 
+func (b Block) GetLevelInfo() BlockLevel {
+	if b.Metadata.LevelInfo != nil {
+		return *b.Metadata.LevelInfo
+	}
+	if b.Metadata.Level != nil {
+		return *b.Metadata.Level
+	}
+	return BlockLevel{}
+}
+
+// only works for mainnet when before Edo or for all nets after Edo
+// due to fixed constants used
+func (b Block) GetVotingInfo() VotingPeriodInfo {
+	if b.Metadata.VotingPeriodInfo != nil {
+		return *b.Metadata.VotingPeriodInfo
+	}
+	if b.Metadata.Level != nil {
+		return VotingPeriodInfo{
+			Position:  b.Metadata.Level.VotingPeriodPosition,
+			Remaining: 32768 - b.Metadata.Level.VotingPeriodPosition,
+			VotingPeriod: VotingPeriod{
+				Index:         b.Metadata.Level.VotingPeriod,
+				Kind:          *b.Metadata.VotingPeriodKind,
+				StartPosition: b.Metadata.Level.VotingPeriod * 32768,
+			},
+		}
+	}
+	return VotingPeriodInfo{}
+}
+
 func (b Block) GetVotingPeriodKind() tezos.VotingPeriodKind {
 	if b.Metadata.VotingPeriodInfo != nil {
 		return b.Metadata.VotingPeriodInfo.VotingPeriod.Kind
@@ -73,22 +103,23 @@ type InvalidBlock struct {
 
 // BlockHeader is a part of the Tezos block data
 type BlockHeader struct {
-	ChainId          *tezos.ChainIdHash  `json:"chain_id,omitempty"`
-	Hash             *tezos.BlockHash    `json:"hash,omitempty"`
-	Level            int64               `json:"level"`
-	Proto            int                 `json:"proto"`
-	Predecessor      tezos.BlockHash     `json:"predecessor"`
-	Timestamp        time.Time           `json:"timestamp"`
-	ValidationPass   int                 `json:"validation_pass"`
-	OperationsHash   string              `json:"operations_hash"`
-	Fitness          []HexBytes          `json:"fitness"`
-	Context          string              `json:"context"`
-	Priority         int                 `json:"priority"`
-	ProofOfWorkNonce HexBytes            `json:"proof_of_work_nonce"`
-	SeedNonceHash    *tezos.NonceHash    `json:"seed_nonce_hash"`
-	Signature        string              `json:"signature"`
-	Content          *BlockContent       `json:"content,omitempty"`
-	Protocol         *tezos.ProtocolHash `json:"protocol,omitempty"`
+	ChainId                   *tezos.ChainIdHash  `json:"chain_id,omitempty"`
+	Hash                      *tezos.BlockHash    `json:"hash,omitempty"`
+	Level                     int64               `json:"level"`
+	Proto                     int                 `json:"proto"`
+	Predecessor               tezos.BlockHash     `json:"predecessor"`
+	Timestamp                 time.Time           `json:"timestamp"`
+	ValidationPass            int                 `json:"validation_pass"`
+	OperationsHash            string              `json:"operations_hash"`
+	Fitness                   []HexBytes          `json:"fitness"`
+	Context                   string              `json:"context"`
+	Priority                  int                 `json:"priority"`
+	ProofOfWorkNonce          HexBytes            `json:"proof_of_work_nonce"`
+	SeedNonceHash             *tezos.NonceHash    `json:"seed_nonce_hash"`
+	Signature                 string              `json:"signature"`
+	Content                   *BlockContent       `json:"content,omitempty"`
+	Protocol                  *tezos.ProtocolHash `json:"protocol,omitempty"`
+	LiquidityBakingEscapeVote bool                `json:"liquidity_baking_escape_vote"`
 }
 
 // BlockContent is part of block 1 header that seeds the initial context
@@ -151,6 +182,10 @@ type BlockMetadata struct {
 	// v008
 	LevelInfo        *BlockLevel       `json:"level_info"`
 	VotingPeriodInfo *VotingPeriodInfo `json:"voting_period_info"`
+
+	// v010
+	ImplicitOperationsResults []ImplicitResult `json:"implicit_operations_results"`
+	LiquidityBakingEscapeEma  int64            `json:"liquidity_baking_escape_ema"`
 }
 
 // GetBlock returns information about a Tezos block

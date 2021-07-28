@@ -63,3 +63,16 @@ type InternalResult struct {
 	Balance     int64                 `json:"balance,string"`        // origination
 	Script      *micheline.Script     `json:"script,omitempty"`      // origination
 }
+
+// found in block metadata from v010+
+type ImplicitResult struct {
+	Kind                tezos.OpType      `json:"kind"`
+	BalanceUpdates      BalanceUpdates    `json:"balance_updates"`
+	ConsumedGas         int64             `json:"consumed_gas,string"`
+	ConsumedMilliGas    int64             `json:"consumed_milligas,string"`
+	Storage             *micheline.Prim   `json:"storage,omitempty"`
+	StorageSize         int64             `json:"storage_size,string"`
+	OriginatedContracts []tezos.Address   `json:"originated_contracts,omitempty"`
+	PaidStorageSizeDiff int64             `json:"paid_storage_size_diff,string"`
+	Script              *micheline.Script `json:"script,omitempty"`
+}

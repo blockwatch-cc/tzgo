@@ -152,7 +152,7 @@ func (c *Client) GetEndorsingRights(ctx context.Context, blockID tezos.BlockHash
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-endorsing-rights
 func (c *Client) GetEndorsingRightsHeight(ctx context.Context, height int64) ([]EndorsingRight, error) {
 	rights := make([]EndorsingRight, 0, 32)
-	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/endorsing_rights?all=true", c.ChainID, height)
+	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/endorsing_rights?all=true&level=%d", c.ChainID, height, height)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}

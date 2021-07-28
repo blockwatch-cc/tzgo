@@ -21,7 +21,7 @@ type BalanceUpdate interface {
 type GenericBalanceUpdate struct {
 	Kind   string `json:"kind"`
 	Change int64  `json:"change,string"`
-	Origin string `json:"origin"` // block, migration
+	Origin string `json:"origin"` // block, migration, subsidy
 }
 
 // BalanceUpdateKind returns the BalanceUpdateType's Kind field

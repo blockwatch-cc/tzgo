@@ -167,7 +167,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (err error) {
 		return nil
 	}
 
-	log.Debug(newLogClosure(func() string {
+	log.Trace(newLogClosure(func() string {
 		d, _ := httputil.DumpResponse(resp, true)
 		return string(d)
 	}))
