@@ -32,7 +32,7 @@ func NewValue(typ Type, val Prim) Value {
 	return Value{
 		Type:   typ.Clone(),
 		Value:  val.Clone(),
-		Render: RENDER_TYPE_PANIC,
+		Render: RENDER_TYPE_PRIM,
 	}
 }
 
