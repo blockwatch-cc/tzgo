@@ -52,6 +52,7 @@ type Params struct {
 	MaxProposalsPerDelegate      int              `json:"max_proposals_per_delegate"`
 	MaxRevelationsPerBlock       int              `json:"max_revelations_per_block"`
 	NonceLength                  int              `json:"nonce_length"`
+	MaxOperationsTTL             int64            `json:"max_operations_ttl"`
 
 	// New in Bablyon v005
 	MinProposalQuorum int64 `json:"min_proposal_quorum"`
@@ -78,6 +79,7 @@ type Params struct {
 	NumVotingPeriods     int   `json:"num_voting_periods"`
 	StartBlockOffset     int64 `json:"start_block_offset"` // correct start/end cycle since Granada
 	StartCycle           int64 `json:"start_cycle"`        // correction since Granada v10
+	VoteBlockOffset      int64 `json:"start_block_offset"` // correction for Edo + Florence Mainnet-only +1 bug
 }
 
 func NewParams() *Params {
@@ -90,6 +92,7 @@ func NewParams() *Params {
 		Decimals:         6,
 		Token:            1000000,
 		NumVotingPeriods: 4,
+		MaxOperationsTTL: 60,
 	}
 }
 
@@ -198,6 +201,7 @@ func (p *Params) MaxSnapshotIndex() int64 {
 	return (p.BlocksPerCycle / p.BlocksPerRollSnapshot) - 1
 }
 
+// Note: VoteBlockOffset does not apply here!!
 func (p *Params) VotingStartCycleFromHeight(height int64) int64 {
 	pp := p
 	if !p.ContainsHeight(height) {
@@ -213,7 +217,12 @@ func (p *Params) IsVoteStart(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height > 0 && (height-pp.StartBlockOffset-1)%pp.BlocksPerVotingPeriod == 0
+	// Edo voting bug does not apply to first Edo block
+	offs := pp.VoteBlockOffset
+	if height == pp.StartBlockOffset+1 {
+		offs = 0
+	}
+	return height > 0 && (height-pp.StartBlockOffset-1+offs)%pp.BlocksPerVotingPeriod == 0
 }
 
 func (p *Params) IsVoteEnd(height int64) bool {
@@ -221,7 +230,12 @@ func (p *Params) IsVoteEnd(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height > 0 && (height-pp.StartBlockOffset)%pp.BlocksPerVotingPeriod == 0
+	// Edo voting bug does not apply to first Edo block
+	offs := pp.VoteBlockOffset
+	if height == pp.StartBlockOffset {
+		offs = 0
+	}
+	return height > 0 && (height-pp.StartBlockOffset+offs)%pp.BlocksPerVotingPeriod == 0
 }
 
 func (p *Params) VoteStartHeight(height int64) int64 {
@@ -229,7 +243,13 @@ func (p *Params) VoteStartHeight(height int64) int64 {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return pp.CycleStartHeight(pp.VotingStartCycleFromHeight(height))
+	// Edo voting bug does not apply to first Edo block
+	var offs int64
+	if height > pp.StartBlockOffset+1 {
+		height++
+		offs = 1
+	}
+	return pp.CycleStartHeight(pp.VotingStartCycleFromHeight(height)) - offs
 }
 
 func (p *Params) VoteEndHeight(height int64) int64 {

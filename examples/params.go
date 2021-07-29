@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"blockwatch.cc/tzgo/rpc"
+	"blockwatch.cc/tzgo/tezos"
 )
 
 var (
@@ -47,49 +48,61 @@ func run() error {
 		return fmt.Errorf("Block height required")
 	}
 
-	h, err := strconv.ParseInt(flags.Arg(0), 10, 64)
+	height, err := strconv.ParseInt(flags.Arg(0), 10, 64)
 	if err != nil {
 		return err
 	}
 
-	// fetch constants at height
+	// fetch block & constants at height
 	c, _ := rpc.NewClient(node, nil)
-	cons, err := c.GetConstantsHeight(context.Background(), h)
+	block, err := c.GetBlockHeight(context.Background(), height)
+	if err != nil {
+		if rpc.ErrorStatus(err) != 404 {
+			return err
+		}
+		block, err = c.GetHeadBlock(context.Background())
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Block %d does not exist yet. Using constants at current head block %d\n", height, block.GetLevel())
+	}
+	cons, err := c.GetConstantsHeight(context.Background(), block.GetLevel())
 	if err != nil {
 		return err
 	}
 
-	block, err := c.GetBlockHeight(context.Background(), h)
-	if err != nil {
-		return err
+	// simulate granada
+	if height >= 1589248 && !block.Protocol.Equal(tezos.ProtoV010) {
+		fmt.Println("Simulating Granada activation")
+		block.Protocol = tezos.ProtoV010
 	}
 
 	p := cons.MapToChainParams().ForNetwork(block.ChainId).ForProtocol(block.Protocol)
 
-	fmt.Println("Height ...................... ", h)
+	fmt.Println("Height ...................... ", height)
 	fmt.Println("Protocol .................... ", block.Protocol)
 	fmt.Println("Period ...................... ", block.GetVotingPeriodKind(), block.GetVotingPeriod())
 	fmt.Println("StartCycle .................. ", p.StartCycle)
 	fmt.Println("StartBlockOffset ............ ", p.StartBlockOffset)
-	// fmt.Println("VoteBlockOffset ............. ", p.VoteBlockOffset)
+	fmt.Println("VoteBlockOffset ............. ", p.VoteBlockOffset)
 	fmt.Println("BlocksPerCycle .............. ", p.BlocksPerCycle)
 	fmt.Println("BlocksPerVotingPeriod ....... ", p.BlocksPerVotingPeriod)
 	fmt.Println("----------------------------- ")
-	fmt.Println("IsCycleStart ................ ", p.IsCycleStart(h))
-	fmt.Println("IsCycleEnd .................. ", p.IsCycleEnd(h))
-	fmt.Println("IsSnapshotBlock ............. ", p.IsSnapshotBlock(h))
-	fmt.Println("IsSeedRequired .............. ", p.IsSeedRequired(h))
-	fmt.Println("CycleFromHeight ............. ", p.CycleFromHeight(h))
-	fmt.Println("CycleStartHeight ............ ", p.CycleStartHeight(p.CycleFromHeight(h)))
-	fmt.Println("CycleEndHeight .............. ", p.CycleEndHeight(p.CycleFromHeight(h)))
-	fmt.Println("SnapshotIndex ............... ", p.SnapshotIndex(h))
+	fmt.Println("IsCycleStart ................ ", p.IsCycleStart(height))
+	fmt.Println("IsCycleEnd .................. ", p.IsCycleEnd(height))
+	fmt.Println("IsSnapshotBlock ............. ", p.IsSnapshotBlock(height))
+	fmt.Println("IsSeedRequired .............. ", p.IsSeedRequired(height))
+	fmt.Println("CycleFromHeight ............. ", p.CycleFromHeight(height))
+	fmt.Println("CycleStartHeight ............ ", p.CycleStartHeight(p.CycleFromHeight(height)))
+	fmt.Println("CycleEndHeight .............. ", p.CycleEndHeight(p.CycleFromHeight(height)))
+	fmt.Println("SnapshotIndex ............... ", p.SnapshotIndex(height))
 	fmt.Println("MaxSnapshotIndex ............ ", p.MaxSnapshotIndex())
-	fmt.Println("VotingStartCycleFromHeight .. ", p.VotingStartCycleFromHeight(h))
-	fmt.Println("IsVoteStart ................. ", p.IsVoteStart(h))
-	fmt.Println("IsVoteEnd ................... ", p.IsVoteEnd(h))
-	fmt.Println("VoteStartHeight ............. ", p.VoteStartHeight(h))
-	fmt.Println("VoteEndHeight ............... ", p.VoteEndHeight(h))
-	fmt.Println("IsPreBabylonHeight .......... ", p.IsPreBabylonHeight(h))
+	fmt.Println("VotingStartCycleFromHeight .. ", p.VotingStartCycleFromHeight(height))
+	fmt.Println("IsVoteStart ................. ", p.IsVoteStart(height))
+	fmt.Println("IsVoteEnd ................... ", p.IsVoteEnd(height))
+	fmt.Println("VoteStartHeight ............. ", p.VoteStartHeight(height))
+	fmt.Println("VoteEndHeight ............... ", p.VoteEndHeight(height))
+	fmt.Println("IsPreBabylonHeight .......... ", p.IsPreBabylonHeight(height))
 
 	return nil
 }

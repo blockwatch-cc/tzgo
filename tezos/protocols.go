@@ -32,10 +32,6 @@ var (
 	Florencenet = MustParseChainIdHash("NetXxkAx4woPLyu")
 	Granadanet  = MustParseChainIdHash("NetXz969SFaFn8k")
 
-	// maximum depth of branches for ops to be included on chain, also
-	// defines max depth of a possible reorg and max block priorities
-	MaxBranchDepth int64 = 64
-
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
 	ProtocolVersions = map[string][]ProtocolHash{
@@ -99,6 +95,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	*pp = *p
 	pp.Protocol = proto
 	pp.NumVotingPeriods = 4
+	pp.MaxOperationsTTL = 60
 	switch true {
 	case ProtoV000.Equal(proto):
 		pp.Version = 0
@@ -161,13 +158,16 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// kinds of calculations big-time. They have also introduced a bug
 			// into vote block alignment during the switch from Delphi to Edo
 			// (Granada is supposed to fix this). We use an extra offset for
-			// tracking this bug.
+			// tracking this bug. Note that it only starts to appear from
+			// cycle end of the first Edo vote epoch.
 			//
 			// Edo has also added a 5th vote period and decreased period
 			// durations from 32,768 blocks to 20,480 so we need a custom start
 			// offset to keep our vote start/end calculations correct.
+			//
 			pp.StartBlockOffset = 1343488
 			pp.StartCycle = 328
+			pp.VoteBlockOffset = 1
 			// this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
@@ -183,6 +183,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1466368
 			pp.StartCycle = 358
+			pp.VoteBlockOffset = 1
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
@@ -209,18 +210,49 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.Version = 10
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
 
 		// It gets more fun in Granada. Now the major cycle length has doubled
 		// since block times have halved. This requires a second offset to track
-		// start cycle.
+		// start cycle in addition to start block offset.
 		//
-		// In an attempt to fix vote/cycle alignment Granada also offsets
+		// In an attempt to fix vote/cycle alignment Granada offsets
 		// voting period by +1 on activation which apparently fails on
 		// Granadanet or any other network that is not mainnet because the
-		// problem did not exist there.
+		// problem did not exist there. Anyways, vote start and cycle start
+		// should be the same again, but there is one problem:
+		//
+		// The last Florence vote epoch ends on 1,589,247 (due to the Edo bug),
+		// one block short of cycle end like all epochs since Edo started.
+		// Since Granada will activate at block 1,589,248 == at cycle end
+		// of the last Florence cycle, this block will also become the first
+		// voting block in Granada. A great start for re-alignement, isn't it!
+		// The sane choice would have been to skip one block and let vote start
+		// at cycle start 1,589,249. However, in tyical Tezos manner, things
+		// have to be more complicated and instead we make the first voting epoch
+		// in Granada 1 block longer (on top of that all RPC voting counters
+		// are broken).
+		// https://tezos.gitlab.io/protocols/010_granada.html#bogus-rpc-results
+		//
+		// TzGo will NOT implement this brainfuck exception and instead do
+		// the following:
+		//
+		// Block      Proto     Cycle Start   Cycle End   Vote Start   Vote End
+		// --------------------------------------------------------------------
+		// 1,589,247  Florence                                            x
+		// 1,589,248  Granada                    x                        x
+		// 1,589,249  Granada       x                          x
+		//
 		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1589248
 			pp.StartCycle = 389
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 256
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 4096
 			pp.StartCycle = 2
@@ -240,6 +272,7 @@ func (p *Params) Clean() *Params {
 	pp.NumVotingPeriods = 0
 	pp.StartBlockOffset = 0
 	pp.StartCycle = 0
+	pp.VoteBlockOffset = 0
 	return pp
 }
 
