@@ -230,6 +230,28 @@ func (c *Client) GetTips(ctx context.Context, depth int, head tezos.BlockHash) (
 	return tips, nil
 }
 
+// GetHeadBlock returns main chain tip block.
+// https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
+func (c *Client) GetHeadBlock(ctx context.Context) (*Block, error) {
+	var head Block
+	u := fmt.Sprintf("chains/%s/blocks/head", c.ChainID)
+	if err := c.Get(ctx, u, &head); err != nil {
+		return nil, err
+	}
+	return &head, nil
+}
+
+// GetGenesisBlock returns main chain genesis block.
+// https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
+func (c *Client) GetGenesisBlock(ctx context.Context) (*Block, error) {
+	var block Block
+	u := fmt.Sprintf("chains/%s/blocks/genesis", c.ChainID)
+	if err := c.Get(ctx, u, &block); err != nil {
+		return nil, err
+	}
+	return &block, nil
+}
+
 // GetTipHeader returns main chain tip's block header.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetTipHeader(ctx context.Context) (*BlockHeader, error) {
