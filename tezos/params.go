@@ -76,7 +76,6 @@ type Params struct {
 	ReactivateByTx       bool  `json:"reactivate_by_tx"`
 	OperationTagsVersion int   `json:"operation_tags_version"`
 	NumVotingPeriods     int   `json:"num_voting_periods"`
-	VoteBlockOffset      int64 `json:"vote_block_offset"`  // correct voting start/end detection
 	StartBlockOffset     int64 `json:"start_block_offset"` // correct start/end cycle since Granada
 	StartCycle           int64 `json:"start_cycle"`        // correction since Granada v10
 }
@@ -204,9 +203,9 @@ func (p *Params) VotingStartCycleFromHeight(height int64) int64 {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	currentCycle := pp.CycleFromHeight(height - pp.VoteBlockOffset)
+	currentCycle := pp.CycleFromHeight(height)
 	offset := (height - pp.StartBlockOffset - 1) % pp.BlocksPerVotingPeriod
-	return currentCycle - (offset-pp.VoteBlockOffset)/pp.BlocksPerCycle
+	return currentCycle - offset/pp.BlocksPerCycle
 }
 
 func (p *Params) IsVoteStart(height int64) bool {
@@ -214,7 +213,7 @@ func (p *Params) IsVoteStart(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height > 0 && (height-pp.StartBlockOffset+pp.VoteBlockOffset-1)%pp.BlocksPerVotingPeriod == 0
+	return height > 0 && (height-pp.StartBlockOffset-1)%pp.BlocksPerVotingPeriod == 0
 }
 
 func (p *Params) IsVoteEnd(height int64) bool {
@@ -222,7 +221,7 @@ func (p *Params) IsVoteEnd(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height > 0 && (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod == 0
+	return height > 0 && (height-pp.StartBlockOffset)%pp.BlocksPerVotingPeriod == 0
 }
 
 func (p *Params) VoteStartHeight(height int64) int64 {
@@ -230,7 +229,7 @@ func (p *Params) VoteStartHeight(height int64) int64 {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height - (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod
+	return pp.CycleStartHeight(pp.VotingStartCycleFromHeight(height))
 }
 
 func (p *Params) VoteEndHeight(height int64) int64 {
@@ -238,7 +237,7 @@ func (p *Params) VoteEndHeight(height int64) int64 {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return height - (height-pp.StartBlockOffset+pp.VoteBlockOffset)%pp.BlocksPerVotingPeriod + pp.BlocksPerVotingPeriod
+	return pp.VoteStartHeight(height) + pp.BlocksPerVotingPeriod - 1
 }
 
 func (p *Params) MaxBlockReward() int64 {

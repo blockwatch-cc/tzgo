@@ -141,6 +141,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.Version = 7
 		pp.OperationTagsVersion = 1
 		// this is extremely hacky!
+		pp.StartBlockOffset = 0
+		pp.StartCycle = 0
 		pp.BlocksPerCycle = 4096
 		pp.BlocksPerCommitment = 32
 		pp.BlocksPerRollSnapshot = 256
@@ -166,7 +168,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// offset to keep our vote start/end calculations correct.
 			pp.StartBlockOffset = 1343488
 			pp.StartCycle = 328
-			pp.VoteBlockOffset = 1
 			// this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
@@ -182,7 +183,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1466368
 			pp.StartCycle = 358
-			pp.VoteBlockOffset = 1
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
@@ -191,7 +191,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 0
 			pp.StartCycle = 0
-			pp.VoteBlockOffset = 0
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 2048
 			pp.BlocksPerCommitment = 16
@@ -225,9 +224,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 4096
 			pp.StartCycle = 2
-			pp.VoteBlockOffset = 4095
-		} else {
-			pp.VoteBlockOffset = 1
 		}
 	}
 	return pp
@@ -242,7 +238,6 @@ func (p *Params) Clean() *Params {
 	pp.ReactivateByTx = false
 	pp.OperationTagsVersion = 0
 	pp.NumVotingPeriods = 0
-	pp.VoteBlockOffset = 0
 	pp.StartBlockOffset = 0
 	pp.StartCycle = 0
 	return pp
