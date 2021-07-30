@@ -6,6 +6,7 @@ Our main focus is on **correctness**, **stability**, and **compliance** with the
 
 Current TzGo protocol support
 
+- Granada v010
 - Florence v009
 - Edo v008
 - Delphi v007
