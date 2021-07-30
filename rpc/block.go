@@ -94,6 +94,10 @@ func (b Block) GetVotingPeriod() int64 {
 	return 0
 }
 
+func (b Block) IsProtocolUpgrade() bool {
+	return !b.Metadata.Protocol.Equal(b.Metadata.NextProtocol)
+}
+
 // InvalidBlock represents invalid block hash along with the errors that led to it being declared invalid
 type InvalidBlock struct {
 	Block tezos.BlockHash `json:"block"`

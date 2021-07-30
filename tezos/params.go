@@ -194,6 +194,9 @@ func (p *Params) SnapshotIndex(height int64) int64 {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
+	if height == pp.StartBlockOffset {
+		return pp.BlocksPerCycle/pp.BlocksPerRollSnapshot - 1
+	}
 	return ((height - pp.StartBlockOffset - pp.BlocksPerRollSnapshot) % pp.BlocksPerCycle) / pp.BlocksPerRollSnapshot
 }
 
@@ -230,11 +233,7 @@ func (p *Params) IsVoteEnd(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	// Edo voting bug does not apply to first Edo block
 	offs := pp.VoteBlockOffset
-	if height == pp.StartBlockOffset {
-		offs = 0
-	}
 	return height > 0 && (height-pp.StartBlockOffset+offs)%pp.BlocksPerVotingPeriod == 0
 }
 
