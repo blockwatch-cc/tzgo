@@ -175,21 +175,22 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	// fmt.Printf("L%0d: %s/%s %s val=%s %s\n", lvl, label, typ.Label(), ps(val), oc(val), val.Dump())
 	// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
 
+	// unfold unexpected pairs
+	if !val.WasPacked && val.IsPair() && !typ.IsPair() {
+		unfolded := val.UnfoldPair(typ)
+		// fmt.Printf("L%0d: %s EXTRA UNFOLD PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump(), typ.Dump())
+		stack.Push(unfolded...)
+		// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+		val = stack.Pop()
+	}
+
 	// detect type for unpacked values
 	if val.WasPacked && (!val.IsScalar() || typ.OpCode == T_BYTES) {
 		labels := typ.Anno
 		typ = val.BuildType()
 		typ.WasPacked = true
 		typ.Anno = labels
-	}
-
-	// unfold unexpected pairs
-	if val.IsPair() && !typ.IsPair() {
-		unfolded := val.UnfoldPair(typ)
-		// fmt.Printf("L%0d: %s EXTRA UNFOLD PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump(), typ.Dump())
-		stack.Push(unfolded...)
-		// fmt.Printf("L%0d: %s stack[%d]:\n%s\n\n", lvl, label, stack.Len(), stack.DumpIdent(4))
-		val = stack.Pop()
+		// fmt.Printf("L%0d: packed type detect typ=%s %s val=%s\n", lvl, typ.OpCode, typ.Dump(), val.Dump())
 	}
 
 	// make sure value + type we're going to process actually match up
@@ -267,6 +268,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_LAMBDA:
 		// LAMBDA <type> <type> { <instruction> ... }
+		// fmt.Printf("L%0d: OUTPUT typ=%s %s\n\n", lvl, typ.OpCode, val.Dump())
 		m[label] = val
 
 	case T_MAP, T_BIG_MAP:
@@ -361,7 +363,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 		// Try unfolding value (again) when type is T_PAIR,
 		// reuse the existing stack and push unfolded values
-		if val.IsPair() {
+		if val.IsPair() && !typ.IsPair() {
 			// unfold regular pair
 			unfolded := val.UnfoldPair(typ)
 			// fmt.Printf("L%0d: %s UNFOLD PAIR args[%d(+%d)]=%s typ=%s\n", lvl, label, stack.Len(), len(unfolded), NewSeq(unfolded...).Dump(), typ.Dump())
@@ -535,6 +537,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			m[label] = mm
 		}
 	}
+	// fmt.Printf("L%0d: done\n\n", lvl)
 	return nil
 }
 
