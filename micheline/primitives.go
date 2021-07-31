@@ -304,8 +304,8 @@ func (p Prim) IsSequence() bool {
 	return p.Type == PrimSequence
 }
 
-func (p Prim) IsOperation() bool {
-	return p.OpCode.TypeCode() == T_OPERATION
+func (p Prim) IsInstruction() bool {
+	return p.OpCode.TypeCode() == T_LAMBDA
 }
 
 func (p Prim) IsTicket() bool {
@@ -522,7 +522,7 @@ func (p Prim) LooksLikeSet() bool {
 
 // Checks if a Prim looks like a lambda type.
 func (p Prim) LooksLikeLambda() bool {
-	if p.OpCode == T_LAMBDA || p.IsOperation() {
+	if p.OpCode == T_LAMBDA || p.IsInstruction() {
 		return true
 	}
 
@@ -533,7 +533,7 @@ func (p Prim) LooksLikeLambda() bool {
 
 	// first non-pair value is operation
 	for {
-		if p.IsOperation() {
+		if p.IsInstruction() {
 			return true
 		}
 		if len(p.Args) == 0 || !(p.IsPair() || p.IsSequence()) {
@@ -560,7 +560,6 @@ func (p Prim) UnfoldPair(typ Type) []Prim {
 			t = Type{typ.Args[i]}
 		}
 		if !v.WasPacked && v.CanUnfold(t) && !t.HasAnno() {
-			// flat = append(flat, v.UnfoldPair(t)...)
 			flat = append(flat, v.Args...)
 		} else {
 			flat = append(flat, v)

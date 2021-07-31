@@ -413,9 +413,9 @@ func (op OpCode) TypeCode() OpCode {
 	case D_PAIR:
 		return T_PAIR
 	case D_ELT:
-		return T_MAP // may also be T_SET, T_BIG_MAP
+		return T_MAP // may also be T_BIG_MAP
 	default:
-		return T_OPERATION
+		return T_LAMBDA
 	}
 }
 

@@ -293,7 +293,7 @@ func (p Prim) BuildType() Type {
 	case PrimUnary, PrimUnaryAnno:
 		t.OpCode = p.OpCode.TypeCode()
 		switch t.OpCode {
-		case T_OPERATION:
+		case T_LAMBDA:
 			t.Type = PrimNullary
 		case T_OR:
 			// in data we only see one branch, so we have to guess the other type
