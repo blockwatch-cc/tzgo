@@ -140,24 +140,16 @@ func NewKeyPtr(typ Type, key Prim) (*Key, error) {
 }
 
 func (k Key) IsPacked() bool {
-	return k.Type.OpCode == T_BYTES && len(k.BytesKey) > 1 && k.BytesKey[0] == 0x5
+	return k.Type.OpCode == T_BYTES && (isPackedBytes(k.BytesKey) ||
+		tezos.IsAddressBytes(k.BytesKey) ||
+		isASCIIBytes(k.BytesKey))
 }
 
 func (k Key) UnpackPrim() (p Prim, err error) {
-	p = Prim{}
-	if !k.IsPacked() {
-		return p, fmt.Errorf("key is not packed")
-	}
-	defer func() {
-		if e := recover(); e != nil {
-			p = Prim{}
-			err = fmt.Errorf("prim is not packed")
-		}
-	}()
-	if err = p.UnmarshalBinary(k.BytesKey[1:]); err != nil {
-		return p, err
-	}
-	return p, nil
+	return Prim{
+		Type:  PrimBytes,
+		Bytes: k.BytesKey,
+	}.Unpack()
 }
 
 func (k Key) Unpack() (Key, error) {

@@ -3129,7 +3129,7 @@
         "prim": "PAIR"
       }
     ],
-    "want_key": "616c6c6f636174654469766964656e6473"
+    "want_key": "allocateDividends"
   },
   {
     "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv-26541-exprvERy5jnK6VW2D4pebxrYU5Zn26HGK1T6Ht8fY9mqzX8svXQyCV",
@@ -3538,7 +3538,7 @@
         "prim": "PAIR"
       }
     ],
-    "want_key": "6275726e"
+    "want_key": "burn"
   },
   {
     "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv-26541-exprv21Gze7vmK5q9gyRqLtari3yNMQkAmwEATfqZQnXjPYjWMRMsR",
@@ -3787,7 +3787,7 @@
         "prim": "PAIR"
       }
     ],
-    "want_key": "6d696e74"
+    "want_key": "mint"
   },
   {
     "name": "Edonet2/KT1RRKf2Ljb2Y5X7kbuBnpyc6Mc94ZC42Xsv-26541-exprvPb37mWW8dYHhZu7cLT65w25KUgHSnxHd7QorZgFFGQg24qsRg",
@@ -5491,6 +5491,6 @@
         "prim": "IF"
       }
     ],
-    "want_key": "7472616e73666572"
+    "want_key": "transfer"
   }
 ]

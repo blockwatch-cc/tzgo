@@ -618,7 +618,7 @@ func (p Prim) Unpack() (pp Prim, err error) {
 	}()
 	pp = Prim{WasPacked: true}
 	switch true {
-	case len(p.Bytes) > 1 && p.Bytes[0] == 0x5 && p.Bytes[1] <= 0xA:
+	case isPackedBytes(p.Bytes):
 		if err := pp.UnmarshalBinary(p.Bytes[1:]); err != nil {
 			return p, err
 		}
@@ -836,7 +836,7 @@ func (p Prim) Value(as OpCode) interface{} {
 			} else if p.OpCode == D_FALSE {
 				return false
 			}
-		case T_OPERATION:
+		case T_LAMBDA:
 			return p.OpCode.String()
 		case T_BYTES:
 			return hex.EncodeToString(p.Bytes)
