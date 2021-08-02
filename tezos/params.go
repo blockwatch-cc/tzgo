@@ -204,14 +204,18 @@ func (p *Params) MaxSnapshotIndex() int64 {
 	return (p.BlocksPerCycle / p.BlocksPerRollSnapshot) - 1
 }
 
-// Note: VoteBlockOffset does not apply here!!
 func (p *Params) VotingStartCycleFromHeight(height int64) int64 {
 	pp := p
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	currentCycle := pp.CycleFromHeight(height)
-	offset := (height - pp.StartBlockOffset - 1) % pp.BlocksPerVotingPeriod
+	// Edo voting bug does not apply to first Edo block
+	offs := pp.VoteBlockOffset
+	if height == pp.StartBlockOffset+1 {
+		offs = 0
+	}
+	currentCycle := pp.CycleFromHeight(height + offs)
+	offset := (height + offs - pp.StartBlockOffset - 1) % pp.BlocksPerVotingPeriod
 	return currentCycle - offset/pp.BlocksPerCycle
 }
 
@@ -243,10 +247,9 @@ func (p *Params) VoteStartHeight(height int64) int64 {
 		pp = p.ForHeight(height)
 	}
 	// Edo voting bug does not apply to first Edo block
-	var offs int64
-	if height > pp.StartBlockOffset+1 {
-		height++
-		offs = 1
+	offs := pp.VoteBlockOffset
+	if height == pp.StartBlockOffset+1 {
+		offs = 0
 	}
 	return pp.CycleStartHeight(pp.VotingStartCycleFromHeight(height)) - offs
 }
