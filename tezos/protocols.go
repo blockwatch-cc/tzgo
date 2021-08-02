@@ -181,9 +181,9 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
 		if Mainnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 1466368
-			pp.StartCycle = 358
-			pp.VoteBlockOffset = 1
+			pp.StartBlockOffset = 1343488 // same as Edo (!!)
+			pp.StartCycle = 328           // same as Edo (!!)
+			pp.VoteBlockOffset = 1        // same as Edo (!!)
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
