@@ -79,7 +79,7 @@ type Params struct {
 	NumVotingPeriods     int   `json:"num_voting_periods"`
 	StartBlockOffset     int64 `json:"start_block_offset"` // correct start/end cycle since Granada
 	StartCycle           int64 `json:"start_cycle"`        // correction since Granada v10
-	VoteBlockOffset      int64 `json:"start_block_offset"` // correction for Edo + Florence Mainnet-only +1 bug
+	VoteBlockOffset      int64 `json:"vote_block_offset"`  // correction for Edo + Florence Mainnet-only +1 bug
 }
 
 func NewParams() *Params {
