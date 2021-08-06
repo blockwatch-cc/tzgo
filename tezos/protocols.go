@@ -245,7 +245,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		//
 		if Mainnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 1589248
-			pp.StartCycle = 389
+			pp.StartCycle = 388
 			pp.VoteBlockOffset = 0
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 8192
