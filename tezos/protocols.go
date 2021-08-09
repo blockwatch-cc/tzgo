@@ -102,25 +102,40 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
 		pp.SilentSpendable = true
+		pp.StartHeight = 1
+		pp.EndHeight = 1
+
 	case ProtoV001.Equal(proto):
 		pp.Version = 1
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
 		pp.SilentSpendable = true
+		pp.StartHeight = 2
+		pp.EndHeight = 28082
+
 	case ProtoV002.Equal(proto):
 		pp.Version = 2
 		pp.ReactivateByTx = true
 		pp.SilentSpendable = true
+		pp.StartHeight = 28083
+		pp.EndHeight = 204761
+
 	case ProtoV003.Equal(proto):
 		pp.Version = 3
 		pp.ReactivateByTx = true
 		pp.SilentSpendable = true
+		pp.StartHeight = 204762
+		pp.EndHeight = 458752
+
 	case ProtoV004.Equal(proto): // Athens
 		pp.Version = 4
 		pp.SilentSpendable = true
 		pp.Invoices = map[string]int64{
 			"tz1iSQEcaGpUn6EW5uAy3XhPiNg7BHMnRSXi": 100 * 1000000,
 		}
+		pp.StartHeight = 458753
+		pp.EndHeight = 655360
+
 	case ProtoV005_1.Equal(proto) || ProtoV005_2.Equal(proto): // Babylon
 		// changed binary operation format
 		pp.Version = 5
@@ -128,11 +143,15 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			"KT1DUfaMfTRZZkvZAYQT5b3byXnvqoAykc43": 500 * 1000000,
 		}
 		pp.OperationTagsVersion = 1
+		pp.StartHeight = 655361
+		pp.EndHeight = 851968
 
 	case ProtoV006_1.Equal(proto) || ProtoV006_2.Equal(proto): // Carthage
 		// no invoice
 		pp.Version = 6
 		pp.OperationTagsVersion = 1
+		pp.StartHeight = 851969
+		pp.EndHeight = 1212416
 
 	case ProtoV007.Equal(proto): // Delphi
 		pp.Version = 7
@@ -144,6 +163,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.BlocksPerCommitment = 32
 		pp.BlocksPerRollSnapshot = 256
 		pp.BlocksPerVotingPeriod = 32768
+		pp.StartHeight = 1212417
+		pp.EndHeight = 1343488
 
 	case ProtoV008_2.Equal(proto) || ProtoV008_1.Equal(proto): // Edo
 		// no invoice
@@ -173,6 +194,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerCommitment = 32
 			pp.BlocksPerRollSnapshot = 256
 			pp.BlocksPerVotingPeriod = 20480
+			pp.StartHeight = 1343489
+			pp.EndHeight = 1466367
 		}
 
 	case ProtoV009.Equal(proto): // Florence
@@ -189,6 +212,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerCommitment = 32
 			pp.BlocksPerRollSnapshot = 256
 			pp.BlocksPerVotingPeriod = 20480
+			pp.StartHeight = 1466368
+			pp.EndHeight = 1589247
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 0
 			pp.StartCycle = 0
@@ -253,6 +278,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerRollSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 256
+			pp.StartHeight = 1589248
+			pp.EndHeight = -1
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 4096
 			pp.StartCycle = 2
