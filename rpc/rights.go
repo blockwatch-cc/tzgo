@@ -88,7 +88,7 @@ func (r *SnapshotRoll) decode(unpacked []interface{}) error {
 	}
 	id, err := strconv.ParseInt(unpacked[0].(json.Number).String(), 10, 64)
 	if err != nil {
-		return fmt.Errorf("SnapshotRoll: invalid roll id: %v", err)
+		return fmt.Errorf("SnapshotRoll: invalid roll id: %w", err)
 	}
 	if err = r.OwnerKey.UnmarshalText([]byte(unpacked[1].(string))); err != nil {
 		return err

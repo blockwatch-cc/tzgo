@@ -30,7 +30,7 @@ func init() {
 	// unpack manager.tz from binary blob
 	buf, err := hex.DecodeString(m_tz_script + m_tz_store)
 	if err != nil {
-		panic(fmt.Errorf("micheline: decoding manager script: %v", err))
+		panic(fmt.Errorf("micheline: decoding manager script: %w", err))
 	}
 	manager_tz = buf
 	manager_tz_code_len = len(m_tz_script) / 2
@@ -40,7 +40,7 @@ func init() {
 func MakeManagerScript(managerHash []byte) (*Script, error) {
 	script := NewScript()
 	if err := script.UnmarshalBinary(manager_tz); err != nil {
-		return nil, fmt.Errorf("micheline: unmarshal manager script: %v", err)
+		return nil, fmt.Errorf("micheline: unmarshal manager script: %w", err)
 	}
 
 	// patch storage

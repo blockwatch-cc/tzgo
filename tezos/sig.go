@@ -240,7 +240,7 @@ func ParseSignature(s string) (Signature, error) {
 		if err == base58.ErrChecksum {
 			return Signature{}, ErrChecksumMismatch
 		}
-		return Signature{}, fmt.Errorf("unknown signature format: %v", err)
+		return Signature{}, fmt.Errorf("unknown signature format: %w", err)
 	}
 
 	if bytes.Compare(ver, typ.PrefixBytes()) != 0 {

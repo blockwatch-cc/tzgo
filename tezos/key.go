@@ -296,7 +296,7 @@ func ParseKey(s string) (Key, error) {
 		if err == base58.ErrChecksum {
 			return k, ErrChecksumMismatch
 		}
-		return k, fmt.Errorf("unknown format for key %s: %v", s, err.Error())
+		return k, fmt.Errorf("unknown format for key %s: %w", s, err)
 	}
 	switch true {
 	case bytes.Compare(version, ED25519_PUBLIC_KEY_ID) == 0:
@@ -312,7 +312,7 @@ func ParseKey(s string) (Key, error) {
 	case bytes.Compare(version, P256_SECRET_KEY_ID) == 0:
 		k.Type = KeyTypeP256Sec
 	default:
-		return k, fmt.Errorf("unknown version %v for key %s", version, s)
+		return k, fmt.Errorf("unknown version %x for key %s", version, s)
 	}
 	if l := len(decoded); l != k.Type.Len() {
 		return k, fmt.Errorf("invalid length %d for %s key data", l, k.Type.Prefix())

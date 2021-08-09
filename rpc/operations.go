@@ -66,7 +66,7 @@ opLoop:
 		}
 		var tmp GenericOp
 		if err := json.Unmarshal(r, &tmp); err != nil {
-			return fmt.Errorf("rpc: generic operation: %v", err)
+			return fmt.Errorf("rpc: generic operation: %w", err)
 		}
 
 		switch tmp.Kind {
@@ -104,7 +104,7 @@ opLoop:
 		}
 
 		if err := json.Unmarshal(r, (*e)[i]); err != nil {
-			return fmt.Errorf("rpc: operation kind %s: %v", tmp.Kind, err)
+			return fmt.Errorf("rpc: operation kind %s: %w", tmp.Kind, err)
 		}
 	}
 

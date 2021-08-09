@@ -90,7 +90,7 @@ loop:
 		}
 		var tmp GenericDiff
 		if err := json.Unmarshal(r, &tmp); err != nil {
-			return fmt.Errorf("rpc: generic diff: %v", err)
+			return fmt.Errorf("rpc: generic diff: %w", err)
 		}
 
 		switch tmp.DiffKind {
@@ -104,7 +104,7 @@ loop:
 			continue loop
 		}
 		if err := json.Unmarshal(r, (*d)[i]); err != nil {
-			return fmt.Errorf("rpc: lazy diff %s: %v", tmp.Kind(), err)
+			return fmt.Errorf("rpc: lazy diff %s: %w", tmp.Kind(), err)
 		}
 	}
 

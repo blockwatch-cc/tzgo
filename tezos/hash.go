@@ -896,7 +896,7 @@ func decodeHash(hstr string) (Hash, error) {
 		if err == base58.ErrChecksum {
 			return Hash{}, ErrChecksumMismatch
 		}
-		return Hash{}, fmt.Errorf("unknown hash format: %v", err.Error())
+		return Hash{}, fmt.Errorf("unknown hash format: %w", err)
 	}
 	if bytes.Compare(version, typ.PrefixBytes()) != 0 {
 		return Hash{}, fmt.Errorf("invalid prefix '%x' for decoded hash type '%s'", version, typ)

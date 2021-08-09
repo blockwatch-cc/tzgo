@@ -63,7 +63,7 @@ func (a *Address) DecodeBlindedString(addr string) error {
 		if err == base58.ErrChecksum {
 			return ErrChecksumMismatch
 		}
-		return fmt.Errorf("decoded address is of unknown format: %v", err.Error())
+		return fmt.Errorf("decoded address is of unknown format: %w", err)
 	}
 	if len(decoded) != 20 {
 		return fmt.Errorf("decoded address hash is of invalid length")
@@ -73,7 +73,7 @@ func (a *Address) DecodeBlindedString(addr string) error {
 		a.Type = AddressTypeBlinded
 		a.Hash = decoded
 	default:
-		return fmt.Errorf("decoded blinded address %s is of unknown type %v", addr, version)
+		return fmt.Errorf("decoded blinded address %s is of unknown type %x", addr, version)
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func DecodeBlindedAddress(addr string) (Address, error) {
 		if err == base58.ErrChecksum {
 			return a, ErrChecksumMismatch
 		}
-		return a, fmt.Errorf("decoded address is of unknown format: %v", err.Error())
+		return a, fmt.Errorf("decoded address is of unknown format: %w", err)
 	}
 	if len(decoded) != 20 {
 		return a, errors.New("decoded address hash is of invalid length")
@@ -94,7 +94,7 @@ func DecodeBlindedAddress(addr string) (Address, error) {
 	case bytes.Compare(version, BLINDED_PUBLIC_KEY_HASH_ID) == 0:
 		return Address{Type: AddressTypeBlinded, Hash: decoded}, nil
 	default:
-		return a, fmt.Errorf("decoded address %s is of unknown type %v", addr, version)
+		return a, fmt.Errorf("decoded address %s is of unknown type %x", addr, version)
 	}
 }
 

@@ -122,7 +122,7 @@ func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 							Int:  big.NewInt(0),
 						}
 						if err := p.Int.UnmarshalText([]byte(vv)); err != nil {
-							return fmt.Errorf("micheline: decoding bigmap int key '%s': %v", v, err)
+							return fmt.Errorf("micheline: decoding bigmap int key '%s': %w", v, err)
 						}
 						e.Key = p
 					case "bytes":
@@ -131,7 +131,7 @@ func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 						}
 						p.Bytes, err = hex.DecodeString(vv)
 						if err != nil {
-							return fmt.Errorf("micheline: decoding bigmap bytes key '%s': %v", v, err)
+							return fmt.Errorf("micheline: decoding bigmap bytes key '%s': %w", v, err)
 						}
 						e.Key = p
 					case "string":
@@ -142,7 +142,7 @@ func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 					case "prim":
 						p := Prim{}
 						if err := p.UnpackPrimitive(key); err != nil {
-							return fmt.Errorf("micheline: decoding bigmap prim key: %v", err)
+							return fmt.Errorf("micheline: decoding bigmap prim key: %w", err)
 						}
 						e.Key = p
 					default:
@@ -152,14 +152,14 @@ func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 			default:
 				p := Prim{}
 				if err := p.UnpackPrimitive(key); err != nil {
-					return fmt.Errorf("micheline: decoding bigmap pair key: %v", err)
+					return fmt.Errorf("micheline: decoding bigmap pair key: %w", err)
 				}
 				e.Key = p
 			}
 		case []interface{}:
 			p := Prim{}
 			if err := p.UnpackSequence(key); err != nil {
-				return fmt.Errorf("micheline: decoding bigmap list key: %v", err)
+				return fmt.Errorf("micheline: decoding bigmap list key: %w", err)
 			}
 			e.Key = p
 		default:

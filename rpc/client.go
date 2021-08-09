@@ -136,7 +136,7 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 				mon.Err(io.EOF)
 				return
 			}
-			mon.Err(fmt.Errorf("rpc: decoding response: %v", err))
+			mon.Err(fmt.Errorf("rpc: decoding response: %w", err))
 			return
 		}
 		select {
@@ -237,7 +237,7 @@ func handleError(resp *http.Response) error {
 	}
 
 	if len(errs) == 0 {
-		log.Errorf("rpc: error decoding RPC error response: %v", err)
+		log.Errorf("rpc: error decoding RPC error response: %w", err)
 		return &httpErr
 	}
 

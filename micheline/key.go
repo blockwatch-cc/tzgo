@@ -67,7 +67,7 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if key.Int == nil {
 			t, err := time.Parse(time.RFC3339, key.String)
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for string timestamp: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string timestamp: %w", err)
 			}
 			k.TimeKey = t
 		} else {
@@ -78,13 +78,13 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if len(key.Bytes) == 0 && len(key.String) > 0 {
 			a, err := tezos.ParseAddress(strings.Split(key.String, "%")[0])
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type address: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type address: %w", err)
 			}
 			k.AddrKey = a
 		} else {
 			a := tezos.Address{}
 			if err := a.UnmarshalBinary(key.Bytes); err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for type address: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for type address: %w", err)
 			}
 			k.AddrKey = a
 		}
@@ -92,13 +92,13 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if len(key.Bytes) == 0 && len(key.String) > 0 {
 			kk, err := tezos.ParseKey(key.String)
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type key: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type key: %w", err)
 			}
 			k.KeyKey = kk
 		} else {
 			kk := tezos.Key{}
 			if err := kk.UnmarshalBinary(key.Bytes); err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for type key: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for type key: %w", err)
 			}
 			k.KeyKey = kk
 		}
@@ -106,13 +106,13 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if len(key.Bytes) == 0 && len(key.String) > 0 {
 			sk, err := tezos.ParseSignature(key.String)
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type signature: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for string type signature: %w", err)
 			}
 			k.SignatureKey = sk
 		} else {
 			sk := tezos.Signature{}
 			if err := sk.UnmarshalBinary(key.Bytes); err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for type signature: %v", err)
+				return Key{}, fmt.Errorf("micheline: invalid big_map key for type signature: %w", err)
 			}
 			k.SignatureKey = sk
 		}
@@ -232,7 +232,7 @@ func ParseKey(typ OpCode, val string) (Key, error) {
 		for _, v := range strings.Split(val, ",") {
 			parsed, err := ParseKey(InferKeyType(v), v)
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: decoding bigmap pair key element %s: %v", v, err)
+				return Key{}, fmt.Errorf("micheline: decoding bigmap pair key element %s: %w", v, err)
 			}
 			prims = append(prims, parsed.Prim())
 		}
@@ -257,7 +257,7 @@ func ParseKey(typ OpCode, val string) (Key, error) {
 	}
 
 	if err != nil {
-		return Key{}, fmt.Errorf("micheline: decoding bigmap key %s as %s: %v", val, typ, err)
+		return Key{}, fmt.Errorf("micheline: decoding bigmap key %s as %s: %w", val, typ, err)
 	}
 	return key, nil
 }
