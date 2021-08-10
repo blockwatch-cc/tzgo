@@ -177,6 +177,12 @@ var typedefInfo = []typedefTest{
 		Spec: `{"annots": ["%transfer"],"args": [{"args": [{"annots": ["%from_"],"prim": "address"},{"annots": ["%txs"],"args": [{"args": [{"annots": ["%to_"],"prim": "address"},{"args": [{"annots": ["%token_id"],"prim": "nat"},{"annots": ["%amount"],"prim": "nat"}],"prim": "pair"}],"prim": "pair"}],"prim": "list"}],"prim": "pair"}],"prim": "list"}`,
 		Want: `{"name":"transfer","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"from_","type":"address"},{"name":"txs","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"to_","type":"address"},{"name":"token_id","type":"nat"},{"name":"amount","type":"nat"}]}]}]}]}`,
 	},
+	// right-hand pair tree
+	typedefTest{
+		Name: "right_hand_pair_tree",
+		Spec: `{"args":[{"annots":["%tokenPool"],"prim":"nat"},{"args":[{"annots":["%xtzPool"],"prim":"mutez"},{"args":[{"annots":["%lqtTotal"],"prim":"nat"},{"args":[{"annots":["%tokenAddress"],"prim":"address"},{"annots":["%lqtAddress"],"prim":"address"}],"prim":"pair"}],"prim":"pair"}],"prim":"pair"}],"prim":"pair"}`,
+		Want: `{"name":"","type":"struct","args":[{"name":"tokenPool","type":"nat"},{"name":"xtzPool","type":"mutez"},{"name":"lqtTotal","type":"nat"},{"name":"tokenAddress","type":"address"},{"name":"lqtAddress","type":"address"}]}`,
+	},
 }
 
 func TestTypeRendering(t *testing.T) {

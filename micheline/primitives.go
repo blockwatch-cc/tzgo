@@ -576,7 +576,7 @@ func (p Prim) UnfoldPairRecursive(typ Type) []Prim {
 			t = Type{typ.Args[i]}
 		}
 		if !v.WasPacked && v.CanUnfold(t) && !t.HasAnno() {
-			flat = append(flat, v.UnfoldPair(t)...)
+			flat = append(flat, v.UnfoldPairRecursive(t)...)
 		} else {
 			flat = append(flat, v)
 		}
