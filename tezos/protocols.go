@@ -288,9 +288,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	return pp
 }
 
-func (p *Params) Clean() *Params {
-	pp := &Params{}
-	*pp = *p
+func (p Params) Clean() *Params {
+	pp := p
 	pp.Invoices = nil
 	pp.SilentSpendable = false
 	pp.HasOriginationBug = false
@@ -300,7 +299,9 @@ func (p *Params) Clean() *Params {
 	pp.StartBlockOffset = 0
 	pp.StartCycle = 0
 	pp.VoteBlockOffset = 0
-	return pp
+	pp.StartHeight = -1
+	pp.EndHeight = -1
+	return &pp
 }
 
 func (p *Params) ForHeight(h int64) *Params {
