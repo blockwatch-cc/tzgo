@@ -52,21 +52,22 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	ctx := context.Background()
 
 	// fetch block & constants at height
 	c, _ := rpc.NewClient(node, nil)
-	block, err := c.GetBlockHeight(context.Background(), height)
+	block, err := c.GetBlockHeight(ctx, height)
 	if err != nil {
 		if rpc.ErrorStatus(err) != 404 {
 			return err
 		}
-		block, err = c.GetHeadBlock(context.Background())
+		block, err = c.GetHeadBlock(ctx)
 		if err != nil {
 			return err
 		}
 		fmt.Printf("Block %d does not exist yet. Using constants at current head block %d\n", height, block.GetLevel())
 	}
-	cons, err := c.GetConstantsHeight(context.Background(), block.GetLevel())
+	cons, err := c.GetConstantsHeight(ctx, block.GetLevel())
 	if err != nil {
 		return err
 	}
@@ -78,6 +79,9 @@ func run() error {
 	}
 
 	p := cons.MapToChainParams().ForNetwork(block.ChainId).ForProtocol(block.Protocol)
+
+	// fmt.Printf("SNAP height=%d\n", p.SnapshotBlock(387+7, 15))
+	// return nil
 
 	fmt.Println("Height ...................... ", height)
 	fmt.Println("Protocol .................... ", block.Protocol)

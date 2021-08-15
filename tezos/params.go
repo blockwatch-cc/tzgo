@@ -154,11 +154,15 @@ func (p *Params) CycleFromHeight(height int64) int64 {
 	if height == 0 {
 		return 0
 	}
+	correct := int64(0)
+	if p.StartBlockOffset == height {
+		correct = 1
+	}
 	pp := p
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return pp.StartCycle + (height-pp.StartBlockOffset-1)/pp.BlocksPerCycle
+	return pp.StartCycle + (height-pp.StartBlockOffset-1)/pp.BlocksPerCycle - correct
 }
 
 func (p *Params) CycleStartHeight(cycle int64) int64 {
@@ -183,7 +187,7 @@ func (p *Params) SnapshotBlock(cycle, index int64) int64 {
 	}
 	baseCycle := cycle - (p.PreservedCycles + 2)
 	pp := p
-	if !p.ContainsCycle(cycle) {
+	if !p.ContainsCycle(baseCycle) {
 		pp = p.ForCycle(baseCycle)
 	}
 	return pp.CycleStartHeight(baseCycle) + (index+1)*pp.BlocksPerRollSnapshot - 1
