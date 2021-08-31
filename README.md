@@ -169,6 +169,93 @@ buf, _ := json.MarshalIndent(m, "", "  ")
 fmt.Println(string(buf))
 ```
 
+#### Decode contract call parameters
+
+```go
+import (
+	"blockwatch.cc/tzgo/micheline"
+	"blockwatch.cc/tzgo/rpc"
+	"blockwatch.cc/tzgo/tezos"
+)
+
+// init RPC client
+c, _ := rpc.NewClient("https://rpc.tzstats.com", nil)
+
+// assuming you have this transaction
+tx := block.Operations[3][0].Contents[0].(*rpc.TransactionOp)
+
+// load the contract's script for type info
+script, err := c.GetContractScript(ctx, tx.Destination)
+
+// unwrap params for nested entrypoints
+ep, param, err := tx.Parameters.MapEntrypoint(script.ParamType())
+
+// convert Micheline param data into human-readable form
+val := micheline.NewValue(ep.Type(), param)
+
+// e.g. access individual nested fields using value helpers
+from, ok := val.GetAddress("transfer.from")
+```
+
+#### Use TzGo's Value API
+
+Micheline type and value trees are verbose and can be ambiguous due to comb-pair optimizations. If you don't know or don't care about what that even means, you may want to use the `Value` API which helps you translate Micheline into human readable form.
+
+There are multiple options to access decoded data:
+
+```go
+// 1/
+// decode into a Go type tree using `Map()` which produces
+// - `map[string]interface{}` for records and maps
+// - `[]interface{}` for lists and sets
+// - `time.Time` for time values
+// - `string` stringified numbers for Nat, Int, Mutez
+// - `bool` for Booleans
+// - `tezos.Address` for any string or bytes sequence that contains an address
+// - `tezos.Key` for keys
+// - `tezos.Signature` for signatures
+// - `tezos.ChainIdHash` for chain ids
+// - hex string for untyped bytes
+// - opcode names for any Michelson opcode
+// - opcode sequences for lambdas
+m, err := val.Map()
+buf, err := json.MarshalIndent(m, "", "  ")
+fmt.Println(string(buf))
+
+// when you know the concrete type you can cast directly
+fmt.Println("Value=", m.(map[string]interface{})["transfer"].(map[string]interface{})["value"])
+
+// 2/
+// access individual nested fields using value helpers (`ok` is true when the field
+// exists and has the correct type; helpers exist for
+//   GetString() (string, bool)
+//   GetBytes() ([]byte, bool)
+//   GetInt64() (int64, bool)
+//   GetBig() (*big.Int, bool)
+//   GetBool() (bool, bool)
+//   GetTime() (time.Time, bool)
+//   GetAddress() (tezos.Address, bool)
+//   GetKey() (tezos.Key, bool)
+//   GetSignature() (tezos.Signature, bool)
+from, ok := val.GetAddress("transfer.from")
+
+// 3/
+// unmarshal the decoded Micheline parameters into a json-tagged Go struct
+type FA12Transfer struct {
+    From  tezos.Address `json:"from"`
+    To    tezos.Address `json:"to"`
+    Value int64         `json:"value,string"`
+}
+
+// FA1.2 params are nested, so we need an extra wrapper
+type FA12TransferParams struct {
+	Transfer FA12Transfer `json:"transfer"`
+}
+
+var transfer FA12TransferParams
+err := val.Unmarshal(&transfer)
+```
+
 #### List a contract's bigmaps
 
 ```go
