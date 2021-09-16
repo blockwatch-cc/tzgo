@@ -6,6 +6,7 @@ package tezos
 import (
 	"blockwatch.cc/tzgo/base58"
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"strings"
@@ -535,6 +536,10 @@ func (h *ChainIdHash) UnmarshalBinary(data []byte) error {
 	h.Hash.Hash = make([]byte, HashTypeChainId.Len())
 	copy(h.Hash.Hash, data)
 	return nil
+}
+
+func (h ChainIdHash) Uint32() uint32 {
+	return binary.BigEndian.Uint32(h.Hash.Hash[:])
 }
 
 func MustParseChainIdHash(s string) ChainIdHash {

@@ -34,8 +34,8 @@ var (
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
-	ProtocolVersions = map[string][]ProtocolHash{
-		Mainnet.String(): []ProtocolHash{
+	ProtocolVersions = map[uint32][]ProtocolHash{
+		Mainnet.Uint32(): []ProtocolHash{
 			ProtoGenesis, // -1
 			ProtoV000,    // 0
 			ProtoV001,    // 1
@@ -49,7 +49,7 @@ var (
 			ProtoV009,    // 9
 			ProtoV010,    // 10
 		},
-		Granadanet.String(): []ProtocolHash{
+		Granadanet.Uint32(): []ProtocolHash{
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV009,      // 1
@@ -305,14 +305,14 @@ func (p Params) Clean() *Params {
 }
 
 func (p *Params) ForHeight(h int64) *Params {
-	versions, ok := ProtocolVersions[p.ChainId.String()]
+	versions, ok := ProtocolVersions[p.ChainId.Uint32()]
 	if !ok {
 		return p
 	}
 	pp := p.Clean()
 	for i := len(versions) - 1; i >= 0; i-- {
 		pp = pp.Clean().ForNetwork(p.ChainId).ForProtocol(versions[i])
-		if pp.StartBlockOffset == 0 || pp.StartBlockOffset < h {
+		if uint64(h-pp.StartHeight) < uint64(pp.EndHeight-pp.StartHeight+1) {
 			return pp
 		}
 	}
@@ -320,7 +320,7 @@ func (p *Params) ForHeight(h int64) *Params {
 }
 
 func (p *Params) ForCycle(c int64) *Params {
-	versions, ok := ProtocolVersions[p.ChainId.String()]
+	versions, ok := ProtocolVersions[p.ChainId.Uint32()]
 	if !ok {
 		return p
 	}
