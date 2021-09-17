@@ -163,6 +163,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.BlocksPerCommitment = 32
 		pp.BlocksPerRollSnapshot = 256
 		pp.BlocksPerVotingPeriod = 32768
+		pp.EndorsersPerBlock = 32
 		pp.StartHeight = 1212417
 		pp.EndHeight = 1343488
 
@@ -194,6 +195,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerCommitment = 32
 			pp.BlocksPerRollSnapshot = 256
 			pp.BlocksPerVotingPeriod = 20480
+			pp.EndorsersPerBlock = 32
 			pp.StartHeight = 1343489
 			pp.EndHeight = 1466367
 		}
