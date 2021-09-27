@@ -88,6 +88,8 @@ opLoop:
 			(*e)[i] = &DelegationOp{}
 		case tezos.OpTypeReveal:
 			(*e)[i] = &RevelationOp{}
+		case tezos.OpTypeRegisterConstant:
+			(*e)[i] = &ConstantRegistrationOp{}
 		// consensus operations
 		case tezos.OpTypeEndorsement:
 			(*e)[i] = &EndorsementOp{}
@@ -98,7 +100,8 @@ opLoop:
 			(*e)[i] = &BallotOp{}
 
 		default:
-			log.Warnf("unsupported op '%s'", tmp.Kind)
+			return fmt.Errorf("unsupported op '%s'", tmp.Kind)
+			// log.Warnf("unsupported op '%s'", tmp.Kind)
 			(*e)[i] = &tmp
 			continue opLoop
 		}

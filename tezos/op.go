@@ -89,6 +89,7 @@ const (
 	OpTypeSeedSlash                               // 15 indexer only
 	OpTypeMigration                               // 16 indexer only
 	OpTypeFailingNoop                             // 17 v009
+	OpTypeRegisterConstant                        // 18 v011
 	OpTypeBatch                     = 254         // indexer only, output-only
 	OpTypeInvalid                   = 255
 )
@@ -150,6 +151,8 @@ func ParseOpType(s string) OpType {
 		return OpTypeBatch
 	case "failing_noop":
 		return OpTypeFailingNoop
+	case "register_global_constant":
+		return OpTypeRegisterConstant
 	default:
 		return OpTypeInvalid
 	}
@@ -195,6 +198,8 @@ func (t OpType) String() string {
 		return "batch"
 	case OpTypeFailingNoop:
 		return "failing_noop"
+	case OpTypeRegisterConstant:
+		return "register_global_constant"
 	default:
 		return ""
 	}
@@ -229,6 +234,7 @@ var (
 		OpTypeOrigination:               109, // v005
 		OpTypeDelegation:                110, // v005
 		OpTypeFailingNoop:               17,  // v009
+		OpTypeRegisterConstant:          111, // v011
 	}
 )
 
@@ -270,6 +276,7 @@ func (t OpType) ListId() int {
 		OpTypeOrigination,
 		OpTypeDelegation,
 		OpTypeReveal,
+		OpTypeRegisterConstant,
 		OpTypeBatch: // custom, indexer only
 		return 3
 	case OpTypeBake, OpTypeUnfreeze, OpTypeSeedSlash:
@@ -307,6 +314,8 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeDelegation
 	case 17:
 		return OpTypeFailingNoop
+	case 111:
+		return OpTypeRegisterConstant
 	default:
 		return OpTypeInvalid
 	}
