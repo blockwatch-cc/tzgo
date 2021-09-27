@@ -100,8 +100,7 @@ opLoop:
 			(*e)[i] = &BallotOp{}
 
 		default:
-			return fmt.Errorf("unsupported op '%s'", tmp.Kind)
-			// log.Warnf("unsupported op '%s'", tmp.Kind)
+			log.Warnf("unsupported op '%s'", tmp.Kind)
 			(*e)[i] = &tmp
 			continue opLoop
 		}
