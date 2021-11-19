@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 type Script struct {
@@ -22,7 +24,7 @@ type Code struct {
 	Param   Prim  // call types
 	Storage Prim  // storage types
 	Code    Prim  // program code
-	View    *Prim // view code
+	View    Prim  // view code (i.e. list of views, may be empty)
 	BadCode *Prim // catch-all for ill-formed contracts
 }
 
@@ -32,7 +34,7 @@ func NewScript() *Script {
 			Param:   Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
 			Storage: Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
 			Code:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_CODE}}},
-			// View:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_VIEW}}},
+			View:    Prim{Type: PrimSequence, Args: []Prim{}},
 		},
 		Storage: Prim{},
 	}
@@ -50,8 +52,62 @@ func (s *Script) Entrypoints(withPrim bool) (Entrypoints, error) {
 	return s.ParamType().Entrypoints(withPrim)
 }
 
-func (s *Script) SearchEntrypointName(name string) string {
-	return s.ParamType().SearchEntrypointName(name)
+func (s *Script) ResolveEntrypointPath(name string) string {
+	return s.ParamType().ResolveEntrypointPath(name)
+}
+
+func (s *Script) Views(withPrim, withCode bool) (Views, error) {
+	views := make(Views, len(s.Code.View.Args))
+	for _, v := range s.Code.View.Args {
+		view := NewView(v)
+		if !withPrim {
+			view.Prim = InvalidPrim
+		}
+		if !withCode {
+			view.Code = InvalidPrim
+		}
+		views[view.Name] = view
+	}
+	return views, nil
+}
+
+func (s *Script) Constants() []tezos.ExprHash {
+	c := make([]tezos.ExprHash, 0)
+	for _, prim := range []Prim{
+		s.Code.Param,
+		s.Code.Storage,
+		s.Code.Code,
+		s.Code.View,
+	} {
+		prim.Walk(func(p Prim) error {
+			if p.IsConstant() {
+				if h, err := tezos.ParseExprHash(p.Args[0].String); err == nil {
+					c = append(c, h)
+				}
+			}
+			return nil
+		})
+	}
+	return c
+}
+
+func (s *Script) ExpandConstants(dict ConstantDict) {
+	for _, prim := range []*Prim{
+		&s.Code.Param,
+		&s.Code.Storage,
+		&s.Code.Code,
+		&s.Code.View,
+	} {
+		_ = prim.Visit(func(p *Prim) error {
+			if p.IsConstant() {
+				if c, ok := dict.GetString(p.Args[0].String); ok {
+					*p = c
+					return PrimSkip
+				}
+			}
+			return nil
+		})
+	}
 }
 
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded parameter type
@@ -224,8 +280,8 @@ func (c Code) MarshalBinary() ([]byte, error) {
 		Args: []Prim{c.Param, c.Storage, c.Code},
 	}
 
-	if c.View != nil {
-		root.Args = append(root.Args, *c.View)
+	if len(c.View.Args) > 0 {
+		root.Args = append(root.Args, c.View.Args...)
 	}
 
 	// store ill-formed contracts
@@ -279,7 +335,8 @@ func (c *Code) DecodeBuffer(buf *bytes.Buffer) error {
 		case K_CODE:
 			c.Code = v
 		case K_VIEW:
-			c.View = &v
+			// append to view list
+			c.View.Args = append(c.View.Args, v)
 		case 255:
 			c.BadCode = &v
 		default:
@@ -294,8 +351,8 @@ func (c Code) MarshalJSON() ([]byte, error) {
 		Type: PrimSequence,
 		Args: []Prim{c.Param, c.Storage, c.Code},
 	}
-	if c.View != nil {
-		root.Args = append(root.Args, *c.View)
+	if len(c.View.Args) > 0 {
+		root.Args = append(root.Args, c.View.Args...)
 	}
 	if c.BadCode != nil {
 		root = *c.BadCode
@@ -329,7 +386,7 @@ stopcode:
 		case K_CODE:
 			c.Code = v
 		case K_VIEW:
-			c.View = &v
+			c.View.Args = append(c.View.Args, v)
 		default:
 			isBadCode = true
 			log.Warnf("micheline: unexpected program key 0x%x (%d)", byte(v.OpCode), v.OpCode)

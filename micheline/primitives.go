@@ -126,6 +126,10 @@ func (p Prim) IsValid() bool {
 	return p.Type.IsValid() && (p.Type > 0 || p.Int != nil)
 }
 
+func (p Prim) IsEmpty() bool {
+	return p.Type == PrimNullary && p.OpCode == 255
+}
+
 func (p Prim) Clone() Prim {
 	clone := Prim{
 		Type:      p.Type,
@@ -265,8 +269,8 @@ func (p *Prim) Visit(f PrimVisitorFunc) error {
 		}
 		return err
 	}
-	for _, v := range p.Args {
-		if err := v.Visit(f); err != nil {
+	for i := range p.Args {
+		if err := p.Args[i].Visit(f); err != nil {
 			return err
 		}
 	}
@@ -330,6 +334,10 @@ func (p Prim) IsLambda() bool {
 
 func (p Prim) IsElt() bool {
 	return p.OpCode == D_ELT
+}
+
+func (p Prim) IsConstant() bool {
+	return p.OpCode == H_CONSTANT
 }
 
 func (p Prim) IsPair() bool {

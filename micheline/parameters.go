@@ -36,7 +36,7 @@ func (p Parameters) MapEntrypoint(typ Type) (Entrypoint, Prim, error) {
 	switch p.Entrypoint {
 	case "default":
 		// rebase branch by prepending the path to the named default entrypoint
-		prefix := typ.SearchEntrypointName("default")
+		prefix := typ.ResolveEntrypointPath("default")
 		// can be [LR]+ or empty when entrypoint is used
 		branch := p.Branch(prefix, eps)
 		ep, ok = eps.FindBranch(branch)
@@ -62,7 +62,7 @@ func (p Parameters) MapEntrypoint(typ Type) (Entrypoint, Prim, error) {
 		if !ok {
 			// entrypoint can be a combination of an annotated branch and more T_OR branches
 			// inside parameters, so lets find the named branch
-			prefix := typ.SearchEntrypointName(p.Entrypoint)
+			prefix := typ.ResolveEntrypointPath(p.Entrypoint)
 			if prefix == "" {
 				// meh
 				return ep, prim, fmt.Errorf("micheline: missing entrypoint '%s'", p.Entrypoint)

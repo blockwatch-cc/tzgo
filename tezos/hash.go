@@ -458,6 +458,11 @@ func (h Hash) String() string {
 	return s
 }
 
+// Bytes returns the raw byte representation of the hash without type info.
+func (h Hash) Bytes() []byte {
+	return h.Hash
+}
+
 func (h Hash) Short() string {
 	s := h.String()
 	if len(s) < 12 {

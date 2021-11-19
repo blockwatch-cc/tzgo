@@ -181,7 +181,7 @@ const (
 )
 
 func (op OpCode) IsValid() bool {
-	return op <= I_GET_AND_UPDATE
+	return op <= H_CONSTANT
 }
 
 var (
