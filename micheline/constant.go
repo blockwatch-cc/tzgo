@@ -39,3 +39,16 @@ func (d ConstantDict) GetString(address string) (Prim, bool) {
 	p, ok := d[address]
 	return p, ok
 }
+
+func (p Prim) Constants() []tezos.ExprHash {
+	c := make([]tezos.ExprHash, 0)
+	p.Walk(func(p Prim) error {
+		if p.IsConstant() {
+			if h, err := tezos.ParseExprHash(p.Args[0].String); err == nil {
+				c = append(c, h)
+			}
+		}
+		return nil
+	})
+	return c
+}

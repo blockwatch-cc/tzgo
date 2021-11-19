@@ -102,7 +102,6 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 			if p.IsConstant() {
 				if c, ok := dict.GetString(p.Args[0].String); ok {
 					*p = c
-					return PrimSkip
 				}
 			}
 			return nil

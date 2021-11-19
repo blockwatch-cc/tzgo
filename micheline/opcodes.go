@@ -172,8 +172,8 @@ const (
 	I_GET_AND_UPDATE        // 8C
 
 	// v011 additions
-	T_CHEST_KEY  // 8D
-	T_CHEST      // 8E
+	T_CHEST      // 8D
+	T_CHEST_KEY  // 8E
 	I_OPEN_CHEST // 8F
 	I_VIEW       // 90
 	K_VIEW       // 91
@@ -327,8 +327,8 @@ var (
 		I_SPLIT_TICKET:          "SPLIT_TICKET",
 		I_JOIN_TICKETS:          "JOIN_TICKETS",
 		I_GET_AND_UPDATE:        "GET_AND_UPDATE",
-		T_CHEST_KEY:             "chest_key",
 		T_CHEST:                 "chest",
+		T_CHEST_KEY:             "chest_key",
 		I_OPEN_CHEST:            "OPEN_CHEST",
 		I_VIEW:                  "VIEW",
 		K_VIEW:                  "view",
@@ -396,8 +396,8 @@ func (op OpCode) IsTypeCode() bool {
 		T_SAPLING_STATE,
 		T_SAPLING_TRANSACTION,
 		T_TICKET,
-		T_CHEST_KEY,
-		T_CHEST:
+		T_CHEST,
+		T_CHEST_KEY:
 		return true
 	default:
 		return false
