@@ -212,6 +212,19 @@ func (a Address) IsValid() bool {
 	return a.Type != AddressTypeInvalid && len(a.Hash) == a.Type.HashType().Len()
 }
 
+func (a Address) IsEOA() bool {
+	switch a.Type {
+	case AddressTypeEd25519, AddressTypeSecp256k1, AddressTypeP256:
+		return true
+	default:
+		return false
+	}
+}
+
+func (a Address) IsContract() bool {
+	return a.Type == AddressTypeContract || a.Type == AddressTypeBaker
+}
+
 func (a Address) Equal(b Address) bool {
 	return a.Type == b.Type && bytes.Compare(a.Hash, b.Hash) == 0
 }
