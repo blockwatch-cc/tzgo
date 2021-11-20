@@ -277,15 +277,20 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// sequence of Elt (key/value) pairs
 
 		// render bigmap reference
-		if typ.OpCode == T_BIG_MAP && len(val.Args) == 0 {
+		if typ.OpCode == T_BIG_MAP && (len(val.Args) == 0 || !val.Args[0].IsElt()) {
 			switch val.Type {
 			case PrimInt:
 				// Babylon bigmaps contain a reference here
 				m[label] = val.Value(T_INT)
 			case PrimSequence:
-				// pre-babylon there's only an empty sequence
-				// FIXME: we could insert the bigmap id, but this is unknown at ths point
-				m[label] = nil
+				if len(val.Args) == 0 {
+					// pre-babylon there's only an empty sequence
+					// FIXME: we could insert the bigmap id, but this is unknown at ths point
+					m[label] = nil
+				} else {
+					m[label] = val.Args[0].Value(T_INT)
+					stack.Push(val.Args[1:]...)
+				}
 			}
 			return nil
 		}
@@ -516,6 +521,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// contract <type> (??)
 		// chain_id
 		// never
+		// chest_key
+		// chest
 		// append scalar or other complex value
 
 		// comb-pair records might have slipped through our in LooksLikeContainer()
@@ -578,7 +585,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 			T_CONTRACT, T_SIGNATURE, T_OPERATION, T_LAMBDA, T_OR,
 			T_CHAIN_ID, T_OPTION, T_SAPLING_STATE, T_SAPLING_TRANSACTION,
 			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR, // maybe stored as bytes
-			T_TICKET: // allow ticket since first value is ticketer address
+			T_TICKET, // allow ticket since first value is ticketer address
+			T_CHEST, T_CHEST_KEY:
 		default:
 			mismatch = true
 		}

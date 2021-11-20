@@ -88,6 +88,8 @@ opLoop:
 			(*e)[i] = &DelegationOp{}
 		case tezos.OpTypeReveal:
 			(*e)[i] = &RevelationOp{}
+		case tezos.OpTypeRegisterConstant:
+			(*e)[i] = &ConstantRegistrationOp{}
 		// consensus operations
 		case tezos.OpTypeEndorsement:
 			(*e)[i] = &EndorsementOp{}

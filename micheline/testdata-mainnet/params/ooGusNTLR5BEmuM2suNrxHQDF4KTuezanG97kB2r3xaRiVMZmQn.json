@@ -1,0 +1,147 @@
+[
+  {
+    "name": "Mainnet/ooGusNTLR5BEmuM2suNrxHQDF4KTuezanG97kB2r3xaRiVMZmQn/0/0",
+    "type": {
+      "annots": [
+        "%tezToTokenPayment"
+      ],
+      "args": [
+        {
+          "annots": [
+            "%min_out"
+          ],
+          "prim": "nat"
+        },
+        {
+          "annots": [
+            "%receiver"
+          ],
+          "prim": "address"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "int": "19963357392881837351356785"
+        },
+        {
+          "string": "tz1hxu9gGgff8kRRPD6XpzrYv3HgbC3g17kw"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "0865046200000008256d696e5f6f7574046e00000009257265636569766572000000122574657a546f546f6b656e5061796d656e74",
+    "value_hex": "070700b1a5def5dcdcbcd48b9f9b88020100000024747a31687875396747676666386b525250443658707a7259763348676243336731376b77",
+    "want_value": {
+      "tezToTokenPayment": {
+        "min_out": "19963357392881837351356785",
+        "receiver": "tz1hxu9gGgff8kRRPD6XpzrYv3HgbC3g17kw"
+      }
+    }
+  },
+  {
+    "name": "Mainnet/ooGusNTLR5BEmuM2suNrxHQDF4KTuezanG97kB2r3xaRiVMZmQn/0/0",
+    "type": {
+      "annots": [
+        "%transfer"
+      ],
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%from_"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                "%txs"
+              ],
+              "args": [
+                {
+                  "annots": [
+                    ""
+                  ],
+                  "args": [
+                    {
+                      "annots": [
+                        "%to_"
+                      ],
+                      "prim": "address"
+                    },
+                    {
+                      "annots": [
+                        "%token_id"
+                      ],
+                      "prim": "nat"
+                    },
+                    {
+                      "annots": [
+                        "%amount"
+                      ],
+                      "prim": "nat"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "list"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "list"
+    },
+    "value": [
+      {
+        "args": [
+          {
+            "bytes": "0140cbc411236f2879ad5de5f3e1ad67f3fa2e6e8400"
+          },
+          [
+            {
+              "args": [
+                {
+                  "bytes": "0000f4e45fec184d64271a0612e1cd2fc4b6cc2cdf5e"
+                },
+                {
+                  "args": [
+                    {
+                      "int": "0"
+                    },
+                    {
+                      "int": "20063675771740540051614860"
+                    }
+                  ],
+                  "prim": "Pair"
+                }
+              ],
+              "prim": "Pair"
+            }
+          ]
+        ],
+        "prim": "Pair"
+      }
+    ],
+    "type_hex": "065f0765046e000000062566726f6d5f065f096500000026046e0000000425746f5f04620000000925746f6b656e5f696404620000000725616d6f756e7400000000000000042574787300000009257472616e73666572",
+    "value_hex": "020000005107070a000000160140cbc411236f2879ad5de5f3e1ad67f3fa2e6e8400020000002f07070a000000160000f4e45fec184d64271a0612e1cd2fc4b6cc2cdf5e07070000008cb2bbe9ecf8a3819698c58902",
+    "want_value": {
+      "transfer": [
+        {
+          "from_": "KT1EVNuwjj7GijvVaxR7Vd9mejy4V6toZkeK",
+          "txs": [
+            {
+              "amount": "20063675771740540051614860",
+              "to_": "tz1hxu9gGgff8kRRPD6XpzrYv3HgbC3g17kw",
+              "token_id": "0"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

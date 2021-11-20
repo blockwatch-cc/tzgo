@@ -170,10 +170,18 @@ const (
 	I_SPLIT_TICKET          // 8A
 	I_JOIN_TICKETS          // 8B
 	I_GET_AND_UPDATE        // 8C
+
+	// v011 additions
+	T_CHEST      // 8D
+	T_CHEST_KEY  // 8E
+	I_OPEN_CHEST // 8F
+	I_VIEW       // 90
+	K_VIEW       // 91
+	H_CONSTANT   // 92
 )
 
 func (op OpCode) IsValid() bool {
-	return op <= I_GET_AND_UPDATE
+	return op <= H_CONSTANT
 }
 
 var (
@@ -319,6 +327,12 @@ var (
 		I_SPLIT_TICKET:          "SPLIT_TICKET",
 		I_JOIN_TICKETS:          "JOIN_TICKETS",
 		I_GET_AND_UPDATE:        "GET_AND_UPDATE",
+		T_CHEST:                 "chest",
+		T_CHEST_KEY:             "chest_key",
+		I_OPEN_CHEST:            "OPEN_CHEST",
+		I_VIEW:                  "VIEW",
+		K_VIEW:                  "view",
+		H_CONSTANT:              "constant",
 	}
 	stringToOp map[string]OpCode
 )
@@ -381,7 +395,9 @@ func (op OpCode) IsTypeCode() bool {
 		T_BLS12_381_FR,
 		T_SAPLING_STATE,
 		T_SAPLING_TRANSACTION,
-		T_TICKET:
+		T_TICKET,
+		T_CHEST,
+		T_CHEST_KEY:
 		return true
 	default:
 		return false
@@ -402,7 +418,7 @@ func (op OpCode) TypeCode() OpCode {
 		return op
 	}
 	switch op {
-	case K_PARAMETER, K_STORAGE, K_CODE, D_UNIT:
+	case K_PARAMETER, K_STORAGE, K_CODE, K_VIEW, D_UNIT:
 		return T_UNIT
 	case D_FALSE, D_TRUE:
 		return T_BOOL

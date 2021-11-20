@@ -20,17 +20,21 @@ var (
 	ProtoV008_2    = ParseProtocolHashSafe("PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA")
 	ProtoV009      = ParseProtocolHashSafe("PsFLorenaUUuikDWvMDr6fGBRG8kt3e3D3fHoXK1j1BFRxeSH4i")
 	ProtoV010      = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
+	ProtoV011_1    = ParseProtocolHashSafe("PtHangzHogokSuiMHemCuowEavgYTP8J5qQ9fQS793MHYFpCY3r")
+	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
 
-	Mainnet     = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Alphanet    = MustParseChainIdHash("NetXgtSLGNJvNye")
-	Zeronet     = MustParseChainIdHash("NetXKakFj1A7ouL")
-	Babylonnet  = MustParseChainIdHash("NetXUdfLh6Gm88t")
-	Carthagenet = MustParseChainIdHash("NetXjD3HPJJjmcd")
-	Delphinet   = MustParseChainIdHash("NetXm8tYqnMWky1")
-	Edonet      = MustParseChainIdHash("NetXSp4gfdanies")
-	Edonet2     = MustParseChainIdHash("NetXSgo1ZT2DRUG")
-	Florencenet = MustParseChainIdHash("NetXxkAx4woPLyu")
-	Granadanet  = MustParseChainIdHash("NetXz969SFaFn8k")
+	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
+	Alphanet     = MustParseChainIdHash("NetXgtSLGNJvNye")
+	Zeronet      = MustParseChainIdHash("NetXKakFj1A7ouL")
+	Babylonnet   = MustParseChainIdHash("NetXUdfLh6Gm88t")
+	Carthagenet  = MustParseChainIdHash("NetXjD3HPJJjmcd")
+	Delphinet    = MustParseChainIdHash("NetXm8tYqnMWky1")
+	Edonet       = MustParseChainIdHash("NetXSp4gfdanies")
+	Edonet2      = MustParseChainIdHash("NetXSgo1ZT2DRUG")
+	Florencenet  = MustParseChainIdHash("NetXxkAx4woPLyu")
+	Granadanet   = MustParseChainIdHash("NetXz969SFaFn8k")
+	Hangzhounet  = MustParseChainIdHash("NetXuXoGoLxNK6o")
+	Hangzhounet2 = MustParseChainIdHash("NetXZSsxBpMQeAT")
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
@@ -48,12 +52,19 @@ var (
 			ProtoV008_2,  // 8
 			ProtoV009,    // 9
 			ProtoV010,    // 10
+			// ProtoV011,    // 11
 		},
 		Granadanet.Uint32(): []ProtocolHash{
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV009,      // 1
 			ProtoV010,      // 2
+		},
+		Hangzhounet2.Uint32(): []ProtocolHash{
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV010,      // 1
+			ProtoV011_2,    // 2
 		},
 	}
 )
@@ -84,6 +95,10 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 		pp.Network = "Florencenet"
 	case Granadanet.Equal(net):
 		pp.Network = "Granadanet"
+	case Hangzhounet.Equal(net):
+		pp.Network = "Hangzhounet"
+	case Hangzhounet2.Equal(net):
+		pp.Network = "Hangzhounet2"
 	default:
 		pp.Network = "Sandbox"
 	}
@@ -284,6 +299,28 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndHeight = -1
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 4096
+			pp.StartCycle = 2
+		}
+	case ProtoV011_1.Equal(proto) || ProtoV011_2.Equal(proto): // Hangzhou
+		pp.Version = 11
+		pp.OperationTagsVersion = 1
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		if Mainnet.Equal(p.ChainId) {
+			// TODO
+			// pp.StartBlockOffset = 1589248
+			// pp.StartCycle = 388
+			// pp.VoteBlockOffset = 0
+			// // FIXME: this is extremely hacky!
+			// pp.BlocksPerCycle = 8192
+			// pp.BlocksPerCommitment = 64
+			// pp.BlocksPerRollSnapshot = 512
+			// pp.BlocksPerVotingPeriod = 40960
+			// pp.EndorsersPerBlock = 256
+			// pp.StartHeight = 1589248
+			// pp.EndHeight = -1
+		} else if Hangzhounet2.Equal(p.ChainId) {
+			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 		}
 	}

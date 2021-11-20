@@ -19,6 +19,9 @@ const (
 	FeatureChainId
 	FeatureTicket
 	FeatureSapling
+	FeatureView
+	FeatureGlobalConstant
+	FeatureTimelock
 )
 
 func (f Features) Contains(x Features) bool {
@@ -50,6 +53,12 @@ func (f Features) Array() []string {
 			s = append(s, "ticket")
 		case FeatureSapling:
 			s = append(s, "sapling")
+		case FeatureView:
+			s = append(s, "view")
+		case FeatureGlobalConstant:
+			s = append(s, "global_constant")
+		case FeatureTimelock:
+			s = append(s, "timelock")
 		}
 		f &= ^i
 		i <<= 1
@@ -62,8 +71,15 @@ func (f Features) MarshalJSON() ([]byte, error) {
 }
 
 func (s *Script) Features() Features {
+	return s.Code.Param.Features() |
+		s.Code.Storage.Features() |
+		s.Code.Code.Features() |
+		s.Code.View.Features()
+}
+
+func (p Prim) Features() Features {
 	var f Features
-	_ = s.Code.Code.Walk(func(p Prim) error {
+	_ = p.Walk(func(p Prim) error {
 		switch p.OpCode {
 		case I_CREATE_ACCOUNT:
 			f |= FeatureAccountFactory
@@ -81,6 +97,12 @@ func (s *Script) Features() Features {
 			f |= FeatureTicket
 		case I_SAPLING_VERIFY_UPDATE:
 			f |= FeatureSapling
+		case H_CONSTANT:
+			f |= FeatureGlobalConstant
+		case K_VIEW:
+			f |= FeatureView
+		case T_CHEST_KEY, T_CHEST, I_OPEN_CHEST:
+			f |= FeatureTimelock
 		}
 		return nil
 	})

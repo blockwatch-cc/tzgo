@@ -277,7 +277,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 	}
 	tip, err := c.GetBlock(ctx, tips[0][0])
 	if err != nil {
-		return err
+		return fmt.Errorf("Block %s failed: %w", tips[0][0], err)
 	}
 
 	// parse ops
@@ -297,7 +297,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 	for {
 		b, err := c.GetBlockHeight(ctx, height)
 		if err != nil {
-			return err
+			return fmt.Errorf("Block %d failed: %w", height, err)
 		}
 
 		if b.GetLevel()%1000 == 0 {
@@ -334,7 +334,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 		}
 		for _, op := range oplist {
 			if n, ok := opcount[op]; ok {
-				fmt.Printf("%s level=%d contains %d %s(s)\n", b.Hash, b.Metadata.Level.Level, n, op)
+				fmt.Printf("%s level=%d contains %d %s(s)\n", b.Hash, b.GetLevel(), n, op)
 				// output relevant ops
 				if !verbose {
 					continue
@@ -354,7 +354,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 
 		// the tip has probably advanced a lot since first fetch above,
 		// but this is only for illustration
-		if height > tip.Metadata.Level.Level {
+		if height > tip.GetLevel() {
 			break
 		}
 	}

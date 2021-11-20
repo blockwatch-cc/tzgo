@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Mainnet/KT1Kyc366SrSJ1camxByr363F9WAiHAaReMv",
+    "type": {
+      "annots": [
+        ""
+      ],
+      "args": [
+        {
+          "annots": [
+            "%ledger"
+          ],
+          "args": [
+            {
+              "annots": [
+                ":owner"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                ":balance"
+              ],
+              "prim": "nat"
+            }
+          ],
+          "prim": "big_map"
+        },
+        {
+          "annots": [
+            "%operators_ledger"
+          ],
+          "args": [
+            {
+              "annots": [
+                ":owner"
+              ],
+              "prim": "address"
+            },
+            {
+              "annots": [
+                ":operators"
+              ],
+              "args": [
+                {
+                  "prim": "address"
+                }
+              ],
+              "prim": "set"
+            }
+          ],
+          "prim": "big_map"
+        },
+        {
+          "annots": [
+            ":total_supply"
+          ],
+          "prim": "nat"
+        },
+        {
+          "annots": [
+            "%token_metadata"
+          ],
+          "args": [
+            {
+              "prim": "nat"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%token_id"
+                  ],
+                  "prim": "nat"
+                },
+                {
+                  "annots": [
+                    "%token_info"
+                  ],
+                  "args": [
+                    {
+                      "prim": "string"
+                    },
+                    {
+                      "prim": "bytes"
+                    }
+                  ],
+                  "prim": "map"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "big_map"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": [
+      {
+        "int": "22833"
+      },
+      {
+        "int": "22834"
+      },
+      {
+        "int": "1000000000000000000000000000000"
+      },
+      {
+        "int": "22835"
+      }
+    ],
+    "type_hex": "0965000000ac0861046e000000063a6f776e65720462000000083a62616c616e636500000007256c65646765720861046e000000063a6f776e65720666036e0000000a3a6f70657261746f727300000011256f70657261746f72735f6c656467657204620000000d3a746f74616c5f737570706c7908610362076504620000000925746f6b656e5f69640860036803690000000b25746f6b656e5f696e666f0000000f25746f6b656e5f6d6574616461746100000000",
+    "value_hex": "020000001c00b1e40200b2e4020080808080c8faf6f48cc1e6c9e5a70600b3e402",
+    "want_value": {
+      "ledger": "22833",
+      "operators_ledger": "22834",
+      "token_metadata": "22835",
+      "total_supply": "1000000000000000000000000000000"
+    }
+  }
+]

@@ -68,23 +68,23 @@ func (t Type) Entrypoints(withPrim bool) (Entrypoints, error) {
 }
 
 // returns path to named entrypoint
-func (t Type) SearchEntrypointName(name string) string {
+func (t Type) ResolveEntrypointPath(name string) string {
 	if !t.IsValid() {
 		return ""
 	}
-	return searchEntrypointName(name, "", t.Prim)
+	return resolveEntrypointPath(name, "", t.Prim)
 }
 
-func searchEntrypointName(name, branch string, node Prim) string {
+func resolveEntrypointPath(name, branch string, node Prim) string {
 	if node.GetVarAnnoAny() == name {
 		return branch
 	}
 	if node.OpCode == T_OR && (len(branch) == 0 || !node.HasAnno()) {
-		b := searchEntrypointName(name, branch+"/L", node.Args[0])
+		b := resolveEntrypointPath(name, branch+"/L", node.Args[0])
 		if b != "" {
 			return b
 		}
-		b = searchEntrypointName(name, branch+"/R", node.Args[1])
+		b = resolveEntrypointPath(name, branch+"/R", node.Args[1])
 		if b != "" {
 			return b
 		}
