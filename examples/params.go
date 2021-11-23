@@ -72,10 +72,10 @@ func run() error {
 		return err
 	}
 
-	// simulate granada
-	if height >= 1589248 && !block.Protocol.Equal(tezos.ProtoV010) {
-		fmt.Println("Simulating Granada activation")
-		block.Protocol = tezos.ProtoV010
+	// simulate H
+	if height >= 1916929 && !block.Protocol.Equal(tezos.ProtoV011_2) {
+		fmt.Println("Simulating Hangzhou activation")
+		block.Protocol = tezos.ProtoV011_2
 	}
 
 	p := cons.MapToChainParams().ForNetwork(block.ChainId).ForProtocol(block.Protocol)

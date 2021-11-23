@@ -52,7 +52,7 @@ var (
 			ProtoV008_2,  // 8
 			ProtoV009,    // 9
 			ProtoV010,    // 10
-			// ProtoV011,    // 11
+			ProtoV011_2,  // 11
 		},
 		Granadanet.Uint32(): []ProtocolHash{
 			ProtoGenesis,   // -1
@@ -296,7 +296,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1589248
-			pp.EndHeight = -1
+			pp.EndHeight = 1916928
 		} else if Granadanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 4096
 			pp.StartCycle = 2
@@ -307,18 +307,17 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.NumVotingPeriods = 5
 		pp.MaxOperationsTTL = 120
 		if Mainnet.Equal(p.ChainId) {
-			// TODO
-			// pp.StartBlockOffset = 1589248
-			// pp.StartCycle = 388
-			// pp.VoteBlockOffset = 0
-			// // FIXME: this is extremely hacky!
-			// pp.BlocksPerCycle = 8192
-			// pp.BlocksPerCommitment = 64
-			// pp.BlocksPerRollSnapshot = 512
-			// pp.BlocksPerVotingPeriod = 40960
-			// pp.EndorsersPerBlock = 256
-			// pp.StartHeight = 1589248
-			// pp.EndHeight = -1
+			pp.StartBlockOffset = 1916928
+			pp.StartCycle = 428
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 256
+			pp.StartHeight = 1916929
+			pp.EndHeight = -1
 		} else if Hangzhounet2.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
