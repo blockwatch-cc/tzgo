@@ -67,7 +67,11 @@ func NewKey(typ Type, key Prim) (Key, error) {
 		if key.Int == nil {
 			t, err := time.Parse(time.RFC3339, key.String)
 			if err != nil {
-				return Key{}, fmt.Errorf("micheline: invalid big_map key for string timestamp: %w", err)
+				if num, err2 := strconv.ParseInt(key.String, 10, 64); err2 == nil {
+					t = time.Unix(num, 0)
+				} else {
+					return Key{}, fmt.Errorf("micheline: invalid big_map key for string timestamp: %w", err)
+				}
 			}
 			k.TimeKey = t
 		} else {
