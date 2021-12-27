@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Mainnet/KT1DDnaFqb6WFN1GAheFgxaXES4wtoLmcvX9-15322-expru5X1yxJG6ezR2uHMotwMLNmSzQyh5t1vUnhjx4cS6Pv9qE1Sdo",
+    "type": {
+      "annots": [
+        "%metadata"
+      ],
+      "args": [
+        {
+          "prim": "string"
+        },
+        {
+          "prim": "bytes"
+        }
+      ],
+      "prim": "big_map"
+    },
+    "value": {
+      "bytes": "68747470733a2f2f747a70726f66696c65732e636f6d2f747a69703031365f6d657461646174612e6a736f6e"
+    },
+    "key": {
+      "string": ""
+    },
+    "type_hex": "08610368036900000009256d65746164617461",
+    "value_hex": "0a0000002c68747470733a2f2f747a70726f66696c65732e636f6d2f747a69703031365f6d657461646174612e6a736f6e",
+    "key_hex": "0100000000",
+    "want_value": "https://tzprofiles.com/tzip016_metadata.json",
+    "want_key": ""
+  }
+]
