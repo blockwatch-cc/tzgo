@@ -2,6 +2,9 @@
 // Author: alex@blockwatch.cc
 //
 
+// Run with tracing enabled
+// go test -tags trace ./micheline/
+
 package micheline
 
 import (
@@ -213,6 +216,7 @@ func TestBigmapValues(t *testing.T) {
 		next int
 		err  error
 	)
+	UseTrace(t.Logf)
 	scanTestFiles(t, "bigmap")
 	for {
 		var tests []testcase
@@ -290,6 +294,7 @@ func TestStorageValues(t *testing.T) {
 		next int
 		err  error
 	)
+	UseTrace(t.Logf)
 	scanTestFiles(t, "storage")
 	for {
 		var tests []testcase
@@ -343,6 +348,7 @@ func TestParamsValues(t *testing.T) {
 		next int
 		err  error
 	)
+	UseTrace(t.Logf)
 	scanTestFiles(t, "params")
 	for {
 		var tests []testcase

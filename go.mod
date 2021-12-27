@@ -3,7 +3,7 @@ module blockwatch.cc/tzgo
 go 1.16
 
 require (
-	github.com/echa/log v1.0.3
+	github.com/echa/log v1.1.0
 	github.com/go-bson/bson v0.0.0-20171017145622-6d291e839eca
 	github.com/pmezard/go-difflib v1.0.0
 	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
