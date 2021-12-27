@@ -46,3 +46,22 @@ func (c logClosure) String() string {
 func newLogClosure(c func() string) logClosure {
 	return logClosure(c)
 }
+
+// LogFn is a shot alias for a log function of type func(string, interface...)
+type LogFn logpkg.LogfFn
+
+// trace is a private trace logging function
+var trace LogFn = nil
+
+// UseTrace sets fn to be used as trace function
+func UseTrace(fn LogFn) {
+	trace = fn
+}
+
+// Trace is a function closure wrapper that forwards trace calls to an
+// output function if set. Call UseTrace() to set a function of type LogFn
+func Trace(fn func(log LogFn)) {
+	if trace != nil {
+		fn(trace)
+	}
+}
