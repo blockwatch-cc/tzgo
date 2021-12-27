@@ -1,0 +1,192 @@
+[
+  {
+    "name": "Mainnet/KT1DDnaFqb6WFN1GAheFgxaXES4wtoLmcvX9",
+    "type": {
+      "args": [
+        {
+          "args": [
+            {
+              "annots": [
+                "%claims"
+              ],
+              "args": [
+                {
+                  "args": [
+                    {
+                      "args": [
+                        {
+                          "prim": "string"
+                        },
+                        {
+                          "prim": "bytes"
+                        }
+                      ],
+                      "prim": "pair"
+                    },
+                    {
+                      "prim": "string"
+                    }
+                  ],
+                  "prim": "pair"
+                }
+              ],
+              "prim": "set"
+            },
+            {
+              "annots": [
+                "%contract_type"
+              ],
+              "prim": "string"
+            }
+          ],
+          "prim": "pair"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%metadata"
+              ],
+              "args": [
+                {
+                  "prim": "string"
+                },
+                {
+                  "prim": "bytes"
+                }
+              ],
+              "prim": "big_map"
+            },
+            {
+              "annots": [
+                "%owner"
+              ],
+              "prim": "address"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": {
+      "args": [
+        {
+          "args": [
+            [
+              {
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "string": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SAHVGvrzexEeEN8iNJgVTDYo5wftFNwKmpqioV1dWtc9j"
+                      },
+                      {
+                        "bytes": "dbfaaf03d570b12baa534715ac55283c5fe849fe6d4d31f30dfb1229e4356993"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "string": "VerifiableCredential"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "string": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SCh18MKk1gwjmhqhHF6KjRyVLpcutpKF5c3vFzzTsVpdF"
+                      },
+                      {
+                        "bytes": "9ff7b143b937f73f9d184e4c593bc32a206c1211f842c138d9ed683ed435d641"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "string": "VerifiableCredential"
+                  }
+                ],
+                "prim": "Pair"
+              },
+              {
+                "args": [
+                  {
+                    "args": [
+                      {
+                        "string": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SCiqGUMctWGKXR493QxhnqvVaLejQqMek6U6qKD35xoyB"
+                      },
+                      {
+                        "bytes": "6b00bddfb69ed094fb1cf018ba87aed546e26dc11a04560e0037f698a05bcaf1"
+                      }
+                    ],
+                    "prim": "Pair"
+                  },
+                  {
+                    "string": "VerifiableCredential"
+                  }
+                ],
+                "prim": "Pair"
+              }
+            ],
+            {
+              "string": "tzprofiles"
+            }
+          ],
+          "prim": "Pair"
+        },
+        {
+          "args": [
+            [
+              {
+                "args": [
+                  {
+                    "string": ""
+                  },
+                  {
+                    "bytes": "68747470733a2f2f747a70726f66696c65732e636f6d2f747a69703031365f6d657461646174612e6a736f6e"
+                  }
+                ],
+                "prim": "Elt"
+              }
+            ],
+            {
+              "string": "tz2WqHSvpgHbKT2ZjLVP19HF5vcERs9JvXXL"
+            }
+          ],
+          "prim": "Pair"
+        }
+      ],
+      "prim": "Pair"
+    },
+    "type_hex": "076507650666076507650368036903680000000725636c61696d7304680000000e25636f6e74726163745f74797065076508610368036900000009256d65746164617461046e00000006256f776e6572",
+    "value_hex": "07070707020000022207070707010000006f6b65706c65723a2f2f7a43543568746b6478334d54615137684b64596a46513448796561543878334e7836623336756d4d6b35484863456b664b3363692f7a623338534148564776727a65784565454e38694e4a67565444596f35776674464e774b6d7071696f563164577463396a0a00000020dbfaaf03d570b12baa534715ac55283c5fe849fe6d4d31f30dfb1229e4356993010000001456657269666961626c6543726564656e7469616c07070707010000006f6b65706c65723a2f2f7a43543568746b6478334d54615137684b64596a46513448796561543878334e7836623336756d4d6b35484863456b664b3363692f7a62333853436831384d4b6b3167776a6d6871684846364b6a5279564c70637574704b4635633376467a7a5473567064460a000000209ff7b143b937f73f9d184e4c593bc32a206c1211f842c138d9ed683ed435d641010000001456657269666961626c6543726564656e7469616c07070707010000006f6b65706c65723a2f2f7a43543568746b6478334d54615137684b64596a46513448796561543878334e7836623336756d4d6b35484863456b664b3363692f7a6233385343697147554d637457474b58523439335178686e717656614c656a51714d656b365536714b443335786f79420a000000206b00bddfb69ed094fb1cf018ba87aed546e26dc11a04560e0037f698a05bcaf1010000001456657269666961626c6543726564656e7469616c010000000a747a70726f66696c657307070200000038070401000000000a0000002c68747470733a2f2f747a70726f66696c65732e636f6d2f747a69703031365f6d657461646174612e6a736f6e0100000024747a325771485376706748624b54325a6a4c565031394846357663455273394a7658584c",
+    "want_value": {
+      "claims": [
+        {
+          "0": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SAHVGvrzexEeEN8iNJgVTDYo5wftFNwKmpqioV1dWtc9j",
+          "1": "dbfaaf03d570b12baa534715ac55283c5fe849fe6d4d31f30dfb1229e4356993",
+          "2": "VerifiableCredential"
+        },
+        {
+          "0": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SCh18MKk1gwjmhqhHF6KjRyVLpcutpKF5c3vFzzTsVpdF",
+          "1": "9ff7b143b937f73f9d184e4c593bc32a206c1211f842c138d9ed683ed435d641",
+          "2": "VerifiableCredential"
+        },
+        {
+          "0": "kepler://zCT5htkdx3MTaQ7hKdYjFQ4HyeaT8x3Nx6b36umMk5HHcEkfK3ci/zb38SCiqGUMctWGKXR493QxhnqvVaLejQqMek6U6qKD35xoyB",
+          "1": "6b00bddfb69ed094fb1cf018ba87aed546e26dc11a04560e0037f698a05bcaf1",
+          "2": "VerifiableCredential"
+        }
+      ],
+      "contract_type": "tzprofiles",
+      "metadata": {
+        "": "https://tzprofiles.com/tzip016_metadata.json"
+      },
+      "owner": "tz2WqHSvpgHbKT2ZjLVP19HF5vcERs9JvXXL"
+    }
+  }
+]

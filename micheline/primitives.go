@@ -402,6 +402,11 @@ func (p Prim) IsContainerType() bool {
 // of container type. Pairs can be unfolded into flat sequences.
 //
 func (p Prim) CanUnfold(typ Type) bool {
+	// fix for pair(list, x)
+	if p.IsSequence() && typ.IsPair() && typ.Args[0].IsContainerType() {
+		return false
+	}
+
 	// regular pairs (works for type and value trees)
 	if p.IsPair() {
 		return true
@@ -420,7 +425,7 @@ func (p Prim) CanUnfold(typ Type) bool {
 	// type tree. Hence we revert to a heuristic that checks if the
 	// current primitive looks like a container type by checking its
 	// contents
-	if p.Type == PrimSequence && !p.LooksLikeContainer() && !p.LooksLikeLambda() {
+	if p.IsSequence() && !p.LooksLikeContainer() && !p.LooksLikeLambda() {
 		return true
 	}
 
