@@ -4,10 +4,10 @@
     "type": {
       "args": [
         {
-          "prim": "chest_key"
+          "prim": "chest"
         },
         {
-          "prim": "chest"
+          "prim": "chest_key"
         }
       ],
       "prim": "pair"
