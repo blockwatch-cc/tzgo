@@ -11,7 +11,7 @@ import (
 type SeedNonceOp struct {
 	GenericOp
 	Level    int64                `json:"level"`
-	Nonce    tezos.NonceHash      `json:"nonce"`
+	Nonce    tezos.HexBytes       `json:"nonce"`
 	Metadata *SeedNonceOpMetadata `json:"metadata"`
 }
 
