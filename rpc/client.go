@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	libraryVersion = "0.11.0"
+	libraryVersion = "0.11.1"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
 )

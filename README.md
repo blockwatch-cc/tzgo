@@ -2,7 +2,7 @@
 
 TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
-Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encoding for Tezos' Micheline types so it's perfectly suited for high-performance applications.
+Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encodings for all Tezos types including the Micheline smart contract data and all transaction formats so it's perfectly suited for high-performance applications that read and write to the Tezos blockchain.
 
 Current TzGo protocol support
 
@@ -20,21 +20,23 @@ Current TzGo protocol support
 
 TzGo contains a set of features that allow developers to read, monitor, decode, translate, analyze and debug data from the Tezos blockchain, in particular from Tezos smart contracts:
 
-- a low-level **Tezos types library** `tzgo/tezos` to handle all sorts of hashes, addresses and more
+- a low-level **Tezos types library** `tzgo/tezos` to handle all sorts of hashes, addresses, keys, signatures and more
 - a powerful **Micheline library** `tzgo/micheline` to decode and translate Tezos smart contract data found in calls, storage and bigmaps
 - an **RPC library** `tzgo/rpc` for accessing the Tezos Node RPC
+- a **Transaction encoding library** `tzgo/encoding` to construct and serialize all operation types
+- a **Wallet library** `tzgo/wallet` for account and operation management
 - helpers like an efficient base58 en/decoder, hash map
 
 ### TzGo Versioning
 
-As long as TzGo is in beta status we will use major version 0.x. Once interfaces are stable we'll switch to 1.x. We'll use the minor version number to express compatibility with a Tezos protocol release, e.g. v0.9.0 supports all protocols up to Florence.
+As long as TzGo is in beta status we will use major version 0.x. Once interfaces are stable we'll switch to 1.x. We'll use the minor version number to express compatibility with a Tezos protocol release, e.g. v0.11.0 supports all protocols up to Hangzhou.
 
 ### TzGo Roadmap
 
 When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet but will add support in the future as usage of these features becomes more widespread.
 
-- **v1** read-only access to Tezos on-chain data
-- **v2** transaction creation, signing, simulation, and injection
+TzGo used to be read-only until v0.11, i.e. you could use it to access Tezos on-chain data, but you could not send transations. Starting with v0.11.1 we have started adding transaction serialization, signing and broadcast support. We make sure all types and interfaces are engineered to be easily composable and non-opinionated, we export all low level types/functions that we use to build more complex, higher level functionality so that you're applications are not limited by the choices we make at the upper levels.
+
 
 ### Usage
 
@@ -346,7 +348,7 @@ func main() {
 
 ## License
 
-The MIT License (MIT) Copyright (c) 2021 Blockwatch Data Inc.
+The MIT License (MIT) Copyright (c) 2020-2022 Blockwatch Data Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
