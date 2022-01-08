@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -14,12 +14,12 @@ import (
 
 // Block holds information about a Tezos block
 type Block struct {
-	Protocol   tezos.ProtocolHash   `json:"protocol"`
-	ChainId    tezos.ChainIdHash    `json:"chain_id"`
-	Hash       tezos.BlockHash      `json:"hash"`
-	Header     BlockHeader          `json:"header"`
-	Metadata   BlockMetadata        `json:"metadata"`
-	Operations [][]*OperationHeader `json:"operations"`
+	Protocol   tezos.ProtocolHash `json:"protocol"`
+	ChainId    tezos.ChainIdHash  `json:"chain_id"`
+	Hash       tezos.BlockHash    `json:"hash"`
+	Header     BlockHeader        `json:"header"`
+	Metadata   BlockMetadata      `json:"metadata"`
+	Operations [][]*Operation     `json:"operations"`
 }
 
 func (b Block) GetLevel() int64 {
@@ -44,14 +44,14 @@ func (b Block) GetCycle() int64 {
 	return 0
 }
 
-func (b Block) GetLevelInfo() BlockLevel {
+func (b Block) GetLevelInfo() LevelInfo {
 	if b.Metadata.LevelInfo != nil {
 		return *b.Metadata.LevelInfo
 	}
 	if b.Metadata.Level != nil {
 		return *b.Metadata.Level
 	}
-	return BlockLevel{}
+	return LevelInfo{}
 }
 
 // only works for mainnet when before Edo or for all nets after Edo
@@ -115,12 +115,12 @@ type BlockHeader struct {
 	Timestamp                 time.Time           `json:"timestamp"`
 	ValidationPass            int                 `json:"validation_pass"`
 	OperationsHash            string              `json:"operations_hash"`
-	Fitness                   []HexBytes          `json:"fitness"`
+	Fitness                   []tezos.HexBytes    `json:"fitness"`
 	Context                   string              `json:"context"`
 	Priority                  int                 `json:"priority"`
-	ProofOfWorkNonce          HexBytes            `json:"proof_of_work_nonce"`
+	ProofOfWorkNonce          tezos.HexBytes      `json:"proof_of_work_nonce"`
 	SeedNonceHash             *tezos.NonceHash    `json:"seed_nonce_hash"`
-	Signature                 string              `json:"signature"`
+	Signature                 tezos.Signature     `json:"signature"`
 	Content                   *BlockContent       `json:"content,omitempty"`
 	Protocol                  *tezos.ProtocolHash `json:"protocol,omitempty"`
 	LiquidityBakingEscapeVote bool                `json:"liquidity_baking_escape_vote"`
@@ -130,7 +130,7 @@ type BlockHeader struct {
 type BlockContent struct {
 	Command    string             `json:"command"`
 	Protocol   tezos.ProtocolHash `json:"hash"`
-	Fitness    []HexBytes         `json:"fitness"`
+	Fitness    []tezos.HexBytes   `json:"fitness"`
 	Parameters *GenesisData       `json:"protocol_parameters"`
 }
 
@@ -141,7 +141,7 @@ type OperationListLength struct {
 }
 
 // BlockLevel is a part of BlockMetadata
-type BlockLevel struct {
+type LevelInfo struct {
 	Level              int64 `json:"level"`
 	LevelPosition      int64 `json:"level_position"`
 	Cycle              int64 `json:"cycle"`
@@ -180,11 +180,11 @@ type BlockMetadata struct {
 	BalanceUpdates         BalanceUpdates         `json:"balance_updates"`
 
 	// deprecated in v008
-	Level            *BlockLevel             `json:"level"`
+	Level            *LevelInfo              `json:"level"`
 	VotingPeriodKind *tezos.VotingPeriodKind `json:"voting_period_kind"`
 
 	// v008
-	LevelInfo        *BlockLevel       `json:"level_info"`
+	LevelInfo        *LevelInfo        `json:"level_info"`
 	VotingPeriodInfo *VotingPeriodInfo `json:"voting_period_info"`
 
 	// v010
@@ -194,9 +194,9 @@ type BlockMetadata struct {
 
 // GetBlock returns information about a Tezos block
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id
-func (c *Client) GetBlock(ctx context.Context, blockID tezos.BlockHash) (*Block, error) {
+func (c *Client) GetBlock(ctx context.Context, id BlockID) (*Block, error) {
 	var block Block
-	u := fmt.Sprintf("chains/%s/blocks/%s", c.ChainID, blockID)
+	u := fmt.Sprintf("chains/main/blocks/%s", id)
 	if err := c.Get(ctx, u, &block); err != nil {
 		return nil, err
 	}
@@ -206,12 +206,7 @@ func (c *Client) GetBlock(ctx context.Context, blockID tezos.BlockHash) (*Block,
 // GetBlockHeight returns information about a Tezos block
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id
 func (c *Client) GetBlockHeight(ctx context.Context, height int64) (*Block, error) {
-	var block Block
-	u := fmt.Sprintf("chains/%s/blocks/%d", c.ChainID, height)
-	if err := c.Get(ctx, u, &block); err != nil {
-		return nil, err
-	}
-	return &block, nil
+	return c.GetBlock(ctx, BlockLevel(height))
 }
 
 // GetTips returns hashes of the current chain tip blocks, first in the array is the
@@ -224,9 +219,9 @@ func (c *Client) GetTips(ctx context.Context, depth int, head tezos.BlockHash) (
 	tips := make([][]tezos.BlockHash, 0, 10)
 	var u string
 	if head.IsValid() {
-		u = fmt.Sprintf("chains/%s/blocks?length=%d&head=%s", c.ChainID, depth, head)
+		u = fmt.Sprintf("chains/main/blocks?length=%d&head=%s", depth, head)
 	} else {
-		u = fmt.Sprintf("/chains/%s/blocks?length=%d", c.ChainID, depth)
+		u = fmt.Sprintf("chains/main/blocks?length=%d", depth)
 	}
 	if err := c.Get(ctx, u, &tips); err != nil {
 		return nil, err
@@ -234,58 +229,56 @@ func (c *Client) GetTips(ctx context.Context, depth int, head tezos.BlockHash) (
 	return tips, nil
 }
 
-// GetHeadBlock returns main chain tip block.
+// GetHeadBlock returns the chain's head block.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetHeadBlock(ctx context.Context) (*Block, error) {
-	var head Block
-	u := fmt.Sprintf("chains/%s/blocks/head", c.ChainID)
-	if err := c.Get(ctx, u, &head); err != nil {
-		return nil, err
-	}
-	return &head, nil
+	return c.GetBlock(ctx, Head)
 }
 
 // GetGenesisBlock returns main chain genesis block.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetGenesisBlock(ctx context.Context) (*Block, error) {
-	var block Block
-	u := fmt.Sprintf("chains/%s/blocks/genesis", c.ChainID)
-	if err := c.Get(ctx, u, &block); err != nil {
-		return nil, err
-	}
-	return &block, nil
+	return c.GetBlock(ctx, Genesis)
 }
 
-// GetTipHeader returns main chain tip's block header.
+// GetTipHeader returns the head block's header.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetTipHeader(ctx context.Context) (*BlockHeader, error) {
 	var head BlockHeader
-	u := fmt.Sprintf("chains/%s/blocks/head/header", c.ChainID)
+	u := fmt.Sprintf("chains/main/blocks/head/header")
 	if err := c.Get(ctx, u, &head); err != nil {
 		return nil, err
 	}
 	return &head, nil
 }
 
-// GetBlockHeader returns the main chain's block header at height.
+// GetBlockHeader returns a block header.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
-func (c *Client) GetBlockHeader(ctx context.Context, height int64) (*BlockHeader, error) {
+func (c *Client) GetBlockHeader(ctx context.Context, id BlockID) (*BlockHeader, error) {
 	var head BlockHeader
-	u := fmt.Sprintf("chains/%s/blocks/%d/header", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/header", id)
 	if err := c.Get(ctx, u, &head); err != nil {
 		return nil, err
 	}
 	return &head, nil
 }
 
-// GetBlockPredHashes returns the block id's (hashes) of count preceeding blocks.
+// GetBlockHash returns the main chain's block header.
+// https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
+func (c *Client) GetBlockHash(ctx context.Context, id BlockID) (hash tezos.BlockHash, err error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/hash", id)
+	err = c.Get(ctx, u, &hash)
+	return
+}
+
+// GetBlockPredHashes returns count parent blocks before block with given hash.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-chains-chain-id-blocks
-func (c *Client) GetBlockPredHashes(ctx context.Context, blockID tezos.BlockHash, count int) ([]tezos.BlockHash, error) {
+func (c *Client) GetBlockPredHashes(ctx context.Context, hash tezos.BlockHash, count int) ([]tezos.BlockHash, error) {
 	if count <= 0 {
 		count = 1
 	}
 	blockIds := make([][]tezos.BlockHash, 0, count)
-	u := fmt.Sprintf("chains/%s/blocks?length=%d&head=%s", c.ChainID, count, blockID)
+	u := fmt.Sprintf("chains/main/blocks?length=%d&head=%s", count, hash)
 	if err := c.Get(ctx, u, &blockIds); err != nil {
 		return nil, err
 	}
@@ -296,7 +289,7 @@ func (c *Client) GetBlockPredHashes(ctx context.Context, blockID tezos.BlockHash
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-chains-chain-id-invalid-blocks
 func (c *Client) GetInvalidBlocks(ctx context.Context) ([]*InvalidBlock, error) {
 	var invalidBlocks []*InvalidBlock
-	if err := c.Get(ctx, "chains/"+c.ChainID+"/invalid_blocks", &invalidBlocks); err != nil {
+	if err := c.Get(ctx, "chains/main/invalid_blocks", &invalidBlocks); err != nil {
 		return nil, err
 	}
 	return invalidBlocks, nil
@@ -306,7 +299,7 @@ func (c *Client) GetInvalidBlocks(ctx context.Context) ([]*InvalidBlock, error) 
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-chains-chain-id-invalid-blocks-block-hash
 func (c *Client) GetInvalidBlock(ctx context.Context, blockID tezos.BlockHash) (*InvalidBlock, error) {
 	var invalidBlock InvalidBlock
-	u := fmt.Sprintf("chains/%s/invalid_blocks/%s", c.ChainID, blockID)
+	u := fmt.Sprintf("chains/main/invalid_blocks/%s", blockID)
 	if err := c.Get(ctx, u, &invalidBlock); err != nil {
 		return nil, err
 	}

@@ -106,9 +106,9 @@ type SnapshotOwners struct {
 
 // GetBakingRights returns information about a Tezos block baking rights
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-baking-rights
-func (c *Client) GetBakingRights(ctx context.Context, blockID tezos.BlockHash) ([]BakingRight, error) {
+func (c *Client) GetBakingRights(ctx context.Context, id BlockID) ([]BakingRight, error) {
 	rights := make([]BakingRight, 0, 64)
-	u := fmt.Sprintf("chains/%s/blocks/%s/helpers/baking_rights?all=true&max_priority=63", c.ChainID, blockID)
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/baking_rights?all=true&max_priority=63", id)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}
@@ -118,19 +118,14 @@ func (c *Client) GetBakingRights(ctx context.Context, blockID tezos.BlockHash) (
 // GetBakingRightsHeight returns information about a Tezos block baking rights
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-baking-rights
 func (c *Client) GetBakingRightsHeight(ctx context.Context, height int64) ([]BakingRight, error) {
-	rights := make([]BakingRight, 0, 64)
-	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/baking_rights?all=true&max_priority=63", c.ChainID, height)
-	if err := c.Get(ctx, u, &rights); err != nil {
-		return nil, err
-	}
-	return rights, nil
+	return c.GetBakingRights(ctx, BlockLevel(height))
 }
 
 // GetBakingRightsCycle returns information about a Tezos baking rights for an entire cycle.
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-baking-rights
-func (c *Client) GetBakingRightsCycle(ctx context.Context, height, cycle int64) ([]BakingRight, error) {
+func (c *Client) GetBakingRightsCycle(ctx context.Context, id BlockID, cycle int64) ([]BakingRight, error) {
 	rights := make([]BakingRight, 0, 64*4096)
-	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/baking_rights?all=true&cycle=%d&max_priority=63", c.ChainID, height, cycle)
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/baking_rights?all=true&cycle=%d&max_priority=63", id, cycle)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}
@@ -139,9 +134,9 @@ func (c *Client) GetBakingRightsCycle(ctx context.Context, height, cycle int64) 
 
 // GetEndorsingRights returns information about a Tezos block endorsing rights
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-endorsing-rights
-func (c *Client) GetEndorsingRights(ctx context.Context, blockID tezos.BlockHash) ([]EndorsingRight, error) {
+func (c *Client) GetEndorsingRights(ctx context.Context, id BlockID) ([]EndorsingRight, error) {
 	rights := make([]EndorsingRight, 0, 32)
-	u := fmt.Sprintf("chains/%s/blocks/%s/helpers/endorsing_rights?all=true", c.ChainID, blockID)
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true", id)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}
@@ -152,7 +147,7 @@ func (c *Client) GetEndorsingRights(ctx context.Context, blockID tezos.BlockHash
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-endorsing-rights
 func (c *Client) GetEndorsingRightsHeight(ctx context.Context, height int64) ([]EndorsingRight, error) {
 	rights := make([]EndorsingRight, 0, 32)
-	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/endorsing_rights?all=true&level=%d", c.ChainID, height, height)
+	u := fmt.Sprintf("chains/main/blocks/%d/helpers/endorsing_rights?all=true&level=%d", height, height)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}
@@ -161,9 +156,9 @@ func (c *Client) GetEndorsingRightsHeight(ctx context.Context, height int64) ([]
 
 // GetEndorsingRightsCycle returns information about a Tezos endorsing rights for an entire cycle
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-endorsing-rights
-func (c *Client) GetEndorsingRightsCycle(ctx context.Context, height, cycle int64) ([]EndorsingRight, error) {
+func (c *Client) GetEndorsingRightsCycle(ctx context.Context, id BlockID, cycle int64) ([]EndorsingRight, error) {
 	rights := make([]EndorsingRight, 0, 32*4096)
-	u := fmt.Sprintf("chains/%s/blocks/%d/helpers/endorsing_rights?all=true&cycle=%d", c.ChainID, height, cycle)
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
 	}
@@ -172,14 +167,14 @@ func (c *Client) GetEndorsingRightsCycle(ctx context.Context, height, cycle int6
 
 // GetSnapshotIndexCycle returns information about a Tezos roll snapshot
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-helpers-endorsing-rights
-func (c *Client) GetSnapshotIndexCycle(ctx context.Context, height, cycle int64) (*SnapshotIndex, error) {
+func (c *Client) GetSnapshotIndexCycle(ctx context.Context, id BlockID, cycle int64) (*SnapshotIndex, error) {
 	idx := &SnapshotIndex{Cycle: cycle}
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/raw/json/cycle/%d", c.ChainID, height, cycle)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/cycle/%d", id, cycle)
 	if err := c.Get(ctx, u, idx); err != nil {
 		return nil, err
 	}
 	if idx.RandomSeed == "" {
-		return nil, fmt.Errorf("missing snapshot for cycle %d at height %d", cycle, height)
+		return nil, fmt.Errorf("missing snapshot for cycle %d at block %s", cycle, id)
 	}
 	return idx, nil
 }
@@ -190,7 +185,7 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, height, cycle int64)
 // /chains/main/blocks/901121/context/raw/json/rolls/owner/snapshot/220/15/?depth=1
 func (c *Client) GetSnapshotRollOwners(ctx context.Context, height, cycle, index int64) (*SnapshotOwners, error) {
 	owners := &SnapshotOwners{Height: height, Cycle: cycle, Index: index}
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/raw/json/rolls/owner/snapshot/%d/%d?depth=1", c.ChainID, height, cycle, index)
+	u := fmt.Sprintf("chains/main/blocks/%d/context/raw/json/rolls/owner/snapshot/%d/%d?depth=1", height, cycle, index)
 	if err := c.Get(ctx, u, &owners.Rolls); err != nil {
 		return nil, err
 	}

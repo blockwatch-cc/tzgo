@@ -11,7 +11,7 @@ import (
 type AccountActivationOp struct {
 	GenericOp
 	Pkh      tezos.Address                `json:"pkh"`
-	Secret   HexBytes                     `json:"secret"`
+	Secret   tezos.HexBytes               `json:"secret"`
 	Metadata *AccountActivationOpMetadata `json:"metadata"`
 }
 

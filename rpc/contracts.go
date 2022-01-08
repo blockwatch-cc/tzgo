@@ -17,9 +17,9 @@ type Contracts []tezos.Address
 
 // GetContracts returns a list of all known contracts at head
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts
-func (c *Client) GetContracts(ctx context.Context) (Contracts, error) {
+func (c *Client) GetContracts(ctx context.Context, id BlockID) (Contracts, error) {
 	contracts := make(Contracts, 0)
-	u := fmt.Sprintf("chains/%s/blocks/head/context/contracts", c.ChainID)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts", id)
 	if err := c.Get(ctx, u, &contracts); err != nil {
 		return nil, err
 	}
@@ -29,18 +29,13 @@ func (c *Client) GetContracts(ctx context.Context) (Contracts, error) {
 // GetContractsHeight returns a list of all known contracts at height
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts
 func (c *Client) GetContractsHeight(ctx context.Context, height int64) (Contracts, error) {
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/contracts", c.ChainID, height)
-	contracts := make(Contracts, 0)
-	if err := c.Get(ctx, u, &contracts); err != nil {
-		return nil, err
-	}
-	return contracts, nil
+	return c.GetContracts(ctx, BlockLevel(height))
 }
 
 // GetContractBalance returns the current balance of a contract at head
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts-contract-id-balance
-func (c *Client) GetContractBalance(ctx context.Context, addr tezos.Address) (int64, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/contracts/%s/balance", c.ChainID, addr)
+func (c *Client) GetContractBalance(ctx context.Context, addr tezos.Address, id BlockID) (int64, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/balance", id, addr)
 	var bal string
 	err := c.Get(ctx, u, &bal)
 	if err != nil {
@@ -52,18 +47,12 @@ func (c *Client) GetContractBalance(ctx context.Context, addr tezos.Address) (in
 // GetContractBalanceHeight returns the current balance of a contract at height
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts-contract-id-balance
 func (c *Client) GetContractBalanceHeight(ctx context.Context, addr tezos.Address, height int64) (int64, error) {
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/contracts/%s/balance", c.ChainID, height, addr)
-	var bal string
-	err := c.Get(ctx, u, &bal)
-	if err != nil {
-		return 0, err
-	}
-	return strconv.ParseInt(bal, 10, 64)
+	return c.GetContractBalance(ctx, addr, BlockLevel(height))
 }
 
 // GetContractScript returns the originated contract script
 func (c *Client) GetContractScript(ctx context.Context, addr tezos.Address) (*micheline.Script, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/contracts/%s/script", c.ChainID, addr)
+	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/script", addr)
 	s := micheline.NewScript()
 	err := c.Get(ctx, u, s)
 	if err != nil {
@@ -73,8 +62,8 @@ func (c *Client) GetContractScript(ctx context.Context, addr tezos.Address) (*mi
 }
 
 // GetContractStorage returns the most recent version of the contract's storage
-func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address) (micheline.Prim, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/contracts/%s/storage", c.ChainID, addr)
+func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address, id BlockID) (micheline.Prim, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/storage", id, addr)
 	prim := micheline.Prim{}
 	err := c.Get(ctx, u, &prim)
 	if err != nil {
@@ -85,18 +74,12 @@ func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address) (mi
 
 // GetContractStorage returns the contract's storage at height
 func (c *Client) GetContractStorageHeight(ctx context.Context, addr tezos.Address, height int64) (micheline.Prim, error) {
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/contracts/%s/storage", c.ChainID, height, addr)
-	prim := micheline.Prim{}
-	err := c.Get(ctx, u, &prim)
-	if err != nil {
-		return micheline.InvalidPrim, err
-	}
-	return prim, nil
+	return c.GetContractStorage(ctx, addr, BlockLevel(height))
 }
 
 // GetContractEntrypoints returns the contract's entrypoints
 func (c *Client) GetContractEntrypoints(ctx context.Context, addr tezos.Address) (map[string]micheline.Prim, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/contracts/%s/storage", c.ChainID, addr)
+	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/storage", addr)
 	type eptype struct {
 		Entrypoints map[string]micheline.Prim `json:"entrypoints"`
 	}
@@ -108,9 +91,9 @@ func (c *Client) GetContractEntrypoints(ctx context.Context, addr tezos.Address)
 	return eps.Entrypoints, nil
 }
 
-// GetBigmapKeys returns all active keys in the bigmap id
-func (c *Client) GetBigmapKeys(ctx context.Context, id int64) ([]tezos.ExprHash, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/raw/json/big_maps/index/%d/contents", c.ChainID, id)
+// GetBigmapKeys returns all keys in the bigmap b at block id
+func (c *Client) GetBigmapKeys(ctx context.Context, bigmap int64, id BlockID) ([]tezos.ExprHash, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/big_maps/index/%d/contents", id, bigmap)
 	hashes := make([]tezos.ExprHash, 0)
 	err := c.Get(ctx, u, &hashes)
 	if err != nil {
@@ -119,9 +102,14 @@ func (c *Client) GetBigmapKeys(ctx context.Context, id int64) ([]tezos.ExprHash,
 	return hashes, nil
 }
 
-// GetBigmapValue returns current active value at key hash from bigmap id
-func (c *Client) GetBigmapValue(ctx context.Context, id int64, hash tezos.ExprHash) (micheline.Prim, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/raw/json/big_maps/index/%d/contents/%s", c.ChainID, id, hash)
+// GetActiveBigmapKeys returns all active keys in the bigmap
+func (c *Client) GetActiveBigmapKeys(ctx context.Context, bigmap int64) ([]tezos.ExprHash, error) {
+	return c.GetBigmapKeys(ctx, bigmap, Head)
+}
+
+// GetBigmapValue returns value at key hash from bigmap at block id
+func (c *Client) GetBigmapValue(ctx context.Context, bigmap int64, hash tezos.ExprHash, id BlockID) (micheline.Prim, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/big_maps/index/%d/contents/%s", id, bigmap, hash)
 	prim := micheline.Prim{}
 	err := c.Get(ctx, u, &prim)
 	if err != nil {
@@ -130,15 +118,14 @@ func (c *Client) GetBigmapValue(ctx context.Context, id int64, hash tezos.ExprHa
 	return prim, nil
 }
 
+// GetActiveBigmapValue returns current active value at key hash from bigmap
+func (c *Client) GetActiveBigmapValue(ctx context.Context, bigmap int64, hash tezos.ExprHash) (micheline.Prim, error) {
+	return c.GetBigmapValue(ctx, bigmap, hash, Head)
+}
+
 // GetBigmapValueHeight returns a value from bigmap id at key hash that was active at height
-func (c *Client) GetBigmapValueHeight(ctx context.Context, id int64, hash tezos.ExprHash, height int64) (micheline.Prim, error) {
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/raw/json/big_maps/index/%d/contents/%s", c.ChainID, height, id, hash)
-	prim := micheline.Prim{}
-	err := c.Get(ctx, u, &prim)
-	if err != nil {
-		return micheline.InvalidPrim, err
-	}
-	return prim, nil
+func (c *Client) GetBigmapValueHeight(ctx context.Context, bigmap int64, hash tezos.ExprHash, height int64) (micheline.Prim, error) {
+	return c.GetBigmapValue(ctx, bigmap, hash, BlockLevel(height))
 }
 
 type BigmapInfo struct {
@@ -147,9 +134,14 @@ type BigmapInfo struct {
 	TotalBytes int64          `json:"total_bytes,string"`
 }
 
-// GetBigmapInfo returns type and content info from bigmap id
-func (c *Client) GetBigmapInfo(ctx context.Context, id int64) (*BigmapInfo, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/raw/json/big_maps/index/%d", c.ChainID, id)
+// GetActiveBigmapInfo returns type and content info from bigmap at current head
+func (c *Client) GetActiveBigmapInfo(ctx context.Context, bigmap int64) (*BigmapInfo, error) {
+	return c.GetBigmapInfo(ctx, bigmap, Head)
+}
+
+// GetBigmapInfo returns type and content info from bigmap at block id
+func (c *Client) GetBigmapInfo(ctx context.Context, bigmap int64, id BlockID) (*BigmapInfo, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/big_maps/index/%d", id, bigmap)
 	info := &BigmapInfo{}
 	err := c.Get(ctx, u, info)
 	if err != nil {

@@ -3,11 +3,15 @@
 
 package rpc
 
+import (
+	"blockwatch.cc/tzgo/tezos"
+)
+
 // SeedNonceOp represents a seed_nonce_revelation operation
 type SeedNonceOp struct {
 	GenericOp
 	Level    int64                `json:"level"`
-	Nonce    HexBytes             `json:"nonce"`
+	Nonce    tezos.NonceHash      `json:"nonce"`
 	Metadata *SeedNonceOpMetadata `json:"metadata"`
 }
 
