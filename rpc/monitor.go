@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -67,7 +67,11 @@ func (m *BootstrapMonitor) Recv(ctx context.Context) (*BootstrappedBlock, error)
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	case <-m.closed:
-		return nil, ErrMonitorClosed
+		err := m.err
+		if err == nil {
+			err = ErrMonitorClosed
+		}
+		return nil, err
 	case res, ok := <-m.result:
 		if !ok {
 			if m.err != nil {
@@ -100,16 +104,16 @@ func (m *BootstrapMonitor) Close() {
 
 // BlockHeaderLogEntry is a log entry returned for a new block when monitoring
 type BlockHeaderLogEntry struct {
-	Hash           tezos.BlockHash `json:"hash"`
-	Level          int64           `json:"level"`
-	Proto          int             `json:"proto"`
-	Predecessor    tezos.BlockHash `json:"predecessor"`
-	Timestamp      time.Time       `json:"timestamp"`
-	ValidationPass int             `json:"validation_pass"`
-	OperationsHash string          `json:"operations_hash"`
-	Fitness        []HexBytes      `json:"fitness"`
-	Context        string          `json:"context"`
-	ProtocolData   HexBytes        `json:"protocol_data"`
+	Hash           tezos.BlockHash  `json:"hash"`
+	Level          int64            `json:"level"`
+	Proto          int              `json:"proto"`
+	Predecessor    tezos.BlockHash  `json:"predecessor"`
+	Timestamp      time.Time        `json:"timestamp"`
+	ValidationPass int              `json:"validation_pass"`
+	OperationsHash string           `json:"operations_hash"`
+	Fitness        []tezos.HexBytes `json:"fitness"`
+	Context        string           `json:"context"`
+	ProtocolData   tezos.HexBytes   `json:"protocol_data"`
 }
 
 func (b *Block) LogEntry() *BlockHeaderLogEntry {
@@ -164,7 +168,11 @@ func (m *BlockHeaderMonitor) Recv(ctx context.Context) (*BlockHeaderLogEntry, er
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	case <-m.closed:
-		return nil, ErrMonitorClosed
+		err := m.err
+		if err == nil {
+			err = ErrMonitorClosed
+		}
+		return nil, err
 	case res, ok := <-m.result:
 		if !ok {
 			if m.err != nil {
@@ -192,6 +200,88 @@ func (m *BlockHeaderMonitor) Close() {
 }
 
 func (m *BlockHeaderMonitor) Closed() <-chan struct{} {
+	return m.closed
+}
+
+// MempoolMonitor is a monitor for the Tezos mempool. Note that the connection
+// resets every time a new head is attached to the chain. MempoolMonitor is
+// closed with an error in this case and cannot be reused after close.
+//
+// The Tezos mempool re-evaluates all operations and potentially updates their state
+// when the head block changes. This applies to operations in lists branch_delayed
+// and branch_refused. After reorg, operations already included in a previous block
+// may enter the mempool again.
+type MempoolMonitor struct {
+	result chan *[]*Operation
+	closed chan struct{}
+	err    error
+}
+
+// make sure MempoolMonitor implements Monitor interface
+var _ Monitor = (*MempoolMonitor)(nil)
+
+func NewMempoolMonitor() *MempoolMonitor {
+	return &MempoolMonitor{
+		result: make(chan *[]*Operation),
+		closed: make(chan struct{}),
+	}
+}
+
+func (m *MempoolMonitor) New() interface{} {
+	slice := make([]*Operation, 0)
+	return &slice
+}
+
+func (m *MempoolMonitor) Send(ctx context.Context, val interface{}) {
+	select {
+	case <-m.closed:
+		return
+	default:
+	}
+	select {
+	case <-ctx.Done():
+	case <-m.closed:
+	case m.result <- val.(*[]*Operation):
+	}
+}
+
+func (m *MempoolMonitor) Recv(ctx context.Context) ([]*Operation, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-m.closed:
+		err := m.err
+		if err == nil {
+			err = ErrMonitorClosed
+		}
+		return nil, err
+	case res, ok := <-m.result:
+		if !ok {
+			if m.err != nil {
+				return nil, m.err
+			}
+			return nil, io.EOF
+		}
+		return *res, nil
+	}
+}
+
+func (m *MempoolMonitor) Err(err error) {
+	m.err = err
+	m.Close()
+}
+
+func (m *MempoolMonitor) Close() {
+	select {
+	case <-m.closed:
+		return
+	default:
+	}
+	close(m.closed)
+	close(m.result)
+}
+
+func (m *MempoolMonitor) Closed() <-chan struct{} {
 	return m.closed
 }
 
@@ -240,7 +330,11 @@ func (m *NetworkPeerMonitor) Recv(ctx context.Context) (*NetworkPeerLogEntry, er
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	case <-m.closed:
-		return nil, ErrMonitorClosed
+		err := m.err
+		if err == nil {
+			err = ErrMonitorClosed
+		}
+		return nil, err
 	case res, ok := <-m.result:
 		if !ok {
 			if m.err != nil {
@@ -315,7 +409,11 @@ func (m *NetworkPointMonitor) Recv(ctx context.Context) (*NetworkPointLogEntry, 
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	case <-m.closed:
-		return nil, ErrMonitorClosed
+		err := m.err
+		if err == nil {
+			err = ErrMonitorClosed
+		}
+		return nil, err
 	case res, ok := <-m.result:
 		if !ok {
 			if m.err != nil {
@@ -353,7 +451,12 @@ func (c *Client) MonitorBootstrapped(ctx context.Context, monitor *BootstrapMoni
 
 // MonitorBlockHeader reads from the chain heads stream http://tezos.gitlab.io/mainnet/api/rpc.html#get-monitor-heads-chain-id
 func (c *Client) MonitorBlockHeader(ctx context.Context, monitor *BlockHeaderMonitor) error {
-	return c.GetAsync(ctx, "monitor/heads/"+c.ChainID, monitor)
+	return c.GetAsync(ctx, "monitor/heads/main", monitor)
+}
+
+// MonitorMempool reads from the chain heads stream http://tezos.gitlab.io/mainnet/api/rpc.html#get-monitor-heads-chain-id
+func (c *Client) MonitorMempool(ctx context.Context, monitor *MempoolMonitor) error {
+	return c.GetAsync(ctx, "chains/main/mempool/monitor_operations", monitor)
 }
 
 // MonitorNetworkPointLog monitors network events related to an `IP:addr`.
