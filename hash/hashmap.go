@@ -42,6 +42,7 @@ func fnv(buf []byte) uint64 {
 	ptr := fnvPool.Get()
 	defer fnvPool.Put(ptr)
 	h := ptr.(*InlineFNV64a)
+	h.Reset()
 	h.Write(buf)
 	return h.Sum64()
 }
