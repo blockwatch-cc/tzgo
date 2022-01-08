@@ -79,7 +79,7 @@ func (c *Client) GetContractStorageHeight(ctx context.Context, addr tezos.Addres
 
 // GetContractEntrypoints returns the contract's entrypoints
 func (c *Client) GetContractEntrypoints(ctx context.Context, addr tezos.Address) (map[string]micheline.Prim, error) {
-	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/storage", addr)
+	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/entrypoints", addr)
 	type eptype struct {
 		Entrypoints map[string]micheline.Prim `json:"entrypoints"`
 	}
