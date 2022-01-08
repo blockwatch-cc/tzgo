@@ -28,7 +28,7 @@ func (t OpStatus) IsSuccess() bool {
 func (t *OpStatus) UnmarshalText(data []byte) error {
 	v := ParseOpStatus(string(data))
 	if !v.IsValid() {
-		return fmt.Errorf("invalid operation status '%s'", string(data))
+		return fmt.Errorf("tezos: invalid operation status '%s'", string(data))
 	}
 	*t = v
 	return nil
@@ -89,7 +89,8 @@ const (
 	OpTypeSeedSlash                               // 15 indexer only
 	OpTypeMigration                               // 16 indexer only
 	OpTypeFailingNoop                             // 17 v009
-	OpTypeRegisterConstant                        // 18 v011
+	OpTypeEndorsementWithSlot                     // 18 v009
+	OpTypeRegisterConstant                        // 19 v011
 	OpTypeBatch                     = 254         // indexer only, output-only
 	OpTypeInvalid                   = 255
 )
@@ -101,7 +102,7 @@ func (t OpType) IsValid() bool {
 func (t *OpType) UnmarshalText(data []byte) error {
 	v := ParseOpType(string(data))
 	if !v.IsValid() {
-		return fmt.Errorf("invalid operation type '%s'", string(data))
+		return fmt.Errorf("tezos: invalid operation type '%s'", string(data))
 	}
 	*t = v
 	return nil
@@ -131,8 +132,10 @@ func ParseOpType(s string) OpType {
 		return OpTypeDelegation
 	case "reveal":
 		return OpTypeReveal
-	case "endorsement", "endorsement_with_slot":
+	case "endorsement":
 		return OpTypeEndorsement
+	case "endorsement_with_slot":
+		return OpTypeEndorsementWithSlot
 	case "proposals":
 		return OpTypeProposals
 	case "ballot":
@@ -180,6 +183,8 @@ func (t OpType) String() string {
 		return "reveal"
 	case OpTypeEndorsement:
 		return "endorsement"
+	case OpTypeEndorsementWithSlot:
+		return "endorsement_with_slot"
 	case OpTypeProposals:
 		return "proposals"
 	case OpTypeBallot:
@@ -206,8 +211,8 @@ func (t OpType) String() string {
 }
 
 var (
-	// before babylon
-	opTagV1 = map[OpType]byte{
+	// before Babylon v005
+	opTagV0 = map[OpType]byte{
 		OpTypeEndorsement:               0,
 		OpTypeSeedNonceRevelation:       1,
 		OpTypeDoubleEndorsementEvidence: 2,
@@ -221,7 +226,7 @@ var (
 		OpTypeDelegation:                10,
 	}
 	// Babylon v005 and up
-	opTagV2 = map[OpType]byte{
+	opTagV1 = map[OpType]byte{
 		OpTypeEndorsement:               0,
 		OpTypeSeedNonceRevelation:       1,
 		OpTypeDoubleEndorsementEvidence: 2,
@@ -233,27 +238,22 @@ var (
 		OpTypeTransaction:               108, // v005
 		OpTypeOrigination:               109, // v005
 		OpTypeDelegation:                110, // v005
+		OpTypeEndorsementWithSlot:       10,  // v009
 		OpTypeFailingNoop:               17,  // v009
 		OpTypeRegisterConstant:          111, // v011
 	}
 )
 
-func (t OpType) Tag(p *Params) byte {
-	v := 0
-	if p != nil {
-		v = p.OperationTagsVersion
-	}
+func (t OpType) TagVersion(ver int) byte {
 	var (
 		tag byte
 		ok  bool
 	)
-	switch v {
+	switch ver {
 	case 0:
-		tag, ok = opTagV1[t]
-	case 1:
-		tag, ok = opTagV2[t]
+		tag, ok = opTagV0[t]
 	default:
-		tag, ok = opTagV2[t]
+		tag, ok = opTagV1[t]
 	}
 	if !ok {
 		return 255
@@ -261,9 +261,67 @@ func (t OpType) Tag(p *Params) byte {
 	return tag
 }
 
+func (t OpType) Tag() byte {
+	tag, ok := opTagV1[t]
+	if !ok {
+		tag = 255
+	}
+	return tag
+}
+
+var (
+	// before Babylon v005
+	opMinSizeV0 = map[byte]int{
+		0:  5,         // OpTypeEndorsement
+		1:  37,        // OpTypeSeedNonceRevelation
+		2:  9 + 2*101, // OpTypeDoubleEndorsementEvidence
+		3:  9 + 2*189, // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash)
+		4:  41,        // OpTypeActivateAccount
+		5:  30,        // OpTypeProposals
+		6:  59,        // OpTypeBallot
+		7:  26 + 32,   // OpTypeReveal (assuming shortest pk)
+		8:  49,        // OpTypeTransaction
+		9:  53,        // OpTypeOrigination
+		10: 26,        // OpTypeDelegation
+	}
+	// Babylon v005 and up
+	opMinSizeV1 = map[byte]int{
+		0:   5,          // OpTypeEndorsement // <v009
+		1:   037,        // OpTypeSeedNonceRevelation
+		2:   11 + 2*101, // OpTypeDoubleEndorsementEvidence
+		3:   9 + 2*189,  // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, lb_escape_vote)
+		4:   41,         // OpTypeActivateAccount
+		5:   30,         // OpTypeProposals
+		6:   59,         // OpTypeBallot
+		107: 26 + 32,    // OpTypeReveal // v005 (assuming shortest pk)
+		108: 50,         // OpTypeTransaction // v005
+		109: 28,         // OpTypeOrigination // v005
+		110: 27,         // OpTypeDelegation // v005
+		10:  108,        // OpTypeEndorsementWithSlot // v009
+		17:  5,          // OpTypeFailingNoop  // v009
+		111: 30,         // OpTypeRegisterConstant // v011
+	}
+)
+
+func (t OpType) MinSizeVersion(ver int) int {
+	var size int
+	switch ver {
+	case 0:
+		size, _ = opMinSizeV0[t.TagVersion(ver)]
+	default:
+		size, _ = opMinSizeV1[t.TagVersion(ver)]
+	}
+	return size
+}
+
+func (t OpType) MinSize() int {
+	size, _ := opMinSizeV1[t.Tag()]
+	return size
+}
+
 func (t OpType) ListId() int {
 	switch t {
-	case OpTypeEndorsement:
+	case OpTypeEndorsement, OpTypeEndorsementWithSlot:
 		return 0
 	case OpTypeProposals, OpTypeBallot:
 		return 1
@@ -276,14 +334,14 @@ func (t OpType) ListId() int {
 		OpTypeOrigination,
 		OpTypeDelegation,
 		OpTypeReveal,
-		OpTypeRegisterConstant,
-		OpTypeBatch: // custom, indexer only
+		OpTypeRegisterConstant:
 		return 3
 	case OpTypeBake, OpTypeUnfreeze, OpTypeSeedSlash:
 		return -1 // block level ops
 	case OpTypeInvoice, OpTypeAirdrop, OpTypeMigration:
 		return -2 // migration ops
 	default:
+		// OpTypeBatch: // custom, indexer only
 		return -255 // invalid
 	}
 }
@@ -292,6 +350,8 @@ func ParseOpTag(t byte) OpType {
 	switch t {
 	case 0:
 		return OpTypeEndorsement
+	case 10:
+		return OpTypeEndorsementWithSlot
 	case 1:
 		return OpTypeSeedNonceRevelation
 	case 2:
@@ -304,13 +364,13 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeProposals
 	case 6:
 		return OpTypeBallot
-	case 7, 107:
+	case 107:
 		return OpTypeReveal
-	case 8, 108:
+	case 108:
 		return OpTypeTransaction
-	case 9, 109:
+	case 109:
 		return OpTypeOrigination
-	case 10, 110:
+	case 110:
 		return OpTypeDelegation
 	case 17:
 		return OpTypeFailingNoop
@@ -319,4 +379,17 @@ func ParseOpTag(t byte) OpType {
 	default:
 		return OpTypeInvalid
 	}
+}
+
+func ParseOpTagVersion(t byte, ver int) OpType {
+	tags := opTagV0
+	if ver > 0 {
+		tags = opTagV1
+	}
+	for typ, tag := range tags {
+		if tag == t {
+			return typ
+		}
+	}
+	return OpTypeInvalid
 }

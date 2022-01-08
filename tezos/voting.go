@@ -33,7 +33,7 @@ func (v VotingPeriodKind) IsValid() bool {
 func (v *VotingPeriodKind) UnmarshalText(data []byte) error {
 	vv := ParseVotingPeriod(string(data))
 	if !vv.IsValid() {
-		return fmt.Errorf("invalid voting period '%s'", string(data))
+		return fmt.Errorf("tezos: invalid voting period '%s'", string(data))
 	}
 	*v = vv
 	return nil
@@ -125,7 +125,7 @@ func (v BallotVote) IsValid() bool {
 func (v *BallotVote) UnmarshalText(data []byte) error {
 	vv := ParseBallotVote(string(data))
 	if !vv.IsValid() {
-		return fmt.Errorf("invalid ballot '%s'", string(data))
+		return fmt.Errorf("tezos: invalid ballot %q", string(data))
 	}
 	*v = vv
 	return nil
@@ -133,6 +133,18 @@ func (v *BallotVote) UnmarshalText(data []byte) error {
 
 func (v BallotVote) MarshalText() ([]byte, error) {
 	return []byte(v.String()), nil
+}
+
+func (v *BallotVote) UnmarshalBinary(data []byte) error {
+	if len(data) < 1 {
+		return fmt.Errorf("tezos: short ballot data")
+	}
+	vv := ParseBallotTag(data[0])
+	if !vv.IsValid() {
+		return fmt.Errorf("tezos: invalid ballot tag %d", data[0])
+	}
+	*v = vv
+	return nil
 }
 
 func ParseBallotVote(s string) BallotVote {
@@ -158,5 +170,31 @@ func (v BallotVote) String() string {
 		return "pass"
 	default:
 		return ""
+	}
+}
+
+func (v BallotVote) Tag() byte {
+	switch v {
+	case BallotVoteYay:
+		return 0
+	case BallotVoteNay:
+		return 1
+	case BallotVotePass:
+		return 2
+	default:
+		return 255
+	}
+}
+
+func ParseBallotTag(t byte) BallotVote {
+	switch t {
+	case 0:
+		return BallotVoteYay
+	case 1:
+		return BallotVoteNay
+	case 2:
+		return BallotVotePass
+	default:
+		return BallotVoteInvalid
 	}
 }

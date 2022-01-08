@@ -82,7 +82,7 @@ var (
 
 	ED25519_SEED_ID         = []byte{0x0D, 0x0F, 0x3A, 0x07} // "\013\015\058\007" (* edsk(54) *)
 	ED25519_PUBLIC_KEY_ID   = []byte{0x0D, 0x0F, 0x25, 0xD9} // "\013\015\037\217" (* edpk(54) *)
-	SECP256K1_SECRET_KEY_ID = []byte{0x11, 0xA2, 0xE0, 0xD2} // "\017\162\224\201" (* spsk(54) *)
+	SECP256K1_SECRET_KEY_ID = []byte{0x11, 0xA2, 0xE0, 0xC9} // "\017\162\224\201" (* spsk(54) *)
 	P256_SECRET_KEY_ID      = []byte{0x10, 0x51, 0xEE, 0xBD} // "\016\081\238\189" (* p2sk(54) *)
 
 	// 33 byte hash magics

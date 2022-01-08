@@ -17,7 +17,14 @@ var (
 	// signature is undefined.
 	ErrUnknownSignatureType = errors.New("unknown signature type")
 
+	// ErrSignature is returned when signature verification fails
+	ErrSignature = errors.New("signature mismatch")
+
+	// InvalidSignature represents an empty invalid signature
 	InvalidSignature = Signature{Type: SignatureTypeInvalid, Data: nil}
+
+	// ZeroSignature represents a valid signature derived from null bytes
+	ZeroSignature = MustParseSignature("sigMzJ4GVAvXEd2RjsKGfG2H9QvqTSKCZsuB2KiHbZRGFz72XgF6KaKADznh674fQgBatxw3xdHqTtMHUZAGRprxy64wg1aq")
 )
 
 type SignatureType byte
@@ -79,6 +86,10 @@ func (t SignatureType) Prefix() string {
 	}
 }
 
+func (t SignatureType) String() string {
+	return t.Prefix()
+}
+
 func (t SignatureType) Tag() byte {
 	switch t {
 	case SignatureTypeEd25519:
@@ -130,6 +141,20 @@ func (t SignatureType) Len() int {
 	return 0
 }
 
+func IsSignature(s string) bool {
+	for _, prefix := range []string{
+		ED25519_SIGNATURE_PREFIX,
+		SECP256K1_SIGNATURE_PREFIX,
+		P256_SIGNATURE_PREFIX,
+		GENERIC_SIGNATURE_PREFIX,
+	} {
+		if strings.HasPrefix(s, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 type Signature struct {
 	Type SignatureType
 	Data []byte
@@ -143,7 +168,7 @@ func NewSignature(typ SignatureType, data []byte) Signature {
 }
 
 func (s Signature) IsValid() bool {
-	return s.Type.Len() == len(s.Data)
+	return s.Type.IsValid() && s.Type.Len() == len(s.Data)
 }
 
 func (s Signature) IsEqual(s2 Signature) bool {
@@ -157,6 +182,13 @@ func (s Signature) Clone() Signature {
 		Type: s.Type,
 		Data: buf,
 	}
+}
+
+func (s Signature) Generic() string {
+	if !s.IsValid() {
+		return ""
+	}
+	return base58.CheckEncode(s.Data, GENERIC_SIGNATURE_ID)
 }
 
 func (s Signature) String() string {
@@ -179,11 +211,39 @@ func (s *Signature) UnmarshalText(data []byte) error {
 	return nil
 }
 
+func (s Signature) Bytes() []byte {
+	return append([]byte{s.Type.Tag()}, s.Data...)
+}
+
+func (s *Signature) DecodeBuffer(buf *bytes.Buffer) error {
+	l := buf.Len()
+	if l < 64 {
+		return fmt.Errorf("tezos: invalid binary signature length %d", l)
+	}
+	// default to generic without tag
+	s.Type = SignatureTypeGeneric
+	if l > s.Type.Len() {
+		tag := buf.Next(1)[0]
+		if typ := ParseSignatureTag(tag); !typ.IsValid() {
+			return fmt.Errorf("tezos: invalid binary signature type %x", tag)
+		} else {
+			s.Type = typ
+		}
+	}
+	l = s.Type.Len()
+	s.Data = make([]byte, l)
+	copy(s.Data, buf.Next(l))
+	if !s.IsValid() {
+		return fmt.Errorf("tezos: invalid %s signature length %d", s.Type, l)
+	}
+	return nil
+}
+
 func (s Signature) MarshalBinary() ([]byte, error) {
 	if !s.Type.IsValid() {
 		return nil, ErrUnknownSignatureType
 	}
-	return append([]byte{s.Type.Tag()}, s.Data...), nil
+	return s.Bytes(), nil
 }
 
 func (s *Signature) UnmarshalBinary(b []byte) error {
@@ -192,13 +252,13 @@ func (s *Signature) UnmarshalBinary(b []byte) error {
 		s.Type = SignatureTypeGeneric
 	case 65:
 		if typ := ParseSignatureTag(b[0]); !typ.IsValid() {
-			return fmt.Errorf("invalid binary signature type %x", b[0])
+			return fmt.Errorf("tezos: invalid binary signature type %x", b[0])
 		} else {
 			s.Type = typ
 		}
 		b = b[1:]
 	default:
-		return fmt.Errorf("invalid binary signature length %d", len(b))
+		return fmt.Errorf("tezos: invalid binary signature length %d", len(b))
 	}
 	if cap(s.Data) < s.Type.Len() {
 		s.Data = make([]byte, s.Type.Len())
@@ -233,26 +293,34 @@ func ParseSignature(s string) (Signature, error) {
 		typ = SignatureTypeGeneric
 
 	default:
-		return Signature{}, fmt.Errorf("unknown signature prefix %s", s)
+		return Signature{}, fmt.Errorf("tezos: unknown signature prefix %s", s)
 	}
 
 	if err != nil {
 		if err == base58.ErrChecksum {
 			return Signature{}, ErrChecksumMismatch
 		}
-		return Signature{}, fmt.Errorf("unknown signature format: %w", err)
+		return Signature{}, fmt.Errorf("tezos: unknown signature format: %w", err)
 	}
 
 	if bytes.Compare(ver, typ.PrefixBytes()) != 0 {
-		return Signature{}, fmt.Errorf("invalid signature type %s for %s", ver, typ.Prefix())
+		return Signature{}, fmt.Errorf("tezos: invalid signature type %s for %s", ver, typ.Prefix())
 	}
 
 	if l := len(dec); l < typ.Len() {
-		return Signature{}, fmt.Errorf("invalid length %d for %s signature data", l, typ.Prefix())
+		return Signature{}, fmt.Errorf("tezos: invalid length %d for %s signature data", l, typ.Prefix())
 	}
 
 	return Signature{
 		Type: typ,
 		Data: dec[:typ.Len()],
 	}, nil
+}
+
+func MustParseSignature(s string) Signature {
+	sig, err := ParseSignature(s)
+	if err != nil {
+		panic(err)
+	}
+	return sig
 }

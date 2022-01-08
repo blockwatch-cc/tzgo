@@ -4,7 +4,32 @@
 package tezos
 
 import (
+	"encoding/json"
 	"time"
+)
+
+var (
+	// DefaultParams defines the blockchain configuration for Mainnet under the latest
+	// protocol. It is used to generate compliant transaction encodings. To change,
+	// either overwrite this default or set custom params per operation using
+	// op.WithParams().
+	DefaultParams = NewParams().
+		ForNetwork(Mainnet).
+		ForProtocol(ProtoV011_2).
+		Mixin(&Params{
+			OperationTagsVersion: 1,
+			TimeBetweenBlocks: [2]time.Duration{
+				60 * time.Second,
+				40 * time.Second,
+			},
+			MaxOperationsTTL:             120,
+			HardGasLimitPerOperation:     1040000,
+			HardGasLimitPerBlock:         5200000,
+			OriginationSize:              257,
+			CostPerByte:                  250,
+			HardStorageLimitPerOperation: 60000,
+			MinimalBlockDelay:            30 * time.Second,
+		})
 )
 
 type Params struct {
@@ -94,6 +119,12 @@ func NewParams() *Params {
 		NumVotingPeriods: 4,
 		MaxOperationsTTL: 60,
 	}
+}
+
+func (p *Params) Mixin(src *Params) *Params {
+	buf, _ := json.Marshal(src)
+	_ = json.Unmarshal(buf, p)
+	return p
 }
 
 // convertAmount converts a floating point number, which may or may not be representable
