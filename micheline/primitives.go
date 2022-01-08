@@ -912,7 +912,7 @@ func (p Prim) EncodeBuffer(buf *bytes.Buffer) error {
 	buf.WriteByte(byte(p.Type))
 	switch p.Type {
 	case PrimInt:
-		var z Z
+		var z tezos.Z
 		z.Set(p.Int)
 		if err := z.EncodeBuffer(buf); err != nil {
 			return err
@@ -1192,7 +1192,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 	switch tag {
 	case PrimInt:
 		// data is a zarith number
-		var z Z
+		var z tezos.Z
 		if err := z.DecodeBuffer(buf); err != nil {
 			return err
 		}
