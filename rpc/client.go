@@ -95,7 +95,8 @@ func (c *Client) ResolveChainConfig(ctx context.Context) (*tezos.Params, error) 
 	if err != nil {
 		return nil, err
 	}
-	return con.MapToChainParams(), nil
+	c.Params = con.MapToChainParams()
+	return c.Params, nil
 }
 
 func (c *Client) Get(ctx context.Context, urlpath string, result interface{}) error {
