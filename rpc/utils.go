@@ -49,10 +49,13 @@ func NewBlockOffset(id BlockID, n int64) BlockOffset {
 }
 
 func (o BlockOffset) String() string {
+	ref := o.Base.String()
 	if o.Offset > 0 {
-		return o.Base.String() + "~" + strconv.FormatInt(o.Offset, 10)
+		ref += "+" + strconv.FormatInt(o.Offset, 10)
+	} else if o.Offset < 0 {
+		ref += strconv.FormatInt(o.Offset, 10)
 	}
-	return o.Base.String()
+	return ref
 }
 
 func unmarshalMultiTypeJSONArray(data []byte, vals ...interface{}) (err error) {
