@@ -48,12 +48,12 @@ func (b *Bool) DecodeBuffer(buf *bytes.Buffer) error {
 //
 type Z big.Int
 
-func (z *Z) Big() *big.Int {
-    return (*big.Int)(z)
+func (z Z) Big() *big.Int {
+    return (*big.Int)(&z)
 }
 
-func (z *Z) Int64() int64 {
-    return (*big.Int)(z).Int64()
+func (z Z) Int64() int64 {
+    return (*big.Int)(&z).Int64()
 }
 
 func (z *Z) Set(b *big.Int) *Z {
@@ -105,7 +105,7 @@ func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
     return nil
 }
 
-func (z *Z) MarshalBinary() ([]byte, error) {
+func (z Z) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     if err := z.EncodeBuffer(buf); err != nil {
         return nil, err
@@ -138,16 +138,16 @@ func (z *Z) EncodeBuffer(buf *bytes.Buffer) error {
     return nil
 }
 
-func (z *Z) MarshalText() ([]byte, error) {
-    return (*big.Int)(z).MarshalText()
+func (z Z) MarshalText() ([]byte, error) {
+    return (*big.Int)(&z).MarshalText()
 }
 
 func (z *Z) UnmarshalText(d []byte) error {
     return (*big.Int)(z).UnmarshalText(d)
 }
 
-func (z *Z) String() string {
-    return (*big.Int)(z).Text(10)
+func (z Z) String() string {
+    return (*big.Int)(&z).Text(10)
 }
 
 // A variable length sequence of bytes, encoding a Zarith number.
@@ -206,7 +206,7 @@ func (n *N) UnmarshalBinary(data []byte) error {
     return n.DecodeBuffer(bytes.NewBuffer(data))
 }
 
-func (n *N) MarshalBinary() ([]byte, error) {
+func (n N) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     if err := n.EncodeBuffer(buf); err != nil {
         return nil, err
