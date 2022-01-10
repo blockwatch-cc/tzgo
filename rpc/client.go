@@ -175,7 +175,10 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 	dec := json.NewDecoder(resp.Body)
 
 	// close body when stream stopped
-	defer resp.Body.Close()
+	defer func() {
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
+	}()
 
 	for {
 		chunkVal := mon.New()
@@ -206,16 +209,15 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 }
 
 // Do retrieves values from the API and marshals them into the provided interface.
-func (c *Client) Do(req *http.Request, v interface{}) (err error) {
+func (c *Client) Do(req *http.Request, v interface{}) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		if rerr := resp.Body.Close(); err == nil {
-			err = rerr
-		}
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
 	}()
 
 	if resp.StatusCode == http.StatusNoContent {
@@ -239,7 +241,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (err error) {
 }
 
 // DoAsync retrieves values from the API and sends responses using the provided monitor.
-func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
+func (c *Client) DoAsync(req *http.Request, mon Monitor) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		if e, ok := err.(*url.Error); ok {
@@ -249,6 +251,7 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
 	}
 
 	if resp.StatusCode == http.StatusNoContent {
+		io.Copy(ioutil.Discard, resp.Body)
 		resp.Body.Close()
 		return nil
 	}
@@ -262,10 +265,11 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
 			return nil
 		}
 	} else {
-		err = handleError(resp)
+		return handleError(resp)
 	}
+	io.Copy(ioutil.Discard, resp.Body)
 	resp.Body.Close()
-	return
+	return nil
 }
 
 func handleError(resp *http.Response) error {
