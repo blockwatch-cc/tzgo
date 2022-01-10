@@ -29,18 +29,19 @@ var (
 func init() {
     flags.Usage = func() {}
     flags.BoolVar(&verbose, "v", false, "be verbose")
-    flags.StringVar(&node, "node", "https://rpc.hangzhou.tzstats.com", "tezos node url")
+    flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node URL")
     flags.Int64Var(&ttl, "ttl", 120, "Operation TTL")
 }
 
 func main() {
     if err := flags.Parse(os.Args[1:]); err != nil {
         if err == flag.ErrHelp {
-            fmt.Println("Usage: mempool <cmd> [args]")
+            fmt.Println("Usage: mempool [args] <cmd> [sub-args]")
             fmt.Println("\nCommands")
             fmt.Printf("  stream [<filter>]   stream new ops entering the mempool, optional filter\n")
             fmt.Printf("  wait <ophash>       wait for operation to be visible in mempool\n")
             fmt.Printf("  info                print info about mempool\n")
+            fmt.Println("\nArguments")
             flags.PrintDefaults()
             os.Exit(0)
         }
@@ -171,7 +172,6 @@ func stream(ctx context.Context, c *rpc.Client, flt string) error {
             fmt.Println(op.Hash, op.Contents[0].OpKind())
         }
     }
-    return nil
 }
 
 func wait(ctx context.Context, c *rpc.Client, hash string) error {

@@ -272,7 +272,7 @@ func sign(key, msg string, generic bool) error {
     fmt.Printf("Signature        %s\n", sig)
     fmt.Printf("Signature Hex    %x\n", sig.Data)
     if generic {
-        fmt.Printf("Generic Sig      %s\n", sig.Generic)
+        fmt.Printf("Generic Sig      %s\n", sig.Generic())
     }
     return nil
 }

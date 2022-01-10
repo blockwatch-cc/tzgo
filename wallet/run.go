@@ -10,21 +10,21 @@ import (
     // "encoding/json"
     "fmt"
 
-    "blockwatch.cc/tzgo/encoding"
+    "blockwatch.cc/tzgo/codec"
     // "blockwatch.cc/tzgo/micheline"
     "blockwatch.cc/tzgo/rpc"
     "blockwatch.cc/tzgo/tezos"
 )
 
 type RunOperationRequest struct {
-    Operation *encoding.Op      `json:"operation"`
+    Operation *codec.Op         `json:"operation"`
     ChainId   tezos.ChainIdHash `json:"chain_id"`
 }
 
 // Simulate dry-runs the execution of the operation against the current state
 // of a Tezos node in order to estimate execution costs and fees (fee/burn/gas/storage).
-func Simulate(ctx context.Context, c *rpc.Client, o *encoding.Op) (*Result, error) {
-    sim := &encoding.Op{
+func Simulate(ctx context.Context, c *rpc.Client, o *codec.Op) (*Result, error) {
+    sim := &codec.Op{
         Branch:    o.Branch,
         Contents:  o.Contents,
         Signature: tezos.ZeroSignature,
@@ -58,8 +58,8 @@ func Simulate(ctx context.Context, c *rpc.Client, o *encoding.Op) (*Result, erro
 
 // Validate compares local serializiation against remote RPC serialization of the
 // operation and returns an error on mismatch.
-func Validate(ctx context.Context, c *rpc.Client, o *encoding.Op) error {
-    op := &encoding.Op{
+func Validate(ctx context.Context, c *rpc.Client, o *codec.Op) error {
+    op := &codec.Op{
         Branch:   o.Branch,
         Contents: o.Contents,
     }
@@ -77,7 +77,7 @@ func Validate(ctx context.Context, c *rpc.Client, o *encoding.Op) error {
 
 // Broadcast sends the signed operation to network and returns the operation hash
 // on successful pre-validation.
-func Broadcast(ctx context.Context, c *rpc.Client, o *encoding.Op) (tezos.OpHash, error) {
+func Broadcast(ctx context.Context, c *rpc.Client, o *codec.Op) (tezos.OpHash, error) {
     return c.BroadcastOperation(ctx, o.Bytes())
 }
 

@@ -31,15 +31,15 @@ var (
 
 func init() {
 	flags.Usage = func() {}
-	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.BoolVar(&debug, "d", false, "enable debug mode")
-	flags.StringVar(&node, "node", "http://127.0.0.1:8732", "tezos node url")
+	flags.BoolVar(&verbose, "v", false, "Be verbose")
+	flags.BoolVar(&debug, "d", false, "Enable debug mode")
+	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node url")
 }
 
 func main() {
 	if err := flags.Parse(os.Args[1:]); err != nil {
 		if err == flag.ErrHelp {
-			fmt.Println("Tezos RPC Examples")
+			fmt.Println("Usage: rpc [args] <cmd> [sub-args]")
 			flags.PrintDefaults()
 			fmt.Printf("\nOperations\n")
 			fmt.Printf("  block <hash>|head   show block info\n")
@@ -153,11 +153,11 @@ func fetchHead(ctx context.Context, c *rpc.Client) error {
 }
 
 func printHead(h *rpc.BlockHeader) {
-	fmt.Printf("Block  %d (%d) %s %s\n", h.Level, h.Level/4096, h.Hash, h.Timestamp)
+	fmt.Printf("Block  %d %s %s\n", h.Level, h.Hash, h.Timestamp)
 }
 
 func printBlock(b *rpc.Block) {
-	fmt.Printf("Height %d (%d)\n", b.Header.Level, b.Metadata.Level.Cycle)
+	fmt.Printf("Height %d (%d)\n", b.GetLevel(), b.GetCycle())
 	fmt.Printf("Block  %s\n", b.Hash)
 	fmt.Printf("Parent %s\n", b.Header.Predecessor)
 	fmt.Printf("Time   %s\n", b.Header.Timestamp)
@@ -222,7 +222,6 @@ func waitBootstrap(ctx context.Context, c *rpc.Client) error {
 			return err
 		}
 	}
-	return nil
 }
 
 func monitorBlocks(ctx context.Context, c *rpc.Client) error {
@@ -259,7 +258,6 @@ func monitorBlocks(ctx context.Context, c *rpc.Client) error {
 			return err
 		}
 	}
-	return nil
 }
 
 func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) error {
@@ -435,12 +433,12 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 	}
 	for name, bigid := range bm {
 		// load bigmap type
-		biginfo, err := c.GetBigmapInfo(ctx, bigid)
+		biginfo, err := c.GetBigmapInfo(ctx, bigid, rpc.Head)
 		if err != nil {
 			return err
 		}
 		// list all bigmap keys
-		bigkeys, err := c.GetBigmapKeys(ctx, bigid)
+		bigkeys, err := c.GetBigmapKeys(ctx, bigid, rpc.Head)
 		if err != nil {
 			return err
 		}
@@ -448,7 +446,7 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 		if verbose {
 			for i, key := range bigkeys {
 				// visit each key
-				bigval, err := c.GetBigmapValue(ctx, bigid, key)
+				bigval, err := c.GetBigmapValue(ctx, bigid, key, rpc.Head)
 				if err != nil {
 					return err
 				}
