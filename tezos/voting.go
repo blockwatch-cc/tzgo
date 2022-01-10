@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// VotingPeriodKind represents a named voting period in Tezos.
 type VotingPeriodKind byte
 
 const (
@@ -109,6 +110,7 @@ func (v VotingPeriodKind) String() string {
 	}
 }
 
+// BallotVote represents a named ballot in Tezos.
 type BallotVote byte
 
 const (

@@ -18,7 +18,7 @@ const (
 	SECP256K1_PUBLIC_KEY_HASH_PREFIX = "tz2"
 	P256_PUBLIC_KEY_HASH_PREFIX      = "tz3"
 	NOCURVE_PUBLIC_KEY_HASH_PREFIX   = "KT1"  // originated contract identifier
-	BAKER_PUBLIC_KEY_HASH_PREFIX     = "SG1"  // baker contract in v008
+	BAKER_PUBLIC_KEY_HASH_PREFIX     = "SG1"  // baker contract in v???
 	BLINDED_PUBLIC_KEY_HASH_PREFIX   = "btz1" // blinded tz1
 
 	// base58 prefixes for 32 byte hash magics

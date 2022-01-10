@@ -45,9 +45,9 @@ func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateL
 	return delegates, nil
 }
 
-// GetDelegateStatus returns information about a delegate at a specific height
+// GetDelegate returns information about a delegate at a specific height
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates-pkh
-func (c *Client) GetDelegateStatus(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
+func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
 	delegate := &Delegate{
 		Delegate: addr,
 		Block:    id.String(),

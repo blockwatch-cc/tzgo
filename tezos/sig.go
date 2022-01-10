@@ -27,6 +27,7 @@ var (
 	ZeroSignature = MustParseSignature("sigMzJ4GVAvXEd2RjsKGfG2H9QvqTSKCZsuB2KiHbZRGFz72XgF6KaKADznh674fQgBatxw3xdHqTtMHUZAGRprxy64wg1aq")
 )
 
+// SignatureType represents the type of a Tezos signature.
 type SignatureType byte
 
 const (
@@ -155,6 +156,7 @@ func IsSignature(s string) bool {
 	return false
 }
 
+// Signature represents a typed Tezos signature.
 type Signature struct {
 	Type SignatureType
 	Data []byte
@@ -184,6 +186,7 @@ func (s Signature) Clone() Signature {
 	}
 }
 
+// Signature converts a typed Tezos signature into a generic signature string.
 func (s Signature) Generic() string {
 	if !s.IsValid() {
 		return ""

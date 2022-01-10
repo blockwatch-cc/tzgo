@@ -30,6 +30,7 @@ var (
 	ZeroAddress = Address{Type: AddressTypeEd25519, Hash: make([]byte, HashTypePkhEd25519.Len())}
 )
 
+// AddressType represents the type of a Tezos signature.
 type AddressType byte
 
 const (

@@ -6,7 +6,6 @@ package rpc
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
@@ -15,39 +14,34 @@ import (
 // Contracts holds a list of addresses
 type Contracts []tezos.Address
 
-// GetContracts returns a list of all known contracts at head
+// Contracts holds info about a Tezos account
+type ContractInfo struct {
+	Balance  int64         `json:"balance,string"`
+	Delegate tezos.Address `json:"delegate"`
+	Counter  int64         `json:"counter,string"`
+}
+
+// GetContract returns the full info about a contract at block id
+// https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts-contract-id
+func (c *Client) GetContract(ctx context.Context, addr tezos.Address, id BlockID) (*ContractInfo, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s", id, addr)
+	var info ContractInfo
+	err := c.Get(ctx, u, &info)
+	if err != nil {
+		return nil, err
+	}
+	return &info, nil
+}
+
+// ListContracts returns a list of all known contracts at head
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts
-func (c *Client) GetContracts(ctx context.Context, id BlockID) (Contracts, error) {
+func (c *Client) ListContracts(ctx context.Context, id BlockID) (Contracts, error) {
 	contracts := make(Contracts, 0)
 	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts", id)
 	if err := c.Get(ctx, u, &contracts); err != nil {
 		return nil, err
 	}
 	return contracts, nil
-}
-
-// GetContractsHeight returns a list of all known contracts at height
-// https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts
-func (c *Client) GetContractsHeight(ctx context.Context, height int64) (Contracts, error) {
-	return c.GetContracts(ctx, BlockLevel(height))
-}
-
-// GetContractBalance returns the current balance of a contract at head
-// https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts-contract-id-balance
-func (c *Client) GetContractBalance(ctx context.Context, addr tezos.Address, id BlockID) (int64, error) {
-	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/balance", id, addr)
-	var bal string
-	err := c.Get(ctx, u, &bal)
-	if err != nil {
-		return 0, err
-	}
-	return strconv.ParseInt(bal, 10, 64)
-}
-
-// GetContractBalanceHeight returns the current balance of a contract at height
-// https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-contracts-contract-id-balance
-func (c *Client) GetContractBalanceHeight(ctx context.Context, addr tezos.Address, height int64) (int64, error) {
-	return c.GetContractBalance(ctx, addr, BlockLevel(height))
 }
 
 // GetContractScript returns the originated contract script
@@ -70,11 +64,6 @@ func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address, id 
 		return micheline.InvalidPrim, err
 	}
 	return prim, nil
-}
-
-// GetContractStorage returns the contract's storage at height
-func (c *Client) GetContractStorageHeight(ctx context.Context, addr tezos.Address, height int64) (micheline.Prim, error) {
-	return c.GetContractStorage(ctx, addr, BlockLevel(height))
 }
 
 // GetContractEntrypoints returns the contract's entrypoints
@@ -121,11 +110,6 @@ func (c *Client) GetBigmapValue(ctx context.Context, bigmap int64, hash tezos.Ex
 // GetActiveBigmapValue returns current active value at key hash from bigmap
 func (c *Client) GetActiveBigmapValue(ctx context.Context, bigmap int64, hash tezos.ExprHash) (micheline.Prim, error) {
 	return c.GetBigmapValue(ctx, bigmap, hash, Head)
-}
-
-// GetBigmapValueHeight returns a value from bigmap id at key hash that was active at height
-func (c *Client) GetBigmapValueHeight(ctx context.Context, bigmap int64, hash tezos.ExprHash, height int64) (micheline.Prim, error) {
-	return c.GetBigmapValue(ctx, bigmap, hash, BlockLevel(height))
 }
 
 type BigmapInfo struct {

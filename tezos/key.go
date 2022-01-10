@@ -276,7 +276,7 @@ func HasKeyPrefix(s string) bool {
 	return IsPublicKey(s) || IsPrivateKey(s)
 }
 
-// Key represents a public key on the Tezos blockchain. Supports
+// Key represents a public key on the Tezos blockchain.
 type Key struct {
 	Type KeyType
 	Data []byte
@@ -289,7 +289,7 @@ func NewKey(typ KeyType, data []byte) Key {
 	}
 }
 
-// Verify verifies the signature using the public key
+// Verify verifies the signature using the public key.
 func (k Key) Verify(hash []byte, sig Signature) error {
 	switch k.Type {
 	case KeyTypeEd25519:
@@ -466,7 +466,7 @@ func MustParseKey(key string) Key {
 	return k
 }
 
-// PrivateKey handles private key types for signing messages
+// PrivateKey represents a typed private key used for signing messages.
 type PrivateKey struct {
 	Type KeyType
 	Data []byte
@@ -506,6 +506,7 @@ func (k *PrivateKey) UnmarshalText(data []byte) error {
 	return nil
 }
 
+// GenerateKey creates a random private key.
 func GenerateKey(typ KeyType) (PrivateKey, error) {
 	key := PrivateKey{
 		Type: typ,
@@ -529,6 +530,7 @@ func GenerateKey(typ KeyType) (PrivateKey, error) {
 	return key, nil
 }
 
+// Public returns the public key associated with the private key.
 func (k PrivateKey) Public() Key {
 	pk := Key{
 		Type: k.Type,
@@ -548,6 +550,7 @@ func (k PrivateKey) Public() Key {
 	return pk
 }
 
+// Encrypt encrypts the private key with a passphrase obtained from calling fn.
 func (k PrivateKey) Encrypt(fn PassphraseFunc) (string, error) {
 	var buf []byte
 	switch k.Type {
@@ -563,7 +566,7 @@ func (k PrivateKey) Encrypt(fn PassphraseFunc) (string, error) {
 	return base58.CheckEncode(enc, k.Type.SkePrefixBytes()), nil
 }
 
-// Sign signs message with private key
+// Sign signs the digest (hash) of a message with the private key.
 func (k PrivateKey) Sign(hash []byte) (Signature, error) {
 	switch k.Type {
 	case KeyTypeEd25519:
@@ -590,6 +593,9 @@ func (k PrivateKey) Sign(hash []byte) (Signature, error) {
 	}
 }
 
+// ParseEncryptedPrivateKey attempts to parse and optionally decrypt a
+// Tezos private key. When an encrypted key is detected, fn is called
+// and expected to return the decoding passphrase.
 func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err error) {
 	var (
 		prefixLen     int = 4
