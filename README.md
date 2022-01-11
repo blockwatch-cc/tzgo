@@ -112,7 +112,7 @@ fmt.Printf("Address bytes = %x\n", addr.Hash)
 
 ```
 
-See [examples/addr.go](https://github.com/blockwatch-cc/tzgo/blob/master/examples/addr.go) for more.
+See [examples/addr.go](https://github.com/blockwatch-cc/tzgo/blob/master/examples/addr/main.go) for more.
 
 #### Monitoring for new blocks
 

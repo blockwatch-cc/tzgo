@@ -438,7 +438,7 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 			return err
 		}
 		// list all bigmap keys
-		bigkeys, err := c.GetBigmapKeys(ctx, bigid, rpc.Head)
+		bigkeys, err := c.ListBigmapKeys(ctx, bigid, rpc.Head)
 		if err != nil {
 			return err
 		}
