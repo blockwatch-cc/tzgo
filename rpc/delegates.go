@@ -34,8 +34,7 @@ type CycleBalance struct {
 // DelegateList contains a list of delegates
 type DelegateList []tezos.Address
 
-// ListActiveDelegates returns information about all active delegates at a block
-// https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates
+// ListActiveDelegates returns information about all active delegates at a block.
 func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateList, error) {
 	delegates := make(DelegateList, 0)
 	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates?active=true", id)
@@ -45,8 +44,7 @@ func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateL
 	return delegates, nil
 }
 
-// GetDelegate returns information about a delegate at a specific height
-// https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates-pkh
+// GetDelegate returns information about a delegate at a specific height.
 func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
 	delegate := &Delegate{
 		Delegate: addr,
@@ -59,7 +57,7 @@ func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID
 	return delegate, nil
 }
 
-// GetDelegateBalance returns a delegate's balance http://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates-pkh-balance
+// GetDelegateBalance returns a delegate's balance
 func (c *Client) GetDelegateBalance(ctx context.Context, addr tezos.Address, id BlockID) (int64, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates/%s/balance", id, addr)
 	var bal string
