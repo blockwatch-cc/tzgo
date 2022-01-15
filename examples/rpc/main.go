@@ -42,11 +42,12 @@ func main() {
 			fmt.Println("Usage: rpc [args] <cmd> [sub-args]")
 			flags.PrintDefaults()
 			fmt.Printf("\nOperations\n")
-			fmt.Printf("  block <hash>|head   show block info\n")
-			fmt.Printf("  contract <hash>     show contract info\n")
-			fmt.Printf("  search <ops> <lvl>  output blocks containing operations in list\n")
-			fmt.Printf("  bootstrap           wait until node is bootstrapped\n")
-			fmt.Printf("  monitor             wait and show new heads as they are baked\n")
+			fmt.Printf("  block <hash>|head        show block info\n")
+			fmt.Printf("  op <hash>:<list>:<pos>   show operation info\n")
+			fmt.Printf("  contract <hash>          show contract info\n")
+			fmt.Printf("  search <ops> <lvl>       output blocks containing operations in list\n")
+			fmt.Printf("  bootstrap                wait until node is bootstrapped\n")
+			fmt.Printf("  monitor                  wait and show new heads as they are baked\n")
 			os.Exit(0)
 		}
 		log.Fatal("Error:", err)
@@ -100,6 +101,37 @@ func run() error {
 			}
 			return fetchBlock(ctx, c, h)
 		}
+	case "op":
+		h := flags.Arg(1)
+		if h == "" {
+			return fmt.Errorf("Missing operation identifier")
+		}
+		parts := strings.SplitN(h, ":", 3)
+		if len(parts) != 3 {
+			return fmt.Errorf("Invalid operation identifier (form: block-hash:list:pos)")
+		}
+		var bid rpc.BlockID
+		bh, err := tezos.ParseBlockHash(parts[0])
+		if err == nil {
+			bid = bh
+		} else {
+			// parse as height
+			height, err := strconv.ParseInt(parts[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("Invalid block identifier: %v", err)
+			}
+			bid = rpc.BlockLevel(height)
+		}
+		list, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return fmt.Errorf("Invalid list identifier: %v", err)
+		}
+		pos, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return fmt.Errorf("Invalid position identifier: %v", err)
+		}
+		return showOpInfo(ctx, c, bid, list, pos)
+
 	case "bootstrap":
 		return waitBootstrap(ctx, c)
 	case "monitor":
@@ -464,5 +496,68 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 			}
 		}
 	}
+	return nil
+}
+
+func showOpInfo(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos int) error {
+	fmt.Printf("Loading op %s/%d/%d\n", bh, list, pos)
+	op, err := c.GetBlockOperation(ctx, bh, list, pos)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Hash   %s\n", op.Hash)
+	fmt.Printf("Parts  %d\n", len(op.Contents))
+	for i, o := range op.Contents {
+		fmt.Printf("Part   %d\n", i+1)
+		fmt.Printf("  Type   %s\n", o.OpKind())
+		switch o.OpKind() {
+		case tezos.OpTypeTransaction:
+			tx := o.(*rpc.TransactionOp)
+			fmt.Printf("  Dest       %s\n", tx.Destination)
+			fmt.Printf("  Fee        %d\n", tx.Fee)
+			fmt.Printf("  Counter    %d\n", tx.Counter)
+			fmt.Printf("  Amount     %d\n", tx.Amount)
+			fmt.Printf("  Gas        %d/%d\n", tx.Metadata.Result.ConsumedGas, tx.GasLimit)
+			fmt.Printf("  Storage    %d/%d\n", tx.Metadata.Result.PaidStorageSizeDiff, tx.StorageLimit)
+			fmt.Printf("  Internal   %d (not shown)\n", len(tx.Metadata.InternalResults))
+			var script *micheline.Script
+			if tx.Destination.IsContract() {
+				script, err = c.GetContractScript(ctx, tx.Destination)
+				if err != nil {
+					return err
+				}
+			}
+			if tx.Parameters != nil {
+				fmt.Printf("  Entrypoint %s\n", tx.Parameters.Entrypoint)
+				ep, _, err := tx.Parameters.MapEntrypoint(script.ParamType())
+				if err != nil {
+					return err
+				}
+				val := micheline.NewValue(ep.Type(), tx.Parameters.Value)
+				m, err := val.Map()
+				if err != nil {
+					return err
+				}
+				buf, err := json.MarshalIndent(m, "  ", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Println("  " + string(buf))
+			}
+			if prim := tx.Metadata.Result.Storage; prim != nil {
+				val := micheline.NewValue(script.StorageType(), *prim)
+				m, err := val.Map()
+				if err != nil {
+					return err
+				}
+				buf, err := json.MarshalIndent(m, "  ", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Printf("Storage:\n  %s\n", string(buf))
+			}
+		}
+	}
+
 	return nil
 }
