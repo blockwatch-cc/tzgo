@@ -48,7 +48,7 @@ func (r RightType) IsValid() bool {
 func (r *RightType) UnmarshalText(data []byte) error {
 	vv := ParseRightType(string(data))
 	if !vv.IsValid() {
-		return fmt.Errorf("invalid right type '%s'", string(data))
+		return fmt.Errorf("tezos: invalid right type '%s'", string(data))
 	}
 	*r = vv
 	return nil

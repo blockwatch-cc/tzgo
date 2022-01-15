@@ -328,7 +328,7 @@ func (k Key) Bytes() []byte {
 			p.OpCode = D_FALSE
 		}
 	case T_TIMESTAMP:
-		var z Z
+		var z tezos.Z
 		z.SetInt64(k.TimeKey.Unix())
 		p.Type = PrimInt
 		p.Int = z.Big()

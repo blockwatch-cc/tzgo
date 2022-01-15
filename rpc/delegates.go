@@ -14,7 +14,7 @@ import (
 // Delegate holds information about an active delegate
 type Delegate struct {
 	Delegate             tezos.Address   `json:"-"`
-	Height               int64           `json:"-"`
+	Block                string          `json:"-"`
 	Deactivated          bool            `json:"deactivated"`
 	Balance              int64           `json:"balance,string"`
 	DelegatedContracts   []tezos.Address `json:"delegated_contracts"`
@@ -34,34 +34,32 @@ type CycleBalance struct {
 // DelegateList contains a list of delegates
 type DelegateList []tezos.Address
 
-// ListActiveDelegates returns information about all active delegates at a block
-// https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates
-func (c *Client) ListActiveDelegates(ctx context.Context, height int64) (DelegateList, error) {
+// ListActiveDelegates returns information about all active delegates at a block.
+func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateList, error) {
 	delegates := make(DelegateList, 0)
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/delegates?active=true", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates?active=true", id)
 	if err := c.Get(ctx, u, &delegates); err != nil {
 		return nil, err
 	}
 	return delegates, nil
 }
 
-// GetDelegateStatus returns information about a delegate at a specific height
-// https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates-pkh
-func (c *Client) GetDelegateStatus(ctx context.Context, addr tezos.Address, height int64) (*Delegate, error) {
+// GetDelegate returns information about a delegate at a specific height.
+func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
 	delegate := &Delegate{
 		Delegate: addr,
-		Height:   height,
+		Block:    id.String(),
 	}
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/delegates/%s", c.ChainID, height, addr)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates/%s", id, addr)
 	if err := c.Get(ctx, u, &delegate); err != nil {
 		return nil, err
 	}
 	return delegate, nil
 }
 
-// GetDelegateBalance returns a delegate's balance http://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id-context-delegates-pkh-balance
-func (c *Client) GetDelegateBalance(ctx context.Context, addr tezos.Address) (int64, error) {
-	u := fmt.Sprintf("chains/%s/blocks/head/context/delegates/%s/balance", c.ChainID, addr)
+// GetDelegateBalance returns a delegate's balance
+func (c *Client) GetDelegateBalance(ctx context.Context, addr tezos.Address, id BlockID) (int64, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates/%s/balance", id, addr)
 	var bal string
 	err := c.Get(ctx, u, &bal)
 	if err != nil {

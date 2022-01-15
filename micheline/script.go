@@ -207,23 +207,21 @@ func (s *Script) BigmapTypesByName() map[string]Type {
 	return named
 }
 
-func (p Script) MarshalBinary() ([]byte, error) {
-	buf := bytes.NewBuffer(nil)
-
+func (p Script) EncodeBuffer(buf *bytes.Buffer) error {
 	// 1 write code segment
 	code, err := p.Code.MarshalBinary()
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	// append to output buffer
-	buf.Write(code)
 
 	// 2 write data segment
 	data, err := p.Storage.MarshalBinary()
 	if err != nil {
-		return nil, err
+		return err
 	}
+
+	// append to output buffer
+	buf.Write(code)
 
 	// write data size
 	binary.Write(buf, binary.BigEndian, uint32(len(data)))
@@ -231,12 +229,10 @@ func (p Script) MarshalBinary() ([]byte, error) {
 	// append to output buffer
 	buf.Write(data)
 
-	return buf.Bytes(), nil
+	return nil
 }
 
-func (p *Script) UnmarshalBinary(data []byte) error {
-	buf := bytes.NewBuffer(data)
-
+func (p *Script) DecodeBuffer(buf *bytes.Buffer) error {
 	// 1 Code
 	if err := p.Code.DecodeBuffer(buf); err != nil {
 		return err
@@ -256,14 +252,35 @@ func (p *Script) UnmarshalBinary(data []byte) error {
 	}
 
 	// read primitive tree
+	n := buf.Len()
 	if err := p.Storage.DecodeBuffer(buf); err != nil {
 		return err
 	}
 
+	// check we've read the defined amount of bytes
+	read := n - buf.Len()
+	if size != read {
+		return fmt.Errorf("micheline: expected script size %d but read %d bytes", size, read)
+	}
+
+	return nil
+}
+
+func (p Script) MarshalBinary() ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	err := p.EncodeBuffer(buf)
+	return buf.Bytes(), err
+}
+
+func (p *Script) UnmarshalBinary(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	err := p.DecodeBuffer(buf)
+	if err != nil {
+		return err
+	}
 	if buf.Len() > 0 {
 		return fmt.Errorf("micheline: %d unexpected extra trailer bytes", buf.Len())
 	}
-
 	return nil
 }
 

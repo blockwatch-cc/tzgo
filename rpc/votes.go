@@ -22,14 +22,14 @@ type Voter struct {
 // VoterList contains a list of voters
 type VoterList []Voter
 
-// Ballot holds information about a vote listing
-type Ballot struct {
+// BallotInfo holds information about a vote listing
+type BallotInfo struct {
 	Delegate tezos.Address    `json:"pkh"`
 	Ballot   tezos.BallotVote `json:"ballot"`
 }
 
 // BallotList contains a list of voters
-type BallotList []Ballot
+type BallotList []BallotInfo
 
 // Ballots holds the current summary of a vote
 type BallotSummary struct {
@@ -75,63 +75,58 @@ func (p *Proposal) UnmarshalJSON(data []byte) error {
 type ProposalList []Proposal
 
 // ListVoters returns information about all eligible voters for an election
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) ListVoters(ctx context.Context, height int64) (VoterList, error) {
+// at block id.
+func (c *Client) ListVoters(ctx context.Context, id BlockID) (VoterList, error) {
 	voters := make(VoterList, 0)
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/listings", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/listings", id)
 	if err := c.Get(ctx, u, &voters); err != nil {
 		return nil, err
 	}
 	return voters, nil
 }
 
-// GetVoteQuorum returns information about the current voring quorum at a specific height
-// Returned value is percent * 10000 i.e. 5820 for 58.20%
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) GetVoteQuorum(ctx context.Context, height int64) (int, error) {
+// GetVoteQuorum returns information about the current voring quorum at block id.
+// Returned value is percent * 10000 i.e. 5820 for 58.20%.
+func (c *Client) GetVoteQuorum(ctx context.Context, id BlockID) (int, error) {
 	var quorum int
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/current_quorum", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/current_quorum", id)
 	if err := c.Get(ctx, u, &quorum); err != nil {
 		return 0, err
 	}
 	return quorum, nil
 }
 
-// GetVoteProposal returns the hash of the current voring proposal at a specific height
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) GetVoteProposal(ctx context.Context, height int64) (tezos.ProtocolHash, error) {
+// GetVoteProposal returns the hash of the current voring proposal at block id.
+func (c *Client) GetVoteProposal(ctx context.Context, id BlockID) (tezos.ProtocolHash, error) {
 	var proposal tezos.ProtocolHash
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/current_proposal", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/current_proposal", id)
 	err := c.Get(ctx, u, &proposal)
 	return proposal, err
 }
 
-// ListBallots returns information about all eligible voters for an election
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) ListBallots(ctx context.Context, height int64) (BallotList, error) {
+// ListBallots returns information about all eligible voters for an election at block id.
+func (c *Client) ListBallots(ctx context.Context, id BlockID) (BallotList, error) {
 	ballots := make(BallotList, 0)
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/ballot_list", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/ballot_list", id)
 	if err := c.Get(ctx, u, &ballots); err != nil {
 		return nil, err
 	}
 	return ballots, nil
 }
 
-// GetVoteResult returns a summary of the current voting result at a specific height
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) GetVoteResult(ctx context.Context, height int64) (BallotSummary, error) {
+// GetVoteResult returns a summary of the current voting result at block id.
+func (c *Client) GetVoteResult(ctx context.Context, id BlockID) (BallotSummary, error) {
 	summary := BallotSummary{}
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/ballots", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/ballots", id)
 	err := c.Get(ctx, u, &summary)
 	return summary, err
 }
 
-// ListProposals returns a list of all submitted proposals and their upvote count
-// This call only returns results when height is within a proposal vote period.
-// https://tezos.gitlab.io/api/rpc.html#rpcs-full-description
-func (c *Client) ListProposals(ctx context.Context, height int64) (ProposalList, error) {
+// ListProposals returns a list of all submitted proposals and their upvote count at block id.
+// This call only returns results when block is within a proposal vote period.
+func (c *Client) ListProposals(ctx context.Context, id BlockID) (ProposalList, error) {
 	proposals := make(ProposalList, 0)
-	u := fmt.Sprintf("chains/%s/blocks/%d/votes/proposals", c.ChainID, height)
+	u := fmt.Sprintf("chains/main/blocks/%s/votes/proposals", id)
 	if err := c.Get(ctx, u, &proposals); err != nil {
 		return nil, err
 	}

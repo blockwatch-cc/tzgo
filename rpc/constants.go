@@ -129,26 +129,18 @@ func (c *Constants) UnmarshalJSON(buf []byte) error {
 	return nil
 }
 
-// GetConstants returns chain configuration constants at a block hash
+// GetConstants returns chain configuration constants at block id
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-constants
-func (c *Client) GetConstants(ctx context.Context, blockID tezos.BlockHash) (Constants, error) {
-	var con Constants
-	u := fmt.Sprintf("chains/%s/blocks/%s/context/constants", c.ChainID, blockID)
-	if err := c.Get(ctx, u, &con); err != nil {
-		return con, err
-	}
-	return con, nil
+func (c *Client) GetConstants(ctx context.Context, id BlockID) (con Constants, err error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/constants", id)
+	err = c.Get(ctx, u, &con)
+	return
 }
 
 // GetConstantsHeight returns chain configuration constants at a block height
 // https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-constants
 func (c *Client) GetConstantsHeight(ctx context.Context, height int64) (Constants, error) {
-	var con Constants
-	u := fmt.Sprintf("chains/%s/blocks/%d/context/constants", c.ChainID, height)
-	if err := c.Get(ctx, u, &con); err != nil {
-		return con, err
-	}
-	return con, nil
+	return c.GetConstants(ctx, BlockLevel(height))
 }
 
 // GetParamsByHeight returns a translated parameters structure for the current
@@ -158,7 +150,7 @@ func (c *Client) GetParamsByHeight(ctx context.Context, height int64) (*tezos.Pa
 	if err != nil {
 		return nil, err
 	}
-	head, err := c.GetBlockHeader(ctx, height)
+	head, err := c.GetBlockHeader(ctx, BlockLevel(height))
 	if err != nil {
 		return nil, err
 	}

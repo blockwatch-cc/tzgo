@@ -124,16 +124,13 @@ func (p Parameters) Unwrap(branch string) Prim {
 	return node
 }
 
-// stay compatible with v005 transaction serialization
-func (p Parameters) MarshalBinary() ([]byte, error) {
-	// single Unit value
-	// if len(p.Entrypoint) == 0 && p.Value != nil && p.Value.OpCode == D_UNIT {
-	if len(p.Entrypoint) == 0 && p.Value.OpCode == D_UNIT {
-		return []byte{0}, nil
+func (p Parameters) EncodeBuffer(buf *bytes.Buffer) error {
+	// marshal value first to catch any error before writing to buffer
+	val, err := p.Value.MarshalBinary()
+	if err != nil {
+		return err
 	}
-	// entrypoint format, compatible with v005
-	buf := bytes.NewBuffer([]byte{1})
-	n := 2
+
 	switch p.Entrypoint {
 	case "", "default":
 		buf.WriteByte(0)
@@ -149,20 +146,16 @@ func (p Parameters) MarshalBinary() ([]byte, error) {
 		buf.WriteByte(255)
 		buf.WriteByte(byte(len(p.Entrypoint)))
 		buf.WriteString(p.Entrypoint)
-		n += 1 + len(p.Entrypoint)
 	}
+	binary.Write(buf, binary.BigEndian, uint32(len(val)))
+	buf.Write(val)
+	return nil
+}
 
-	// param as size + serialized data
-	binary.Write(buf, binary.BigEndian, uint32(0))
-	if err := p.Value.EncodeBuffer(buf); err != nil {
-		return nil, err
-	}
-
-	// patch data size
-	res := buf.Bytes()
-	binary.BigEndian.PutUint32(res[n:], uint32(len(res)-n-4))
-
-	return res, nil
+func (p Parameters) MarshalBinary() ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	err := p.EncodeBuffer(buf)
+	return buf.Bytes(), err
 }
 
 func (p *Parameters) UnmarshalJSON(data []byte) error {
@@ -187,13 +180,10 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 	}
 }
 
-func (p *Parameters) UnmarshalBinary(data []byte) error {
-	if len(data) == 1 && data[0] == 0 {
-		p.Value = Prim{Type: PrimNullary, OpCode: D_UNIT}
-		p.Entrypoint = "default"
-		return nil
+func (p *Parameters) DecodeBuffer(buf *bytes.Buffer) error {
+	if buf.Len() < 1 {
+		return io.ErrShortBuffer
 	}
-	buf := bytes.NewBuffer(data[1:])
 	tag := buf.Next(1)
 	if len(tag) == 0 {
 		return io.ErrShortBuffer
@@ -216,8 +206,10 @@ func (p *Parameters) UnmarshalBinary(data []byte) error {
 		}
 		p.Entrypoint = string(buf.Next(int(sz[0])))
 	}
-
-	// read serialized data
+	if buf.Len() == 0 {
+		p.Value = Prim{Type: PrimNullary, OpCode: D_UNIT}
+		return nil
+	}
 	size := int(binary.BigEndian.Uint32(buf.Next(4)))
 	if buf.Len() < size {
 		return io.ErrShortBuffer
@@ -228,4 +220,8 @@ func (p *Parameters) UnmarshalBinary(data []byte) error {
 	}
 	p.Value = prim
 	return nil
+}
+
+func (p *Parameters) UnmarshalBinary(data []byte) error {
+	return p.DecodeBuffer(bytes.NewBuffer(data))
 }

@@ -3,26 +3,35 @@
 
 package rpc
 
-import (
-	"blockwatch.cc/tzgo/tezos"
-)
+// Ensure DoubleEndorsement implements the TypedOperation interface.
+var _ TypedOperation = (*DoubleEndorsement)(nil)
 
-// DoubleEndorsementOp represents a double_endorsement_evidence operation
-type DoubleEndorsementOp struct {
-	GenericOp
-	OP1      DoubleEndorsementEvidence    `json:"op1"`
-	OP2      DoubleEndorsementEvidence    `json:"op2"`
-	Metadata *DoubleEndorsementOpMetadata `json:"metadata"`
+// DoubleEndorsement represents a double_endorsement_evidence operation
+type DoubleEndorsement struct {
+	Generic
+	OP1      InlinedEndorsement `json:"op1"`
+	OP2      InlinedEndorsement `json:"op2"`
+	Metadata OperationMetadata  `json:"metadata"`
 }
 
-// DoubleEndorsementOpMetadata represents double_endorsement_evidence operation metadata
-type DoubleEndorsementOpMetadata struct {
-	BalanceUpdates BalanceUpdates `json:"balance_updates"`
+// Meta returns operation metadata to implement TypedOperation interface.
+func (d DoubleEndorsement) Meta() OperationMetadata {
+	return d.Metadata
 }
 
-// DoubleEndorsementEvidence represents one of the duplicate endoresements
-type DoubleEndorsementEvidence struct {
-	Branch     tezos.BlockHash `json:"branch"`     // the double block
-	Operations EndorsementOp   `json:"operations"` // only level and kind are set
-	Signature  string          `json:"signature"`
+// Cost returns operation cost to implement TypedOperation interface.
+func (d DoubleEndorsement) Cost() OperationCost {
+	var burn int64
+	upd := d.Metadata.BalanceUpdates
+	// last item is accuser reward, rest is burned
+	for i, v := range upd {
+		if i == len(upd)-1 {
+			burn += v.Amount()
+		} else {
+			burn += v.Amount()
+		}
+	}
+	return OperationCost{
+		Burn: -burn,
+	}
 }

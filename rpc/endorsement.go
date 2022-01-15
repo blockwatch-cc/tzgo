@@ -1,5 +1,4 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -8,41 +7,33 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// EndorsementOp represents an endorsement operation
-type EndorsementOp struct {
-	GenericOp
-	Level       int64                  `json:"level"`       // <= v008
-	Metadata    *EndorsementOpMetadata `json:"metadata"`    // all protocols
-	Endorsement *EndorsementContent    `json:"endorsement"` // v009+
-	Slot        int                    `json:"slot"`        // v009+
+// Ensure Endorsement implements the TypedOperation interface.
+var _ TypedOperation = (*Endorsement)(nil)
+
+// Endorsement represents an endorsement operation
+type Endorsement struct {
+	Generic
+	Level       int64               `json:"level"`       // <= v008
+	Metadata    OperationMetadata   `json:"metadata"`    // all protocols
+	Endorsement *InlinedEndorsement `json:"endorsement"` // v009+
+	Slot        int                 `json:"slot"`        // v009+
 }
 
-func (e EndorsementOp) GetLevel() int64 {
+func (e Endorsement) GetLevel() int64 {
 	if e.Endorsement != nil {
 		return e.Endorsement.Operations.Level
 	}
 	return e.Level
 }
 
-// EndorsementOpMetadata represents an endorsement operation metadata
-type EndorsementOpMetadata struct {
-	BalanceUpdates BalanceUpdates `json:"balance_updates"`
-	Delegate       tezos.Address  `json:"delegate"`
-	Slots          []int          `json:"slots"`
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (e Endorsement) Meta() OperationMetadata {
+	return e.Metadata
 }
 
-func (m EndorsementOpMetadata) Address() tezos.Address {
-	return m.Delegate
-}
-
-// v009+
-type EndorsementContent struct {
-	Branch     string                `json:"branch"`
-	Operations EmbeddedEndorsementOp `json:"operations"`
-}
-
-// v009+
-type EmbeddedEndorsementOp struct {
-	Kind  tezos.OpType `json:"kind"`
-	Level int64        `json:"level"`
+// InlinedEndorsement represents and embedded endorsement
+type InlinedEndorsement struct {
+	Branch     tezos.BlockHash `json:"branch"`     // the double block
+	Operations Endorsement     `json:"operations"` // only level and kind are set
+	Signature  tezos.Signature `json:"signature"`
 }

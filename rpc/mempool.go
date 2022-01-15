@@ -1,49 +1,75 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
 
 import (
 	"context"
+	"encoding/json"
 )
 
-// MempoolOperations represents mempool operations
-type MempoolOperations struct {
-	Applied       []*OperationHeader             `json:"applied"`
-	Refused       []*OperationHeaderWithErrorAlt `json:"refused"`
-	BranchRefused []*OperationHeaderWithErrorAlt `json:"branch_refused"`
-	BranchDelayed []*OperationHeaderWithErrorAlt `json:"branch_delayed"`
-	Unprocessed   []*OperationHeaderAlt          `json:"unprocessed"`
+// Mempool represents mempool operations
+type Mempool struct {
+	Applied       []*Operation `json:"applied"`
+	Refused       []*Operation `json:"refused"`
+	BranchRefused []*Operation `json:"branch_refused"`
+	BranchDelayed []*Operation `json:"branch_delayed"`
+	Unprocessed   []*Operation `json:"unprocessed"`
 }
 
-// GetMempoolPendingOperations returns mempool pending operations
-func (c *Client) GetMempoolPendingOperations(ctx context.Context) (*MempoolOperations, error) {
-	var ops MempoolOperations
-	if err := c.Get(ctx, "chains/"+c.ChainID+"/mempool/pending_operations", &ops); err != nil {
+// GetMempool returns mempool pending operations
+func (c *Client) GetMempool(ctx context.Context) (*Mempool, error) {
+	var mem Mempool
+	if err := c.Get(ctx, "chains/main/mempool/pending_operations", &mem); err != nil {
 		return nil, err
 	}
-	return &ops, nil
+	return &mem, nil
 }
 
-type OperationHeaderAlt OperationHeader
+type PendingOperation Operation
 
-// UnmarshalJSON implements json.Unmarshaler
-func (o *OperationHeaderAlt) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &o.Hash, (*OperationHeader)(o))
+func (o *PendingOperation) UnmarshalJSON(data []byte) error {
+	return unmarshalMultiTypeJSONArray(data, &o.Hash, (*Operation)(o))
 }
 
-// OperationHeaderWithError represents unsuccessful operation
-type OperationHeaderWithError struct {
-	OperationHeader
-	Error Errors `json:"error"`
+func (o PendingOperation) MarshalJSON() ([]byte, error) {
+	return marshalMultiTypeJSONArray(o.Hash, (Operation)(o))
 }
 
-// OperationHeaderWithErrorAlt is a named array encoded OperationWithError with hash as a first array member.
-// See OperationAltList for details
-type OperationHeaderWithErrorAlt OperationHeaderWithError
+func (m *Mempool) UnmarshalJSON(data []byte) error {
+	type mempool struct {
+		Applied       []*Operation        `json:"applied"`
+		Refused       []*PendingOperation `json:"refused"`
+		BranchRefused []*PendingOperation `json:"branch_refused"`
+		BranchDelayed []*PendingOperation `json:"branch_delayed"`
+		Unprocessed   []*PendingOperation `json:"unprocessed"`
+	}
+	mp := mempool{}
+	if err := json.Unmarshal(data, &mp); err != nil {
+		return err
+	}
+	// applied is the correct type
+	m.Applied = mp.Applied
+	mp.Applied = mp.Applied[:0]
 
-// UnmarshalJSON implements json.Unmarshaler
-func (o *OperationHeaderWithErrorAlt) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &o.Hash, (*OperationHeaderWithError)(o))
+	// type-convert the rest
+	type convert struct {
+		A *[]*PendingOperation
+		B *[]*Operation
+	}
+	for _, v := range []convert{
+		{&mp.Refused, &m.Refused},
+		{&mp.BranchRefused, &m.BranchRefused},
+		{&mp.BranchDelayed, &m.BranchDelayed},
+		{&mp.Unprocessed, &m.Unprocessed},
+	} {
+		if l := len(*v.A); l > 0 {
+			*v.B = make([]*Operation, l)
+			for i := range *v.A {
+				(*v.B)[i] = (*Operation)((*v.A)[i])
+			}
+			*v.A = (*v.A)[:0]
+		}
+	}
+	return nil
 }

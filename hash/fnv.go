@@ -48,3 +48,7 @@ func (s *InlineFNV64a) Sum() []byte {
 	binary.BigEndian.PutUint64(buf[:], s.Sum64())
 	return buf[:]
 }
+
+func (s *InlineFNV64a) Reset() {
+	*s = offset64
+}

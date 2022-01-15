@@ -1,97 +1,104 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
 
 import (
-	"encoding/hex"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
-// HexBytes represents bytes as a JSON string of hexadecimal digits
-type HexBytes []byte
-
-// UnmarshalText umarshalls a hex string to bytes
-func (h *HexBytes) UnmarshalText(data []byte) error {
-	dst := make([]byte, hex.DecodedLen(len(data)))
-	if _, err := hex.Decode(dst, data); err != nil {
-		return err
-	}
-	*h = dst
-	return nil
+// BlockID is an interface to abstract different kinds of block addressing modes
+type BlockID interface {
+	fmt.Stringer
 }
 
-func (h HexBytes) MarshalText() ([]byte, error) {
-	return []byte(hex.EncodeToString(h)), nil
+// BlockLevel is a block addressing mode that uses the blocks sequence number a.k.a level
+type BlockLevel int64
+
+func (b BlockLevel) String() string {
+	return strconv.FormatInt(int64(b), 10)
 }
 
-func (h HexBytes) String() string {
-	return hex.EncodeToString(h)
+// BlockAlias is a block addressing mode that uses a constant string
+type BlockAlias string
+
+const (
+	Genesis BlockAlias = "genesis"
+	Head    BlockAlias = "head"
+)
+
+func (b BlockAlias) String() string {
+	return string(b)
 }
 
-// Just suppress UnmarshalJSON
-// type bigIntStr big.Int
-
-// func (z *bigIntStr) UnmarshalText(data []byte) error {
-// 	return (*big.Int)(z).UnmarshalText(data)
-// }
-
-/*
-unmarshalNamedJSONArray is a helper function used in custom JSON
-unmarshallers and intended to decode array-like objects:
-	[
-		"...", // object ID or hash
-		{
-			... // ebject with ID ommitted
-		}
-	]
-*/
-func unmarshalNamedJSONArray(data []byte, v ...interface{}) error {
-	var raw []json.RawMessage
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
-	}
-
-	if len(raw) < len(v) {
-		return fmt.Errorf("JSON array is too short, expected %d, got %d", len(v), len(raw))
-	}
-
-	for i, vv := range v {
-		if err := json.Unmarshal(raw[i], vv); err != nil {
-			return err
-		}
-	}
-
-	return nil
+// BlockOffset is a block addressing mode that uses relative addressing from a given
+// base block.
+type BlockOffset struct {
+	Base   BlockID
+	Offset int64
 }
 
-// unmarshalInSlice unmarshals a JSON array in a way so that each element of the
-// interface slice is unmarshaled individually. This is a workaround for the
-// case where Go's normal unmarshaling wants to treat the array as a whole.
-func unmarshalInSlice(data []byte, s []interface{}) error {
-	var aRaw []json.RawMessage
-	if err := json.Unmarshal(data, &aRaw); err != nil {
-		return err
+func NewBlockOffset(id BlockID, n int64) BlockOffset {
+	return BlockOffset{
+		Base:   id,
+		Offset: n,
 	}
-
-	if len(aRaw) != len(s) {
-		return fmt.Errorf("Array is too short, JSON has %d, we have %d", len(aRaw), len(s))
-	}
-
-	for i, raw := range aRaw {
-		if err := json.Unmarshal(raw, &s[i]); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
-func jsonify(i interface{}) string {
-	jsonb, err := json.Marshal(i)
+func (o BlockOffset) String() string {
+	ref := o.Base.String()
+	if o.Offset > 0 {
+		ref += "+" + strconv.FormatInt(o.Offset, 10)
+	} else if o.Offset < 0 {
+		ref += strconv.FormatInt(o.Offset, 10)
+	}
+	return ref
+}
+
+func unmarshalMultiTypeJSONArray(data []byte, vals ...interface{}) (err error) {
+	dec := json.NewDecoder(bytes.NewBuffer(data))
+
+	// read open bracket
+	_, err = dec.Token()
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
-	return string(jsonb)
+
+	// while the array contains values
+	var i int
+	for dec.More() {
+		if i >= len(vals) {
+			return fmt.Errorf("short JSON data")
+		}
+		err = dec.Decode(vals[i])
+		if err != nil {
+			return
+		}
+		i++
+	}
+
+	// read closing bracket
+	_, err = dec.Token()
+	return
+}
+
+func marshalMultiTypeJSONArray(vals ...interface{}) (data []byte, err error) {
+	buf := bytes.NewBuffer(nil)
+	enc := json.NewEncoder(buf)
+	buf.WriteByte('[')
+	for i, v := range vals {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		err = enc.Encode(v)
+		if err != nil {
+			return
+		}
+	}
+	buf.WriteByte(']')
+	data = buf.Bytes()
+	return
 }

@@ -31,22 +31,23 @@ var (
 
 func init() {
 	flags.Usage = func() {}
-	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.BoolVar(&debug, "d", false, "enable debug mode")
-	flags.StringVar(&node, "node", "http://127.0.0.1:8732", "tezos node url")
+	flags.BoolVar(&verbose, "v", false, "Be verbose")
+	flags.BoolVar(&debug, "d", false, "Enable debug mode")
+	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node url")
 }
 
 func main() {
 	if err := flags.Parse(os.Args[1:]); err != nil {
 		if err == flag.ErrHelp {
-			fmt.Println("Tezos RPC Examples")
+			fmt.Println("Usage: rpc [args] <cmd> [sub-args]")
 			flags.PrintDefaults()
 			fmt.Printf("\nOperations\n")
-			fmt.Printf("  block <hash>|head   show block info\n")
-			fmt.Printf("  contract <hash>     show contract info\n")
-			fmt.Printf("  search <ops> <lvl>  output blocks containing operations in list\n")
-			fmt.Printf("  bootstrap           wait until node is bootstrapped\n")
-			fmt.Printf("  monitor             wait and show new heads as they are baked\n")
+			fmt.Printf("  block <hash>|head        show block info\n")
+			fmt.Printf("  op <hash>:<list>:<pos>   show operation info\n")
+			fmt.Printf("  contract <hash>          show contract info\n")
+			fmt.Printf("  search <ops> <lvl>       output blocks containing operations in list\n")
+			fmt.Printf("  bootstrap                wait until node is bootstrapped\n")
+			fmt.Printf("  monitor                  wait and show new heads as they are baked\n")
 			os.Exit(0)
 		}
 		log.Fatal("Error:", err)
@@ -100,6 +101,37 @@ func run() error {
 			}
 			return fetchBlock(ctx, c, h)
 		}
+	case "op":
+		h := flags.Arg(1)
+		if h == "" {
+			return fmt.Errorf("Missing operation identifier")
+		}
+		parts := strings.SplitN(h, ":", 3)
+		if len(parts) != 3 {
+			return fmt.Errorf("Invalid operation identifier (form: block-hash:list:pos)")
+		}
+		var bid rpc.BlockID
+		bh, err := tezos.ParseBlockHash(parts[0])
+		if err == nil {
+			bid = bh
+		} else {
+			// parse as height
+			height, err := strconv.ParseInt(parts[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("Invalid block identifier: %v", err)
+			}
+			bid = rpc.BlockLevel(height)
+		}
+		list, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return fmt.Errorf("Invalid list identifier: %v", err)
+		}
+		pos, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return fmt.Errorf("Invalid position identifier: %v", err)
+		}
+		return showOpInfo(ctx, c, bid, list, pos)
+
 	case "bootstrap":
 		return waitBootstrap(ctx, c)
 	case "monitor":
@@ -153,11 +185,11 @@ func fetchHead(ctx context.Context, c *rpc.Client) error {
 }
 
 func printHead(h *rpc.BlockHeader) {
-	fmt.Printf("Block  %d (%d) %s %s\n", h.Level, h.Level/4096, h.Hash, h.Timestamp)
+	fmt.Printf("Block  %d %s %s\n", h.Level, h.Hash, h.Timestamp)
 }
 
 func printBlock(b *rpc.Block) {
-	fmt.Printf("Height %d (%d)\n", b.Header.Level, b.Metadata.Level.Cycle)
+	fmt.Printf("Height %d (%d)\n", b.GetLevel(), b.GetCycle())
 	fmt.Printf("Block  %s\n", b.Hash)
 	fmt.Printf("Parent %s\n", b.Header.Predecessor)
 	fmt.Printf("Time   %s\n", b.Header.Timestamp)
@@ -168,7 +200,7 @@ func printBlock(b *rpc.Block) {
 	for _, v := range b.Operations {
 		for _, vv := range v {
 			for _, op := range vv.Contents {
-				kind := op.OpKind()
+				kind := op.Kind()
 				count++
 				if c, ok := ops[kind]; ok {
 					ops[kind] = c + 1
@@ -222,7 +254,6 @@ func waitBootstrap(ctx context.Context, c *rpc.Client) error {
 			return err
 		}
 	}
-	return nil
 }
 
 func monitorBlocks(ctx context.Context, c *rpc.Client) error {
@@ -259,7 +290,6 @@ func monitorBlocks(ctx context.Context, c *rpc.Client) error {
 			return err
 		}
 	}
-	return nil
 }
 
 func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) error {
@@ -310,7 +340,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 		for _, v := range b.Operations {
 			for _, vv := range v {
 				for _, op := range vv.Contents {
-					kind := op.OpKind()
+					kind := op.Kind()
 					count++
 					if c, ok := opcount[kind]; ok {
 						opcount[kind] = c + 1
@@ -318,9 +348,9 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 						opcount[kind] = 1
 					}
 					if kind == tezos.OpTypeTransaction {
-						top := op.(*rpc.TransactionOp)
+						top := op.(*rpc.Transaction)
 						for _, vvv := range top.Metadata.InternalResults {
-							kind = vvv.OpKind()
+							kind = vvv.Kind
 							count++
 							if c, ok := opcount[kind]; ok {
 								opcount[kind] = c + 1
@@ -342,7 +372,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 				for _, v := range b.Operations {
 					for _, vv := range v {
 						for _, o := range vv.Contents {
-							if op == o.OpKind() {
+							if op == o.Kind() {
 								enc.Encode(o)
 							}
 						}
@@ -435,12 +465,12 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 	}
 	for name, bigid := range bm {
 		// load bigmap type
-		biginfo, err := c.GetBigmapInfo(ctx, bigid)
+		biginfo, err := c.GetBigmapInfo(ctx, bigid, rpc.Head)
 		if err != nil {
 			return err
 		}
 		// list all bigmap keys
-		bigkeys, err := c.GetBigmapKeys(ctx, bigid)
+		bigkeys, err := c.ListBigmapKeys(ctx, bigid, rpc.Head)
 		if err != nil {
 			return err
 		}
@@ -448,7 +478,7 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 		if verbose {
 			for i, key := range bigkeys {
 				// visit each key
-				bigval, err := c.GetBigmapValue(ctx, bigid, key)
+				bigval, err := c.GetBigmapValue(ctx, bigid, key, rpc.Head)
 				if err != nil {
 					return err
 				}
@@ -466,5 +496,68 @@ func showContractInfo(ctx context.Context, c *rpc.Client, addr tezos.Address) er
 			}
 		}
 	}
+	return nil
+}
+
+func showOpInfo(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos int) error {
+	fmt.Printf("Loading op %s/%d/%d\n", bh, list, pos)
+	op, err := c.GetBlockOperation(ctx, bh, list, pos)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Hash   %s\n", op.Hash)
+	fmt.Printf("Parts  %d\n", len(op.Contents))
+	for i, o := range op.Contents {
+		fmt.Printf("Part   %d\n", i+1)
+		fmt.Printf("  Type   %s\n", o.Kind())
+		switch o.Kind() {
+		case tezos.OpTypeTransaction:
+			tx := o.(*rpc.Transaction)
+			fmt.Printf("  Dest       %s\n", tx.Destination)
+			fmt.Printf("  Fee        %d\n", tx.Fee)
+			fmt.Printf("  Counter    %d\n", tx.Counter)
+			fmt.Printf("  Amount     %d\n", tx.Amount)
+			fmt.Printf("  Gas        %d/%d\n", tx.Metadata.Result.ConsumedGas, tx.GasLimit)
+			fmt.Printf("  Storage    %d/%d\n", tx.Metadata.Result.PaidStorageSizeDiff, tx.StorageLimit)
+			fmt.Printf("  Internal   %d (not shown)\n", len(tx.Metadata.InternalResults))
+			var script *micheline.Script
+			if tx.Destination.IsContract() {
+				script, err = c.GetContractScript(ctx, tx.Destination)
+				if err != nil {
+					return err
+				}
+			}
+			if tx.Parameters != nil {
+				fmt.Printf("  Entrypoint %s\n", tx.Parameters.Entrypoint)
+				ep, _, err := tx.Parameters.MapEntrypoint(script.ParamType())
+				if err != nil {
+					return err
+				}
+				val := micheline.NewValue(ep.Type(), tx.Parameters.Value)
+				m, err := val.Map()
+				if err != nil {
+					return err
+				}
+				buf, err := json.MarshalIndent(m, "  ", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Println("  " + string(buf))
+			}
+			if prim := tx.Metadata.Result.Storage; prim != nil {
+				val := micheline.NewValue(script.StorageType(), *prim)
+				m, err := val.Map()
+				if err != nil {
+					return err
+				}
+				buf, err := json.MarshalIndent(m, "  ", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Printf("Storage:\n  %s\n", string(buf))
+			}
+		}
+	}
+
 	return nil
 }

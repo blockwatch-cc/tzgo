@@ -21,14 +21,14 @@ type NetworkStats struct {
 
 // NetworkConnection models detailed information for one network connection.
 type NetworkConnection struct {
-	Incoming         bool              `json:"incoming"`
-	PeerID           string            `json:"peer_id"`
-	IDPoint          NetworkAddress    `json:"id_point"`
-	RemoteSocketPort uint16            `json:"remote_socket_port"`
-	Versions         []*NetworkVersion `json:"versions"`
-	Private          bool              `json:"private"`
-	LocalMetadata    NetworkMetadata   `json:"local_metadata"`
-	RemoteMetadata   NetworkMetadata   `json:"remote_metadata"`
+	Incoming         bool            `json:"incoming"`
+	PeerID           string          `json:"peer_id"`
+	IDPoint          NetworkAddress  `json:"id_point"`
+	RemoteSocketPort uint16          `json:"remote_socket_port"`
+	Versions         []*ConnVersion  `json:"versions"`
+	Private          bool            `json:"private"`
+	LocalMetadata    NetworkMetadata `json:"local_metadata"`
+	RemoteMetadata   NetworkMetadata `json:"remote_metadata"`
 }
 
 // NetworkAddress models a point's address and port.
@@ -37,8 +37,8 @@ type NetworkAddress struct {
 	Port uint16 `json:"port"`
 }
 
-// NetworkVersion models a network-layer version of a node.
-type NetworkVersion struct {
+// ConnVersion models a network-layer version of a node.
+type ConnVersion struct {
 	Name  string `json:"name"`
 	Major uint16 `json:"major"`
 	Minor uint16 `json:"minor"`
@@ -58,7 +58,7 @@ type NetworkConnectionTimestamp struct {
 
 // UnmarshalJSON implements json.Unmarshaler
 func (n *NetworkConnectionTimestamp) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &n.NetworkAddress, &n.Timestamp)
+	return unmarshalMultiTypeJSONArray(data, &n.NetworkAddress, &n.Timestamp)
 }
 
 // NetworkPeer represents peer info
@@ -83,7 +83,7 @@ type NetworkPeer struct {
 type networkPeerWithID NetworkPeer
 
 func (n *networkPeerWithID) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &n.PeerID, (*NetworkPeer)(n))
+	return unmarshalMultiTypeJSONArray(data, &n.PeerID, (*NetworkPeer)(n))
 }
 
 // NetworkPoint represents network point info
@@ -106,7 +106,7 @@ type NetworkPoint struct {
 type networkPointAlt NetworkPoint
 
 func (n *networkPointAlt) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &n.Address, (*NetworkPoint)(n))
+	return unmarshalMultiTypeJSONArray(data, &n.Address, (*NetworkPoint)(n))
 }
 
 // NetworkPointState represents point state
@@ -123,7 +123,7 @@ type IDTimestamp struct {
 
 // UnmarshalJSON implements json.Unmarshaler
 func (i *IDTimestamp) UnmarshalJSON(data []byte) error {
-	return unmarshalNamedJSONArray(data, &i.ID, &i.Timestamp)
+	return unmarshalMultiTypeJSONArray(data, &i.ID, &i.Timestamp)
 }
 
 // GetNetworkStats returns current network stats https://tezos.gitlab.io/betanet/api/rpc.html#get-network-stat

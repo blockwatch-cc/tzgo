@@ -5,15 +5,16 @@ package rpc
 
 import (
 	"blockwatch.cc/tzgo/tezos"
-	"encoding/json"
 )
 
-// BallotOp represents a ballot operation
-type BallotOp struct {
-	GenericOp
+// Ensure Ballot implements the TypedOperation interface.
+var _ TypedOperation = (*Ballot)(nil)
+
+// Ballot represents a ballot operation
+type Ballot struct {
+	Generic
 	Source   tezos.Address      `json:"source"`
 	Period   int                `json:"period"`
 	Ballot   tezos.BallotVote   `json:"ballot"` // yay, nay, pass
 	Proposal tezos.ProtocolHash `json:"proposal"`
-	Metadata json.RawMessage    `json:"metadata"` // missing example
 }

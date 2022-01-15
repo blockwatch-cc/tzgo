@@ -617,6 +617,15 @@ func (p Prim) IsPacked() bool {
 		(isPackedBytes(p.Bytes) || tezos.IsAddressBytes(p.Bytes) || isASCIIBytes(p.Bytes))
 }
 
+// Packs produces a packed serialization for of a primitive's contents that
+// is prefixed with a 0x5 byte.
+func (p Prim) Pack() []byte {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteByte(0x5)
+	_ = p.EncodeBuffer(buf)
+	return buf.Bytes()
+}
+
 // Unpacks all primitive contents that looks like packed and returns a new primitive
 // tree.
 func (p Prim) Unpack() (pp Prim, err error) {
@@ -912,7 +921,7 @@ func (p Prim) EncodeBuffer(buf *bytes.Buffer) error {
 	buf.WriteByte(byte(p.Type))
 	switch p.Type {
 	case PrimInt:
-		var z Z
+		var z tezos.Z
 		z.Set(p.Int)
 		if err := z.EncodeBuffer(buf); err != nil {
 			return err
@@ -1192,7 +1201,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 	switch tag {
 	case PrimInt:
 		// data is a zarith number
-		var z Z
+		var z tezos.Z
 		if err := z.DecodeBuffer(buf); err != nil {
 			return err
 		}

@@ -16,7 +16,7 @@ var (
 	// ErrUnknownHashType describes an error where a hash can not
 	// decoded as a specific hash type because the string encoding
 	// starts with an unknown identifier.
-	ErrUnknownHashType = errors.New("unknown hash type")
+	ErrUnknownHashType = errors.New("tezos: unknown hash type")
 
 	// InvalidHash represents an empty invalid hash type
 	InvalidHash = Hash{Type: HashTypeInvalid, Hash: nil}
@@ -519,26 +519,26 @@ func (h *ChainIdHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), CHAIN_ID_PREFIX) {
-		return fmt.Errorf("invalid prefix for chain id hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for chain id hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeChainId {
-		return fmt.Errorf("invalid type %s for chain id hash", h.Type.Prefix())
+		return fmt.Errorf("tezos: invalid type %s for chain id hash", h.Type.Prefix())
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for chain id hash", len(h.Hash.Hash))
+		return fmt.Errorf("tezos: invalid len %d for chain id hash", len(h.Hash.Hash))
 	}
 	return nil
 }
 
 func (h *ChainIdHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeChainId.Len() {
-		return fmt.Errorf("invalid len %d for chain id hash", len(data))
+		return fmt.Errorf("tezos: invalid len %d for chain id hash", len(data))
 	}
 	h.Type = HashTypeChainId
-	h.Hash.Hash = make([]byte, HashTypeChainId.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -587,26 +587,26 @@ func (h *BlockHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), BLOCK_HASH_PREFIX) {
-		return fmt.Errorf("invalid prefix for block hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for block hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeBlock {
-		return fmt.Errorf("invalid type %s for block hash", h.Type.Prefix())
+		return fmt.Errorf("tezos: invalid type %s for block hash", h.Type.Prefix())
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for block hash", len(h.Hash.Hash))
+		return fmt.Errorf("tezos: invalid len %d for block hash", len(h.Hash.Hash))
 	}
 	return nil
 }
 
 func (h *BlockHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeBlock.Len() {
-		return fmt.Errorf("invalid len %d for block hash", len(data))
+		return fmt.Errorf("tezos: invalid len %d for block hash", len(data))
 	}
 	h.Type = HashTypeBlock
-	h.Hash.Hash = make([]byte, HashTypeBlock.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -651,26 +651,26 @@ func (h *ProtocolHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), PROTOCOL_HASH_PREFIX) {
-		return fmt.Errorf("invalid prefix for protocol hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for protocol hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeProtocol {
-		return fmt.Errorf("invalid type %s for protocol hash", h.Type.Prefix())
+		return fmt.Errorf("tezos: invalid type %s for protocol hash", h.Type.Prefix())
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for protocol hash", len(h.Hash.Hash))
+		return fmt.Errorf("tezos: invalid len %d for protocol hash", len(h.Hash.Hash))
 	}
 	return nil
 }
 
 func (h *ProtocolHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeProtocol.Len() {
-		return fmt.Errorf("invalid len %d for protocol hash", len(data))
+		return fmt.Errorf("tezos: invalid len %d for protocol hash", len(data))
 	}
 	h.Type = HashTypeProtocol
-	h.Hash.Hash = make([]byte, HashTypeProtocol.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -721,26 +721,26 @@ func (h *OpHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), OPERATION_HASH_PREFIX) {
-		return fmt.Errorf("invalid prefix for operation hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for operation hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeOperation {
-		return fmt.Errorf("invalid type %s for operation hash", h.Type.Prefix())
+		return fmt.Errorf("tezos: invalid type %s for operation hash", h.Type.Prefix())
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for operation hash", len(h.Hash.Hash))
+		return fmt.Errorf("tezos: invalid len %d for operation hash", len(h.Hash.Hash))
 	}
 	return nil
 }
 
 func (h *OpHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeOperation.Len() {
-		return fmt.Errorf("invalid len %d for operation hash", len(data))
+		return fmt.Errorf("tezos: invalid len %d for operation hash", len(data))
 	}
 	h.Type = HashTypeOperation
-	h.Hash.Hash = make([]byte, HashTypeOperation.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -755,6 +755,70 @@ func MustParseOpHash(s string) OpHash {
 
 func ParseOpHash(s string) (OpHash, error) {
 	var h OpHash
+	if err := h.UnmarshalText([]byte(s)); err != nil {
+		return h, err
+	}
+	return h, nil
+}
+
+// OpListListHash
+type OpListListHash struct {
+	Hash
+}
+
+func NewOpListListHash(buf []byte) OpListListHash {
+	b := make([]byte, len(buf))
+	copy(b, buf)
+	return OpListListHash{Hash: NewHash(HashTypeOperationListList, b)}
+}
+
+func (h OpListListHash) Clone() OpListListHash {
+	return OpListListHash{h.Hash.Clone()}
+}
+
+func (h OpListListHash) Equal(h2 OpListListHash) bool {
+	return h.Hash.Equal(h2.Hash)
+}
+
+func (h *OpListListHash) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	if !strings.HasPrefix(string(data), OPERATION_LIST_LIST_HASH_PREFIX) {
+		return fmt.Errorf("tezos: invalid prefix for operation list list hash '%s'", string(data))
+	}
+	if err := h.Hash.UnmarshalText(data); err != nil {
+		return err
+	}
+	if h.Type != HashTypeOperationListList {
+		return fmt.Errorf("tezos: invalid type %s for operation list list hash", h.Type.Prefix())
+	}
+	if len(h.Hash.Hash) != h.Type.Len() {
+		return fmt.Errorf("tezos: invalid len %d for operation list list hash", len(h.Hash.Hash))
+	}
+	return nil
+}
+
+func (h *OpListListHash) UnmarshalBinary(data []byte) error {
+	if l := len(data); l > 0 && l != HashTypeOperationListList.Len() {
+		return fmt.Errorf("tezos: invalid len %d for operation list list hash", len(data))
+	}
+	h.Type = HashTypeOperationListList
+	h.Hash.Hash = make([]byte, h.Type.Len())
+	copy(h.Hash.Hash, data)
+	return nil
+}
+
+func MustParseOpListListHash(s string) OpListListHash {
+	b, err := ParseOpListListHash(s)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+func ParseOpListListHash(s string) (OpListListHash, error) {
+	var h OpListListHash
 	if err := h.UnmarshalText([]byte(s)); err != nil {
 		return h, err
 	}
@@ -785,26 +849,26 @@ func (h *ExprHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), SCRIPT_EXPR_HASH_PREFIX) {
-		return fmt.Errorf("invalid prefix for script expression hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for script expression hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeScriptExpr {
-		return fmt.Errorf("invalid type %s for script expression hash", h.Type.Prefix())
+		return fmt.Errorf("tezos: invalid type %s for script expression hash", h.Type.Prefix())
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for script expression hash", len(h.Hash.Hash))
+		return fmt.Errorf("tezos: invalid len %d for script expression hash", len(h.Hash.Hash))
 	}
 	return nil
 }
 
 func (h *ExprHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeScriptExpr.Len() {
-		return fmt.Errorf("invalid len %d for script expression hash", len(data))
+		return fmt.Errorf("tezos: invalid len %d for script expression hash", len(data))
 	}
 	h.Type = HashTypeScriptExpr
-	h.Hash.Hash = make([]byte, HashTypeScriptExpr.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -849,26 +913,26 @@ func (h *NonceHash) UnmarshalText(data []byte) error {
 		return nil
 	}
 	if !strings.HasPrefix(string(data), NONCE_HASH_PREFIX) {
-		return fmt.Errorf("invalid prefix for nonce hash '%s'", string(data))
+		return fmt.Errorf("tezos: invalid prefix for nonce hash '%s'", string(data))
 	}
 	if err := h.Hash.UnmarshalText(data); err != nil {
 		return err
 	}
 	if h.Type != HashTypeNonce {
-		return fmt.Errorf("invalid type %s for nonce hash '%s'", h.Type.Prefix(), string(data))
+		return fmt.Errorf("tezos: invalid type %s for nonce hash '%s'", h.Type.Prefix(), string(data))
 	}
 	if len(h.Hash.Hash) != h.Type.Len() {
-		return fmt.Errorf("invalid len %d for nonce hash '%s'", len(h.Hash.Hash), string(data))
+		return fmt.Errorf("tezos: invalid len %d for nonce hash '%s'", len(h.Hash.Hash), string(data))
 	}
 	return nil
 }
 
 func (h *NonceHash) UnmarshalBinary(data []byte) error {
 	if l := len(data); l > 0 && l != HashTypeNonce.Len() {
-		return fmt.Errorf("invalid len %d for nonce hash '%s'", len(data), string(data))
+		return fmt.Errorf("tezos: invalid len %d for nonce hash '%s'", len(data), string(data))
 	}
 	h.Type = HashTypeNonce
-	h.Hash.Hash = make([]byte, HashTypeNonce.Len())
+	h.Hash.Hash = make([]byte, h.Type.Len())
 	copy(h.Hash.Hash, data)
 	return nil
 }
@@ -895,6 +959,70 @@ func ParseNonceHashSafe(s string) NonceHash {
 	return h
 }
 
+// ContextHash
+type ContextHash struct {
+	Hash
+}
+
+func NewContextHash(buf []byte) ContextHash {
+	b := make([]byte, len(buf))
+	copy(b, buf)
+	return ContextHash{Hash: NewHash(HashTypeContext, b)}
+}
+
+func (h ContextHash) Clone() ContextHash {
+	return ContextHash{h.Hash.Clone()}
+}
+
+func (h ContextHash) Equal(h2 ContextHash) bool {
+	return h.Hash.Equal(h2.Hash)
+}
+
+func (h *ContextHash) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	if !strings.HasPrefix(string(data), CONTEXT_HASH_PREFIX) {
+		return fmt.Errorf("tezos: invalid prefix for context hash '%s'", string(data))
+	}
+	if err := h.Hash.UnmarshalText(data); err != nil {
+		return err
+	}
+	if h.Type != HashTypeContext {
+		return fmt.Errorf("tezos: invalid type %s for context hash", h.Type.Prefix())
+	}
+	if len(h.Hash.Hash) != h.Type.Len() {
+		return fmt.Errorf("tezos: invalid len %d for context hash", len(h.Hash.Hash))
+	}
+	return nil
+}
+
+func (h *ContextHash) UnmarshalBinary(data []byte) error {
+	if l := len(data); l > 0 && l != HashTypeContext.Len() {
+		return fmt.Errorf("tezos: invalid len %d for context hash", len(data))
+	}
+	h.Type = HashTypeContext
+	h.Hash.Hash = make([]byte, h.Type.Len())
+	copy(h.Hash.Hash, data)
+	return nil
+}
+
+func MustParseContextHash(s string) ContextHash {
+	b, err := ParseContextHash(s)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+func ParseContextHash(s string) (ContextHash, error) {
+	var h ContextHash
+	if err := h.UnmarshalText([]byte(s)); err != nil {
+		return h, err
+	}
+	return h, nil
+}
+
 // internal decoders
 func decodeHash(hstr string) (Hash, error) {
 	typ := ParseHashType(hstr)
@@ -906,13 +1034,13 @@ func decodeHash(hstr string) (Hash, error) {
 		if err == base58.ErrChecksum {
 			return Hash{}, ErrChecksumMismatch
 		}
-		return Hash{}, fmt.Errorf("unknown hash format: %w", err)
+		return Hash{}, fmt.Errorf("tezos: unknown hash format: %w", err)
 	}
 	if bytes.Compare(version, typ.PrefixBytes()) != 0 {
-		return Hash{}, fmt.Errorf("invalid prefix '%x' for decoded hash type '%s'", version, typ)
+		return Hash{}, fmt.Errorf("tezos: invalid prefix '%x' for decoded hash type '%s'", version, typ)
 	}
 	if have, want := len(decoded), typ.Len(); have != want {
-		return Hash{}, fmt.Errorf("invalid length for decoded hash have=%d want=%d", have, want)
+		return Hash{}, fmt.Errorf("tezos: invalid length for decoded hash have=%d want=%d", have, want)
 	}
 	return Hash{
 		Type: typ,
@@ -925,7 +1053,7 @@ func encodeHash(typ HashType, h []byte) (string, error) {
 		return "", ErrUnknownHashType
 	}
 	if have, want := len(h), typ.Len(); have != want {
-		return "", fmt.Errorf("invalid hash length have=%d want=%d", have, want)
+		return "", fmt.Errorf("tezos: invalid hash length have=%d want=%d", have, want)
 	}
 	return base58.CheckEncode(h, typ.PrefixBytes()), nil
 }

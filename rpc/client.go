@@ -1,5 +1,4 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -15,13 +14,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 const (
-	libraryVersion = "0.9.0"
+	libraryVersion = "1.11-rc0"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
-	MAIN_NET       = "main"
 )
 
 // Client manages communication with a Tezos RPC server.
@@ -33,7 +33,9 @@ type Client struct {
 	// User agent name for client.
 	UserAgent string
 	// The chain the client will query.
-	ChainID string
+	ChainId tezos.ChainIdHash
+	// The current chain configuration.
+	Params *tezos.Params
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -48,8 +50,52 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	c := &Client{client: httpClient, BaseURL: u, UserAgent: userAgent, ChainID: MAIN_NET}
+	c := &Client{client: httpClient, BaseURL: u, UserAgent: userAgent}
 	return c, nil
+}
+
+func (c *Client) InitChain(ctx context.Context) error {
+	// pull chain id if not yet set
+	_, err := c.ResolveChainId(ctx)
+	if err != nil {
+		return err
+	}
+
+	// pull chain params
+	_, err = c.ResolveChainConfig(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) SetChainId(id tezos.ChainIdHash) {
+	c.ChainId = id.Clone()
+}
+
+func (c *Client) SetChainParams(p *tezos.Params) {
+	c.Params = p
+}
+
+func (c *Client) ResolveChainId(ctx context.Context) (tezos.ChainIdHash, error) {
+	if c.ChainId.IsValid() {
+		return c.ChainId, nil
+	}
+	id, err := c.GetChainId(ctx)
+	c.ChainId = id
+	return id, err
+}
+
+func (c *Client) ResolveChainConfig(ctx context.Context) (*tezos.Params, error) {
+	if c.Params != nil {
+		return c.Params, nil
+	}
+	con, err := c.GetConstants(ctx, Head)
+	if err != nil {
+		return nil, err
+	}
+	c.Params = con.MapToChainParams()
+	return c.Params, nil
 }
 
 func (c *Client) Get(ctx context.Context, urlpath string, result interface{}) error {
@@ -70,6 +116,14 @@ func (c *Client) GetAsync(ctx context.Context, urlpath string, mon Monitor) erro
 
 func (c *Client) Put(ctx context.Context, urlpath string, body, result interface{}) error {
 	req, err := c.NewRequest(ctx, http.MethodPut, urlpath, body)
+	if err != nil {
+		return err
+	}
+	return c.Do(req, result)
+}
+
+func (c *Client) Post(ctx context.Context, urlpath string, body, result interface{}) error {
+	req, err := c.NewRequest(ctx, http.MethodPost, urlpath, body)
 	if err != nil {
 		return err
 	}
@@ -120,7 +174,10 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 	dec := json.NewDecoder(resp.Body)
 
 	// close body when stream stopped
-	defer resp.Body.Close()
+	defer func() {
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
+	}()
 
 	for {
 		chunkVal := mon.New()
@@ -136,7 +193,7 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 				mon.Err(io.EOF)
 				return
 			}
-			mon.Err(fmt.Errorf("rpc: decoding response: %w", err))
+			mon.Err(fmt.Errorf("rpc: %w", err))
 			return
 		}
 		select {
@@ -151,16 +208,15 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 }
 
 // Do retrieves values from the API and marshals them into the provided interface.
-func (c *Client) Do(req *http.Request, v interface{}) (err error) {
+func (c *Client) Do(req *http.Request, v interface{}) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		if rerr := resp.Body.Close(); err == nil {
-			err = rerr
-		}
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
 	}()
 
 	if resp.StatusCode == http.StatusNoContent {
@@ -184,7 +240,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (err error) {
 }
 
 // DoAsync retrieves values from the API and sends responses using the provided monitor.
-func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
+func (c *Client) DoAsync(req *http.Request, mon Monitor) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		if e, ok := err.(*url.Error); ok {
@@ -194,6 +250,7 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
 	}
 
 	if resp.StatusCode == http.StatusNoContent {
+		io.Copy(ioutil.Discard, resp.Body)
 		resp.Body.Close()
 		return nil
 	}
@@ -207,10 +264,11 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) (err error) {
 			return nil
 		}
 	} else {
-		err = handleError(resp)
+		return handleError(resp)
 	}
+	io.Copy(ioutil.Discard, resp.Body)
 	resp.Body.Close()
-	return
+	return nil
 }
 
 func handleError(resp *http.Response) error {

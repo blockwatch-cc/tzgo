@@ -15,13 +15,13 @@ import (
 var (
 	// ErrChecksumMismatch describes an error where decoding failed due
 	// to a bad checksum.
-	ErrChecksumMismatch = errors.New("checksum mismatch")
+	ErrChecksumMismatch = errors.New("tezos: checksum mismatch")
 
 	// ErrUnknownAddressType describes an error where an address can not
 	// decoded as a specific address type due to the string encoding
 	// begining with an identifier byte unknown to any standard or
 	// registered (via Register) network.
-	ErrUnknownAddressType = errors.New("unknown address type")
+	ErrUnknownAddressType = errors.New("tezos: unknown address type")
 
 	// InvalidAddress is an empty invalid address
 	InvalidAddress = Address{Type: AddressTypeInvalid, Hash: nil}
@@ -30,6 +30,7 @@ var (
 	ZeroAddress = Address{Type: AddressTypeEd25519, Hash: make([]byte, HashTypePkhEd25519.Len())}
 )
 
+// AddressType represents the type of a Tezos signature.
 type AddressType byte
 
 const (
@@ -266,7 +267,8 @@ func (a Address) MarshalText() ([]byte, error) {
 	return []byte(a.String()), nil
 }
 
-// output the 21 (implicit) or 22 byte (contract) version
+// Bytes returns the 21 (implicit) or 22 byte (contract) tagged and optionally padded
+// binary hash value of the address.
 func (a Address) Bytes() []byte {
 	if !a.Type.IsValid() {
 		return nil
@@ -279,8 +281,9 @@ func (a Address) Bytes() []byte {
 	return append([]byte{a.Type.Tag()}, a.Hash...)
 }
 
-// Tezos compatible binary encoding with padding for contracts and
-// leading 0-byte for EOAs
+// Bytes22 returns the 22 byte tagged and padded binary encoding for contracts
+// and EOAs (tz1/2/3). In contrast to Bytes which outputs the 21 byte address for EOAs
+// here we add a leading 0-byte.
 func (a Address) Bytes22() []byte {
 	if !a.Type.IsValid() {
 		return nil
@@ -293,7 +296,7 @@ func (a Address) Bytes22() []byte {
 	return append([]byte{00, a.Type.Tag()}, a.Hash...)
 }
 
-// output the 22 byte version
+// MarshalBinary always output the 22 byte version for contracts and EOAs.
 func (a Address) MarshalBinary() ([]byte, error) {
 	if !a.Type.IsValid() {
 		return nil, ErrUnknownAddressType
@@ -306,8 +309,9 @@ func (a Address) MarshalBinary() ([]byte, error) {
 	return append([]byte{00, a.Type.Tag()}, a.Hash...), nil
 }
 
-// support both the 21 byte and 22 byte versions
-// be resilient to longer byte strings with extra padding
+// UnmarshalBinary reads a 21 byte or 22 byte address versions and is
+// resilient to longer byte strings that contain extra padding or a suffix
+// (e.g. an entrypoint suffix as found in smart contract data).
 func (a *Address) UnmarshalBinary(b []byte) error {
 	switch true {
 	case len(b) >= 22 && (b[0] == 0 || b[0] == 1):
@@ -318,13 +322,13 @@ func (a *Address) UnmarshalBinary(b []byte) error {
 			a.Type = AddressTypeContract
 			b = b[1:21]
 		} else {
-			return fmt.Errorf("invalid binary address prefix %x", b[0])
+			return fmt.Errorf("tezos: invalid binary address prefix %x", b[0])
 		}
 	case len(b) >= 21:
 		a.Type = ParseAddressTag(b[0])
 		b = b[1:21]
 	default:
-		return fmt.Errorf("invalid binary address length %d", len(b))
+		return fmt.Errorf("tezos: invalid binary address length %d", len(b))
 	}
 	if !a.Type.IsValid() {
 		return ErrUnknownAddressType
@@ -338,6 +342,7 @@ func (a *Address) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
+// IsAddressBytes checks whether a buffer likely contains a binary encoded address.
 func IsAddressBytes(b []byte) bool {
 	if len(b) < 21 {
 		return false
@@ -388,10 +393,10 @@ func ParseAddress(addr string) (Address, error) {
 		if err == base58.ErrChecksum {
 			return a, ErrChecksumMismatch
 		}
-		return a, fmt.Errorf("decoded address is of unknown format: %w", err)
+		return a, fmt.Errorf("tezos: decoded address is of unknown format: %w", err)
 	}
 	if len(decoded) != 20 {
-		return a, errors.New("decoded address hash is of invalid length")
+		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
 	switch true {
 	case bytes.Compare(version, BAKER_PUBLIC_KEY_HASH_ID) == 0:
@@ -405,13 +410,13 @@ func ParseAddress(addr string) (Address, error) {
 	case bytes.Compare(version, NOCURVE_PUBLIC_KEY_HASH_ID) == 0:
 		return Address{Type: AddressTypeContract, Hash: decoded}, nil
 	default:
-		return a, fmt.Errorf("decoded address %s is of unknown type %x", addr, version)
+		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
 	}
 }
 
 func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 	if len(addrhash) != 20 {
-		return "", fmt.Errorf("invalid address hash")
+		return "", fmt.Errorf("tezos: invalid address hash")
 	}
 	switch typ {
 	case AddressTypeBaker:
@@ -427,6 +432,6 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 	case AddressTypeBlinded:
 		return base58.CheckEncode(addrhash, BLINDED_PUBLIC_KEY_HASH_ID), nil
 	default:
-		return "", fmt.Errorf("unknown address type %s for hash=%x\n", typ, addrhash)
+		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x\n", typ, addrhash)
 	}
 }
