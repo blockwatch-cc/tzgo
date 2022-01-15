@@ -1,5 +1,4 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -20,7 +19,7 @@ import (
 )
 
 const (
-	libraryVersion = "0.11.1"
+	libraryVersion = "1.11-rc0"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
 )

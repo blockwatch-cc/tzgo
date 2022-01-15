@@ -1,4 +1,3 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
 // Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
@@ -10,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
 )
 
@@ -24,15 +24,89 @@ type Operation struct {
 	Errors    []OperationError   `json:"error,omitempty"` // mempool only
 }
 
-// TypedOperation must be implemented by all operations
-type TypedOperation interface {
-	OpKind() tezos.OpType
+// Cost returns the sum of costs across all batched and internal operations.
+func (o Operation) Cost() OperationCost {
+	var c OperationCost
+	for _, op := range o.Contents {
+		c = c.Add(op.Cost())
+	}
+	return c
 }
 
+// TypedOperation must be implemented by all operations
+type TypedOperation interface {
+	Kind() tezos.OpType
+	Meta() OperationMetadata
+	Result() OperationResult
+	Cost() OperationCost
+}
+
+// OperationCost represents all costs paid by an operation. Its contents depends on
+// operation type and activity. On transactions with internal results costs are a
+// summary.
+type OperationCost struct {
+	Fee            int64
+	Burn           int64
+	Gas            int64
+	StorageBytes   int64
+	StorageBurn    int64
+	AllocationBurn int64
+}
+
+// Add adds two costs z = x + y and returns the sum z without changing any of the inputs.
+func (x OperationCost) Add(y OperationCost) OperationCost {
+	x.Fee += y.Fee
+	x.Burn += y.Burn
+	x.Gas += y.Gas
+	x.StorageBurn += y.StorageBurn
+	x.AllocationBurn += y.AllocationBurn
+	return x
+}
+
+// OperationError represents data describing an error conditon that lead to a
+// failed operation execution.
 type OperationError struct {
 	GenericError
 	Contract *tezos.Address  `json:"contract,omitempty"`
 	Raw      json.RawMessage `json:"-"`
+}
+
+// OperationMetadata contains execution receipts for successful and failed
+// operations.
+type OperationMetadata struct {
+	BalanceUpdates BalanceUpdates  `json:"balance_updates"` // fee-related
+	Result         OperationResult `json:"operation_result"`
+
+	// transaction only
+	InternalResults []*InternalResult `json:"internal_operation_results,omitempty"`
+
+	// endorsement only
+	Delegate tezos.Address `json:"delegate"`
+	Slots    []int         `json:"slots,omitempty"`
+}
+
+// Address returns the delegate address for endorsements.
+func (m OperationMetadata) Address() tezos.Address {
+	return m.Delegate
+}
+
+// OperationResult contains receipts for executed operations, both success and failed.
+// This type is a generic container for all possible results. Which fields are actually
+// used depends on operation type and performed actions.
+type OperationResult struct {
+	Status              tezos.OpStatus       `json:"status"`
+	BalanceUpdates      BalanceUpdates       `json:"balance_updates"` // burn, etc
+	ConsumedGas         int64                `json:"consumed_gas,string"`
+	ConsumedMilliGas    int64                `json:"consumed_milligas,string"` // v007+
+	Errors              []OperationError     `json:"errors,omitempty"`
+	Allocated           bool                 `json:"allocated_destination_contract"` // tx only
+	Storage             *micheline.Prim      `json:"storage,omitempty"`              // tx, orig
+	OriginatedContracts []tezos.Address      `json:"originated_contracts"`           // orig only
+	StorageSize         int64                `json:"storage_size,string"`            // tx, orig, const
+	PaidStorageSizeDiff int64                `json:"paid_storage_size_diff,string"`  // tx, orig
+	BigmapDiff          micheline.BigmapDiff `json:"big_map_diff,omitempty"`         // tx, orig
+	LazyStorageDiff     LazyStorageDiff      `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
+	GlobalAddress       tezos.ExprHash       `json:"global_address"`                 // const
 }
 
 func (o OperationError) MarshalJSON() ([]byte, error) {
@@ -49,14 +123,39 @@ func (o *OperationError) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// GenericOp is a most generic type
-type GenericOp struct {
-	Kind tezos.OpType `json:"kind"`
+// Generic is the most generic operation type.
+type Generic struct {
+	OpKind tezos.OpType `json:"kind"`
 }
 
-// OpKind returns the operation's type. Implements TypedOperation interface.
-func (e *GenericOp) OpKind() tezos.OpType {
-	return e.Kind
+// Manager represents data common for all manager operations.
+type Manager struct {
+	Generic
+	Source       tezos.Address `json:"source"`
+	Fee          int64         `json:"fee,string"`
+	Counter      int64         `json:"counter,string"`
+	GasLimit     int64         `json:"gas_limit,string"`
+	StorageLimit int64         `json:"storage_limit,string"`
+}
+
+// Kind returns the operation's type. Implements TypedOperation interface.
+func (e Generic) Kind() tezos.OpType {
+	return e.OpKind
+}
+
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (e Generic) Meta() OperationMetadata {
+	return OperationMetadata{}
+}
+
+// Result returns an empty operation result to implement TypedOperation interface.
+func (e Generic) Result() OperationResult {
+	return OperationResult{}
+}
+
+// Cost returns an empty operation cost to implement TypedOperation interface.
+func (e Generic) Cost() OperationCost {
+	return OperationCost{}
 }
 
 // OperationList is a slice of TypedOperation (interface type) with custom JSON unmarshaller
@@ -80,40 +179,40 @@ opLoop:
 		if r == nil {
 			continue
 		}
-		var tmp GenericOp
+		var tmp Generic
 		if err := json.Unmarshal(r, &tmp); err != nil {
 			return fmt.Errorf("rpc: generic operation: %w", err)
 		}
 
-		switch tmp.Kind {
+		switch tmp.Kind() {
 		// anonymous operations
 		case tezos.OpTypeActivateAccount:
-			(*e)[i] = &AccountActivationOp{}
+			(*e)[i] = &Activation{}
 		case tezos.OpTypeDoubleBakingEvidence:
-			(*e)[i] = &DoubleBakingOp{}
+			(*e)[i] = &DoubleBaking{}
 		case tezos.OpTypeDoubleEndorsementEvidence:
-			(*e)[i] = &DoubleEndorsementOp{}
+			(*e)[i] = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
-			(*e)[i] = &SeedNonceOp{}
+			(*e)[i] = &SeedNonce{}
 		// manager operations
 		case tezos.OpTypeTransaction:
-			(*e)[i] = &TransactionOp{}
+			(*e)[i] = &Transaction{}
 		case tezos.OpTypeOrigination:
-			(*e)[i] = &OriginationOp{}
+			(*e)[i] = &Origination{}
 		case tezos.OpTypeDelegation:
-			(*e)[i] = &DelegationOp{}
+			(*e)[i] = &Delegation{}
 		case tezos.OpTypeReveal:
-			(*e)[i] = &RevelationOp{}
+			(*e)[i] = &Reveal{}
 		case tezos.OpTypeRegisterConstant:
-			(*e)[i] = &ConstantRegistrationOp{}
+			(*e)[i] = &ConstantRegistration{}
 		// consensus operations
 		case tezos.OpTypeEndorsement, tezos.OpTypeEndorsementWithSlot:
-			(*e)[i] = &EndorsementOp{}
+			(*e)[i] = &Endorsement{}
 		// amendment operations
 		case tezos.OpTypeProposals:
-			(*e)[i] = &ProposalsOp{}
+			(*e)[i] = &Proposals{}
 		case tezos.OpTypeBallot:
-			(*e)[i] = &BallotOp{}
+			(*e)[i] = &Ballot{}
 
 		default:
 			log.Warnf("unsupported op '%s'", tmp.Kind)
@@ -122,7 +221,7 @@ opLoop:
 		}
 
 		if err := json.Unmarshal(r, (*e)[i]); err != nil {
-			return fmt.Errorf("rpc: operation kind %s: %w", tmp.Kind, err)
+			return fmt.Errorf("rpc: operation kind %s: %w", tmp.Kind(), err)
 		}
 	}
 

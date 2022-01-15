@@ -22,14 +22,14 @@ type Voter struct {
 // VoterList contains a list of voters
 type VoterList []Voter
 
-// Ballot holds information about a vote listing
-type Ballot struct {
+// BallotInfo holds information about a vote listing
+type BallotInfo struct {
 	Delegate tezos.Address    `json:"pkh"`
 	Ballot   tezos.BallotVote `json:"ballot"`
 }
 
 // BallotList contains a list of voters
-type BallotList []Ballot
+type BallotList []BallotInfo
 
 // Ballots holds the current summary of a vote
 type BallotSummary struct {

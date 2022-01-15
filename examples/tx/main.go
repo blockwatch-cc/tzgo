@@ -341,7 +341,7 @@ func simulate(ctx context.Context, c *rpc.Client, msg string) error {
         return err
     }
     fmt.Println("Result\n", string(buf))
-    buf, err = json.MarshalIndent(res.Cost(c.Params), "", "  ")
+    buf, err = json.MarshalIndent(res.Cost(), "", "  ")
     if err != nil {
         return err
     }
@@ -397,11 +397,7 @@ func wait(ctx context.Context, c *rpc.Client, op, conf, ttl string) error {
         return err
     }
     fmt.Println("Result\n", string(buf))
-    params, err := c.ResolveChainConfig(ctx)
-    if err != nil {
-        return err
-    }
-    buf, err = json.MarshalIndent(res.Cost(params), "", "  ")
+    buf, err = json.MarshalIndent(res.Cost(), "", "  ")
     if err != nil {
         return err
     }

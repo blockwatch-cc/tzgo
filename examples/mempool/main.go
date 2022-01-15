@@ -110,7 +110,7 @@ func info(ctx context.Context, c *rpc.Client) error {
         m := cnt[i]
         for _, op := range v {
             for _, o := range op.Contents {
-                k := o.OpKind()
+                k := o.Kind()
                 if c, ok := m[k]; ok {
                     m[k] = c + 1
                 } else {
@@ -169,7 +169,9 @@ func stream(ctx context.Context, c *rpc.Client, flt string) error {
             continue
         }
         for _, op := range ops {
-            fmt.Println(op.Hash, op.Contents[0].OpKind())
+            fmt.Println(op.Hash, op.Contents[0].Kind())
+            // calculate cost but discard result to catch errors
+            _ = op.Cost()
         }
     }
 }

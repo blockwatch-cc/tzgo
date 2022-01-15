@@ -83,7 +83,7 @@ func run() error {
 		return err
 	}
 
-	tx := b.Operations[3][op_n].Contents[0].(*rpc.TransactionOp)
+	tx := b.Operations[3][op_n].Contents[0].(*rpc.Transaction)
 
 	// you need the contract's script for type info
 	script, err := c.GetContractScript(ctx, tx.Destination)

@@ -7,15 +7,18 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// SeedNonceOp represents a seed_nonce_revelation operation
-type SeedNonceOp struct {
-	GenericOp
-	Level    int64                `json:"level"`
-	Nonce    tezos.HexBytes       `json:"nonce"`
-	Metadata *SeedNonceOpMetadata `json:"metadata"`
+// Ensure SeedNonce implements the TypedOperation interface.
+var _ TypedOperation = (*SeedNonce)(nil)
+
+// SeedNonce represents a seed_nonce_revelation operation
+type SeedNonce struct {
+	Generic
+	Level    int64             `json:"level"`
+	Nonce    tezos.HexBytes    `json:"nonce"`
+	Metadata OperationMetadata `json:"metadata"`
 }
 
-// SeedNonceOpMetadata represents a transaction operation metadata
-type SeedNonceOpMetadata struct {
-	BalanceUpdates BalanceUpdates `json:"balance_updates"` // fee-related
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (s SeedNonce) Meta() OperationMetadata {
+	return s.Metadata
 }

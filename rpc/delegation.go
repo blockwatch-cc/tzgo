@@ -7,27 +7,30 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// DelegationOp represents a transaction operation
-type DelegationOp struct {
-	GenericOp
-	Source       tezos.Address         `json:"source"`
-	Fee          int64                 `json:"fee,string"`
-	Counter      int64                 `json:"counter,string"`
-	GasLimit     int64                 `json:"gas_limit,string"`
-	StorageLimit int64                 `json:"storage_limit,string"`
-	Delegate     tezos.Address         `json:"delegate,omitempty"`
-	Metadata     *DelegationOpMetadata `json:"metadata"`
+// Ensure Delegation implements the TypedOperation interface.
+var _ TypedOperation = (*Delegation)(nil)
+
+// Delegation represents a transaction operation
+type Delegation struct {
+	Manager
+	Delegate tezos.Address     `json:"delegate,omitempty"`
+	Metadata OperationMetadata `json:"metadata"`
 }
 
-// DelegationOpMetadata represents a transaction operation metadata
-type DelegationOpMetadata struct {
-	BalanceUpdates BalanceUpdates   `json:"balance_updates"` // fee-related
-	Result         DelegationResult `json:"operation_result"`
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (d Delegation) Meta() OperationMetadata {
+	return d.Metadata
 }
 
-// DelegationResult represents a transaction result
-type DelegationResult struct {
-	ConsumedGas int64            `json:"consumed_gas,string"`
-	Status      tezos.OpStatus   `json:"status"`
-	Errors      []OperationError `json:"errors,omitempty"`
+// Result returns an empty operation result to implement TypedOperation interface.
+func (d Delegation) Result() OperationResult {
+	return d.Metadata.Result
+}
+
+// Cost returns operation cost to implement TypedOperation interface.
+func (d Delegation) Cost() OperationCost {
+	return OperationCost{
+		Fee: d.Manager.Fee,
+		Gas: d.Metadata.Result.ConsumedGas,
+	}
 }

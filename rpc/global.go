@@ -5,34 +5,37 @@ package rpc
 
 import (
 	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/tezos"
 )
 
-// ConstantRegistrationOp represents a global constant registration operation
-type ConstantRegistrationOp struct {
-	GenericOp
-	Source       tezos.Address                   `json:"source"`
-	Fee          int64                           `json:"fee,string"`
-	Counter      int64                           `json:"counter,string"`
-	GasLimit     int64                           `json:"gas_limit,string"`
-	StorageLimit int64                           `json:"storage_limit,string"`
-	Value        micheline.Prim                  `json:"value,omitempty"`
-	Metadata     *ConstantRegistrationOpMetadata `json:"metadata"`
+// Ensure ConstantRegistration implements the TypedOperation interface.
+var _ TypedOperation = (*ConstantRegistration)(nil)
+
+// ConstantRegistration represents a global constant registration operation
+type ConstantRegistration struct {
+	Manager
+	Value    micheline.Prim    `json:"value,omitempty"`
+	Metadata OperationMetadata `json:"metadata"`
 }
 
-// ConstantRegistrationOpMetadata represents a transaction operation metadata
-type ConstantRegistrationOpMetadata struct {
-	BalanceUpdates BalanceUpdates              `json:"balance_updates"` // fee-related
-	Result         *ConstantRegistrationResult `json:"operation_result"`
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (c ConstantRegistration) Meta() OperationMetadata {
+	return c.Metadata
 }
 
-// ConstantRegistrationResult represents a transaction result
-type ConstantRegistrationResult struct {
-	Status         tezos.OpStatus   `json:"status"`
-	BalanceUpdates BalanceUpdates   `json:"balance_updates"` // sender related
-	ConsumedGas    int64            `json:"consumed_gas,string"`
-	Errors         []OperationError `json:"errors,omitempty"`
+// Result returns an empty operation result to implement TypedOperation interface.
+func (c ConstantRegistration) Result() OperationResult {
+	return c.Metadata.Result
+}
 
-	StorageSize   int64          `json:"storage_size,string"`
-	GlobalAddress tezos.ExprHash `json:"global_address"`
+// Cost returns operation cost to implement TypedOperation interface.
+func (c ConstantRegistration) Cost() OperationCost {
+	res := c.Metadata.Result
+	burn := res.BalanceUpdates[0].Amount()
+	return OperationCost{
+		Fee:          c.Manager.Fee,
+		Gas:          res.ConsumedGas,
+		Burn:         -burn,
+		StorageBytes: res.StorageSize,
+		StorageBurn:  -burn,
+	}
 }

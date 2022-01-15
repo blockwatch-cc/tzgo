@@ -7,9 +7,12 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// ProposalsOp represents a proposal operation
-type ProposalsOp struct {
-	GenericOp
+// Ensure Proposals implements the TypedOperation interface.
+var _ TypedOperation = (*Proposals)(nil)
+
+// Proposals represents a proposal operation
+type Proposals struct {
+	Generic
 	Source    tezos.Address        `json:"source"`
 	Period    int                  `json:"period"`
 	Proposals []tezos.ProtocolHash `json:"proposals"`

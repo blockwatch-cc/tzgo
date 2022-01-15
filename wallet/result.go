@@ -25,14 +25,11 @@ type Result struct {
 }
 
 // Cost returns the sum of costs across all batched and internal operations.
-func (r *Result) Cost(p *tezos.Params) Cost {
-    var c Cost
+func (r *Result) Cost() rpc.OperationCost {
     if r.Op != nil {
-        for _, op := range r.Op.Contents {
-            c = c.Add(sumOpCost(op, p))
-        }
+        return r.Op.Cost()
     }
-    return c
+    return rpc.OperationCost{}
 }
 
 type FutureResult struct {

@@ -7,15 +7,18 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// AccountActivationOp represents a transaction operation
-type AccountActivationOp struct {
-	GenericOp
-	Pkh      tezos.Address                `json:"pkh"`
-	Secret   tezos.HexBytes               `json:"secret"`
-	Metadata *AccountActivationOpMetadata `json:"metadata"`
+// Ensure Activation implements the TypedOperation interface.
+var _ TypedOperation = (*Activation)(nil)
+
+// Activation represents a transaction operation
+type Activation struct {
+	Generic
+	Pkh      tezos.Address     `json:"pkh"`
+	Secret   tezos.HexBytes    `json:"secret"`
+	Metadata OperationMetadata `json:"metadata"`
 }
 
-// AccountActivationOpMetadata represents a transaction operation metadata
-type AccountActivationOpMetadata struct {
-	BalanceUpdates BalanceUpdates `json:"balance_updates"` // initial funding
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (a Activation) Meta() OperationMetadata {
+	return a.Metadata
 }

@@ -1,5 +1,7 @@
 // Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
+//go:build ignore
+// +build ignore
 
 package wallet
 
@@ -80,15 +82,15 @@ func (x Cost) Add(y Cost) Cost {
 
 func sumOpCost(op rpc.TypedOperation, p *tezos.Params) Cost {
     var c Cost
-    switch op.OpKind() {
+    switch op.Kind() {
 
     case tezos.OpTypeReveal:
-        o := op.(*rpc.RevelationOp)
+        o := op.(*rpc.Reveal)
         c.Fee += o.Fee
         c.Gas += o.Metadata.Result.ConsumedGas
 
     case tezos.OpTypeRegisterConstant:
-        o := op.(*rpc.ConstantRegistrationOp)
+        o := op.(*rpc.ConstantRegistration)
         c.Fee += o.Fee
         c.Gas += o.Metadata.Result.ConsumedGas
         storageCost := o.Metadata.Result.StorageSize * p.CostPerByte
@@ -96,12 +98,12 @@ func sumOpCost(op rpc.TypedOperation, p *tezos.Params) Cost {
         c.StorageBurn += storageCost
 
     case tezos.OpTypeDelegation:
-        o := op.(*rpc.DelegationOp)
+        o := op.(*rpc.Delegation)
         c.Fee += o.Fee
         c.Gas += o.Metadata.Result.ConsumedGas
 
     case tezos.OpTypeOrigination:
-        o := op.(*rpc.OriginationOp)
+        o := op.(*rpc.Origination)
         c.Fee += o.Fee
         c.Gas += o.Metadata.Result.ConsumedGas
         var burned int64
@@ -122,7 +124,7 @@ func sumOpCost(op rpc.TypedOperation, p *tezos.Params) Cost {
         c.AllocationBurn += burned - storageCost
 
     case tezos.OpTypeTransaction:
-        o := op.(*rpc.TransactionOp)
+        o := op.(*rpc.Transaction)
         c.Fee += o.Fee
         c.Gas += o.Metadata.Result.ConsumedGas
         if o.Metadata.Result.Allocated {

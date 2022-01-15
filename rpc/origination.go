@@ -8,53 +8,59 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// OriginationOp represents a contract creation operation
-type OriginationOp struct {
-	GenericOp
-	Source         tezos.Address          `json:"source"`
-	Fee            int64                  `json:"fee,string"`
-	Counter        int64                  `json:"counter,string"`
-	GasLimit       int64                  `json:"gas_limit,string"`
-	StorageLimit   int64                  `json:"storage_limit,string"`
-	ManagerPubkey  tezos.Address          `json:"manager_pubkey"` // proto v1 & >= v4
-	ManagerPubkey2 tezos.Address          `json:"managerPubkey"`  // proto v2, v3
-	Balance        int64                  `json:"balance,string"`
-	Spendable      *bool                  `json:"spendable"`   // true when missing before v5 Babylon
-	Delegatable    *bool                  `json:"delegatable"` // true when missing before v5 Babylon
-	Delegate       *tezos.Address         `json:"delegate"`
-	Script         *micheline.Script      `json:"script"`
-	Metadata       *OriginationOpMetadata `json:"metadata"`
+// Ensure Origination implements the TypedOperation interface.
+var _ TypedOperation = (*Origination)(nil)
+
+// Origination represents a contract creation operation
+type Origination struct {
+	Manager
+	ManagerPubkey  tezos.Address     `json:"manager_pubkey"` // proto v1 & >= v4
+	ManagerPubkey2 tezos.Address     `json:"managerPubkey"`  // proto v2, v3
+	Balance        int64             `json:"balance,string"`
+	Spendable      *bool             `json:"spendable"`   // true when missing before v5 Babylon
+	Delegatable    *bool             `json:"delegatable"` // true when missing before v5 Babylon
+	Delegate       *tezos.Address    `json:"delegate"`
+	Script         *micheline.Script `json:"script"`
+	Metadata       OperationMetadata `json:"metadata"`
 }
 
-func (o OriginationOp) Manager() tezos.Address {
+func (o Origination) ManagerAddress() tezos.Address {
 	if o.ManagerPubkey2.IsValid() {
 		return o.ManagerPubkey2
 	}
 	return o.ManagerPubkey
 }
 
-// OriginationOpMetadata represents a transaction operation metadata
-type OriginationOpMetadata struct {
-	BalanceUpdates BalanceUpdates    `json:"balance_updates"` // fee-related
-	Result         OriginationResult `json:"operation_result"`
+// Meta returns an empty operation metadata to implement TypedOperation interface.
+func (o Origination) Meta() OperationMetadata {
+	return o.Metadata
 }
 
-// OriginationResult represents a contract creation result
-type OriginationResult struct {
-	BalanceUpdates      BalanceUpdates   `json:"balance_updates"` // burned fees
-	OriginatedContracts []tezos.Address  `json:"originated_contracts"`
-	ConsumedGas         int64            `json:"consumed_gas,string"`
-	StorageSize         int64            `json:"storage_size,string"`
-	PaidStorageSizeDiff int64            `json:"paid_storage_size_diff,string"`
-	Status              tezos.OpStatus   `json:"status"`
-	Errors              []OperationError `json:"errors,omitempty"`
+// Result returns an empty operation result to implement TypedOperation interface.
+func (o Origination) Result() OperationResult {
+	return o.Metadata.Result
+}
 
-	// v007
-	ConsumedMilliGas int64 `json:"consumed_milligas,string"`
-
-	// deprecated in v008
-	BigmapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
-
-	// v008
-	LazyStorageDiff LazyStorageDiff `json:"lazy_storage_diff,omitempty"`
+// Cost returns operation cost to implement TypedOperation interface.
+func (o Origination) Cost() OperationCost {
+	res := o.Metadata.Result
+	cost := OperationCost{
+		Fee:          o.Manager.Fee,
+		Gas:          res.ConsumedGas,
+		StorageBytes: res.PaidStorageSizeDiff,
+	}
+	var i int
+	if res.PaidStorageSizeDiff > 0 {
+		burn := res.BalanceUpdates[i].Amount()
+		cost.StorageBurn += -burn
+		cost.Burn += -burn
+		i++
+	}
+	if len(res.OriginatedContracts) > 0 {
+		burn := res.BalanceUpdates[i].Amount()
+		cost.AllocationBurn += -burn
+		cost.Burn += -burn
+		i++
+	}
+	return cost
 }

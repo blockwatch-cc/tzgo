@@ -200,7 +200,7 @@ func printBlock(b *rpc.Block) {
 	for _, v := range b.Operations {
 		for _, vv := range v {
 			for _, op := range vv.Contents {
-				kind := op.OpKind()
+				kind := op.Kind()
 				count++
 				if c, ok := ops[kind]; ok {
 					ops[kind] = c + 1
@@ -340,7 +340,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 		for _, v := range b.Operations {
 			for _, vv := range v {
 				for _, op := range vv.Contents {
-					kind := op.OpKind()
+					kind := op.Kind()
 					count++
 					if c, ok := opcount[kind]; ok {
 						opcount[kind] = c + 1
@@ -348,9 +348,9 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 						opcount[kind] = 1
 					}
 					if kind == tezos.OpTypeTransaction {
-						top := op.(*rpc.TransactionOp)
+						top := op.(*rpc.Transaction)
 						for _, vvv := range top.Metadata.InternalResults {
-							kind = vvv.OpKind()
+							kind = vvv.Kind
 							count++
 							if c, ok := opcount[kind]; ok {
 								opcount[kind] = c + 1
@@ -372,7 +372,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 				for _, v := range b.Operations {
 					for _, vv := range v {
 						for _, o := range vv.Contents {
-							if op == o.OpKind() {
+							if op == o.Kind() {
 								enc.Encode(o)
 							}
 						}
@@ -509,10 +509,10 @@ func showOpInfo(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos in
 	fmt.Printf("Parts  %d\n", len(op.Contents))
 	for i, o := range op.Contents {
 		fmt.Printf("Part   %d\n", i+1)
-		fmt.Printf("  Type   %s\n", o.OpKind())
-		switch o.OpKind() {
+		fmt.Printf("  Type   %s\n", o.Kind())
+		switch o.Kind() {
 		case tezos.OpTypeTransaction:
-			tx := o.(*rpc.TransactionOp)
+			tx := o.(*rpc.Transaction)
 			fmt.Printf("  Dest       %s\n", tx.Destination)
 			fmt.Printf("  Fee        %d\n", tx.Fee)
 			fmt.Printf("  Counter    %d\n", tx.Counter)
