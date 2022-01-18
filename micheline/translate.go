@@ -359,8 +359,8 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
         // chest
         // append scalar or other complex value
 
-        // comb-pair records might have slipped through our in LooksLikeContainer()
-        // so if we detect an unpack comb part (i.e. sequence) we unpack it here
+        // comb-pair records might have slipped through in LooksLikeContainer()
+        // so if we detect any unpacked comb part (i.e. sequence) we unpack it here
         if val.IsSequence() {
             stack.Push(val.Args...)
             val = stack.Pop()

@@ -1,0 +1,100 @@
+[
+  {
+    "name": "Hangzhounet2/KT1U2F7LcizMhRPDYsaCkbNSc5WjD7uBaU3N",
+    "type": {
+      "args": [
+        {
+          "annots": [
+            "%minters"
+          ],
+          "args": [
+            {
+              "prim": "address"
+            }
+          ],
+          "prim": "set"
+        },
+        {
+          "args": [
+            {
+              "annots": [
+                "%qsgov"
+              ],
+              "args": [
+                {
+                  "annots": [
+                    "%token"
+                  ],
+                  "prim": "address"
+                },
+                {
+                  "annots": [
+                    "%id"
+                  ],
+                  "prim": "nat"
+                }
+              ],
+              "prim": "pair"
+            },
+            {
+              "args": [
+                {
+                  "annots": [
+                    "%admin"
+                  ],
+                  "prim": "address"
+                },
+                {
+                  "annots": [
+                    "%pending_admin"
+                  ],
+                  "prim": "address"
+                }
+              ],
+              "prim": "pair"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "pair"
+    },
+    "value": [
+      [
+        {
+          "bytes": "016697e76089c6d49859cc98014ae823812f74843800"
+        }
+      ],
+      {
+        "args": [
+          {
+            "bytes": "01e8d86ef29c133b90dda5e4db0fec9978d4bcb9b500"
+          },
+          {
+            "int": "0"
+          }
+        ],
+        "prim": "Pair"
+      },
+      {
+        "bytes": "00006b82198cb179e8306c1bedd08f12dc863f328886"
+      },
+      {
+        "bytes": "000098b9732c83017e938ba48cb91cf53e5f919dc844"
+      }
+    ],
+    "type_hex": "07650666036e00000008256d696e7465727307650865046e0000000625746f6b656e04620000000325696400000006257173676f760765046e000000062561646d696e046e0000000e2570656e64696e675f61646d696e",
+    "value_hex": "0200000075020000001b0a00000016016697e76089c6d49859cc98014ae823812f7484380007070a0000001601e8d86ef29c133b90dda5e4db0fec9978d4bcb9b50000000a0000001600006b82198cb179e8306c1bedd08f12dc863f3288860a00000016000098b9732c83017e938ba48cb91cf53e5f919dc844",
+    "want_value": {
+      "admin": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+      "minters": [
+        "KT1HwETo2PSBZucsNia9EknjwNBVien8EjBe"
+      ],
+      "pending_admin": "tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg",
+      "qsgov": {
+        "id": "0",
+        "token": "KT1VowcKqZFGhdcDZA3UN1vrjBLmxV5bxgfJ"
+      }
+    }
+  }
+]
