@@ -18,11 +18,11 @@ type FailingNoop struct {
     Arbitrary string `json:"arbitrary"`
 }
 
-func (o *FailingNoop) Kind() tezos.OpType {
+func (o FailingNoop) Kind() tezos.OpType {
     return tezos.OpTypeFailingNoop
 }
 
-func (o *FailingNoop) MarshalJSON() ([]byte, error) {
+func (o FailingNoop) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -33,7 +33,7 @@ func (o *FailingNoop) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *FailingNoop) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o FailingNoop) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     // convert utf8 string to bytes
     val := []byte(o.Arbitrary)
@@ -56,7 +56,7 @@ func (o *FailingNoop) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
     return nil
 }
 
-func (o *FailingNoop) MarshalBinary() ([]byte, error) {
+func (o FailingNoop) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

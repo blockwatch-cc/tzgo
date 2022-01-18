@@ -18,11 +18,11 @@ type Proposals struct {
     Proposals []tezos.ProtocolHash `json:"proposals"`
 }
 
-func (o *Proposals) Kind() tezos.OpType {
+func (o Proposals) Kind() tezos.OpType {
     return tezos.OpTypeProposals
 }
 
-func (o *Proposals) MarshalJSON() ([]byte, error) {
+func (o Proposals) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -42,7 +42,7 @@ func (o *Proposals) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Proposals) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Proposals) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     buf.Write(o.Source.Bytes())
     binary.Write(buf, enc, o.Period)
@@ -77,7 +77,7 @@ func (o *Proposals) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error)
     return nil
 }
 
-func (o *Proposals) MarshalBinary() ([]byte, error) {
+func (o Proposals) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

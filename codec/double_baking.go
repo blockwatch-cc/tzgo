@@ -18,11 +18,11 @@ type DoubleBakingEvidence struct {
     Bh2 BlockHeader `json:"bh2"`
 }
 
-func (o *DoubleBakingEvidence) Kind() tezos.OpType {
+func (o DoubleBakingEvidence) Kind() tezos.OpType {
     return tezos.OpTypeDoubleBakingEvidence
 }
 
-func (o *DoubleBakingEvidence) MarshalJSON() ([]byte, error) {
+func (o DoubleBakingEvidence) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -36,7 +36,7 @@ func (o *DoubleBakingEvidence) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *DoubleBakingEvidence) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o DoubleBakingEvidence) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     b2 := bytes.NewBuffer(nil)
     o.Bh1.EncodeBuffer(b2)
@@ -71,7 +71,7 @@ func (o *DoubleBakingEvidence) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) 
     return
 }
 
-func (o *DoubleBakingEvidence) MarshalBinary() ([]byte, error) {
+func (o DoubleBakingEvidence) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

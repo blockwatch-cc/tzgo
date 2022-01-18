@@ -16,11 +16,11 @@ type Reveal struct {
     PublicKey tezos.Key `json:"public_key"`
 }
 
-func (o *Reveal) Kind() tezos.OpType {
+func (o Reveal) Kind() tezos.OpType {
     return tezos.OpTypeReveal
 }
 
-func (o *Reveal) MarshalJSON() ([]byte, error) {
+func (o Reveal) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -33,7 +33,7 @@ func (o *Reveal) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Reveal) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Reveal) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     buf.Write(o.PublicKey.Bytes())
@@ -53,7 +53,7 @@ func (o *Reveal) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
     return nil
 }
 
-func (o *Reveal) MarshalBinary() ([]byte, error) {
+func (o Reveal) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

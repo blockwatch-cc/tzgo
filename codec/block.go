@@ -32,51 +32,51 @@ type BlockHeader struct {
 // Bytes serializes the block header into binary form. When no signature is set, the
 // result can be used as input for signing, if a signature is set the result is
 // ready for broadcast.
-func (b *BlockHeader) Bytes() []byte {
+func (h BlockHeader) Bytes() []byte {
     buf := bytes.NewBuffer(nil)
-    _ = b.EncodeBuffer(buf)
+    _ = h.EncodeBuffer(buf)
     return buf.Bytes()
 }
 
 // WatermarkedBytes serializes the block header and prefixes it with a watermark.
 // This format is only used for signing.
-func (b *BlockHeader) WatermarkedBytes() []byte {
+func (h BlockHeader) WatermarkedBytes() []byte {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte(BlockWatermark)
-    _ = b.EncodeBuffer(buf)
+    _ = h.EncodeBuffer(buf)
     return buf.Bytes()
 }
 
 // Digest returns a 32 byte blake2b hash for signing the block header. The pre-image
 // is binary serialized (without signature) and prefixed with a watermark byte.
-func (b *BlockHeader) Digest() []byte {
-    d := tezos.Digest(b.WatermarkedBytes())
+func (h BlockHeader) Digest() []byte {
+    d := tezos.Digest(h.WatermarkedBytes())
     return d[:]
 }
 
 // Sign signs the block header using a private key and generates a generic signature.
 // If a valid signature already exists, this function is a noop.
-func (b *BlockHeader) Sign(key tezos.PrivateKey) error {
-    if b.Signature.IsValid() {
+func (h *BlockHeader) Sign(key tezos.PrivateKey) error {
+    if h.Signature.IsValid() {
         return nil
     }
-    sig, err := key.Sign(b.Digest())
+    sig, err := key.Sign(h.Digest())
     sig.Type = tezos.SignatureTypeGeneric
     if err != nil {
         return err
     }
-    b.Signature = sig
+    h.Signature = sig
     return nil
 }
 
 // WithSignature adds an externally created signature to the block header. Converts
 // any non-generic signature first. No signature validation is performed, it is
 // assumed the signature is correct.
-func (b *BlockHeader) WithSignature(sig tezos.Signature) *BlockHeader {
+func (h *BlockHeader) WithSignature(sig tezos.Signature) *BlockHeader {
     sig = sig.Clone()
     sig.Type = tezos.SignatureTypeGeneric
-    b.Signature = sig
-    return b
+    h.Signature = sig
+    return h
 }
 
 func (h BlockHeader) MarshalJSON() ([]byte, error) {
@@ -232,7 +232,7 @@ func (h *BlockHeader) DecodeBuffer(buf *bytes.Buffer) (err error) {
     return nil
 }
 
-func (h *BlockHeader) MarshalBinary() ([]byte, error) {
+func (h BlockHeader) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := h.EncodeBuffer(buf)
     return buf.Bytes(), err

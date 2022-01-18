@@ -17,11 +17,11 @@ type SeedNonceRevelation struct {
     Nonce tezos.HexBytes `json:"nonce"`
 }
 
-func (o *SeedNonceRevelation) Kind() tezos.OpType {
+func (o SeedNonceRevelation) Kind() tezos.OpType {
     return tezos.OpTypeSeedNonceRevelation
 }
 
-func (o *SeedNonceRevelation) MarshalJSON() ([]byte, error) {
+func (o SeedNonceRevelation) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -34,7 +34,7 @@ func (o *SeedNonceRevelation) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *SeedNonceRevelation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o SeedNonceRevelation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     binary.Write(buf, enc, o.Level)
     buf.Write(o.Nonce.Bytes())
@@ -54,7 +54,7 @@ func (o *SeedNonceRevelation) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (
     return nil
 }
 
-func (o *SeedNonceRevelation) MarshalBinary() ([]byte, error) {
+func (o SeedNonceRevelation) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

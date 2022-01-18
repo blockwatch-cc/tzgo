@@ -19,11 +19,11 @@ type Transaction struct {
     Parameters  *micheline.Parameters `json:"parameters,omitempty"`
 }
 
-func (o *Transaction) Kind() tezos.OpType {
+func (o Transaction) Kind() tezos.OpType {
     return tezos.OpTypeTransaction
 }
 
-func (o *Transaction) MarshalJSON() ([]byte, error) {
+func (o Transaction) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -43,7 +43,7 @@ func (o *Transaction) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Transaction) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Transaction) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     o.Amount.EncodeBuffer(buf)
@@ -85,7 +85,7 @@ func (o *Transaction) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
     return nil
 }
 
-func (o *Transaction) MarshalBinary() ([]byte, error) {
+func (o Transaction) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

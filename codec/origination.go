@@ -20,11 +20,11 @@ type Origination struct {
     Script   micheline.Script `json:"script"`
 }
 
-func (o *Origination) Kind() tezos.OpType {
+func (o Origination) Kind() tezos.OpType {
     return tezos.OpTypeOrigination
 }
 
-func (o *Origination) MarshalJSON() ([]byte, error) {
+func (o Origination) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -44,7 +44,7 @@ func (o *Origination) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Origination) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Origination) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     o.Balance.EncodeBuffer(buf)
@@ -87,7 +87,7 @@ func (o *Origination) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
     return nil
 }
 
-func (o *Origination) MarshalBinary() ([]byte, error) {
+func (o Origination) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

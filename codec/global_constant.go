@@ -18,11 +18,11 @@ type RegisterGlobalConstant struct {
     Value micheline.Prim `json:"value"`
 }
 
-func (o *RegisterGlobalConstant) Kind() tezos.OpType {
+func (o RegisterGlobalConstant) Kind() tezos.OpType {
     return tezos.OpTypeRegisterConstant
 }
 
-func (o *RegisterGlobalConstant) MarshalJSON() ([]byte, error) {
+func (o RegisterGlobalConstant) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -36,7 +36,7 @@ func (o *RegisterGlobalConstant) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *RegisterGlobalConstant) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o RegisterGlobalConstant) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     b2 := bytes.NewBuffer(nil)
@@ -60,7 +60,7 @@ func (o *RegisterGlobalConstant) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params
     return nil
 }
 
-func (o *RegisterGlobalConstant) MarshalBinary() ([]byte, error) {
+func (o RegisterGlobalConstant) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

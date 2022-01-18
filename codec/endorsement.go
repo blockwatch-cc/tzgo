@@ -28,11 +28,11 @@ func (o Endorsement) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Endorsement) Kind() tezos.OpType {
+func (o Endorsement) Kind() tezos.OpType {
     return tezos.OpTypeEndorsement
 }
 
-func (o *Endorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Endorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     binary.Write(buf, enc, o.Level)
     return nil
@@ -49,7 +49,7 @@ func (o *Endorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
     return nil
 }
 
-func (o *Endorsement) MarshalBinary() ([]byte, error) {
+func (o Endorsement) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err
@@ -67,7 +67,7 @@ type InlinedEndorsement struct {
     Signature   tezos.Signature `json:"signature"`
 }
 
-func (o *InlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o InlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.Write(o.Branch.Bytes())
     o.Endorsement.EncodeBuffer(buf, p)
     buf.Write(o.Signature.Data) // generic sig, no tag (!)
@@ -94,11 +94,11 @@ type EndorsementWithSlot struct {
     Slot        int16              `json:"slot"`
 }
 
-func (o *EndorsementWithSlot) Kind() tezos.OpType {
+func (o EndorsementWithSlot) Kind() tezos.OpType {
     return tezos.OpTypeEndorsementWithSlot
 }
 
-func (o *EndorsementWithSlot) MarshalJSON() ([]byte, error) {
+func (o EndorsementWithSlot) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -111,7 +111,7 @@ func (o *EndorsementWithSlot) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *EndorsementWithSlot) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o EndorsementWithSlot) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     b2 := bytes.NewBuffer(nil)
     o.Endorsement.EncodeBuffer(b2, p)
@@ -136,7 +136,7 @@ func (o *EndorsementWithSlot) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (
     return err
 }
 
-func (o *EndorsementWithSlot) MarshalBinary() ([]byte, error) {
+func (o EndorsementWithSlot) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

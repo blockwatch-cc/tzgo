@@ -18,11 +18,11 @@ type ActivateAccount struct {
     Secret        tezos.HexBytes `json:"secret"`
 }
 
-func (o *ActivateAccount) Kind() tezos.OpType {
+func (o ActivateAccount) Kind() tezos.OpType {
     return tezos.OpTypeActivateAccount
 }
 
-func (o *ActivateAccount) MarshalJSON() ([]byte, error) {
+func (o ActivateAccount) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -35,7 +35,7 @@ func (o *ActivateAccount) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *ActivateAccount) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o ActivateAccount) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     buf.Write(o.PublicKeyHash.Hash) // only place where a 20 byte address is used (!)
     buf.Write(o.Secret.Bytes())
@@ -58,7 +58,7 @@ func (o *ActivateAccount) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
     return nil
 }
 
-func (o *ActivateAccount) MarshalBinary() ([]byte, error) {
+func (o ActivateAccount) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

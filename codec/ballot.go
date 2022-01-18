@@ -19,11 +19,11 @@ type Ballot struct {
     Ballot   tezos.BallotVote   `json:"ballot"`
 }
 
-func (o *Ballot) Kind() tezos.OpType {
+func (o Ballot) Kind() tezos.OpType {
     return tezos.OpTypeBallot
 }
 
-func (o *Ballot) MarshalJSON() ([]byte, error) {
+func (o Ballot) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -40,7 +40,7 @@ func (o *Ballot) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Ballot) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Ballot) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     buf.Write(o.Source.Bytes())
     binary.Write(buf, enc, o.Period)
@@ -69,7 +69,7 @@ func (o *Ballot) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
     return nil
 }
 
-func (o *Ballot) MarshalBinary() ([]byte, error) {
+func (o Ballot) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

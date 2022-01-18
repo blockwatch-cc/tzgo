@@ -19,11 +19,11 @@ type DoubleEndorsementEvidence struct {
     Slot int16              `json:"slot"`
 }
 
-func (o *DoubleEndorsementEvidence) Kind() tezos.OpType {
+func (o DoubleEndorsementEvidence) Kind() tezos.OpType {
     return tezos.OpTypeDoubleEndorsementEvidence
 }
 
-func (o *DoubleEndorsementEvidence) MarshalJSON() ([]byte, error) {
+func (o DoubleEndorsementEvidence) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -39,7 +39,7 @@ func (o *DoubleEndorsementEvidence) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *DoubleEndorsementEvidence) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o DoubleEndorsementEvidence) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     b2 := bytes.NewBuffer(nil)
     o.Op1.EncodeBuffer(b2, p)
@@ -78,7 +78,7 @@ func (o *DoubleEndorsementEvidence) DecodeBuffer(buf *bytes.Buffer, p *tezos.Par
     return nil
 }
 
-func (o *DoubleEndorsementEvidence) MarshalBinary() ([]byte, error) {
+func (o DoubleEndorsementEvidence) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err

@@ -19,7 +19,7 @@ type Manager struct {
     StorageLimit tezos.N       `json:"storage_limit"`
 }
 
-func (o *Manager) EncodeJSON(buf *bytes.Buffer) error {
+func (o Manager) EncodeJSON(buf *bytes.Buffer) error {
     buf.WriteString(`"source":`)
     buf.WriteString(strconv.Quote(o.Source.String()))
     buf.WriteString(`,"fee":`)
@@ -33,7 +33,7 @@ func (o *Manager) EncodeJSON(buf *bytes.Buffer) error {
     return nil
 }
 
-func (o *Manager) EncodeBuffer(buf *bytes.Buffer, _ *tezos.Params) error {
+func (o Manager) EncodeBuffer(buf *bytes.Buffer, _ *tezos.Params) error {
     buf.Write(o.Source.Bytes())
     o.Fee.EncodeBuffer(buf)
     o.Counter.EncodeBuffer(buf)
@@ -61,18 +61,22 @@ func (o *Manager) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
     return nil
 }
 
-func (o *Manager) WithCounter(c int64) {
+func (o *Manager) WithCounter(c int64) *Manager {
     o.Counter.SetInt64(c)
+    return o
 }
 
-func (o *Manager) WithFee(fee int64) {
+func (o *Manager) WithFee(fee int64) *Manager {
     o.Fee.SetInt64(fee)
+    return o
 }
 
-func (o *Manager) WithGasLimit(limit int64) {
+func (o *Manager) WithGasLimit(limit int64) *Manager {
     o.GasLimit.SetInt64(limit)
+    return o
 }
 
-func (o *Manager) WithStorageLimit(limit int64) {
+func (o *Manager) WithStorageLimit(limit int64) *Manager {
     o.StorageLimit.SetInt64(limit)
+    return o
 }

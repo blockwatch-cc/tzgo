@@ -16,11 +16,11 @@ type Delegation struct {
     Delegate tezos.Address `json:"delegate"`
 }
 
-func (o *Delegation) Kind() tezos.OpType {
+func (o Delegation) Kind() tezos.OpType {
     return tezos.OpTypeDelegation
 }
 
-func (o *Delegation) MarshalJSON() ([]byte, error) {
+func (o Delegation) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     buf.WriteByte('{')
     buf.WriteString(`"kind":`)
@@ -35,7 +35,7 @@ func (o *Delegation) MarshalJSON() ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func (o *Delegation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o Delegation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     if o.Delegate.IsValid() {
@@ -68,7 +68,7 @@ func (o *Delegation) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error
     return nil
 }
 
-func (o *Delegation) MarshalBinary() ([]byte, error) {
+func (o Delegation) MarshalBinary() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
     err := o.EncodeBuffer(buf, tezos.DefaultParams)
     return buf.Bytes(), err
