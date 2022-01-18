@@ -44,6 +44,17 @@ func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateL
 	return delegates, nil
 }
 
+// ListActiveDelegatesWithRolls returns information about all active delegates at a block
+// who have at least one roll.
+func (c *Client) ListActiveDelegatesWithRolls(ctx context.Context, id BlockID) (DelegateList, error) {
+	delegates := make(DelegateList, 0)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/active_delegates_with_rolls", id)
+	if err := c.Get(ctx, u, &delegates); err != nil {
+		return nil, err
+	}
+	return delegates, nil
+}
+
 // GetDelegate returns information about a delegate at a specific height.
 func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
 	delegate := &Delegate{
