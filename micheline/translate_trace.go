@@ -273,7 +273,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
         for i, t := range typ.Args {
             Trace(func(log LogFn) {
-                fmt.Printf("HELLOOOOOOO %#v\n", log)
                 log("L%0d: CHILD-%s[%s] [n=%d/%d] top=%s", lvl, label, t.GetVarAnnoAny(), i+1, len(typ.Args), stack.Peek().Dump())
                 log("L%0d: CHILD-%s[%s] [n=%d/%d] typ[%s]=%s\n", lvl, label, t.GetVarAnnoAny(), i+1, len(typ.Args), t.OpCode, t.Dump())
             })

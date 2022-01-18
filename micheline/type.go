@@ -255,7 +255,7 @@ func (p Prim) BuildType() Type {
 				p.Args[0].Args[0].BuildType().Prim, // key type
 				p.Args[0].Args[1].BuildType().Prim, // value type
 			}
-		case p.LooksLikeLambda():
+		case p.LooksLikeCode():
 			t.Type = PrimNullary // we don't know in/out types
 			t.OpCode = T_LAMBDA
 		case p.LooksLikeSet():

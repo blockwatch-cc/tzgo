@@ -403,7 +403,7 @@ func (p Prim) IsContainerType() bool {
 //
 func (p Prim) CanUnfold(typ Type) bool {
 	// fix for pair(list, x)
-	if p.IsSequence() && typ.IsPair() && typ.Args[0].IsContainerType() {
+	if p.IsSequence() && typ.IsPair() && typ.Args[0].IsList() {
 		return false
 	}
 
@@ -425,7 +425,7 @@ func (p Prim) CanUnfold(typ Type) bool {
 	// type tree. Hence we revert to a heuristic that checks if the
 	// current primitive looks like a container type by checking its
 	// contents
-	if p.IsSequence() && !p.LooksLikeContainer() && !p.LooksLikeLambda() {
+	if p.IsSequence() && !p.LooksLikeContainer() && !p.LooksLikeCode() {
 		return true
 	}
 
@@ -472,11 +472,11 @@ func (p Prim) LooksLikeContainer() bool {
 	}
 
 	// contains similar records
-	if !p.HasSimilarChildTypes() {
-		return false
+	if p.HasSimilarChildTypes() {
+		return true
 	}
 
-	return true
+	return false
 }
 
 // Checks if all children have the same type by generating a type tree from
@@ -534,7 +534,7 @@ func (p Prim) LooksLikeSet() bool {
 }
 
 // Checks if a Prim looks like a lambda type.
-func (p Prim) LooksLikeLambda() bool {
+func (p Prim) LooksLikeCode() bool {
 	if p.OpCode == T_LAMBDA || p.IsInstruction() {
 		return true
 	}
@@ -542,18 +542,13 @@ func (p Prim) LooksLikeLambda() bool {
 	if p.Type != PrimSequence || len(p.Args) == 0 {
 		return false
 	}
-	p = p.Args[0]
 
-	// first non-pair value is operation
-	for {
-		if p.IsInstruction() {
-			return true
-		}
-		if len(p.Args) == 0 || !(p.IsPair() || p.IsSequence()) {
-			return false
-		}
-		p = p.Args[0]
+	// first and last prim contain instruction ocpode
+	if p.Args[0].IsInstruction() && p.Args[len(p.Args)-1].IsInstruction() {
+		return true
 	}
+
+	return false
 }
 
 // Converts a pair tree into a flat sequence. While Michelson
@@ -681,7 +676,7 @@ func (p Prim) UnpackAll() (Prim, error) {
 	if p.IsPacked() {
 		return p.Unpack()
 	}
-	if p.LooksLikeLambda() {
+	if p.LooksLikeCode() {
 		return p, nil
 	}
 	pp := p
