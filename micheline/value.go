@@ -136,12 +136,14 @@ func (e Value) MarshalJSON() ([]byte, error) {
 
 		switch e.Render {
 		default:
-			log.Errorf("RENDER: %s", string(buf))
 			// render the plain prim tree
 			return json.Marshal(e.Value)
 		case RENDER_TYPE_FAIL:
+			// render the plain prim tree, but fail with render error
+			buf, _ = json.Marshal(e.Value)
 			return buf, err
 		case RENDER_TYPE_PANIC:
+			// panic with render error
 			panic(err)
 		}
 	}
