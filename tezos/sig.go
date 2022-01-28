@@ -39,7 +39,7 @@ const (
 )
 
 func (t SignatureType) IsValid() bool {
-	return t >= 0 && t < SignatureTypeInvalid
+	return t < SignatureTypeInvalid
 }
 
 func (t SignatureType) HashType() HashType {
@@ -174,7 +174,7 @@ func (s Signature) IsValid() bool {
 }
 
 func (s Signature) IsEqual(s2 Signature) bool {
-	return s.Type == s2.Type && bytes.Compare(s.Data, s2.Data) == 0
+	return s.Type == s2.Type && bytes.Equal(s.Data, s2.Data)
 }
 
 func (s Signature) Clone() Signature {
@@ -306,7 +306,7 @@ func ParseSignature(s string) (Signature, error) {
 		return Signature{}, fmt.Errorf("tezos: unknown signature format: %w", err)
 	}
 
-	if bytes.Compare(ver, typ.PrefixBytes()) != 0 {
+	if !bytes.Equal(ver, typ.PrefixBytes()) {
 		return Signature{}, fmt.Errorf("tezos: invalid signature type %s for %s", ver, typ.Prefix())
 	}
 

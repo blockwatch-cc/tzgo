@@ -49,7 +49,7 @@ const (
 )
 
 func (t KeyType) IsValid() bool {
-	return t >= 0 && t < KeyTypeInvalid
+	return t < KeyTypeInvalid
 }
 
 func (t KeyType) String() string {
@@ -315,7 +315,7 @@ func (k Key) IsValid() bool {
 }
 
 func (k Key) IsEqual(k2 Key) bool {
-	return k.Type == k2.Type && bytes.Compare(k.Data, k2.Data) == 0
+	return k.Type == k2.Type && bytes.Equal(k.Data, k2.Data)
 }
 
 func (k Key) Clone() Key {
@@ -442,11 +442,11 @@ func ParseKey(s string) (Key, error) {
 		return k, fmt.Errorf("tezos: unknown format for key %s: %w", s, err)
 	}
 	switch true {
-	case bytes.Compare(version, ED25519_PUBLIC_KEY_ID) == 0:
+	case bytes.Equal(version, ED25519_PUBLIC_KEY_ID):
 		k.Type = KeyTypeEd25519
-	case bytes.Compare(version, SECP256K1_PUBLIC_KEY_ID) == 0:
+	case bytes.Equal(version, SECP256K1_PUBLIC_KEY_ID):
 		k.Type = KeyTypeSecp256k1
-	case bytes.Compare(version, P256_PUBLIC_KEY_ID) == 0:
+	case bytes.Equal(version, P256_PUBLIC_KEY_ID):
 		k.Type = KeyTypeP256
 	default:
 		return k, fmt.Errorf("tezos: unknown version %x for key %s", version, s)
@@ -624,29 +624,29 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 			return
 		}
 		switch true {
-		case bytes.Compare(version, ED25519_ENCRYPTED_SEED_ID) == 0:
+		case bytes.Equal(version, ED25519_ENCRYPTED_SEED_ID):
 			version = ED25519_SEED_ID
-		case bytes.Compare(version, SECP256K1_ENCRYPTED_SECRET_KEY_ID) == 0:
+		case bytes.Equal(version, SECP256K1_ENCRYPTED_SECRET_KEY_ID):
 			version = SECP256K1_SECRET_KEY_ID
-		case bytes.Compare(version, P256_ENCRYPTED_SECRET_KEY_ID) == 0:
+		case bytes.Equal(version, P256_ENCRYPTED_SECRET_KEY_ID):
 			version = P256_SECRET_KEY_ID
 		}
 	}
 
 	// detect type
 	switch true {
-	case bytes.Compare(version, ED25519_SEED_ID) == 0:
+	case bytes.Equal(version, ED25519_SEED_ID):
 		if l := len(decoded); l != ed25519.SeedSize {
 			return k, fmt.Errorf("tezos: invalid ed25519 seed length: %d", l)
 		}
 		k.Type = KeyTypeEd25519
 		// convert seed to key
 		decoded = []byte(ed25519.NewKeyFromSeed(decoded))
-	case bytes.Compare(version, ED25519_SECRET_KEY_ID) == 0:
+	case bytes.Equal(version, ED25519_SECRET_KEY_ID):
 		k.Type = KeyTypeEd25519
-	case bytes.Compare(version, SECP256K1_SECRET_KEY_ID) == 0:
+	case bytes.Equal(version, SECP256K1_SECRET_KEY_ID):
 		k.Type = KeyTypeSecp256k1
-	case bytes.Compare(version, P256_SECRET_KEY_ID) == 0:
+	case bytes.Equal(version, P256_SECRET_KEY_ID):
 		k.Type = KeyTypeP256
 	default:
 		err = fmt.Errorf("tezos: unknown version %x for private key %s", version, s)

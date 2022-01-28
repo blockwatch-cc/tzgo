@@ -4,12 +4,13 @@
 package tezos
 
 import (
-	"blockwatch.cc/tzgo/base58"
 	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"strings"
+
+	"blockwatch.cc/tzgo/base58"
 )
 
 var (
@@ -435,7 +436,7 @@ func (h Hash) IsValid() bool {
 }
 
 func (h Hash) Equal(h2 Hash) bool {
-	return h.Type == h2.Type && bytes.Compare(h.Hash, h2.Hash) == 0
+	return h.Type == h2.Type && bytes.Equal(h.Hash, h2.Hash)
 }
 
 func (h Hash) Clone() Hash {
@@ -1036,7 +1037,7 @@ func decodeHash(hstr string) (Hash, error) {
 		}
 		return Hash{}, fmt.Errorf("tezos: unknown hash format: %w", err)
 	}
-	if bytes.Compare(version, typ.PrefixBytes()) != 0 {
+	if !bytes.Equal(version, typ.PrefixBytes()) {
 		return Hash{}, fmt.Errorf("tezos: invalid prefix '%x' for decoded hash type '%s'", version, typ)
 	}
 	if have, want := len(decoded), typ.Len(); have != want {

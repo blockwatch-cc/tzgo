@@ -49,7 +49,7 @@ func (s AddressFilter) Contains(addr Address) bool {
 }
 
 func (s *AddressFilter) Merge(b *AddressFilter) {
-	for n, _ := range b.set {
+	for n := range b.set {
 		s.set[n] = struct{}{}
 	}
 }

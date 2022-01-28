@@ -227,7 +227,7 @@ func (a Address) IsContract() bool {
 }
 
 func (a Address) Equal(b Address) bool {
-	return a.Type == b.Type && bytes.Compare(a.Hash, b.Hash) == 0
+	return a.Type == b.Type && bytes.Equal(a.Hash, b.Hash)
 }
 
 func (a Address) Clone() Address {
@@ -399,15 +399,15 @@ func ParseAddress(addr string) (Address, error) {
 		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
 	switch true {
-	case bytes.Compare(version, BAKER_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, BAKER_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeBaker, Hash: decoded}, nil
-	case bytes.Compare(version, ED25519_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, ED25519_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeEd25519, Hash: decoded}, nil
-	case bytes.Compare(version, SECP256K1_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, SECP256K1_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeSecp256k1, Hash: decoded}, nil
-	case bytes.Compare(version, P256_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, P256_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeP256, Hash: decoded}, nil
-	case bytes.Compare(version, NOCURVE_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, NOCURVE_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeContract, Hash: decoded}, nil
 	default:
 		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
@@ -432,6 +432,6 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 	case AddressTypeBlinded:
 		return base58.CheckEncode(addrhash, BLINDED_PUBLIC_KEY_HASH_ID), nil
 	default:
-		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x\n", typ, addrhash)
+		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x", typ, addrhash)
 	}
 }

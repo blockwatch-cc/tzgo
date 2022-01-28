@@ -39,7 +39,7 @@ var (
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
 	ProtocolVersions = map[uint32][]ProtocolHash{
-		Mainnet.Uint32(): []ProtocolHash{
+		Mainnet.Uint32(): {
 			ProtoGenesis, // -1
 			ProtoV000,    // 0
 			ProtoV001,    // 1
@@ -54,13 +54,13 @@ var (
 			ProtoV010,    // 10
 			ProtoV011_2,  // 11
 		},
-		Granadanet.Uint32(): []ProtocolHash{
+		Granadanet.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV009,      // 1
 			ProtoV010,      // 2
 		},
-		Hangzhounet2.Uint32(): []ProtocolHash{
+		Hangzhounet2.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV010,      // 1

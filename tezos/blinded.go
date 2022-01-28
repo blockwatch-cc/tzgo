@@ -53,7 +53,7 @@ func BlindAddress(a Address, secret []byte) (Address, error) {
 // Checks if address a when blinded with secret equals blinded address b.
 func MatchBlindedAddress(a, b Address, secret []byte) bool {
 	bh, _ := BlindHash(a.Hash, secret)
-	return bytes.Compare(bh, b.Hash) == 0
+	return bytes.Equal(bh, b.Hash)
 }
 
 func (a *Address) DecodeBlindedString(addr string) error {
@@ -69,7 +69,7 @@ func (a *Address) DecodeBlindedString(addr string) error {
 		return fmt.Errorf("tezos: decoded address hash is of invalid length")
 	}
 	switch true {
-	case bytes.Compare(version, BLINDED_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
 		a.Type = AddressTypeBlinded
 		a.Hash = decoded
 	default:
@@ -91,7 +91,7 @@ func DecodeBlindedAddress(addr string) (Address, error) {
 		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
 	switch true {
-	case bytes.Compare(version, BLINDED_PUBLIC_KEY_HASH_ID) == 0:
+	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeBlinded, Hash: decoded}, nil
 	default:
 		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
