@@ -7,3 +7,5 @@
 # OSX specific files
 .DS_Store
 
+# Go specific files
+vendor/
