@@ -111,10 +111,20 @@ func (t PrimType) MarshalText() ([]byte, error) {
 	return []byte(t.String()), nil
 }
 
+type PrimList []Prim
+
+func (l PrimList) Last() Prim {
+	n := len(l)
+	if n == 0 {
+		return InvalidPrim
+	}
+	return l[n-1]
+}
+
 type Prim struct {
 	Type      PrimType // primitive type
 	OpCode    OpCode   // primitive opcode (invalid on sequences, strings, bytes, int)
-	Args      []Prim   // optional arguments
+	Args      PrimList // optional arguments
 	Anno      []string // optional type annotations
 	Int       *big.Int // optional data
 	String    string   // optional data
@@ -599,9 +609,9 @@ func (p Prim) FoldPair() Prim {
 	}
 	switch len(p.Args) {
 	case 2:
-		return NewPairValue(p.Args[0], p.Args[1])
+		return NewPair(p.Args[0], p.Args[1])
 	default:
-		return NewPairValue(p.Args[0], NewSeq(p.Args[1:]...).FoldPair())
+		return NewPair(p.Args[0], NewSeq(p.Args[1:]...).FoldPair())
 	}
 }
 
@@ -706,7 +716,9 @@ func (p Prim) Value(as OpCode) interface{} {
 			}
 			return tm
 		default:
-			return p.Int.Text(10)
+			var z tezos.Z
+			z.Set(p.Int)
+			return z
 		}
 
 	case PrimString:
@@ -716,9 +728,35 @@ func (p Prim) Value(as OpCode) interface{} {
 				return t
 			}
 			return p.String
+
+		case T_KEY_HASH, T_ADDRESS, T_CONTRACT:
+			a, err := tezos.ParseAddress(p.String)
+			if err == nil {
+				return a
+			}
+
+		case T_KEY:
+			k, err := tezos.ParseKey(p.String)
+			if err == nil {
+				return k
+			}
+
+		case T_SIGNATURE:
+			s, err := tezos.ParseSignature(p.String)
+			if err == nil {
+				return s
+			}
+
+		case T_CHAIN_ID:
+			id, err := tezos.ParseChainIdHash(p.String)
+			if err == nil {
+				return id
+			}
+
 		default:
 			return p.String
 		}
+		return p.String
 
 	case PrimBytes:
 		switch as {
@@ -742,7 +780,7 @@ func (p Prim) Value(as OpCode) interface{} {
 
 		case T_CHAIN_ID:
 			if len(p.Bytes) == tezos.HashTypeChainId.Len() {
-				return tezos.NewChainIdHash(p.Bytes).String()
+				return tezos.NewChainIdHash(p.Bytes)
 			}
 
 		default:
