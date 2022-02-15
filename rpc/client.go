@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	libraryVersion = "1.11-rc0"
+	libraryVersion = "1.11-rc1"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
 )
@@ -82,11 +82,13 @@ func (c *Client) Init(ctx context.Context) error {
 		return err
 	}
 
+	return nil
+}
+
+func (c *Client) Listen() {
 	// start observers
 	c.BlockObserver.Listen(c)
 	c.MempoolObserver.ListenMempool(c)
-
-	return nil
 }
 
 func (c *Client) Close() {
@@ -96,6 +98,11 @@ func (c *Client) Close() {
 
 func (c *Client) ResolveChainId(ctx context.Context) (tezos.ChainIdHash, error) {
 	id, err := c.GetChainId(ctx)
+	if c.ChainId.IsValid() {
+		if !c.ChainId.Equal(id) {
+			return id, fmt.Errorf("rpc: chain mismatch detected, expected=%s seen=%s", c.ChainId, id)
+		}
+	}
 	c.ChainId = id
 	return id, err
 }

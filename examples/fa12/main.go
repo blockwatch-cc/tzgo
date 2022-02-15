@@ -126,7 +126,7 @@ func run() error {
 	type FA12Transfer struct {
 		From  tezos.Address `json:"from"`
 		To    tezos.Address `json:"to"`
-		Value tezos.Z       `json:"value,string"`
+		Value tezos.Z       `json:"value"`
 	}
 	type FA12TransferWrapper struct {
 		Transfer FA12Transfer `json:"transfer"`
