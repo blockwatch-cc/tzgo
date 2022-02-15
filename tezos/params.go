@@ -37,8 +37,8 @@ type Params struct {
 	Name        string       `json:"name"`
 	Network     string       `json:"network"`
 	Symbol      string       `json:"symbol"`
-	Deployment  int          `json:"deployment"` // as activated on chain
-	Version     int          `json:"version"`    // as implemented
+	Deployment  int          `json:"deployment"`
+	Version     int          `json:"version"`
 	ChainId     ChainIdHash  `json:"chain_id"`
 	Protocol    ProtocolHash `json:"protocol"`
 	StartHeight int64        `json:"start_height"`
@@ -46,8 +46,9 @@ type Params struct {
 	Decimals    int          `json:"decimals"`
 	Token       int64        `json:"units"` // atomic units per token
 
-	NoRewardCycles               int64            `json:"no_reward_cycles"`                // from mainnet genesis
-	SecurityDepositRampUpCycles  int64            `json:"security_deposit_ramp_up_cycles"` // increase 1/64th each cycle
+	// Per-protocol configs
+	NoRewardCycles               int64            `json:"no_reward_cycles"`
+	SecurityDepositRampUpCycles  int64            `json:"security_deposit_ramp_up_cycles"`
 	PreservedCycles              int64            `json:"preserved_cycles"`
 	BlocksPerCycle               int64            `json:"blocks_per_cycle"`
 	BlocksPerCommitment          int64            `json:"blocks_per_commitment"`
@@ -68,8 +69,6 @@ type Params struct {
 	EndorsementSecurityDeposit   int64            `json:"endorsement_security_deposit"`
 	BlockReward                  int64            `json:"block_reward"`
 	EndorsementReward            int64            `json:"endorsement_reward"`
-	BlockRewardV6                [2]int64         `json:"block_rewards_v6"`
-	EndorsementRewardV6          [2]int64         `json:"endorsement_rewards_v6"`
 	CostPerByte                  int64            `json:"cost_per_byte"`
 	HardStorageLimitPerOperation int64            `json:"hard_storage_limit_per_operation"`
 	TestChainDuration            int64            `json:"test_chain_duration"`
@@ -77,12 +76,15 @@ type Params struct {
 	MaxProposalsPerDelegate      int              `json:"max_proposals_per_delegate"`
 	MaxRevelationsPerBlock       int              `json:"max_revelations_per_block"`
 	NonceLength                  int              `json:"nonce_length"`
-	MaxOperationsTTL             int64            `json:"max_operations_ttl"`
 
 	// New in Bablyon v005
 	MinProposalQuorum int64 `json:"min_proposal_quorum"`
 	QuorumMin         int64 `json:"quorum_min"`
 	QuorumMax         int64 `json:"quorum_max"`
+
+	// New in Carthage v006
+	BlockRewardV6       [2]int64 `json:"block_rewards_v6"`
+	EndorsementRewardV6 [2]int64 `json:"endorsement_rewards_v6"`
 
 	// New in Delphi v007
 	MaxAnonOpsPerBlock int `json:"max_anon_ops_per_block"` // was max_revelations_per_block
@@ -93,18 +95,37 @@ type Params struct {
 	LiquidityBakingSunsetLevel        int64         `json:"liquidity_baking_sunset_level"`
 	MinimalBlockDelay                 time.Duration `json:"minimal_block_delay"`
 
-	// hidden invoice feature
-	Invoices map[string]int64 `json:"invoices,omitempty"`
+	// New in Hangzhou v011
+	MaxMichelineNodeCount          int      `json:"max_micheline_node_count"`
+	MaxMichelineBytesLimit         int      `json:"max_micheline_bytes_limit"`
+	MaxAllowedGlobalConstantsDepth int      `json:"max_allowed_global_constants_depth"`
+	CacheLayout                    []string `json:"cache_layout"`
+
+	// New in Ithaca v012
+	BlocksPerStakeSnapshot                           int64 `json:"blocks_per_stake_snapshot"`
+	BakingRewardFixedPortion                         int64 `json:"baking_reward_fixed_portion,string"`
+	BakingRewardBonusPerSlot                         int64 `json:"baking_reward_bonus_per_slot,string"`
+	EndorsingRewardPerSlot                           int64 `json:"endorsing_reward_per_slot,string"`
+	DelayIncrementPerRound                           int   `json:"delay_increment_per_round,string"`
+	ConsensusCommitteeSize                           int   `json:"consensus_committee_size"`
+	ConsensusThreshold                               int   `json:"consensus_threshold"`
+	MinimalParticipationRatio                        Ratio `json:"minimal_participation_ratio"`
+	MaxSlashingPeriod                                int64 `json:"max_slashing_period"`
+	FrozenDepositsPercentage                         int   `json:"frozen_deposits_percentage"`
+	DoubleBakingPunishment                           int64 `json:"double_baking_punishment,string"`
+	RatioOfFrozenDepositsSlashedPerDoubleEndorsement Ratio `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
 
 	// extra features to follow protocol upgrades
-	SilentSpendable      bool  `json:"silent_spendable"` // contracts are spendable/delegatable without flag set
-	HasOriginationBug    bool  `json:"has_origination_bug"`
-	ReactivateByTx       bool  `json:"reactivate_by_tx"`
-	OperationTagsVersion int   `json:"operation_tags_version"`
-	NumVotingPeriods     int   `json:"num_voting_periods"`
-	StartBlockOffset     int64 `json:"start_block_offset"` // correct start/end cycle since Granada
-	StartCycle           int64 `json:"start_cycle"`        // correction since Granada v10
-	VoteBlockOffset      int64 `json:"vote_block_offset"`  // correction for Edo + Florence Mainnet-only +1 bug
+	MaxOperationsTTL     int64            `json:"max_operations_ttl"`               // in block meta until v011, explicit from v012+
+	Invoices             map[string]int64 `json:"invoices,omitempty"`               // hidden invoice feature, explicit since v007+ (?)
+	SilentSpendable      bool             `json:"silent_spendable,omitempty"`       // contracts are spendable/delegatable without flag set, changed in v005
+	HasOriginationBug    bool             `json:"has_origination_bug,omitempty"`    // bugfix applied before v002
+	ReactivateByTx       bool             `json:"reactivate_by_tx,omitempty"`       // bugfix applied before v004
+	OperationTagsVersion int              `json:"operation_tags_version,omitempty"` // 1 after v005
+	NumVotingPeriods     int              `json:"num_voting_periods,omitempty"`     // 5 after v008, 4 before
+	StartBlockOffset     int64            `json:"start_block_offset,omitempty"`     // correct start/end cycle since Granada
+	StartCycle           int64            `json:"start_cycle,omitempty"`            // correction since Granada v10
+	VoteBlockOffset      int64            `json:"vote_block_offset,omitempty"`      // correction for Edo + Florence Mainnet-only +1 bug
 }
 
 func NewParams() *Params {
@@ -115,9 +136,9 @@ func NewParams() *Params {
 		StartHeight:      -1,
 		EndHeight:        -1,
 		Decimals:         6,
-		Token:            1000000,
-		NumVotingPeriods: 4,
-		MaxOperationsTTL: 60,
+		Token:            1000000, // initial, changed several times later
+		NumVotingPeriods: 4,       // initial, changed once in v008
+		MaxOperationsTTL: 60,      // initial, changed once in v011
 	}
 }
 
@@ -170,7 +191,7 @@ func (p *Params) IsSnapshotBlock(height int64) bool {
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
-	return (height-pp.StartBlockOffset)%pp.BlocksPerRollSnapshot == 0
+	return (height-pp.StartBlockOffset)%pp.SnapshotBlocks() == 0
 }
 
 func (p *Params) IsSeedRequired(height int64) bool {
@@ -221,7 +242,7 @@ func (p *Params) SnapshotBlock(cycle, index int64) int64 {
 	if !p.ContainsCycle(baseCycle) {
 		pp = p.ForCycle(baseCycle)
 	}
-	return pp.CycleStartHeight(baseCycle) + (index+1)*pp.BlocksPerRollSnapshot - 1
+	return pp.CycleStartHeight(baseCycle) + (index+1)*pp.SnapshotBlocks() - 1
 }
 
 func (p *Params) SnapshotIndex(height int64) int64 {
@@ -230,13 +251,20 @@ func (p *Params) SnapshotIndex(height int64) int64 {
 		pp = p.ForHeight(height)
 	}
 	if height == pp.StartBlockOffset {
-		return pp.BlocksPerCycle/pp.BlocksPerRollSnapshot - 1
+		return pp.BlocksPerCycle/pp.SnapshotBlocks() - 1
 	}
-	return ((height - pp.StartBlockOffset - pp.BlocksPerRollSnapshot) % pp.BlocksPerCycle) / pp.BlocksPerRollSnapshot
+	return ((height - pp.StartBlockOffset - pp.SnapshotBlocks()) % pp.BlocksPerCycle) / pp.SnapshotBlocks()
+}
+
+func (p *Params) SnapshotBlocks() int64 {
+	if p.BlocksPerRollSnapshot > 0 {
+		return p.BlocksPerRollSnapshot
+	}
+	return p.BlocksPerStakeSnapshot
 }
 
 func (p *Params) MaxSnapshotIndex() int64 {
-	return (p.BlocksPerCycle / p.BlocksPerRollSnapshot) - 1
+	return (p.BlocksPerCycle / p.SnapshotBlocks()) - 1
 }
 
 func (p *Params) VotingStartCycleFromHeight(height int64) int64 {
@@ -298,7 +326,10 @@ func (p *Params) VoteEndHeight(height int64) int64 {
 }
 
 func (p *Params) MaxBlockReward() int64 {
-	return p.BlockReward + p.EndorsementReward*int64(p.EndorsersPerBlock)
+	if p.Version < 12 {
+		return p.BlockReward + p.EndorsementReward*int64(p.EndorsersPerBlock)
+	}
+	return p.BlockReward + p.EndorsementReward*int64(p.ConsensusCommitteeSize)
 }
 
 func (p *Params) ContainsHeight(height int64) bool {

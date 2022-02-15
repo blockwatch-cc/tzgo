@@ -38,3 +38,16 @@ func (h HexBytes) String() string {
 func (h HexBytes) Bytes() []byte {
     return []byte(h)
 }
+
+// Ratio represents a numeric ratio used in Ithaca constants
+type Ratio struct {
+    Num int `json:"numerator"`
+    Den int `json:"denominator"`
+}
+
+func (r Ratio) Float64() float64 {
+    if r.Den == 0 {
+        return 0
+    }
+    return float64(r.Num) / float64(r.Den)
+}

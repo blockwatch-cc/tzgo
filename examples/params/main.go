@@ -18,12 +18,16 @@ var (
 	flags   = flag.NewFlagSet("params", flag.ContinueOnError)
 	verbose bool
 	node    string
+	proto   string
+	net     string
 )
 
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
 	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "node url")
+	flags.StringVar(&proto, "proto", "", "simulate with protocol")
+	flags.StringVar(&net, "net", "", "simulate with network")
 }
 
 func main() {
@@ -71,20 +75,26 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	forNet, forProto := block.ChainId, block.Protocol
 
-	// simulate H
-	if height >= 1916929 && !block.Protocol.Equal(tezos.ProtoV011_2) {
-		fmt.Println("Simulating Hangzhou activation")
-		block.Protocol = tezos.ProtoV011_2
+	// simulate
+	if proto != "" {
+		forProto, err = tezos.ParseProtocolHash(proto)
+		if err != nil {
+			return err
+		}
 	}
-
-	p := cons.MapToChainParams().ForNetwork(block.ChainId).ForProtocol(block.Protocol)
-
-	// fmt.Printf("SNAP height=%d\n", p.SnapshotBlock(387+7, 15))
-	// return nil
+	if net != "" {
+		forNet, err = tezos.ParseChainIdHash(net)
+		if err != nil {
+			return err
+		}
+	}
+	p := cons.MapToChainParams().ForNetwork(forNet).ForProtocol(forProto)
+	fmt.Printf("Using protocol %s on %s\n", forProto.Short()[:8], p.Network)
 
 	fmt.Println("Height ...................... ", height)
-	fmt.Println("Protocol .................... ", block.Protocol)
+	fmt.Println("Protocol .................... ", forProto)
 	fmt.Println("Period ...................... ", block.GetVotingPeriodKind(), block.GetVotingPeriod())
 	fmt.Println("StartCycle .................. ", p.StartCycle)
 	fmt.Println("StartBlockOffset ............ ", p.StartBlockOffset)

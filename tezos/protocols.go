@@ -22,6 +22,8 @@ var (
 	ProtoV010      = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
 	ProtoV011_1    = ParseProtocolHashSafe("PtHangzHogokSuiMHemCuowEavgYTP8J5qQ9fQS793MHYFpCY3r")
 	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
+	ProtoV012_1    = ParseProtocolHashSafe("PsiThaCaT47Zboaw71QWScM8sXeMM7bbQFncK9FLqYc6EKdpjVP")
+	ProtoV012_2    = ParseProtocolHashSafe("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
 
 	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Alphanet     = MustParseChainIdHash("NetXgtSLGNJvNye")
@@ -35,6 +37,8 @@ var (
 	Granadanet   = MustParseChainIdHash("NetXz969SFaFn8k")
 	Hangzhounet  = MustParseChainIdHash("NetXuXoGoLxNK6o")
 	Hangzhounet2 = MustParseChainIdHash("NetXZSsxBpMQeAT")
+	Ithacanet    = MustParseChainIdHash("NetXbhmtAbMukLc")
+	Ithacanet2   = MustParseChainIdHash("NetXnHfVqm9iesp")
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
@@ -53,6 +57,7 @@ var (
 			ProtoV009,    // 9
 			ProtoV010,    // 10
 			ProtoV011_2,  // 11
+			ProtoV012_2,  // 11
 		},
 		Granadanet.Uint32(): {
 			ProtoGenesis,   // -1
@@ -65,6 +70,12 @@ var (
 			ProtoBootstrap, // 0
 			ProtoV010,      // 1
 			ProtoV011_2,    // 2
+		},
+		Ithacanet2.Uint32(): {
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV011_2,    // 1
+			ProtoV012_2,    // 2
 		},
 	}
 )
@@ -99,6 +110,10 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 		pp.Network = "Hangzhounet"
 	case Hangzhounet2.Equal(net):
 		pp.Network = "Hangzhounet2"
+	case Ithacanet.Equal(net):
+		pp.Network = "Ithacanet"
+	case Ithacanet2.Equal(net):
+		pp.Network = "Ithacanet2"
 	default:
 		pp.Network = "Sandbox"
 	}
@@ -317,8 +332,29 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1916929
+			pp.EndHeight = 2244608
+		} else if Hangzhounet.Equal(p.ChainId) || Hangzhounet2.Equal(p.ChainId) {
+			pp.StartBlockOffset = 8192
+			pp.StartCycle = 2
+		}
+	case ProtoV012_1.Equal(proto) || ProtoV012_2.Equal(proto): // Ithaca
+		pp.Version = 12
+		pp.OperationTagsVersion = 1
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		if Mainnet.Equal(p.ChainId) {
+			pp.StartBlockOffset = 2244608
+			pp.StartCycle = 468
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 256
+			pp.StartHeight = 2244609
 			pp.EndHeight = -1
-		} else if Hangzhounet2.Equal(p.ChainId) {
+		} else if Ithacanet.Equal(p.ChainId) || Ithacanet2.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 		}

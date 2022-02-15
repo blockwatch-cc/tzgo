@@ -67,24 +67,57 @@ type Constants struct {
 	LiquidityBakingSubsidy            int64 `json:"liquidity_baking_subsidy,string"`
 	LiquidityBakingSunsetLevel        int64 `json:"liquidity_baking_sunset_level"`
 	MinimalBlockDelay                 int   `json:"minimal_block_delay,string"`
+
+	// New in v11
+	MaxMichelineNodeCount          int      `json:"max_micheline_node_count"`
+	MaxMichelineBytesLimit         int      `json:"max_micheline_bytes_limit"`
+	MaxAllowedGlobalConstantsDepth int      `json:"max_allowed_global_constants_depth"`
+	CacheLayout                    []string `json:"cache_layout"`
+
+	// New in v12
+	BlocksPerStakeSnapshot                           int64       `json:"blocks_per_stake_snapshot"`
+	BakingRewardFixedPortion                         int64       `json:"baking_reward_fixed_portion,string"`
+	BakingRewardBonusPerSlot                         int64       `json:"baking_reward_bonus_per_slot,string"`
+	EndorsingRewardPerSlot                           int64       `json:"endorsing_reward_per_slot,string"`
+	MaxOperationsTimeToLive                          int64       `json:"max_operations_time_to_live"`
+	DelayIncrementPerRound                           int         `json:"delay_increment_per_round,string"`
+	ConsensusCommitteeSize                           int         `json:"consensus_committee_size"`
+	ConsensusThreshold                               int         `json:"consensus_threshold"`
+	MinimalParticipationRatio                        tezos.Ratio `json:"minimal_participation_ratio"`
+	MaxSlashingPeriod                                int64       `json:"max_slashing_period"`
+	FrozenDepositsPercentage                         int         `json:"frozen_deposits_percentage"`
+	DoubleBakingPunishment                           int64       `json:"double_baking_punishment,string"`
+	RatioOfFrozenDepositsSlashedPerDoubleEndorsement tezos.Ratio `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
 }
 
 func (c Constants) HaveV6Rewards() bool {
 	return c.BakingRewardPerEndorsement_v6[0] > 0
 }
 
+func (c Constants) HaveV12Rewards() bool {
+	return c.BakingRewardFixedPortion > 0
+}
+
 func (c Constants) GetBlockReward() int64 {
-	if c.HaveV6Rewards() {
+	switch {
+	case c.HaveV12Rewards():
+		return c.BakingRewardFixedPortion + c.BakingRewardBonusPerSlot*int64(c.ConsensusCommitteeSize)
+	case c.HaveV6Rewards():
 		return c.BakingRewardPerEndorsement_v6[0] * int64(c.EndorsersPerBlock)
+	default:
+		return c.BlockReward_v1
 	}
-	return c.BlockReward_v1
 }
 
 func (c Constants) GetEndorsementReward() int64 {
-	if c.HaveV6Rewards() {
+	switch {
+	case c.HaveV12Rewards():
+		return c.EndorsingRewardPerSlot
+	case c.HaveV6Rewards():
 		return c.EndorsementReward_v6[0]
+	default:
+		return c.EndorsementReward_v1
 	}
-	return c.EndorsementReward_v1
 }
 
 type v1_const struct {
@@ -216,5 +249,25 @@ func (c Constants) MapToChainParams() *tezos.Params {
 		}
 	}
 
+	// v11
+	p.MaxMichelineNodeCount = c.MaxMichelineNodeCount
+	p.MaxMichelineBytesLimit = c.MaxMichelineBytesLimit
+	p.MaxAllowedGlobalConstantsDepth = c.MaxAllowedGlobalConstantsDepth
+	p.CacheLayout = c.CacheLayout
+
+	// New in v12
+	p.BlocksPerStakeSnapshot = c.BlocksPerStakeSnapshot
+	p.BakingRewardFixedPortion = c.BakingRewardFixedPortion
+	p.BakingRewardBonusPerSlot = c.BakingRewardBonusPerSlot
+	p.EndorsingRewardPerSlot = c.EndorsingRewardPerSlot
+	p.MaxOperationsTTL = c.MaxOperationsTimeToLive
+	p.DelayIncrementPerRound = c.DelayIncrementPerRound
+	p.ConsensusCommitteeSize = c.ConsensusCommitteeSize
+	p.ConsensusThreshold = c.ConsensusThreshold
+	p.MinimalParticipationRatio = c.MinimalParticipationRatio
+	p.MaxSlashingPeriod = c.MaxSlashingPeriod
+	p.FrozenDepositsPercentage = c.FrozenDepositsPercentage
+	p.DoubleBakingPunishment = c.DoubleBakingPunishment
+	p.RatioOfFrozenDepositsSlashedPerDoubleEndorsement = c.RatioOfFrozenDepositsSlashedPerDoubleEndorsement
 	return p
 }
