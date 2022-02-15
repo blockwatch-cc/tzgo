@@ -27,6 +27,13 @@ func (e Entrypoint) Type() Type {
 	return typ
 }
 
+func (e Entrypoint) IsCallback() bool {
+	if e.Prim == nil {
+		return false
+	}
+	return e.Prim.IsPair() && e.Prim.Args.Last().OpCode == T_CONTRACT
+}
+
 type Entrypoints map[string]Entrypoint
 
 func (e Entrypoints) FindBranch(branch string) (Entrypoint, bool) {

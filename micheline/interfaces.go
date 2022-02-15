@@ -16,14 +16,37 @@ func (s *Script) Implements(i Interface) bool {
 	return i.Matches(eps)
 }
 
+func (s *Script) ImplementsStrict(i Interface) bool {
+	eps, _ := s.Entrypoints(true)
+	if len(eps) == 0 {
+		return false
+	}
+	return i.MatchesStrict(eps)
+}
+
 func (s *Script) Interfaces() Interfaces {
 	eps, _ := s.Entrypoints(true)
 	if len(eps) == 0 {
 		return nil
 	}
 	iv := make(Interfaces, 0)
-	for _, i := range knownInterfaces {
+	for _, i := range WellKnownInterfaces {
 		if !i.Matches(eps) {
+			continue
+		}
+		iv = append(iv, i)
+	}
+	return iv
+}
+
+func (s *Script) InterfacesStrict() Interfaces {
+	eps, _ := s.Entrypoints(true)
+	if len(eps) == 0 {
+		return nil
+	}
+	iv := make(Interfaces, 0)
+	for _, i := range WellKnownInterfaces {
+		if !i.MatchesStrict(eps) {
 			continue
 		}
 		iv = append(iv, i)
@@ -33,9 +56,13 @@ func (s *Script) Interfaces() Interfaces {
 
 type Interface string
 
+func (m Interface) String() string {
+	return string(m)
+}
+
 // search all interfaces in the list of entrypoints
 func (m Interface) Matches(e Entrypoints) bool {
-	for _, spec := range michelsonInterfaces[m] {
+	for _, spec := range InterfaceSpecs[m] {
 		var matched bool
 		for _, ep := range e {
 			if IsEqualPrim(spec, *ep.Prim, false) {
@@ -48,6 +75,58 @@ func (m Interface) Matches(e Entrypoints) bool {
 		}
 	}
 	return true
+}
+
+func (m Interface) MatchesStrict(e Entrypoints) bool {
+	for _, spec := range InterfaceSpecs[m] {
+		var matched bool
+		for _, ep := range e {
+			if IsEqualPrim(spec, *ep.Prim, true) {
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			return false
+		}
+	}
+	return true
+}
+
+func (m Interface) Contains(e Entrypoint) bool {
+	for _, spec := range InterfaceSpecs[m] {
+		if IsEqualPrim(spec, *e.Prim, false) {
+			return true
+		}
+	}
+	return false
+}
+
+func (m Interface) ContainsStrict(e Entrypoint) bool {
+	for _, spec := range InterfaceSpecs[m] {
+		if IsEqualPrim(spec, *e.Prim, true) {
+			return true
+		}
+	}
+	return false
+}
+
+func (m Interface) FuncType(name string) Type {
+	for _, v := range InterfaceSpecs[m] {
+		if v.GetVarAnno() == name {
+			return NewType(v)
+		}
+	}
+	return Type{}
+}
+
+func (m Interface) FuncPrim(name string) Prim {
+	for _, v := range InterfaceSpecs[m] {
+		if v.GetVarAnno() == name {
+			return v
+		}
+	}
+	return Prim{}
 }
 
 type Interfaces []Interface
@@ -116,7 +195,7 @@ var (
 	// IKolibriVault = Interface("KOLIBRI_VAULT")
 	// IWXTZVault    = Interface("WXTZ_VAULT")
 
-	knownInterfaces = []Interface{
+	WellKnownInterfaces = []Interface{
 		IManager,
 		ISetDelegate,
 		ITzip5,
@@ -129,8 +208,9 @@ var (
 	}
 )
 
-// lists of required entrypoints (note: annotations are optional)
-var michelsonInterfaces = map[Interface][]Prim{
+// WellKnownInterfaces contains entrypoint types for standard call interfaces and other
+// known contracts.
+var InterfaceSpecs = map[Interface][]Prim{
 	// manager.tz
 	IManager: []Prim{
 		// 1 (lambda %do unit (list operation))
@@ -227,13 +307,13 @@ var michelsonInterfaces = map[Interface][]Prim{
 		// )
 		NewCodeAnno(T_LIST, "%transfer",
 			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":from_"),
-				NewCodeAnno(T_LIST, ":txs",
+				NewCodeAnno(T_ADDRESS, "%from_"),
+				NewCodeAnno(T_LIST, "%txs",
 					NewPairType(
-						NewCodeAnno(T_ADDRESS, ":to_"),
+						NewCodeAnno(T_ADDRESS, "%to_"),
 						NewPairType(
-							NewCodeAnno(T_NAT, ":token_id"),
-							NewCodeAnno(T_NAT, ":amount"),
+							NewCodeAnno(T_NAT, "%token_id"),
+							NewCodeAnno(T_NAT, "%amount"),
 						),
 					),
 				),
@@ -259,21 +339,21 @@ var michelsonInterfaces = map[Interface][]Prim{
 		//   )
 		// )
 		NewPairType(
-			NewCodeAnno(T_LIST, ":requests",
+			NewCodeAnno(T_LIST, "%requests",
 				NewPairType(
-					NewCodeAnno(T_ADDRESS, ":owner"),
-					NewCodeAnno(T_NAT, ":token_id"),
+					NewCodeAnno(T_ADDRESS, "%owner"),
+					NewCodeAnno(T_NAT, "%token_id"),
 				),
 			),
-			NewCodeAnno(T_CONTRACT, ":callback",
+			NewCodeAnno(T_CONTRACT, "%callback",
 				NewCode(T_LIST,
 					NewPairType(
 						NewPairType(
-							NewCodeAnno(T_ADDRESS, ":owner"),
-							NewCodeAnno(T_NAT, ":token_id"),
-							":request",
+							NewCodeAnno(T_ADDRESS, "%owner"),
+							NewCodeAnno(T_NAT, "%token_id"),
+							"%request",
 						),
-						NewCodeAnno(T_NAT, ":balance"),
+						NewCodeAnno(T_NAT, "%balance"),
 					),
 				),
 			),
@@ -300,20 +380,20 @@ var michelsonInterfaces = map[Interface][]Prim{
 		NewCodeAnno(T_LIST, "%update_operators",
 			NewCode(T_OR,
 				NewPairType(
-					NewCodeAnno(T_ADDRESS, ":owner"),
+					NewCodeAnno(T_ADDRESS, "%owner"),
 					NewPairType(
-						NewCodeAnno(T_ADDRESS, ":operator"),
-						NewCodeAnno(T_NAT, ":token_id"),
+						NewCodeAnno(T_ADDRESS, "%operator"),
+						NewCodeAnno(T_NAT, "%token_id"),
 					),
-					":add_operator",
+					"%add_operator",
 				),
 				NewPairType(
-					NewCodeAnno(T_ADDRESS, ":owner"),
+					NewCodeAnno(T_ADDRESS, "%owner"),
 					NewPairType(
-						NewCodeAnno(T_ADDRESS, ":operator"),
-						NewCodeAnno(T_NAT, ":token_id"),
+						NewCodeAnno(T_ADDRESS, "%operator"),
+						NewCodeAnno(T_NAT, "%token_id"),
 					),
-					":remove_operator",
+					"%remove_operator",
 				),
 			),
 		),
