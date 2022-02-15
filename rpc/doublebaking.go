@@ -1,7 +1,11 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
+
+import (
+	"blockwatch.cc/tzgo/tezos"
+)
 
 // Ensure DoubleBaking implements the TypedOperation interface.
 var _ TypedOperation = (*DoubleBaking)(nil)
@@ -19,8 +23,8 @@ func (d DoubleBaking) Meta() OperationMetadata {
 	return d.Metadata
 }
 
-// Cost returns operation cost to implement TypedOperation interface.
-func (d DoubleBaking) Cost() OperationCost {
+// Costs returns operation cost to implement TypedOperation interface.
+func (d DoubleBaking) Costs() tezos.Costs {
 	var burn int64
 	upd := d.Metadata.BalanceUpdates
 	// last item is accuser reward, rest is burned
@@ -31,7 +35,7 @@ func (d DoubleBaking) Cost() OperationCost {
 			burn += v.Amount()
 		}
 	}
-	return OperationCost{
+	return tezos.Costs{
 		Burn: -burn,
 	}
 }

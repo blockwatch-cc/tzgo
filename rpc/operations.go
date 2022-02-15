@@ -4,6 +4,7 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"encoding/json"
@@ -24,13 +25,22 @@ type Operation struct {
 	Errors    []OperationError   `json:"error,omitempty"` // mempool only
 }
 
-// Cost returns the sum of costs across all batched and internal operations.
-func (o Operation) Cost() OperationCost {
-	var c OperationCost
+// TotalCosts returns the sum of costs across all batched and internal operations.
+func (o Operation) TotalCosts() tezos.Costs {
+	var c tezos.Costs
 	for _, op := range o.Contents {
-		c = c.Add(op.Cost())
+		c = c.Add(op.Costs())
 	}
 	return c
+}
+
+// Costs returns ta list of individual costs for all batched operations.
+func (o Operation) Costs() []tezos.Costs {
+	list := make([]tezos.Costs, len(o.Contents))
+	for i, op := range o.Contents {
+		list[i] = op.Costs()
+	}
+	return list
 }
 
 // TypedOperation must be implemented by all operations
@@ -38,29 +48,8 @@ type TypedOperation interface {
 	Kind() tezos.OpType
 	Meta() OperationMetadata
 	Result() OperationResult
-	Cost() OperationCost
-}
-
-// OperationCost represents all costs paid by an operation. Its contents depends on
-// operation type and activity. On transactions with internal results costs are a
-// summary.
-type OperationCost struct {
-	Fee            int64
-	Burn           int64
-	Gas            int64
-	StorageBytes   int64
-	StorageBurn    int64
-	AllocationBurn int64
-}
-
-// Add adds two costs z = x + y and returns the sum z without changing any of the inputs.
-func (x OperationCost) Add(y OperationCost) OperationCost {
-	x.Fee += y.Fee
-	x.Burn += y.Burn
-	x.Gas += y.Gas
-	x.StorageBurn += y.StorageBurn
-	x.AllocationBurn += y.AllocationBurn
-	return x
+	Costs() tezos.Costs
+	Limits() tezos.Limits
 }
 
 // OperationError represents data describing an error conditon that lead to a
@@ -153,76 +142,119 @@ func (e Generic) Result() OperationResult {
 	return OperationResult{}
 }
 
-// Cost returns an empty operation cost to implement TypedOperation interface.
-func (e Generic) Cost() OperationCost {
-	return OperationCost{}
+// Costs returns empty operation costs to implement TypedOperation interface.
+func (e Generic) Costs() tezos.Costs {
+	return tezos.Costs{}
+}
+
+// Limits returns empty operation limits to implement TypedOperation interface.
+func (e Generic) Limits() tezos.Limits {
+	return tezos.Limits{}
+}
+
+// Limits returns manager operation limits to implement TypedOperation interface.
+func (e Manager) Limits() tezos.Limits {
+	return tezos.Limits{
+		Fee:          e.Fee,
+		GasLimit:     e.GasLimit,
+		StorageLimit: e.StorageLimit,
+	}
 }
 
 // OperationList is a slice of TypedOperation (interface type) with custom JSON unmarshaller
 type OperationList []TypedOperation
 
+// Contains returns true when the list contains an operation of kind typ.
+func (o OperationList) Contains(typ tezos.OpType) bool {
+	for _, v := range o {
+		if v.Kind() == typ {
+			return true
+		}
+	}
+	return false
+}
+
+func (o OperationList) Select(typ tezos.OpType, n int) TypedOperation {
+	var cnt int
+	for _, v := range o {
+		if v.Kind() != typ {
+			continue
+		}
+		if cnt == n {
+			return v
+		}
+		cnt++
+	}
+	return nil
+}
+
 // UnmarshalJSON implements json.Unmarshaler
 func (e *OperationList) UnmarshalJSON(data []byte) error {
-	if data == nil {
+	if len(data) <= 2 {
 		return nil
 	}
 
-	var raw []json.RawMessage
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
+	if data[0] != '[' {
+		return fmt.Errorf("rpc: expected operation array")
 	}
 
-	*e = make(OperationList, len(raw))
+	// fmt.Printf("Decoding ops: %s\n", string(data))
+	dec := json.NewDecoder(bytes.NewReader(data))
 
-opLoop:
-	for i, r := range raw {
-		if r == nil {
-			continue
-		}
-		var tmp Generic
-		if err := json.Unmarshal(r, &tmp); err != nil {
-			return fmt.Errorf("rpc: generic operation: %w", err)
-		}
+	// read open bracket
+	_, err := dec.Token()
+	if err != nil {
+		return fmt.Errorf("rpc: %v", err)
+	}
 
-		switch tmp.Kind() {
+	for dec.More() {
+		// peek into `{"kind":"...",` field
+		start := int(dec.InputOffset()) + 9
+		// after first JSON object, decoder pos is at `,`
+		if data[start] == '"' {
+			start += 1
+		}
+		end := start + bytes.IndexByte(data[start:], '"')
+		kind := tezos.ParseOpType(string(data[start:end]))
+		var op TypedOperation
+		switch kind {
 		// anonymous operations
 		case tezos.OpTypeActivateAccount:
-			(*e)[i] = &Activation{}
+			op = &Activation{}
 		case tezos.OpTypeDoubleBakingEvidence:
-			(*e)[i] = &DoubleBaking{}
+			op = &DoubleBaking{}
 		case tezos.OpTypeDoubleEndorsementEvidence:
-			(*e)[i] = &DoubleEndorsement{}
+			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
-			(*e)[i] = &SeedNonce{}
+			op = &SeedNonce{}
 		// manager operations
 		case tezos.OpTypeTransaction:
-			(*e)[i] = &Transaction{}
+			op = &Transaction{}
 		case tezos.OpTypeOrigination:
-			(*e)[i] = &Origination{}
+			op = &Origination{}
 		case tezos.OpTypeDelegation:
-			(*e)[i] = &Delegation{}
+			op = &Delegation{}
 		case tezos.OpTypeReveal:
-			(*e)[i] = &Reveal{}
+			op = &Reveal{}
 		case tezos.OpTypeRegisterConstant:
-			(*e)[i] = &ConstantRegistration{}
+			op = &ConstantRegistration{}
 		// consensus operations
 		case tezos.OpTypeEndorsement, tezos.OpTypeEndorsementWithSlot:
-			(*e)[i] = &Endorsement{}
+			op = &Endorsement{}
 		// amendment operations
 		case tezos.OpTypeProposals:
-			(*e)[i] = &Proposals{}
+			op = &Proposals{}
 		case tezos.OpTypeBallot:
-			(*e)[i] = &Ballot{}
+			op = &Ballot{}
 
 		default:
-			log.Warnf("unsupported op '%s'", tmp.Kind)
-			(*e)[i] = &tmp
-			continue opLoop
+			return fmt.Errorf("rpc: unsupported op %q", kind)
 		}
 
-		if err := json.Unmarshal(r, (*e)[i]); err != nil {
-			return fmt.Errorf("rpc: operation kind %s: %w", tmp.Kind(), err)
+		if err := dec.Decode(op); err != nil {
+			return fmt.Errorf("rpc: operation kind %s: %w", kind, err)
 		}
+		(*e) = append(*e, op)
 	}
 
 	return nil

@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -27,10 +27,10 @@ func (r Reveal) Result() OperationResult {
 	return r.Metadata.Result
 }
 
-// Cost returns operation cost to implement TypedOperation interface.
-func (r Reveal) Cost() OperationCost {
-	return OperationCost{
-		Fee: r.Manager.Fee,
-		Gas: r.Metadata.Result.ConsumedGas,
+// Costs returns operation cost to implement TypedOperation interface.
+func (r Reveal) Costs() tezos.Costs {
+	return tezos.Costs{
+		Fee:     r.Manager.Fee,
+		GasUsed: r.Metadata.Result.ConsumedGas,
 	}
 }

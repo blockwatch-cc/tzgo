@@ -28,9 +28,9 @@ func (d Delegation) Result() OperationResult {
 }
 
 // Cost returns operation cost to implement TypedOperation interface.
-func (d Delegation) Cost() OperationCost {
-	return OperationCost{
-		Fee: d.Manager.Fee,
-		Gas: d.Metadata.Result.ConsumedGas,
+func (d Delegation) Costs() tezos.Costs {
+	return tezos.Costs{
+		Fee:     d.Manager.Fee,
+		GasUsed: d.Metadata.Result.ConsumedGas,
 	}
 }

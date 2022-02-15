@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"strings"
 
+	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/tezos"
 )
 
@@ -32,10 +33,18 @@ type Client struct {
 	BaseURL *url.URL
 	// User agent name for client.
 	UserAgent string
+	// Optional API key for protected endpoints
+	ApiKey string
 	// The chain the client will query.
 	ChainId tezos.ChainIdHash
 	// The current chain configuration.
 	Params *tezos.Params
+	// An active event observer to watch for operation inclusion
+	BlockObserver *Observer
+	// An active event observer to watch for operation posting to the mempool
+	MempoolObserver *Observer
+	// A default signer used for transaction sending
+	Signer signer.Signer
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -50,11 +59,17 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	c := &Client{client: httpClient, BaseURL: u, UserAgent: userAgent}
+	c := &Client{
+		client:          httpClient,
+		BaseURL:         u,
+		UserAgent:       userAgent,
+		BlockObserver:   NewObserver(),
+		MempoolObserver: NewObserver(),
+	}
 	return c, nil
 }
 
-func (c *Client) InitChain(ctx context.Context) error {
+func (c *Client) Init(ctx context.Context) error {
 	// pull chain id if not yet set
 	_, err := c.ResolveChainId(ctx)
 	if err != nil {
@@ -66,30 +81,26 @@ func (c *Client) InitChain(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// start observers
+	c.BlockObserver.Listen(c)
+	c.MempoolObserver.ListenMempool(c)
+
 	return nil
 }
 
-func (c *Client) SetChainId(id tezos.ChainIdHash) {
-	c.ChainId = id.Clone()
-}
-
-func (c *Client) SetChainParams(p *tezos.Params) {
-	c.Params = p
+func (c *Client) Close() {
+	c.BlockObserver.Close()
+	c.MempoolObserver.Close()
 }
 
 func (c *Client) ResolveChainId(ctx context.Context) (tezos.ChainIdHash, error) {
-	if c.ChainId.IsValid() {
-		return c.ChainId, nil
-	}
 	id, err := c.GetChainId(ctx)
 	c.ChainId = id
 	return id, err
 }
 
 func (c *Client) ResolveChainConfig(ctx context.Context) (*tezos.Params, error) {
-	if c.Params != nil {
-		return c.Params, nil
-	}
 	con, err := c.GetConstants(ctx, Head)
 	if err != nil {
 		return nil, err
@@ -156,6 +167,9 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 	req.Header.Add("Content-Type", mediaType)
 	req.Header.Add("Accept", mediaType)
 	req.Header.Add("User-Agent", c.UserAgent)
+	if c.ApiKey != "" {
+		req.Header.Add("X-Api-Key", c.ApiKey)
+	}
 
 	log.Debug(newLogClosure(func() string {
 		d, _ := httputil.DumpRequest(req, true)

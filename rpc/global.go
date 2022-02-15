@@ -5,6 +5,7 @@ package rpc
 
 import (
 	"blockwatch.cc/tzgo/micheline"
+	"blockwatch.cc/tzgo/tezos"
 )
 
 // Ensure ConstantRegistration implements the TypedOperation interface.
@@ -27,15 +28,15 @@ func (c ConstantRegistration) Result() OperationResult {
 	return c.Metadata.Result
 }
 
-// Cost returns operation cost to implement TypedOperation interface.
-func (c ConstantRegistration) Cost() OperationCost {
+// Costs returns operation cost to implement TypedOperation interface.
+func (c ConstantRegistration) Costs() tezos.Costs {
 	res := c.Metadata.Result
 	burn := res.BalanceUpdates[0].Amount()
-	return OperationCost{
-		Fee:          c.Manager.Fee,
-		Gas:          res.ConsumedGas,
-		Burn:         -burn,
-		StorageBytes: res.StorageSize,
-		StorageBurn:  -burn,
+	return tezos.Costs{
+		Fee:         c.Manager.Fee,
+		GasUsed:     res.ConsumedGas,
+		Burn:        -burn,
+		StorageUsed: res.StorageSize,
+		StorageBurn: -burn,
 	}
 }

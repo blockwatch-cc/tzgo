@@ -19,11 +19,41 @@ type ContractInfo struct {
 	Balance  int64         `json:"balance,string"`
 	Delegate tezos.Address `json:"delegate"`
 	Counter  int64         `json:"counter,string"`
+	Manager  string        `json:"manager"`
 }
 
-// GetContract returns the full info about a contract at block id.
+func (i ContractInfo) IsRevealed() bool {
+	_, ok := tezos.ParseKeyType(i.Manager)
+	return ok
+}
+
+func (i ContractInfo) ManagerKey() tezos.Key {
+	key, _ := tezos.ParseKey(i.Manager)
+	return key
+}
+
+// GetContract returns info about an account at block id.
 func (c *Client) GetContract(ctx context.Context, addr tezos.Address, id BlockID) (*ContractInfo, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s", id, addr)
+	var info ContractInfo
+	err := c.Get(ctx, u, &info)
+	if err != nil {
+		return nil, err
+	}
+	return &info, nil
+}
+
+// GetManagerKey returns the revealed public key of an account at block id.
+func (c *Client) GetManagerKey(ctx context.Context, addr tezos.Address, id BlockID) (tezos.Key, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/manager_key", id, addr)
+	var key tezos.Key
+	err := c.Get(ctx, u, &key)
+	return key, err
+}
+
+// GetContractExt returns info about an account at block id including its public key when revealed.
+func (c *Client) GetContractExt(ctx context.Context, addr tezos.Address, id BlockID) (*ContractInfo, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/contracts/index/%s", id, addr)
 	var info ContractInfo
 	err := c.Get(ctx, u, &info)
 	if err != nil {
@@ -55,6 +85,23 @@ func (c *Client) GetContractScript(ctx context.Context, addr tezos.Address) (*mi
 	return s, nil
 }
 
+// GetNormalizedScript returns the originated contract script with global constants
+// expanded.
+func (c *Client) GetNormalizedScript(ctx context.Context, addr tezos.Address) (*micheline.Script, error) {
+	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/script/normalized", addr)
+	s := micheline.NewScript()
+	mode := struct {
+		Mode string `json:"unparsing_mode"`
+	}{
+		Mode: "Readable",
+	}
+	err := c.Post(ctx, u, &mode, s)
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
 // GetContractStorage returns the most recent version of the contract's storage.
 func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address, id BlockID) (micheline.Prim, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/storage", id, addr)
@@ -67,10 +114,10 @@ func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address, id 
 }
 
 // GetContractEntrypoints returns the contract's entrypoints.
-func (c *Client) GetContractEntrypoints(ctx context.Context, addr tezos.Address) (map[string]micheline.Prim, error) {
+func (c *Client) GetContractEntrypoints(ctx context.Context, addr tezos.Address) (map[string]micheline.Type, error) {
 	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/entrypoints", addr)
 	type eptype struct {
-		Entrypoints map[string]micheline.Prim `json:"entrypoints"`
+		Entrypoints map[string]micheline.Type `json:"entrypoints"`
 	}
 	eps := &eptype{}
 	err := c.Get(ctx, u, eps)

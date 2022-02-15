@@ -41,13 +41,13 @@ func (o Origination) Result() OperationResult {
 	return o.Metadata.Result
 }
 
-// Cost returns operation cost to implement TypedOperation interface.
-func (o Origination) Cost() OperationCost {
+// Costs returns operation cost to implement TypedOperation interface.
+func (o Origination) Costs() tezos.Costs {
 	res := o.Metadata.Result
-	cost := OperationCost{
-		Fee:          o.Manager.Fee,
-		Gas:          res.ConsumedGas,
-		StorageBytes: res.PaidStorageSizeDiff,
+	cost := tezos.Costs{
+		Fee:         o.Manager.Fee,
+		GasUsed:     res.ConsumedGas,
+		StorageUsed: res.PaidStorageSizeDiff,
 	}
 	var i int
 	if res.PaidStorageSizeDiff > 0 {

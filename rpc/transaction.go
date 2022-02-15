@@ -30,13 +30,13 @@ func (t Transaction) Result() OperationResult {
 	return t.Metadata.Result
 }
 
-// Cost returns operation cost to implement TypedOperation interface.
-func (t Transaction) Cost() OperationCost {
+// Costs returns operation cost to implement TypedOperation interface.
+func (t Transaction) Costs() tezos.Costs {
 	res := t.Metadata.Result
-	cost := OperationCost{
-		Fee:          t.Manager.Fee,
-		Gas:          res.ConsumedGas,
-		StorageBytes: res.PaidStorageSizeDiff,
+	cost := tezos.Costs{
+		Fee:         t.Manager.Fee,
+		GasUsed:     res.ConsumedGas,
+		StorageUsed: res.PaidStorageSizeDiff,
 	}
 	var i int
 	if res.PaidStorageSizeDiff > 0 {
@@ -52,8 +52,8 @@ func (t Transaction) Cost() OperationCost {
 		i++
 	}
 	for _, in := range t.Metadata.InternalResults {
-		cost.Gas += in.Result.ConsumedGas
-		cost.StorageBytes += in.Result.PaidStorageSizeDiff
+		cost.GasUsed += in.Result.ConsumedGas
+		cost.StorageUsed += in.Result.PaidStorageSizeDiff
 		var i int
 		if in.Amount > 0 {
 			i += 2
