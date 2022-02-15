@@ -48,8 +48,22 @@ func (b *Bool) DecodeBuffer(buf *bytes.Buffer) error {
 //
 type Z big.Int
 
+func NewZ(i int64) Z {
+    var z Z
+    z.SetInt64(i)
+    return z
+}
+
 func (z Z) Big() *big.Int {
     return (*big.Int)(&z)
+}
+
+func (z Z) Equal(x Z) bool {
+    return z.Big().Cmp(x.Big()) == 0
+}
+
+func (z Z) IsZero() bool {
+    return (*big.Int)(&z).IsInt64() && (*big.Int)(&z).Int64() == 0
 }
 
 func (z Z) Int64() int64 {
@@ -64,6 +78,12 @@ func (z *Z) Set(b *big.Int) *Z {
 func (z *Z) SetInt64(i int64) *Z {
     (*big.Int)(z).SetInt64(i)
     return z
+}
+
+func (z Z) Clone() Z {
+    var x Z
+    x.Set(z.Big())
+    return x
 }
 
 func (z *Z) UnmarshalBinary(data []byte) error {
@@ -159,12 +179,28 @@ func (z Z) String() string {
 //
 type N int64
 
+func NewN(i int64) N {
+    return N(i)
+}
+
+func (n N) Equal(x N) bool {
+    return n == x
+}
+
+func (n N) IsZero() bool {
+    return n == 0
+}
+
 func (n N) Int64() int64 {
     return int64(n)
 }
 
 func (n *N) SetInt64(i int64) *N {
     *n = N(i)
+    return n
+}
+
+func (n N) Clone() N {
     return n
 }
 
