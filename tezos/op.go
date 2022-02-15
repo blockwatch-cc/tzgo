@@ -304,19 +304,16 @@ var (
 )
 
 func (t OpType) MinSizeVersion(ver int) int {
-	var size int
 	switch ver {
 	case 0:
-		size, _ = opMinSizeV0[t.TagVersion(ver)]
+		return opMinSizeV0[t.TagVersion(ver)]
 	default:
-		size, _ = opMinSizeV1[t.TagVersion(ver)]
+		return opMinSizeV1[t.TagVersion(ver)]
 	}
-	return size
 }
 
 func (t OpType) MinSize() int {
-	size, _ := opMinSizeV1[t.Tag()]
-	return size
+	return opMinSizeV1[t.Tag()]
 }
 
 func (t OpType) ListId() int {
