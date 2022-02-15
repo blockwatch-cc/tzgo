@@ -43,6 +43,10 @@ func NewBig(i *big.Int) Prim {
 	return Prim{Type: PrimInt, Int: i}
 }
 
+func NewNat(i *big.Int) Prim {
+	return Prim{Type: PrimInt, Int: i}
+}
+
 func NewBytes(b []byte) Prim {
 	return Prim{Type: PrimBytes, Bytes: b}
 }
@@ -59,12 +63,16 @@ func NewPairType(l, r Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: T_PAIR, Args: []Prim{l, r}, Anno: anno}
 }
 
-func NewPairValue(l, r Prim, anno ...string) Prim {
-	typ := PrimBinary
-	if len(anno) > 0 {
-		typ = PrimBinaryAnno
-	}
-	return Prim{Type: typ, OpCode: D_PAIR, Args: []Prim{l, r}, Anno: anno}
+func NewPair(l, r Prim) Prim {
+	return Prim{Type: PrimBinary, OpCode: D_PAIR, Args: []Prim{l, r}}
+}
+
+func NewCombPair(contents ...Prim) Prim {
+	return Prim{Type: PrimSequence, Args: contents}
+}
+
+func NewCombPairType(contents ...Prim) Prim {
+	return Prim{Type: PrimSequence, OpCode: T_PAIR, Args: contents}
 }
 
 func NewPrim(c OpCode, anno ...string) Prim {
