@@ -425,6 +425,22 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
             val = stack.Pop()
         }
 
+        // if val.IsPair() {
+        //  Trace(func(log LogFn) {
+        //      log("L%0d: %s EXTRA UNPACK PAIR args[%d(+%d)]=%s typ=%s", lvl, label, stack.Len(), len(val.Args), val.Dump(), typ.Dump())
+        //  })
+        //  stack.Push(val.Args...)
+        //  Trace(func(log LogFn) {
+        //      log("L%0d: %s stack[%d]:\n%s\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+        //  })
+        //  val = stack.Pop()
+        // }
+
+        // safety check: skip invalid values (only happens if type detect was wrong)
+        if !val.IsValid() {
+            break
+        }
+
         if val.IsScalar() {
             m[label] = val.Value(typ.OpCode)
         } else {

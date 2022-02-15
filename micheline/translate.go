@@ -366,6 +366,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
             val = stack.Pop()
         }
 
+        // safety check: skip invalid values (only happens if type detect was wrong)
+        if !val.IsValid() {
+            break
+        }
+
         if val.IsScalar() {
             m[label] = val.Value(typ.OpCode)
         } else {
