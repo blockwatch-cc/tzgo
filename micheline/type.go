@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -41,12 +42,84 @@ type Typedef struct {
 	Args     []Typedef `json:"args,omitempty"`
 }
 
+func (t Typedef) String() string {
+	var b strings.Builder
+	if t.Name != "" {
+		b.WriteString(t.Name)
+		b.WriteString(": ")
+	}
+	if t.Optional {
+		b.WriteByte('?')
+	}
+	switch t.Type {
+	case "map":
+		b.WriteString("map[")
+		n := t.Args[0].Name
+		t.Args[0].Name = ""
+		b.WriteString(t.Args[0].String())
+		t.Args[0].Name = n
+		b.WriteString("](")
+		n = t.Args[1].Name
+		t.Args[1].Name = ""
+		b.WriteString(t.Args[1].String())
+		t.Args[1].Name = n
+		b.WriteString(")")
+	case "set", "list":
+		b.WriteByte('[')
+		for i, v := range t.Args {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			n := v.Name
+			v.Name = ""
+			b.WriteString(v.String())
+			v.Name = n
+		}
+		b.WriteByte(']')
+	case "struct":
+		b.WriteByte('{')
+		for i, v := range t.Args {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			b.WriteString(v.String())
+		}
+		b.WriteByte('}')
+	case "union":
+		b.WriteByte('(')
+		for i, v := range t.Args {
+			if i > 0 {
+				b.WriteString(" | ")
+			}
+			b.WriteString(v.String())
+		}
+		b.WriteByte(')')
+	case "contract":
+		b.WriteString(t.Type)
+		b.WriteByte('(')
+		for i, v := range t.Args {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			b.WriteString(v.String())
+		}
+		b.WriteByte(')')
+	default:
+		b.WriteString(t.Type)
+	}
+	return b.String()
+}
+
 func NewType(p Prim) Type {
 	return Type{p.Clone()}
 }
 
 func NewTypePtr(p Prim) *Type {
 	return &Type{p.Clone()}
+}
+
+func (t *Type) UnmarshalJSON(buf []byte) error {
+	return t.Prim.UnmarshalJSON(buf)
 }
 
 func (t *Type) UnmarshalBinary(buf []byte) error {
