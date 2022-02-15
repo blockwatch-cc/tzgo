@@ -11,6 +11,26 @@ import (
     "blockwatch.cc/tzgo/tezos"
 )
 
+const (
+    minFeeFixedNanoTez int64 = 100_000
+    minFeeByteNanoTez  int64 = 250_000
+    minFeeGasNanoTez   int64 = 100
+)
+
+// CalculateMinFee returns the minimum fee at/above which bakers will accept
+// this operation under default config settings. Lower fee operations may not
+// pass the fee filter and may time out in the mempool.
+func CalculateMinFee(o Operation, gas int64, withHeader bool) int64 {
+    buf := bytes.NewBuffer(nil)
+    _ = o.EncodeBuffer(buf, nil)
+    sz := int64(buf.Len())
+    if withHeader {
+        sz += 32 + 64 // branch + signature
+    }
+    fee := minFeeFixedNanoTez + sz*minFeeByteNanoTez + gas*minFeeGasNanoTez
+    return fee / 1000 // nano -> micro
+}
+
 // ensureTagAndSize reads the binary operation's tag and matches it against the expected
 // type tag and minimum size for the operation under the current protocol. It returns
 // an error when tag does not match or when the buffer is too short for reading the
@@ -92,4 +112,11 @@ func readByte(buf []byte) (byte, error) {
         return 0, io.ErrShortBuffer
     }
     return buf[0], nil
+}
+
+func max64(x, y int64) int64 {
+    if x > y {
+        return x
+    }
+    return y
 }

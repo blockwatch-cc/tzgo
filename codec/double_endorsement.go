@@ -14,6 +14,7 @@ import (
 
 // DoubleEndorsementEvidence represents "double_endorsement_evidence" operation
 type DoubleEndorsementEvidence struct {
+    Simple
     Op1  InlinedEndorsement `json:"op1"`
     Op2  InlinedEndorsement `json:"op2"`
     Slot int16              `json:"slot"`

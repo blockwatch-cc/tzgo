@@ -14,6 +14,7 @@ import (
 
 // Endorsement represents "endorsement" operation
 type Endorsement struct {
+    Simple
     Level int32 `json:"level"`
 }
 
@@ -90,6 +91,7 @@ func (o *InlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (e
 
 // EndorsementWithSlot represents "endorsement_with_slot" operation
 type EndorsementWithSlot struct {
+    Simple
     Endorsement InlinedEndorsement `json:"endorsement"`
     Slot        int16              `json:"slot"`
 }

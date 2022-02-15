@@ -13,6 +13,7 @@ import (
 
 // Ballot represents "ballot" operation
 type Ballot struct {
+    Simple
     Source   tezos.Address      `json:"source"`
     Period   int32              `json:"period"`
     Proposal tezos.ProtocolHash `json:"proposal"`

@@ -14,6 +14,7 @@ import (
 
 // DoubleBakingEvidence represents "double_baking_evidence" operation
 type DoubleBakingEvidence struct {
+    Simple
     Bh1 BlockHeader `json:"bh1"`
     Bh2 BlockHeader `json:"bh2"`
 }

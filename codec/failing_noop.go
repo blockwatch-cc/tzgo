@@ -15,6 +15,7 @@ import (
 // and guaranteed to be not included on-chain. This prevents an attack vector where a
 // message is crafted which looks like a regular transaction.
 type FailingNoop struct {
+    Simple
     Arbitrary string `json:"arbitrary"`
 }
 

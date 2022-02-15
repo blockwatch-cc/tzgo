@@ -13,6 +13,7 @@ import (
 
 // Proposals represents "proposals" operation
 type Proposals struct {
+    Simple
     Source    tezos.Address        `json:"source"`
     Period    int32                `json:"period"`
     Proposals []tezos.ProtocolHash `json:"proposals"`

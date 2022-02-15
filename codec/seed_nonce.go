@@ -13,6 +13,7 @@ import (
 
 // SeedNonceRevelation represents "seed_nonce_revelation" operation
 type SeedNonceRevelation struct {
+    Simple
     Level int32          `json:"level,string"`
     Nonce tezos.HexBytes `json:"nonce"`
 }

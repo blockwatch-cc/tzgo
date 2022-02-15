@@ -14,6 +14,7 @@ import (
 
 // ActivateAccount represents "activate_account" operation
 type ActivateAccount struct {
+    Simple
     PublicKeyHash tezos.Address  `json:"pkh"`
     Secret        tezos.HexBytes `json:"secret"`
 }

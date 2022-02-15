@@ -30,6 +30,11 @@ var (
 // types inside an operation's contents list.
 type Operation interface {
     Kind() tezos.OpType
+    Limits() tezos.Limits
+    GetCounter() int64
+    WithSource(tezos.Address)
+    WithCounter(int64)
+    WithLimits(tezos.Limits)
     encoding.BinaryMarshaler
     encoding.BinaryUnmarshaler
     json.Marshaler
@@ -77,6 +82,14 @@ func (o *Op) WithContentsFront(op Operation) *Op {
     return o
 }
 
+// WithSource sets the source for all manager operations to addr.
+func (o *Op) WithSource(addr tezos.Address) *Op {
+    for _, v := range o.Contents {
+        v.WithSource(addr)
+    }
+    return o
+}
+
 // WithTTL sets a time-to-live for the operation in number of blocks. This may be
 // used as a convenience method instead of setting a branch directly, but requires
 // to use an autocomplete handler, wallet or custom function that fetches the hash
@@ -95,6 +108,44 @@ func (o *Op) WithTTL(n int64) *Op {
 func (o *Op) WithBranch(hash tezos.BlockHash) *Op {
     o.Branch = hash
     return o
+}
+
+// WithLimits sets the limits (fee, gas and storage limit) of each
+// contained operation to provided limits. Use this to apply values from
+// simulation with an optional safety margin on gas. This will also
+// calculate the minFee for each operation in the list and add the minFee
+// for header bytes (branch and signature) to the first operation in a list.
+//
+// Setting a user-defined fee for each individual operation is only honored
+// when its higher than minFee. Note that when sending batch operations all
+// fees must be >= the individual minFee. Otherwise the minFee rule will
+// apply to all zero/lower fee operations and the entire batch may overpay
+// (e.g. if you have the first operation pay all fees for example and set
+// remaining fees to zero).
+func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
+    for i, v := range o.Contents {
+        if len(limits) >= i {
+            continue
+        }
+        gas := limits[i].GasLimit + margin
+        adj := tezos.Limits{
+            GasLimit:     gas,
+            StorageLimit: limits[i].StorageLimit,
+            Fee:          max64(limits[i].Fee, CalculateMinFee(v, gas, i == 0)),
+        }
+        v.WithLimits(adj)
+    }
+    return o
+}
+
+// Limits returns the sum of all limits (fee, gas, storage limit) currently
+// set for all contained operations.
+func (o Op) Limits() tezos.Limits {
+    var l tezos.Limits
+    for _, v := range o.Contents {
+        l.Add(v.Limits())
+    }
+    return l
 }
 
 // Bytes serializes the operation into binary form. When no signature is set, the
