@@ -42,6 +42,31 @@ type Typedef struct {
 	Args     []Typedef `json:"args,omitempty"`
 }
 
+func (a Typedef) Equal(b Typedef) bool {
+	if a.Type != b.Type {
+		return false
+	}
+	if a.Optional != b.Optional {
+		return false
+	}
+	if len(a.Args) != len(b.Args) {
+		return false
+	}
+	for i, av := range a.Args {
+		if !av.Equal(b.Args[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+func (a Typedef) StrictEqual(b Typedef) bool {
+	if a.Name != b.Name {
+		return false
+	}
+	return a.Equal(b)
+}
+
 func (t Typedef) String() string {
 	var b strings.Builder
 	if t.Name != "" {

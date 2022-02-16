@@ -60,12 +60,29 @@ func (m Interface) String() string {
 	return string(m)
 }
 
-// search all interfaces in the list of entrypoints
+// Checks if a contract implements all entrypoints required by a standard
+// interface without requiring argument labels to match. This is a looser
+// definition of interface compliance, but in line with the Michelson
+// type system which ignores annotation labels for type equality.
+//
+// This check uses extracted Typedefs to avoid issues when the Micheline
+// primitive structure diverges from the defined interface (e.g. due to
+// comb type unfolding).
 func (m Interface) Matches(e Entrypoints) bool {
 	for _, spec := range InterfaceSpecs[m] {
+		// use Typedef to avoid differences in data encoding with comb pairs
+		specType := NewType(spec).Typedef("")
+
 		var matched bool
 		for _, ep := range e {
-			if IsEqualPrim(spec, *ep.Prim, false) {
+			// check entrypoint name
+			if ep.Call != spec.GetVarAnnoAny() {
+				continue
+			}
+
+			// check entrypoint type
+			epType := NewType(*ep.Prim).Typedef("")
+			if specType.Equal(epType) {
 				matched = true
 				break
 			}
@@ -77,11 +94,27 @@ func (m Interface) Matches(e Entrypoints) bool {
 	return true
 }
 
+// Checks if a contract strictly implements all standard interface
+// entrypoints including argument types and argument names (annotations).
+//
+// This check uses extracted Typedefs to avoid issues when the Micheline
+// primitive structure diverges from the defined interface (e.g. due to
+// comb type unfolding).
 func (m Interface) MatchesStrict(e Entrypoints) bool {
 	for _, spec := range InterfaceSpecs[m] {
+		// use Typedef to avoid differences in data encoding with comb pairs
+		specType := NewType(spec).Typedef("")
+
 		var matched bool
 		for _, ep := range e {
-			if IsEqualPrim(spec, *ep.Prim, true) {
+			// check entrypoint name
+			if ep.Call != spec.GetVarAnnoAny() {
+				continue
+			}
+
+			// check entrypoint type
+			epType := NewType(*ep.Prim).Typedef("")
+			if specType.StrictEqual(epType) {
 				matched = true
 				break
 			}
@@ -94,8 +127,15 @@ func (m Interface) MatchesStrict(e Entrypoints) bool {
 }
 
 func (m Interface) Contains(e Entrypoint) bool {
+	epType := NewType(*e.Prim).Typedef("")
 	for _, spec := range InterfaceSpecs[m] {
-		if IsEqualPrim(spec, *e.Prim, false) {
+		// check entrypoint name
+		if e.Call != spec.GetVarAnnoAny() {
+			continue
+		}
+		// check entrypoint type
+		specType := NewType(spec).Typedef("")
+		if specType.Equal(epType) {
 			return true
 		}
 	}
@@ -103,8 +143,15 @@ func (m Interface) Contains(e Entrypoint) bool {
 }
 
 func (m Interface) ContainsStrict(e Entrypoint) bool {
+	epType := NewType(*e.Prim).Typedef("")
 	for _, spec := range InterfaceSpecs[m] {
-		if IsEqualPrim(spec, *e.Prim, true) {
+		// check entrypoint name
+		if e.Call != spec.GetVarAnnoAny() {
+			continue
+		}
+		// check entrypoint type
+		specType := NewType(spec).Typedef("")
+		if specType.StrictEqual(epType) {
 			return true
 		}
 	}
@@ -113,7 +160,7 @@ func (m Interface) ContainsStrict(e Entrypoint) bool {
 
 func (m Interface) FuncType(name string) Type {
 	for _, v := range InterfaceSpecs[m] {
-		if v.GetVarAnno() == name {
+		if v.GetVarAnnoAny() == name {
 			return NewType(v)
 		}
 	}
@@ -122,7 +169,7 @@ func (m Interface) FuncType(name string) Type {
 
 func (m Interface) FuncPrim(name string) Prim {
 	for _, v := range InterfaceSpecs[m] {
-		if v.GetVarAnno() == name {
+		if v.GetVarAnnoAny() == name {
 			return v
 		}
 	}

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -178,6 +179,52 @@ func run_view(ctx context.Context, c *rpc.Client, addr, name, in string) error {
 	return nil
 }
 
+func max(i, j int) int {
+	if i < j {
+		return j
+	}
+	return i
+}
+
+func maxColWith(rows [][]string) []int {
+	if len(rows) == 0 {
+		return nil
+	}
+	widths := make([]int, len(rows[0]))
+	for _, row := range rows {
+		for i := range widths {
+			if len(row) < i {
+				continue
+			}
+			widths[i] = max(widths[i], len(row[i]))
+		}
+	}
+	return widths
+}
+
+func writeTable(w io.Writer, prefix string, names []string, rows [][]string) {
+	cols := maxColWith(append([][]string{names}, rows...))
+	var b strings.Builder
+	b.WriteString(prefix)
+	for i, n := range names {
+		b.WriteString(n)
+		b.WriteString(strings.Repeat(" ", cols[i]-len(n)+2))
+	}
+	b.WriteByte('\n')
+	w.Write([]byte(b.String()))
+	b.Reset()
+	for _, row := range rows {
+		b.WriteString(prefix)
+		for j := range row {
+			b.WriteString(row[j])
+			b.WriteString(strings.Repeat(" ", cols[j]-len(row[j])+2))
+		}
+		b.WriteByte('\n')
+		w.Write([]byte(b.String()))
+		b.Reset()
+	}
+}
+
 func info(ctx context.Context, c *rpc.Client, addr string) error {
 	con, err := loadContract(ctx, c, addr, true)
 	if err != nil {
@@ -190,28 +237,38 @@ func info(ctx context.Context, c *rpc.Client, addr string) error {
 	fmt.Printf("Manager.tz   %t\n", con.IsManagerTz())
 	eps, _ := con.Script().Entrypoints(true)
 	fmt.Printf("Entrypoints  %d\n", len(eps))
+	rows := make([][]string, 0, len(eps))
 	for n, ep := range eps {
+		row := make([]string, 3)
+		row[0] = n
+		td := ep.Type().Typedef("")
+		td.Name = ""
+		row[1] = td.String()
 		var std []string
 		for _, iface := range micheline.WellKnownInterfaces {
-			if iface.ContainsStrict(ep) {
+			if iface.Contains(ep) {
 				std = append(std, iface.String())
 			}
 		}
 		if ep.IsCallback() {
 			std = append(std, "CALLBACK")
 		}
-		var typ string
-		if len(std) > 0 {
-			typ = "// " + strings.Join(std, ",")
-		}
-		td := ep.Type().Typedef("")
-		td.Name = ""
-		fmt.Printf("  %-25s  %s %s\n", n, td, typ)
+		row[2] = strings.Join(std, ",")
+		rows = append(rows, row)
 	}
+	writeTable(os.Stdout, "  ", []string{"Name", "Type", "Interface"}, rows)
 	views, _ := con.Script().Views(false, false)
 	fmt.Printf("Views        %d\n", len(views))
+	rows = make([][]string, 0, len(views))
 	for n, v := range views {
-		fmt.Printf("  %-25s  param:%s retval:%s\n", n, v.Param.Typedef(""), v.Retval.Typedef(""))
+		row := make([]string, 3)
+		row[0] = n
+		row[1] = v.Param.Typedef("").String()
+		row[2] = v.Retval.Typedef("").String()
+		rows = append(rows, row)
+	}
+	if len(views) > 0 {
+		writeTable(os.Stdout, "  ", []string{"Name", "Params", "Return"}, rows)
 	}
 	return nil
 }

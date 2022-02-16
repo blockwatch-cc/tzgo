@@ -11,6 +11,25 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
+// UnparsingMode defines the way types and values are represented in Micheline script
+// and storage. This affects timestamps, keys, addresses, signatures and nested pairs.
+// Optimized encodings use integers for timestamps and bytes instead of base58 encoded
+// values. Legacy mode is supposed to output 2-ary pairs only, but is messed up on
+// certain endpoints (e.g. /script/normalized), so there's no guarantee.
+//
+type UnparsingMode string
+
+const (
+	UnparsingModeInvalid   = ""
+	UnparsingModeLegacy    = "Optimized_legacy"
+	UnparsingModeOptimized = "Optimized"
+	UnparsingModeReadable  = "Readable"
+)
+
+func (m UnparsingMode) String() string {
+	return string(m)
+}
+
 // Contracts holds a list of addresses
 type Contracts []tezos.Address
 
@@ -74,7 +93,7 @@ func (c *Client) ListContracts(ctx context.Context, id BlockID) (Contracts, erro
 	return contracts, nil
 }
 
-// GetContractScript returns the originated contract script.
+// GetContractScript returns the originated contract script in default data mode.
 func (c *Client) GetContractScript(ctx context.Context, addr tezos.Address) (*micheline.Script, error) {
 	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/script", addr)
 	s := micheline.NewScript()
@@ -86,27 +105,49 @@ func (c *Client) GetContractScript(ctx context.Context, addr tezos.Address) (*mi
 }
 
 // GetNormalizedScript returns the originated contract script with global constants
-// expanded.
-func (c *Client) GetNormalizedScript(ctx context.Context, addr tezos.Address) (*micheline.Script, error) {
+// expanded using given unparsing mode.
+func (c *Client) GetNormalizedScript(ctx context.Context, addr tezos.Address, mode UnparsingMode) (*micheline.Script, error) {
 	u := fmt.Sprintf("chains/main/blocks/head/context/contracts/%s/script/normalized", addr)
 	s := micheline.NewScript()
-	mode := struct {
-		Mode string `json:"unparsing_mode"`
-	}{
-		Mode: "Readable",
+	if mode == "" {
+		mode = UnparsingModeOptimized
 	}
-	err := c.Post(ctx, u, &mode, s)
+	postData := struct {
+		Mode UnparsingMode `json:"unparsing_mode"`
+	}{
+		Mode: mode,
+	}
+	err := c.Post(ctx, u, &postData, s)
 	if err != nil {
 		return nil, err
 	}
 	return s, nil
 }
 
-// GetContractStorage returns the most recent version of the contract's storage.
+// GetContractStorage returns the contract's storage at block id.
 func (c *Client) GetContractStorage(ctx context.Context, addr tezos.Address, id BlockID) (micheline.Prim, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/storage", id, addr)
 	prim := micheline.Prim{}
 	err := c.Get(ctx, u, &prim)
+	if err != nil {
+		return micheline.InvalidPrim, err
+	}
+	return prim, nil
+}
+
+// GetContractStorageNormalized returns contract's storage at block id using unparsing mode.
+func (c *Client) GetContractStorageNormalized(ctx context.Context, addr tezos.Address, id BlockID, mode UnparsingMode) (micheline.Prim, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/storage/normalized", id, addr)
+	if mode == "" {
+		mode = UnparsingModeOptimized
+	}
+	postData := struct {
+		Mode UnparsingMode `json:"unparsing_mode"`
+	}{
+		Mode: mode,
+	}
+	prim := micheline.Prim{}
+	err := c.Post(ctx, u, &postData, &prim)
 	if err != nil {
 		return micheline.InvalidPrim, err
 	}
