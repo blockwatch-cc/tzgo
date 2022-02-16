@@ -188,10 +188,10 @@ func (c *Client) GetParamsByHeight(ctx context.Context, height int64) (*tezos.Pa
 		return nil, err
 	}
 	params := con.MapToChainParams()
-	if head.ChainId == nil || head.Protocol == nil {
+	if !head.ChainId.IsValid() || !head.Protocol.IsValid() {
 		return params, nil
 	}
-	return params.ForNetwork(*head.ChainId).ForProtocol(*head.Protocol), nil
+	return params.ForNetwork(head.ChainId).ForProtocol(head.Protocol), nil
 }
 
 func (c Constants) MapToChainParams() *tezos.Params {

@@ -12,6 +12,7 @@ import (
 type Mempool struct {
 	Applied       []*Operation `json:"applied"`
 	Refused       []*Operation `json:"refused"`
+	Outdated      []*Operation `json:"outdated"` // v012+
 	BranchRefused []*Operation `json:"branch_refused"`
 	BranchDelayed []*Operation `json:"branch_delayed"`
 	Unprocessed   []*Operation `json:"unprocessed"`
@@ -40,6 +41,7 @@ func (m *Mempool) UnmarshalJSON(data []byte) error {
 	type mempool struct {
 		Applied       []*Operation        `json:"applied"`
 		Refused       []*PendingOperation `json:"refused"`
+		Outdated      []*PendingOperation `json:"outdated"`
 		BranchRefused []*PendingOperation `json:"branch_refused"`
 		BranchDelayed []*PendingOperation `json:"branch_delayed"`
 		Unprocessed   []*PendingOperation `json:"unprocessed"`
@@ -59,6 +61,7 @@ func (m *Mempool) UnmarshalJSON(data []byte) error {
 	}
 	for _, v := range []convert{
 		{&mp.Refused, &m.Refused},
+		{&mp.Outdated, &m.Outdated},
 		{&mp.BranchRefused, &m.BranchRefused},
 		{&mp.BranchDelayed, &m.BranchDelayed},
 		{&mp.Unprocessed, &m.Unprocessed},

@@ -41,6 +41,7 @@ const (
 	AddressTypeContract
 	AddressTypeBlinded
 	AddressTypeBaker
+	AddressTypeSapling
 )
 
 func ParseAddressType(s string) AddressType {
@@ -57,6 +58,8 @@ func ParseAddressType(s string) AddressType {
 		return AddressTypeBlinded
 	case "baker", BAKER_PUBLIC_KEY_HASH_PREFIX:
 		return AddressTypeBaker
+	case "sapling", SAPLING_ADDRESS_PREFIX:
+		return AddressTypeSapling
 	default:
 		return AddressTypeInvalid
 	}
@@ -80,6 +83,8 @@ func (t AddressType) String() string {
 		return "blinded"
 	case AddressTypeBaker:
 		return "baker"
+	case AddressTypeSapling:
+		return "sapling"
 	default:
 		return "invalid"
 	}
@@ -99,6 +104,8 @@ func (t AddressType) Prefix() string {
 		return BLINDED_PUBLIC_KEY_HASH_PREFIX
 	case AddressTypeBaker:
 		return BAKER_PUBLIC_KEY_HASH_PREFIX
+	case AddressTypeSapling:
+		return SAPLING_ADDRESS_PREFIX
 	default:
 		return ""
 	}
@@ -155,6 +162,7 @@ func HasAddressPrefix(s string) bool {
 		NOCURVE_PUBLIC_KEY_HASH_PREFIX,
 		BLINDED_PUBLIC_KEY_HASH_PREFIX,
 		BAKER_PUBLIC_KEY_HASH_PREFIX,
+		SAPLING_ADDRESS_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -177,6 +185,8 @@ func (t AddressType) HashType() HashType {
 		return HashTypePkhBlinded
 	case AddressTypeBaker:
 		return HashTypePkhBaker
+	case AddressTypeSapling:
+		return HashTypeSaplingAddress
 	default:
 		return HashTypeInvalid
 	}
@@ -409,6 +419,8 @@ func ParseAddress(addr string) (Address, error) {
 		return Address{Type: AddressTypeP256, Hash: decoded}, nil
 	case bytes.Equal(version, NOCURVE_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeContract, Hash: decoded}, nil
+	case bytes.Equal(version, SAPLING_ADDRESS_ID):
+		return Address{Type: AddressTypeSapling, Hash: decoded}, nil
 	default:
 		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
 	}
@@ -431,6 +443,8 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 		return base58.CheckEncode(addrhash, NOCURVE_PUBLIC_KEY_HASH_ID), nil
 	case AddressTypeBlinded:
 		return base58.CheckEncode(addrhash, BLINDED_PUBLIC_KEY_HASH_ID), nil
+	case AddressTypeSapling:
+		return base58.CheckEncode(addrhash, SAPLING_ADDRESS_ID), nil
 	default:
 		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x", typ, addrhash)
 	}

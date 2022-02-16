@@ -22,6 +22,13 @@ type Delegate struct {
 	FrozenBalanceByCycle []CycleBalance  `json:"frozen_balance_by_cycle"`
 	GracePeriod          int64           `json:"grace_period"`
 	StakingBalance       int64           `json:"staking_balance,string"`
+	VotingPower          int64           `json:"voting_power"`
+
+	// v012+
+	FullBalance           int64 `json:"full_balance,string"`
+	FrozenDeposits        int64 `json:"frozen_deposits,string"`
+	CurrentFrozenDeposits int64 `json:"current_frozen_deposits,string"`
+	FrozenDepositsLimit   int64 `json:"frozen_deposits_limit,string"`
 }
 
 type CycleBalance struct {
@@ -45,7 +52,7 @@ func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateL
 }
 
 // ListActiveDelegatesWithRolls returns information about all active delegates at a block
-// who have at least one roll.
+// who have at least one roll. Deprecated in Ithaca.
 func (c *Client) ListActiveDelegatesWithRolls(ctx context.Context, id BlockID) (DelegateList, error) {
 	delegates := make(DelegateList, 0)
 	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/active_delegates_with_rolls", id)

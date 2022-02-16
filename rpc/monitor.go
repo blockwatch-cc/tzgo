@@ -103,17 +103,20 @@ func (m *BootstrapMonitor) Close() {
 
 // BlockHeaderLogEntry is a log entry returned for a new block when monitoring
 type BlockHeaderLogEntry struct {
-	Hash           tezos.BlockHash  `json:"hash"`
-	Level          int64            `json:"level"`
-	Proto          int              `json:"proto"`
-	Predecessor    tezos.BlockHash  `json:"predecessor"`
-	Timestamp      time.Time        `json:"timestamp"`
-	ValidationPass int              `json:"validation_pass"`
-	OperationsHash string           `json:"operations_hash"`
-	Fitness        []tezos.HexBytes `json:"fitness"`
-	Context        string           `json:"context"`
-	ProtocolData   tezos.HexBytes   `json:"protocol_data"`
+	Hash           tezos.BlockHash      `json:"hash"`
+	Level          int64                `json:"level"`
+	Proto          int                  `json:"proto"`
+	Predecessor    tezos.BlockHash      `json:"predecessor"`
+	Timestamp      time.Time            `json:"timestamp"`
+	ValidationPass int                  `json:"validation_pass"`
+	OperationsHash tezos.OpListListHash `json:"operations_hash"`
+	Fitness        []tezos.HexBytes     `json:"fitness"`
+	Context        tezos.ContextHash    `json:"context"`
+	ProtocolData   tezos.HexBytes       `json:"protocol_data"`
 }
+
+// TODO: handle protocol data
+// tezos-codec describe 012-Psithaca.block_header.protocol_data binary schema
 
 func (b *Block) LogEntry() *BlockHeaderLogEntry {
 	return &BlockHeaderLogEntry{

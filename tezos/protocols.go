@@ -339,7 +339,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		}
 	case ProtoV012_1.Equal(proto) || ProtoV012_2.Equal(proto): // Ithaca
 		pp.Version = 12
-		pp.OperationTagsVersion = 1
+		pp.OperationTagsVersion = 2
 		pp.NumVotingPeriods = 5
 		pp.MaxOperationsTTL = 120
 		if Mainnet.Equal(p.ChainId) {

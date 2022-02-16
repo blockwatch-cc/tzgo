@@ -301,6 +301,8 @@ func DecodeOp(data []byte) (*Op, error) {
             op = new(FailingNoop)
         case tezos.OpTypeRegisterConstant:
             op = new(RegisterGlobalConstant)
+        case tezos.OpTypeSetDepositsLimit:
+            op = new(SetDepositsLimit)
         default:
             // stop if rest looks like a signature
             if buf.Len() == 64 {

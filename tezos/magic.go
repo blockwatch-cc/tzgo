@@ -18,7 +18,7 @@ const (
 	SECP256K1_PUBLIC_KEY_HASH_PREFIX = "tz2"
 	P256_PUBLIC_KEY_HASH_PREFIX      = "tz3"
 	NOCURVE_PUBLIC_KEY_HASH_PREFIX   = "KT1"  // originated contract identifier
-	BAKER_PUBLIC_KEY_HASH_PREFIX     = "SG1"  // baker contract in v???
+	BAKER_PUBLIC_KEY_HASH_PREFIX     = "SG1"  // baker contract (undeployed)
 	BLINDED_PUBLIC_KEY_HASH_PREFIX   = "btz1" // blinded tz1
 
 	// base58 prefixes for 32 byte hash magics
@@ -34,6 +34,12 @@ const (
 	SECP256K1_SECRET_KEY_PREFIX     = "spsk"
 	P256_SECRET_KEY_PREFIX          = "p2sk"
 
+	BLOCK_PAYLOAD_HASH_PREFIX                = "vh"  // "\001\106\242" (* vh(52) *)
+	BLOCK_METADATA_HASH_PREFIX               = "bm"  // "\234\249" (* bm(52) *)
+	OPERATION_METADATA_HASH_PREFIX           = "r"   // "\005\183" (* r(51) *)
+	OPERATION_METADATA_LIST_HASH_PREFIX      = "Lr"  // "\134\039" (* Lr(52) *)
+	OPERATION_METADATA_LIST_LIST_HASH_PREFIX = "LLr" // "\029\159\182" (* LLr(53) *)
+
 	// base58 prefixes for 33 byte hash magics
 	SECP256K1_PUBLIC_KEY_PREFIX = "sppk"
 	P256_PUBLIC_KEY_PREFIX      = "p2pk"
@@ -48,12 +54,19 @@ const (
 	SECP256K1_ENCRYPTED_SECRET_KEY_PREFIX = "spesk"
 	P256_ENCRYPTED_SECRET_KEY_PREFIX      = "p2esk"
 
+	// base58 prefixes for 60 byte hash magics
+	SECP256K1_ENCRYPTED_SCALAR_PREFIX = "seesk" // "\001\131\036\086\248" (* seesk(93) *)
+
 	// base58 prefixes for 64 byte hash magics
 	ED25519_SECRET_KEY_PREFIX  = "edsk"
 	ED25519_SIGNATURE_PREFIX   = "edsig"
 	SECP256K1_SIGNATURE_PREFIX = "spsig1"
 	P256_SIGNATURE_PREFIX      = "p2sig"
 	GENERIC_SIGNATURE_PREFIX   = "sig"
+
+	// base58 prefixes for Sapling byte hash magics
+	SAPLING_SPENDING_KEY_PREFIX = "sask" // "\011\237\020\092" (* sask(241) *) // 169 bytes
+	SAPLING_ADDRESS_PREFIX      = "zet1" // "\018\071\040\223" (* zet1(69) *) // 43 bytes
 )
 
 var (
@@ -80,6 +93,12 @@ var (
 	CONTEXT_HASH_ID             = []byte{0x4F, 0xC7}       // "\079\199" (* Co(52) *)
 	NONCE_HASH_ID               = []byte{0x45, 0xDC, 0xA9} // "\069\220\169" (* nce(53) *)
 
+	BLOCK_PAYLOAD_HASH_ID                = []byte{0x01, 0x6A, 0xF2} // "\001\106\242" (* vh(52) *)
+	BLOCK_METADATA_HASH_ID               = []byte{0xEA, 0xF9}       // "\234\249" (* bm(52) *)
+	OPERATION_METADATA_HASH_ID           = []byte{0x05, 0xB7}       // "\005\183" (* r(51) *)
+	OPERATION_METADATA_LIST_HASH_ID      = []byte{0x86, 0x27}       // "\134\039" (* Lr(52) *)
+	OPERATION_METADATA_LIST_LIST_HASH_ID = []byte{0x1D, 0x9F, 0xB6} // "\029\159\182" (* LLr(53) *)
+
 	ED25519_SEED_ID         = []byte{0x0D, 0x0F, 0x3A, 0x07} // "\013\015\058\007" (* edsk(54) *)
 	ED25519_PUBLIC_KEY_ID   = []byte{0x0D, 0x0F, 0x25, 0xD9} // "\013\015\037\217" (* edpk(54) *)
 	SECP256K1_SECRET_KEY_ID = []byte{0x11, 0xA2, 0xE0, 0xC9} // "\017\162\224\201" (* spsk(54) *)
@@ -99,10 +118,17 @@ var (
 	SECP256K1_ENCRYPTED_SECRET_KEY_ID = []byte{0x09, 0xED, 0xF1, 0xAE, 0x96} // "\009\237\241\174\150" (* spesk(88) *)
 	P256_ENCRYPTED_SECRET_KEY_ID      = []byte{0x09, 0x30, 0x39, 0x73, 0xAB} // "\009\048\057\115\171" (* p2esk(88) *)
 
+	// 60 byte hash magics
+	SECP256K1_ENCRYPTED_SCALAR_ID = []byte{0x01, 0x83, 0x24, 0x56, 0xF8} // "\001\131\036\086\248" (* seesk(93) *)
+
 	// 64 byte hash magics
 	ED25519_SECRET_KEY_ID  = []byte{0x2B, 0xF6, 0x4E, 0x07}       // "\043\246\078\007" (* edsk(98) *)
 	ED25519_SIGNATURE_ID   = []byte{0x09, 0xF5, 0xCD, 0x86, 0x12} // "\009\245\205\134\018" (* edsig(99) *)
-	SECP256K1_SIGNATURE_ID = []byte{0x0D, 0x73, 0x65, 0x13, 0x3F} //  "\013\115\101\019\063" (* spsig1(99) *)
-	P256_SIGNATURE_ID      = []byte{0x36, 0xF0, 0x2C, 0x34}       //  "\054\240\044\052" (* p2sig(98) *)
+	SECP256K1_SIGNATURE_ID = []byte{0x0D, 0x73, 0x65, 0x13, 0x3F} // "\013\115\101\019\063" (* spsig1(99) *)
+	P256_SIGNATURE_ID      = []byte{0x36, 0xF0, 0x2C, 0x34}       // "\054\240\044\052" (* p2sig(98) *)
 	GENERIC_SIGNATURE_ID   = []byte{0x04, 0x82, 0x2B}             // "\004\130\043" (* sig(96) *)
+
+	// Sapling magics
+	SAPLING_SPENDING_KEY_ID = []byte{0x0b, 0xED, 0x14, 0x5C} // "\011\237\020\092" (* sask(241) *)
+	SAPLING_ADDRESS_ID      = []byte{0x12, 0x47, 0x28, 0xDF} // "\018\071\040\223" (* zet1(69) *)
 )

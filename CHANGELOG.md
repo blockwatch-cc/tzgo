@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.12-rc1
+
+- Refactored wallet functionality into rpc package
+- Refactored op construction
+- Refactored cost and limit types
+- Initial contract and token support
+- Added Ithaca constants, hashes, types and RPC updates
+
 ## v1.11-rc0
 
 This is the first release of TzGo that allows to send transaction. All types and interfaces are engineered to be easily composable. We start with essential low level types/functions for public and private key handling, operation encoding/signing/broadcast and mempool/block monitoring. This feature set is already fully sufficient to build end-user applications including the possibility to send smart contract calls, but may at times be less convenient. To simplify complex use cases we will introduce higher order functionality in the next release candidate.

@@ -106,23 +106,27 @@ type InvalidBlock struct {
 
 // BlockHeader is a part of the Tezos block data
 type BlockHeader struct {
-	ChainId                   *tezos.ChainIdHash  `json:"chain_id,omitempty"`
-	Hash                      *tezos.BlockHash    `json:"hash,omitempty"`
-	Level                     int64               `json:"level"`
-	Proto                     int                 `json:"proto"`
-	Predecessor               tezos.BlockHash     `json:"predecessor"`
-	Timestamp                 time.Time           `json:"timestamp"`
-	ValidationPass            int                 `json:"validation_pass"`
-	OperationsHash            string              `json:"operations_hash"`
-	Fitness                   []tezos.HexBytes    `json:"fitness"`
-	Context                   string              `json:"context"`
-	Priority                  int                 `json:"priority"`
-	ProofOfWorkNonce          tezos.HexBytes      `json:"proof_of_work_nonce"`
-	SeedNonceHash             *tezos.NonceHash    `json:"seed_nonce_hash"`
-	Signature                 tezos.Signature     `json:"signature"`
-	Content                   *BlockContent       `json:"content,omitempty"`
-	Protocol                  *tezos.ProtocolHash `json:"protocol,omitempty"`
-	LiquidityBakingEscapeVote bool                `json:"liquidity_baking_escape_vote"`
+	Level                     int64                `json:"level"`
+	Proto                     int                  `json:"proto"`
+	Predecessor               tezos.BlockHash      `json:"predecessor"`
+	Timestamp                 time.Time            `json:"timestamp"`
+	ValidationPass            int                  `json:"validation_pass"`
+	OperationsHash            tezos.OpListListHash `json:"operations_hash"`
+	Fitness                   []tezos.HexBytes     `json:"fitness"`
+	Context                   tezos.ContextHash    `json:"context"`
+	PayloadHash               tezos.PayloadHash    `json:"payload_hash"`
+	PayloadRound              int                  `json:"payload_round"`
+	Priority                  int                  `json:"priority"`
+	ProofOfWorkNonce          tezos.HexBytes       `json:"proof_of_work_nonce"`
+	SeedNonceHash             *tezos.NonceHash     `json:"seed_nonce_hash"`
+	Signature                 tezos.Signature      `json:"signature"`
+	Content                   *BlockContent        `json:"content,omitempty"`
+	LiquidityBakingEscapeVote bool                 `json:"liquidity_baking_escape_vote"`
+
+	// only present when header is fetched explicitly
+	Hash     tezos.BlockHash    `json:"hash"`
+	Protocol tezos.ProtocolHash `json:"protocol"`
+	ChainId  tezos.ChainIdHash  `json:"chain_id"`
 }
 
 // BlockContent is part of block 1 header that seeds the initial context
@@ -173,7 +177,8 @@ type BlockMetadata struct {
 	MaxBlockHeaderLength   int                    `json:"max_block_header_length"`
 	MaxOperationListLength []*OperationListLength `json:"max_operation_list_length"`
 	Baker                  tezos.Address          `json:"baker"`
-	NonceHash              *tezos.NonceHash       `json:"nonce_hash"`
+	Proposer               tezos.Address          `json:"proposer"`
+	NonceHash              tezos.NonceHash        `json:"nonce_hash"`
 	ConsumedGas            int64                  `json:"consumed_gas,string"`
 	Deactivated            []tezos.Address        `json:"deactivated"`
 	BalanceUpdates         BalanceUpdates         `json:"balance_updates"`

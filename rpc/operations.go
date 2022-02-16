@@ -72,6 +72,7 @@ type OperationMetadata struct {
 	// endorsement only
 	Delegate tezos.Address `json:"delegate"`
 	Slots    []int         `json:"slots,omitempty"`
+	Power    int           `json:"endorsement_power,omitempty"`
 }
 
 // Address returns the delegate address for endorsements.
@@ -223,10 +224,24 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &Activation{}
 		case tezos.OpTypeDoubleBakingEvidence:
 			op = &DoubleBaking{}
-		case tezos.OpTypeDoubleEndorsementEvidence:
+		case tezos.OpTypeDoubleEndorsementEvidence,
+			tezos.OpTypeDoublePreEndorsementEvidence:
 			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
 			op = &SeedNonce{}
+
+		// consensus operations
+		case tezos.OpTypeEndorsement,
+			tezos.OpTypeEndorsementWithSlot,
+			tezos.OpTypePreEndorsement:
+			op = &Endorsement{}
+
+		// amendment operations
+		case tezos.OpTypeProposals:
+			op = &Proposals{}
+		case tezos.OpTypeBallot:
+			op = &Ballot{}
+
 		// manager operations
 		case tezos.OpTypeTransaction:
 			op = &Transaction{}
@@ -238,14 +253,8 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &Reveal{}
 		case tezos.OpTypeRegisterConstant:
 			op = &ConstantRegistration{}
-		// consensus operations
-		case tezos.OpTypeEndorsement, tezos.OpTypeEndorsementWithSlot:
-			op = &Endorsement{}
-		// amendment operations
-		case tezos.OpTypeProposals:
-			op = &Proposals{}
-		case tezos.OpTypeBallot:
-			op = &Ballot{}
+		case tezos.OpTypeSetDepositsLimit:
+			op = &SetDepositsLimit{}
 
 		default:
 			return fmt.Errorf("rpc: unsupported op %q", kind)

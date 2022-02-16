@@ -178,6 +178,9 @@ const (
 	I_VIEW       // 90
 	K_VIEW       // 91
 	H_CONSTANT   // 92
+
+	// v012 additions
+	I_SUB_MUTEZ // 93
 )
 
 func (op OpCode) IsValid() bool {
@@ -333,6 +336,7 @@ var (
 		I_VIEW:                  "VIEW",
 		K_VIEW:                  "view",
 		H_CONSTANT:              "constant",
+		I_SUB_MUTEZ:             "SUB_MUTEZ",
 	}
 	stringToOp map[string]OpCode
 )

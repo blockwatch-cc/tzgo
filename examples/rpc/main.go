@@ -189,10 +189,17 @@ func printHead(h *rpc.BlockHeader) {
 }
 
 func printBlock(b *rpc.Block) {
-	fmt.Printf("Height %d (%d)\n", b.GetLevel(), b.GetCycle())
-	fmt.Printf("Block  %s\n", b.Hash)
-	fmt.Printf("Parent %s\n", b.Header.Predecessor)
-	fmt.Printf("Time   %s\n", b.Header.Timestamp)
+	fmt.Printf("Height   %d (%d)\n", b.GetLevel(), b.GetCycle())
+	fmt.Printf("Block    %s\n", b.Hash)
+	if b.Header.PayloadHash.IsValid() {
+		fmt.Printf("Round    %d\n", b.Header.PayloadRound)
+		fmt.Printf("Payload  %s\n", b.Header.PayloadHash)
+	} else {
+		fmt.Printf("Priority %d\n", b.Header.Priority)
+		fmt.Printf("Payload  %s\n", b.Header.OperationsHash)
+	}
+	fmt.Printf("Parent   %s\n", b.Header.Predecessor)
+	fmt.Printf("Time     %s\n", b.Header.Timestamp)
 
 	// count operations and details
 	ops := make(map[tezos.OpType]int)
@@ -210,7 +217,7 @@ func printBlock(b *rpc.Block) {
 			}
 		}
 	}
-	fmt.Printf("Ops    %d: ", count)
+	fmt.Printf("Ops      %d: ", count)
 	comma := ""
 	for n, c := range ops {
 		fmt.Printf("%s%d %s", comma, c, n)

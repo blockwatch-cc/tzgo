@@ -70,29 +70,33 @@ func (t OpStatus) String() string {
 
 type OpType byte
 
+// enums are allocated in chronological order
 const (
-	OpTypeBake                      OpType = iota // 0
-	OpTypeActivateAccount                         // 1
-	OpTypeDoubleBakingEvidence                    // 2
-	OpTypeDoubleEndorsementEvidence               // 3
-	OpTypeSeedNonceRevelation                     // 4
-	OpTypeTransaction                             // 5
-	OpTypeOrigination                             // 6
-	OpTypeDelegation                              // 7
-	OpTypeReveal                                  // 8
-	OpTypeEndorsement                             // 9
-	OpTypeProposals                               // 10
-	OpTypeBallot                                  // 11
-	OpTypeUnfreeze                                // 12 indexer only
-	OpTypeInvoice                                 // 13 indexer only
-	OpTypeAirdrop                                 // 14 indexer only
-	OpTypeSeedSlash                               // 15 indexer only
-	OpTypeMigration                               // 16 indexer only
-	OpTypeFailingNoop                             // 17 v009
-	OpTypeEndorsementWithSlot                     // 18 v009
-	OpTypeRegisterConstant                        // 19 v011
-	OpTypeBatch                     = 254         // indexer only, output-only
-	OpTypeInvalid                   = 255
+	OpTypeBake                         OpType = iota // 0
+	OpTypeActivateAccount                            // 1
+	OpTypeDoubleBakingEvidence                       // 2
+	OpTypeDoubleEndorsementEvidence                  // 3
+	OpTypeSeedNonceRevelation                        // 4
+	OpTypeTransaction                                // 5
+	OpTypeOrigination                                // 6
+	OpTypeDelegation                                 // 7
+	OpTypeReveal                                     // 8
+	OpTypeEndorsement                                // 9
+	OpTypeProposals                                  // 10
+	OpTypeBallot                                     // 11
+	OpTypeUnfreeze                                   // 12 indexer event only
+	OpTypeInvoice                                    // 13 indexer event only
+	OpTypeAirdrop                                    // 14 indexer event only
+	OpTypeSeedSlash                                  // 15 indexer event only
+	OpTypeMigration                                  // 16 indexer event only
+	OpTypeFailingNoop                                // 17 v009
+	OpTypeEndorsementWithSlot                        // 18 v009
+	OpTypeRegisterConstant                           // 19 v011
+	OpTypePreEndorsement                             // 20 v012
+	OpTypeDoublePreEndorsementEvidence               // 21 v012
+	OpTypeSetDepositsLimit                           // 22 v012
+	OpTypeBatch                        = 254         // indexer only, output-only
+	OpTypeInvalid                      = 255
 )
 
 func (t OpType) IsValid() bool {
@@ -156,6 +160,12 @@ func ParseOpType(s string) OpType {
 		return OpTypeFailingNoop
 	case "register_global_constant":
 		return OpTypeRegisterConstant
+	case "preendorsement":
+		return OpTypePreEndorsement
+	case "double_preendorsement_evidence":
+		return OpTypeDoublePreEndorsementEvidence
+	case "set_deposits_limit":
+		return OpTypeSetDepositsLimit
 	default:
 		return OpTypeInvalid
 	}
@@ -205,6 +215,12 @@ func (t OpType) String() string {
 		return "failing_noop"
 	case OpTypeRegisterConstant:
 		return "register_global_constant"
+	case OpTypePreEndorsement:
+		return "preendorsement"
+	case OpTypeDoublePreEndorsementEvidence:
+		return "double_preendorsement_evidence"
+	case OpTypeSetDepositsLimit:
+		return "set_deposits_limit"
 	default:
 		return ""
 	}
@@ -225,7 +241,7 @@ var (
 		OpTypeOrigination:               9,
 		OpTypeDelegation:                10,
 	}
-	// Babylon v005 and up
+	// Babylon v005 until Hangzhou v011
 	opTagV1 = map[OpType]byte{
 		OpTypeEndorsement:               0,
 		OpTypeSeedNonceRevelation:       1,
@@ -242,6 +258,25 @@ var (
 		OpTypeFailingNoop:               17,  // v009
 		OpTypeRegisterConstant:          111, // v011
 	}
+	// Itahca v012 and up
+	opTagV2 = map[OpType]byte{
+		OpTypeSeedNonceRevelation:          1,
+		OpTypeDoubleEndorsementEvidence:    2,
+		OpTypeDoubleBakingEvidence:         3,
+		OpTypeActivateAccount:              4,
+		OpTypeProposals:                    5,
+		OpTypeBallot:                       6,
+		OpTypeReveal:                       107, // v005
+		OpTypeTransaction:                  108, // v005
+		OpTypeOrigination:                  109, // v005
+		OpTypeDelegation:                   110, // v005
+		OpTypeFailingNoop:                  17,  // v009
+		OpTypeRegisterConstant:             111, // v011
+		OpTypePreEndorsement:               20,  // v012
+		OpTypeEndorsement:                  21,  // v012
+		OpTypeDoublePreEndorsementEvidence: 7,   // v012
+		OpTypeSetDepositsLimit:             112, // v012
+	}
 )
 
 func (t OpType) TagVersion(ver int) byte {
@@ -252,8 +287,10 @@ func (t OpType) TagVersion(ver int) byte {
 	switch ver {
 	case 0:
 		tag, ok = opTagV0[t]
-	default:
+	case 1:
 		tag, ok = opTagV1[t]
+	default:
+		tag, ok = opTagV2[t]
 	}
 	if !ok {
 		return 255
@@ -262,7 +299,7 @@ func (t OpType) TagVersion(ver int) byte {
 }
 
 func (t OpType) Tag() byte {
-	tag, ok := opTagV1[t]
+	tag, ok := opTagV2[t]
 	if !ok {
 		tag = 255
 	}
@@ -284,10 +321,10 @@ var (
 		9:  53,        // OpTypeOrigination
 		10: 26,        // OpTypeDelegation
 	}
-	// Babylon v005 and up
+	// Babylon v005 until Hangzhou v011
 	opMinSizeV1 = map[byte]int{
 		0:   5,          // OpTypeEndorsement // <v009
-		1:   037,        // OpTypeSeedNonceRevelation
+		1:   37,         // OpTypeSeedNonceRevelation
 		2:   11 + 2*101, // OpTypeDoubleEndorsementEvidence
 		3:   9 + 2*189,  // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, lb_escape_vote)
 		4:   41,         // OpTypeActivateAccount
@@ -301,37 +338,60 @@ var (
 		17:  5,          // OpTypeFailingNoop  // v009
 		111: 30,         // OpTypeRegisterConstant // v011
 	}
+	// Ithaca v012 and up
+	opMinSizeV2 = map[byte]int{
+		1:   37,               // OpTypeSeedNonceRevelation
+		2:   9 + 2*(32+43+64), // OpTypeDoubleEndorsementEvidence
+		3:   9 + 2*237,        // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, min fitness size)
+		4:   41,               // OpTypeActivateAccount
+		5:   30,               // OpTypeProposals
+		6:   59,               // OpTypeBallot
+		107: 26 + 32,          // OpTypeReveal // v005 (assuming shortest pk)
+		108: 50,               // OpTypeTransaction // v005
+		109: 28,               // OpTypeOrigination // v005
+		110: 27,               // OpTypeDelegation // v005
+		17:  5,                // OpTypeFailingNoop  // v009
+		111: 30,               // OpTypeRegisterConstant // v011
+		7:   9 + 2*(32+43+64), // OpTypeDoublePreEndorsementEvidence // v012
+		20:  43,               // OpTypePreEndorsement // v012
+		21:  43,               // OpTypeEndorsement // v012
+		112: 27,               // OpTypeSetDepositsLimit // v012
+	}
 )
 
 func (t OpType) MinSizeVersion(ver int) int {
 	switch ver {
 	case 0:
 		return opMinSizeV0[t.TagVersion(ver)]
-	default:
+	case 1:
 		return opMinSizeV1[t.TagVersion(ver)]
+	default:
+		return opMinSizeV2[t.TagVersion(ver)]
 	}
 }
 
 func (t OpType) MinSize() int {
-	return opMinSizeV1[t.Tag()]
+	return opMinSizeV2[t.Tag()]
 }
 
 func (t OpType) ListId() int {
 	switch t {
-	case OpTypeEndorsement, OpTypeEndorsementWithSlot:
+	case OpTypeEndorsement, OpTypeEndorsementWithSlot, OpTypePreEndorsement:
 		return 0
 	case OpTypeProposals, OpTypeBallot:
 		return 1
 	case OpTypeActivateAccount,
 		OpTypeDoubleBakingEvidence,
 		OpTypeDoubleEndorsementEvidence,
-		OpTypeSeedNonceRevelation:
+		OpTypeSeedNonceRevelation,
+		OpTypeDoublePreEndorsementEvidence:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
 		OpTypeDelegation,
 		OpTypeReveal,
-		OpTypeRegisterConstant:
+		OpTypeRegisterConstant,
+		OpTypeSetDepositsLimit:
 		return 3
 	case OpTypeBake, OpTypeUnfreeze, OpTypeSeedSlash:
 		return -1 // block level ops
@@ -373,6 +433,14 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeFailingNoop
 	case 111:
 		return OpTypeRegisterConstant
+	case 20:
+		return OpTypePreEndorsement
+	case 21:
+		return OpTypeEndorsement
+	case 7:
+		return OpTypeDoublePreEndorsementEvidence
+	case 112:
+		return OpTypeSetDepositsLimit
 	default:
 		return OpTypeInvalid
 	}
@@ -380,8 +448,11 @@ func ParseOpTag(t byte) OpType {
 
 func ParseOpTagVersion(t byte, ver int) OpType {
 	tags := opTagV0
-	if ver > 0 {
+	switch ver {
+	case 1:
 		tags = opTagV1
+	case 2:
+		tags = opTagV2
 	}
 	for typ, tag := range tags {
 		if tag == t {

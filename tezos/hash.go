@@ -63,6 +63,15 @@ const (
 	HashTypeSigSecp256k1
 	HashTypeSigP256
 	HashTypeSigGeneric
+
+	HashTypeBlockPayload
+	HashTypeBlockMetadata
+	HashTypeOperationMetadata
+	HashTypeOperationMetadataList
+	HashTypeOperationMetadataListList
+	HashTypeEncryptedSecp256k1Scalar
+	HashTypeSaplingSpendingKey
+	HashTypeSaplingAddress
 )
 
 func ParseHashType(s string) HashType {
@@ -90,6 +99,11 @@ func ParseHashType(s string) HashType {
 		case strings.HasPrefix(s, BAKER_PUBLIC_KEY_HASH_PREFIX):
 			return HashTypePkhBaker
 		}
+	case 43:
+		switch true {
+		case strings.HasPrefix(s, SAPLING_ADDRESS_PREFIX):
+			return HashTypeSaplingAddress
+		}
 	case 51:
 		switch true {
 		case strings.HasPrefix(s, BLOCK_HASH_PREFIX):
@@ -98,6 +112,8 @@ func ParseHashType(s string) HashType {
 			return HashTypeOperation
 		case strings.HasPrefix(s, PROTOCOL_HASH_PREFIX):
 			return HashTypeProtocol
+		case strings.HasPrefix(s, OPERATION_METADATA_HASH_PREFIX):
+			return HashTypeOperationMetadata
 		}
 	case 52:
 		switch true {
@@ -105,6 +121,12 @@ func ParseHashType(s string) HashType {
 			return HashTypeOperationList
 		case strings.HasPrefix(s, CONTEXT_HASH_PREFIX):
 			return HashTypeContext
+		case strings.HasPrefix(s, BLOCK_PAYLOAD_HASH_PREFIX):
+			return HashTypeBlockPayload
+		case strings.HasPrefix(s, BLOCK_METADATA_HASH_PREFIX):
+			return HashTypeBlockMetadata
+		case strings.HasPrefix(s, OPERATION_METADATA_LIST_HASH_PREFIX):
+			return HashTypeOperationMetadataList
 		}
 	case 53:
 		switch true {
@@ -114,6 +136,8 @@ func ParseHashType(s string) HashType {
 			return HashTypeScalarSecp256k1
 		case strings.HasPrefix(s, NONCE_HASH_PREFIX):
 			return HashTypeNonce
+		case strings.HasPrefix(s, OPERATION_METADATA_LIST_LIST_HASH_PREFIX):
+			return HashTypeOperationMetadataListList
 		}
 	case 54:
 		switch true {
@@ -146,6 +170,11 @@ func ParseHashType(s string) HashType {
 		case strings.HasPrefix(s, P256_ENCRYPTED_SECRET_KEY_PREFIX):
 			return HashTypeEncryptedSkP256
 		}
+	case 93:
+		switch true {
+		case strings.HasPrefix(s, SECP256K1_ENCRYPTED_SCALAR_PREFIX):
+			return HashTypeEncryptedSecp256k1Scalar
+		}
 	case 96:
 		if strings.HasPrefix(s, GENERIC_SIGNATURE_PREFIX) {
 			return HashTypeSigGeneric
@@ -163,6 +192,11 @@ func ParseHashType(s string) HashType {
 			return HashTypeSigEd25519
 		case strings.HasPrefix(s, SECP256K1_SIGNATURE_PREFIX):
 			return HashTypeSigSecp256k1
+		}
+	case 169:
+		switch true {
+		case strings.HasPrefix(s, SAPLING_SPENDING_KEY_PREFIX):
+			return HashTypeSaplingSpendingKey
 		}
 	}
 	return HashTypeInvalid
@@ -246,6 +280,22 @@ func (t HashType) Prefix() string {
 		return P256_SIGNATURE_PREFIX
 	case HashTypeSigGeneric:
 		return GENERIC_SIGNATURE_PREFIX
+	case HashTypeBlockPayload:
+		return BLOCK_PAYLOAD_HASH_PREFIX
+	case HashTypeBlockMetadata:
+		return BLOCK_METADATA_HASH_PREFIX
+	case HashTypeOperationMetadata:
+		return OPERATION_METADATA_HASH_PREFIX
+	case HashTypeOperationMetadataList:
+		return OPERATION_METADATA_LIST_HASH_PREFIX
+	case HashTypeOperationMetadataListList:
+		return OPERATION_METADATA_LIST_LIST_HASH_PREFIX
+	case HashTypeEncryptedSecp256k1Scalar:
+		return SECP256K1_ENCRYPTED_SCALAR_PREFIX
+	case HashTypeSaplingSpendingKey:
+		return SAPLING_SPENDING_KEY_PREFIX
+	case HashTypeSaplingAddress:
+		return SAPLING_ADDRESS_PREFIX
 	default:
 		return ""
 	}
@@ -317,6 +367,22 @@ func (t HashType) PrefixBytes() []byte {
 		return P256_SIGNATURE_ID
 	case HashTypeSigGeneric:
 		return GENERIC_SIGNATURE_ID
+	case HashTypeBlockPayload:
+		return BLOCK_PAYLOAD_HASH_ID
+	case HashTypeBlockMetadata:
+		return BLOCK_METADATA_HASH_ID
+	case HashTypeOperationMetadata:
+		return OPERATION_METADATA_HASH_ID
+	case HashTypeOperationMetadataList:
+		return OPERATION_METADATA_LIST_HASH_ID
+	case HashTypeOperationMetadataListList:
+		return OPERATION_METADATA_LIST_LIST_HASH_ID
+	case HashTypeEncryptedSecp256k1Scalar:
+		return SECP256K1_ENCRYPTED_SCALAR_ID
+	case HashTypeSaplingSpendingKey:
+		return SAPLING_SPENDING_KEY_ID
+	case HashTypeSaplingAddress:
+		return SAPLING_ADDRESS_ID
 	default:
 		return nil
 	}
@@ -346,23 +412,34 @@ func (t HashType) Len() int {
 		HashTypePkEd25519,
 		HashTypeSkSecp256k1,
 		HashTypeSkP256,
-		HashTypeScriptExpr:
+		HashTypeScriptExpr,
+		HashTypeBlockPayload,
+		HashTypeBlockMetadata,
+		HashTypeOperationMetadata,
+		HashTypeOperationMetadataList,
+		HashTypeOperationMetadataListList:
 		return 32
 	case HashTypePkSecp256k1,
 		HashTypePkP256,
 		HashTypeScalarSecp256k1,
 		HashTypeElementSecp256k1:
 		return 33
+	case HashTypeSaplingAddress:
+		return 43
 	case HashTypeEncryptedSeedEd25519,
 		HashTypeEncryptedSkSecp256k1,
 		HashTypeEncryptedSkP256:
 		return 56
+	case HashTypeEncryptedSecp256k1Scalar:
+		return 60
 	case HashTypeSkEd25519,
 		HashTypeSigEd25519,
 		HashTypeSigSecp256k1,
 		HashTypeSigP256,
 		HashTypeSigGeneric:
 		return 64
+	case HashTypeSaplingSpendingKey:
+		return 169
 	default:
 		return 0
 	}
@@ -383,14 +460,19 @@ func (t HashType) Base58Len() int {
 		return 37
 	case HashTypeBlock,
 		HashTypeOperation,
-		HashTypeProtocol:
+		HashTypeProtocol,
+		HashTypeOperationMetadata:
 		return 51
 	case HashTypeOperationList,
-		HashTypeContext:
+		HashTypeContext,
+		HashTypeBlockPayload,
+		HashTypeBlockMetadata,
+		HashTypeOperationMetadataList:
 		return 52
 	case HashTypeOperationListList,
 		HashTypeNonce,
-		HashTypeScalarSecp256k1:
+		HashTypeScalarSecp256k1,
+		HashTypeOperationMetadataListList:
 		return 53
 	case HashTypeSeedEd25519,
 		HashTypePkEd25519,
@@ -402,10 +484,14 @@ func (t HashType) Base58Len() int {
 	case HashTypePkSecp256k1,
 		HashTypePkP256:
 		return 55
+	case HashTypeSaplingAddress:
+		return 69
 	case HashTypeEncryptedSeedEd25519,
 		HashTypeEncryptedSkSecp256k1,
 		HashTypeEncryptedSkP256:
 		return 88
+	case HashTypeEncryptedSecp256k1Scalar:
+		return 93
 	case HashTypeSigGeneric:
 		return 96
 	case HashTypeSkEd25519,
@@ -414,6 +500,8 @@ func (t HashType) Base58Len() int {
 	case HashTypeSigEd25519,
 		HashTypeSigSecp256k1:
 		return 99
+	case HashTypeSaplingSpendingKey:
+		return 241
 	default:
 		return 0
 	}
@@ -820,6 +908,70 @@ func MustParseOpListListHash(s string) OpListListHash {
 
 func ParseOpListListHash(s string) (OpListListHash, error) {
 	var h OpListListHash
+	if err := h.UnmarshalText([]byte(s)); err != nil {
+		return h, err
+	}
+	return h, nil
+}
+
+// PayloadHash
+type PayloadHash struct {
+	Hash
+}
+
+func NewPayloadHash(buf []byte) PayloadHash {
+	b := make([]byte, len(buf))
+	copy(b, buf)
+	return PayloadHash{Hash: NewHash(HashTypeBlockPayload, b)}
+}
+
+func (h PayloadHash) Clone() PayloadHash {
+	return PayloadHash{h.Hash.Clone()}
+}
+
+func (h PayloadHash) Equal(h2 PayloadHash) bool {
+	return h.Hash.Equal(h2.Hash)
+}
+
+func (h *PayloadHash) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	if !strings.HasPrefix(string(data), BLOCK_PAYLOAD_HASH_PREFIX) {
+		return fmt.Errorf("tezos: invalid prefix for payload hash '%s'", string(data))
+	}
+	if err := h.Hash.UnmarshalText(data); err != nil {
+		return err
+	}
+	if h.Type != HashTypeBlockPayload {
+		return fmt.Errorf("tezos: invalid type %s for payload hash", h.Type.Prefix())
+	}
+	if len(h.Hash.Hash) != h.Type.Len() {
+		return fmt.Errorf("tezos: invalid len %d for payload hash", len(h.Hash.Hash))
+	}
+	return nil
+}
+
+func (h *PayloadHash) UnmarshalBinary(data []byte) error {
+	if l := len(data); l > 0 && l != HashTypeBlockPayload.Len() {
+		return fmt.Errorf("tezos: invalid len %d for payload hash", len(data))
+	}
+	h.Type = HashTypeBlockPayload
+	h.Hash.Hash = make([]byte, h.Type.Len())
+	copy(h.Hash.Hash, data)
+	return nil
+}
+
+func MustParsePayloadHash(s string) PayloadHash {
+	b, err := ParsePayloadHash(s)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+func ParsePayloadHash(s string) (PayloadHash, error) {
+	var h PayloadHash
 	if err := h.UnmarshalText([]byte(s)); err != nil {
 		return h, err
 	}
