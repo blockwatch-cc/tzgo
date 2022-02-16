@@ -5,10 +5,8 @@ package codec
 
 import (
     "bytes"
-    "encoding/binary"
     "strconv"
 
-    "blockwatch.cc/tzgo/micheline"
     "blockwatch.cc/tzgo/tezos"
 )
 
@@ -30,8 +28,7 @@ func (o SetDepositsLimit) MarshalJSON() ([]byte, error) {
     buf.WriteByte(',')
     o.Manager.EncodeJSON(buf)
     buf.WriteString(`,"limit":`)
-    b, _ := o.Limit.MarshalJSON()
-    buf.Write(b)
+    buf.WriteString(strconv.Quote(o.Limit.String()))
     buf.WriteByte('}')
     return buf.Bytes(), nil
 }
