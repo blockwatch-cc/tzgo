@@ -190,6 +190,6 @@ func (r FA1TransferReceipt) Costs() tezos.Costs {
 }
 
 func (r FA1TransferReceipt) BalanceUpdates() []TokenBalance {
-	// TODO: read from bigmap update
+	// TODO: read from ledger bigmap update
 	return nil
 }

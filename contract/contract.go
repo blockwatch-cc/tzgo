@@ -52,6 +52,7 @@ type CallOptions struct {
 var DefaultOptions = CallOptions{
 	Confirmations: 6,
 	TTL:           120,
+	MaxFee:        1000000,
 }
 
 type Contract struct {
@@ -70,11 +71,8 @@ func NewContract(addr tezos.Address, cli *rpc.Client) *Contract {
 }
 
 func (c *Contract) Resolve(ctx context.Context) error {
-	// FIXME: normalized pulls global constants replaced, but uses comb pairs
-	//        in entrypoints, so type detection fails
-	//
-	// script, err := c.rpc.GetNormalizedScript(ctx, c.addr)
-	script, err := c.rpc.GetContractScript(ctx, c.addr)
+	// use normalized script to have the node embed global constants
+	script, err := c.rpc.GetNormalizedScript(ctx, c.addr, rpc.UnparsingModeOptimized)
 	if err != nil {
 		return err
 	}
@@ -88,6 +86,7 @@ func (c *Contract) Resolve(ctx context.Context) error {
 }
 
 func (c *Contract) ResolveMetadata(ctx context.Context) (*Tz16, error) {
+	// TODO
 	return nil, nil
 }
 
@@ -124,19 +123,19 @@ func (c Contract) Address() tezos.Address {
 }
 
 func (c Contract) IsManagerTz() bool {
-	return c.script != nil && c.script.ImplementsStrict(micheline.IManager)
+	return c.script != nil && c.script.Implements(micheline.IManager)
 }
 
 func (c Contract) IsFA1() bool {
-	return c.script != nil && c.script.ImplementsStrict(micheline.ITzip5)
+	return c.script != nil && c.script.Implements(micheline.ITzip5)
 }
 
 func (c Contract) IsFA12() bool {
-	return c.script != nil && c.script.ImplementsStrict(micheline.ITzip7)
+	return c.script != nil && c.script.Implements(micheline.ITzip7)
 }
 
 func (c Contract) IsFA2() bool {
-	return c.script != nil && c.script.ImplementsStrict(micheline.ITzip12)
+	return c.script != nil && c.script.Implements(micheline.ITzip12)
 }
 
 // func (c *Contract) IsNFT() bool {}
