@@ -102,23 +102,22 @@ type Params struct {
 	CacheLayout                    []string `json:"cache_layout"`
 
 	// New in Ithaca v012
-	BlocksPerStakeSnapshot                           int64 `json:"blocks_per_stake_snapshot"`
-	BakingRewardFixedPortion                         int64 `json:"baking_reward_fixed_portion,string"`
-	BakingRewardBonusPerSlot                         int64 `json:"baking_reward_bonus_per_slot,string"`
-	EndorsingRewardPerSlot                           int64 `json:"endorsing_reward_per_slot,string"`
-	DelayIncrementPerRound                           int   `json:"delay_increment_per_round,string"`
-	ConsensusCommitteeSize                           int   `json:"consensus_committee_size"`
-	ConsensusThreshold                               int   `json:"consensus_threshold"`
-	MinimalParticipationRatio                        Ratio `json:"minimal_participation_ratio"`
-	MaxSlashingPeriod                                int64 `json:"max_slashing_period"`
-	FrozenDepositsPercentage                         int   `json:"frozen_deposits_percentage"`
-	DoubleBakingPunishment                           int64 `json:"double_baking_punishment,string"`
-	RatioOfFrozenDepositsSlashedPerDoubleEndorsement Ratio `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
+	BlocksPerStakeSnapshot                           int64         `json:"blocks_per_stake_snapshot"`
+	BakingRewardFixedPortion                         int64         `json:"baking_reward_fixed_portion,string"`
+	BakingRewardBonusPerSlot                         int64         `json:"baking_reward_bonus_per_slot,string"`
+	EndorsingRewardPerSlot                           int64         `json:"endorsing_reward_per_slot,string"`
+	DelayIncrementPerRound                           time.Duration `json:"delay_increment_per_round,string"`
+	ConsensusCommitteeSize                           int           `json:"consensus_committee_size"`
+	ConsensusThreshold                               int           `json:"consensus_threshold"`
+	MinimalParticipationRatio                        Ratio         `json:"minimal_participation_ratio"`
+	MaxSlashingPeriod                                int64         `json:"max_slashing_period"`
+	FrozenDepositsPercentage                         int           `json:"frozen_deposits_percentage"`
+	DoubleBakingPunishment                           int64         `json:"double_baking_punishment,string"`
+	RatioOfFrozenDepositsSlashedPerDoubleEndorsement Ratio         `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
 
 	// extra features to follow protocol upgrades
 	MaxOperationsTTL     int64            `json:"max_operations_ttl"`               // in block meta until v011, explicit from v012+
 	Invoices             map[string]int64 `json:"invoices,omitempty"`               // hidden invoice feature, explicit since v007+ (?)
-	SilentSpendable      bool             `json:"silent_spendable,omitempty"`       // contracts are spendable/delegatable without flag set, changed in v005
 	HasOriginationBug    bool             `json:"has_origination_bug,omitempty"`    // bugfix applied before v002
 	ReactivateByTx       bool             `json:"reactivate_by_tx,omitempty"`       // bugfix applied before v004
 	OperationTagsVersion int              `json:"operation_tags_version,omitempty"` // 1 after v005
@@ -233,27 +232,35 @@ func (p *Params) CycleEndHeight(cycle int64) int64 {
 	return pp.StartBlockOffset + (cycle-pp.StartCycle+1)*pp.BlocksPerCycle
 }
 
-func (p *Params) SnapshotBlock(cycle, index int64) int64 {
-	if cycle < p.PreservedCycles+2 {
-		return 0
+func (p *Params) SnapshotBaseCycle(cycle int64) int64 {
+	var offset int64 = 2
+	if p.Version >= 12 {
+		offset = 1
 	}
-	baseCycle := cycle - (p.PreservedCycles + 2)
-	pp := p
-	if !p.ContainsCycle(baseCycle) {
-		pp = p.ForCycle(baseCycle)
-	}
-	return pp.CycleStartHeight(baseCycle) + (index+1)*pp.SnapshotBlocks() - 1
+	return cycle - (p.PreservedCycles + offset)
 }
 
-func (p *Params) SnapshotIndex(height int64) int64 {
+func (p *Params) SnapshotBlock(cycle int64, index int) int64 {
+	base := p.SnapshotBaseCycle(cycle)
+	if base < 0 {
+		return 0
+	}
+	pp := p
+	if !p.ContainsCycle(base) {
+		pp = p.ForCycle(base)
+	}
+	return pp.CycleStartHeight(base) + int64(index+1)*pp.SnapshotBlocks() - 1
+}
+
+func (p *Params) SnapshotIndex(height int64) int {
 	pp := p
 	if !p.ContainsHeight(height) {
 		pp = p.ForHeight(height)
 	}
 	if height == pp.StartBlockOffset {
-		return pp.BlocksPerCycle/pp.SnapshotBlocks() - 1
+		return int(pp.BlocksPerCycle/pp.SnapshotBlocks() - 1)
 	}
-	return ((height - pp.StartBlockOffset - pp.SnapshotBlocks()) % pp.BlocksPerCycle) / pp.SnapshotBlocks()
+	return int(((height - pp.StartBlockOffset - pp.SnapshotBlocks()) % pp.BlocksPerCycle) / pp.SnapshotBlocks())
 }
 
 func (p *Params) SnapshotBlocks() int64 {

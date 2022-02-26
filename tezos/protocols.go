@@ -131,7 +131,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.Version = 0
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
-		pp.SilentSpendable = true
 		pp.StartHeight = 1
 		pp.EndHeight = 1
 
@@ -139,27 +138,23 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.Version = 1
 		pp.ReactivateByTx = true
 		pp.HasOriginationBug = true
-		pp.SilentSpendable = true
 		pp.StartHeight = 2
 		pp.EndHeight = 28082
 
 	case ProtoV002.Equal(proto):
 		pp.Version = 2
 		pp.ReactivateByTx = true
-		pp.SilentSpendable = true
 		pp.StartHeight = 28083
 		pp.EndHeight = 204761
 
 	case ProtoV003.Equal(proto):
 		pp.Version = 3
 		pp.ReactivateByTx = true
-		pp.SilentSpendable = true
 		pp.StartHeight = 204762
 		pp.EndHeight = 458752
 
 	case ProtoV004.Equal(proto): // Athens
 		pp.Version = 4
-		pp.SilentSpendable = true
 		pp.Invoices = map[string]int64{
 			"tz1iSQEcaGpUn6EW5uAy3XhPiNg7BHMnRSXi": 100 * 1000000,
 		}
@@ -351,12 +346,14 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerCommitment = 64
 			pp.BlocksPerRollSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
-			pp.EndorsersPerBlock = 256
+			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
 		} else if Ithacanet.Equal(p.ChainId) || Ithacanet2.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
+			pp.StartHeight = 8192
+			pp.EndHeight = -1
 		}
 	}
 	return pp
@@ -365,7 +362,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 func (p Params) Clean() *Params {
 	pp := p
 	pp.Invoices = nil
-	pp.SilentSpendable = false
 	pp.HasOriginationBug = false
 	pp.ReactivateByTx = false
 	pp.OperationTagsVersion = 0
@@ -401,7 +397,7 @@ func (p *Params) ForCycle(c int64) *Params {
 	pp := p.Clean()
 	for i := len(versions) - 1; i >= 0; i-- {
 		pp = pp.Clean().ForNetwork(p.ChainId).ForProtocol(versions[i])
-		if pp.StartCycle == 0 || pp.StartCycle < c {
+		if pp.StartCycle == 0 || pp.StartCycle <= c {
 			return pp
 		}
 	}
