@@ -523,6 +523,15 @@ func (h Hash) IsValid() bool {
 	return h.Type != HashTypeInvalid && len(h.Hash) == h.Type.Len()
 }
 
+func (h Hash) IsEmpty() bool {
+	return len(h.Hash) == 0
+}
+
+func (h Hash) IsZero() bool {
+	zero := make([]byte, h.Type.Len())
+	return len(h.Hash) == 0 || bytes.Equal(h.Hash, zero)
+}
+
 func (h Hash) Equal(h2 Hash) bool {
 	return h.Type == h2.Type && bytes.Equal(h.Hash, h2.Hash)
 }
@@ -545,6 +554,11 @@ func (h *Hash) Reset() {
 func (h Hash) String() string {
 	s, _ := encodeHash(h.Type, h.Hash)
 	return s
+}
+
+// Int64 ensures interface compatibility with the RPC packages' BlockID type
+func (h Hash) Int64() int64 {
+	return -1
 }
 
 // Bytes returns the raw byte representation of the hash without type info.

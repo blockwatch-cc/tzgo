@@ -13,7 +13,7 @@ type AddressSet struct {
 
 func NewAddressSet(addrs ...Address) *AddressSet {
 	set := &AddressSet{
-		set: make(map[uint64]Address),
+		set: make(map[uint64]Address, len(addrs)),
 	}
 	for _, v := range addrs {
 		if !v.IsValid() {
