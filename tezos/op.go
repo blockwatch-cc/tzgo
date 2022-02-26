@@ -34,7 +34,7 @@ func (t *OpStatus) UnmarshalText(data []byte) error {
 	return nil
 }
 
-func (t *OpStatus) MarshalText() ([]byte, error) {
+func (t OpStatus) MarshalText() ([]byte, error) {
 	return []byte(t.String()), nil
 }
 
@@ -72,31 +72,24 @@ type OpType byte
 
 // enums are allocated in chronological order
 const (
-	OpTypeBake                         OpType = iota // 0
-	OpTypeActivateAccount                            // 1
-	OpTypeDoubleBakingEvidence                       // 2
-	OpTypeDoubleEndorsementEvidence                  // 3
-	OpTypeSeedNonceRevelation                        // 4
-	OpTypeTransaction                                // 5
-	OpTypeOrigination                                // 6
-	OpTypeDelegation                                 // 7
-	OpTypeReveal                                     // 8
-	OpTypeEndorsement                                // 9
-	OpTypeProposals                                  // 10
-	OpTypeBallot                                     // 11
-	OpTypeUnfreeze                                   // 12 indexer event only
-	OpTypeInvoice                                    // 13 indexer event only
-	OpTypeAirdrop                                    // 14 indexer event only
-	OpTypeSeedSlash                                  // 15 indexer event only
-	OpTypeMigration                                  // 16 indexer event only
-	OpTypeFailingNoop                                // 17 v009
-	OpTypeEndorsementWithSlot                        // 18 v009
-	OpTypeRegisterConstant                           // 19 v011
-	OpTypePreEndorsement                             // 20 v012
-	OpTypeDoublePreEndorsementEvidence               // 21 v012
-	OpTypeSetDepositsLimit                           // 22 v012
-	OpTypeBatch                        = 254         // indexer only, output-only
-	OpTypeInvalid                      = 255
+	OpTypeInvalid                      OpType = iota
+	OpTypeActivateAccount                     // 1
+	OpTypeDoubleBakingEvidence                // 2
+	OpTypeDoubleEndorsementEvidence           // 3
+	OpTypeSeedNonceRevelation                 // 4
+	OpTypeTransaction                         // 5
+	OpTypeOrigination                         // 6
+	OpTypeDelegation                          // 7
+	OpTypeReveal                              // 8
+	OpTypeEndorsement                         // 9
+	OpTypeProposals                           // 10
+	OpTypeBallot                              // 11
+	OpTypeFailingNoop                         // 12 v009
+	OpTypeEndorsementWithSlot                 // 13 v009
+	OpTypeRegisterConstant                    // 14 v011
+	OpTypePreendorsement                      // 15 v012
+	OpTypeDoublePreendorsementEvidence        // 16 v012
+	OpTypeSetDepositsLimit                    // 17 v012
 )
 
 func (t OpType) IsValid() bool {
@@ -112,14 +105,12 @@ func (t *OpType) UnmarshalText(data []byte) error {
 	return nil
 }
 
-func (t *OpType) MarshalText() ([]byte, error) {
+func (t OpType) MarshalText() ([]byte, error) {
 	return []byte(t.String()), nil
 }
 
 func ParseOpType(s string) OpType {
 	switch s {
-	case "bake":
-		return OpTypeBake
 	case "activate_account":
 		return OpTypeActivateAccount
 	case "double_baking_evidence":
@@ -144,26 +135,14 @@ func ParseOpType(s string) OpType {
 		return OpTypeProposals
 	case "ballot":
 		return OpTypeBallot
-	case "unfreeze":
-		return OpTypeUnfreeze
-	case "invoice":
-		return OpTypeInvoice
-	case "airdrop":
-		return OpTypeAirdrop
-	case "seed_slash":
-		return OpTypeSeedSlash
-	case "migration":
-		return OpTypeMigration
-	case "batch":
-		return OpTypeBatch
 	case "failing_noop":
 		return OpTypeFailingNoop
 	case "register_global_constant":
 		return OpTypeRegisterConstant
 	case "preendorsement":
-		return OpTypePreEndorsement
+		return OpTypePreendorsement
 	case "double_preendorsement_evidence":
-		return OpTypeDoublePreEndorsementEvidence
+		return OpTypeDoublePreendorsementEvidence
 	case "set_deposits_limit":
 		return OpTypeSetDepositsLimit
 	default:
@@ -173,8 +152,6 @@ func ParseOpType(s string) OpType {
 
 func (t OpType) String() string {
 	switch t {
-	case OpTypeBake:
-		return "bake"
 	case OpTypeActivateAccount:
 		return "activate_account"
 	case OpTypeDoubleBakingEvidence:
@@ -199,25 +176,13 @@ func (t OpType) String() string {
 		return "proposals"
 	case OpTypeBallot:
 		return "ballot"
-	case OpTypeUnfreeze:
-		return "unfreeze"
-	case OpTypeInvoice:
-		return "invoice"
-	case OpTypeAirdrop:
-		return "airdrop"
-	case OpTypeSeedSlash:
-		return "seed_slash"
-	case OpTypeMigration:
-		return "migration"
-	case OpTypeBatch:
-		return "batch"
 	case OpTypeFailingNoop:
 		return "failing_noop"
 	case OpTypeRegisterConstant:
 		return "register_global_constant"
-	case OpTypePreEndorsement:
+	case OpTypePreendorsement:
 		return "preendorsement"
-	case OpTypeDoublePreEndorsementEvidence:
+	case OpTypeDoublePreendorsementEvidence:
 		return "double_preendorsement_evidence"
 	case OpTypeSetDepositsLimit:
 		return "set_deposits_limit"
@@ -272,9 +237,9 @@ var (
 		OpTypeDelegation:                   110, // v005
 		OpTypeFailingNoop:                  17,  // v009
 		OpTypeRegisterConstant:             111, // v011
-		OpTypePreEndorsement:               20,  // v012
+		OpTypePreendorsement:               20,  // v012
 		OpTypeEndorsement:                  21,  // v012
-		OpTypeDoublePreEndorsementEvidence: 7,   // v012
+		OpTypeDoublePreendorsementEvidence: 7,   // v012
 		OpTypeSetDepositsLimit:             112, // v012
 	}
 )
@@ -352,8 +317,8 @@ var (
 		110: 27,               // OpTypeDelegation // v005
 		17:  5,                // OpTypeFailingNoop  // v009
 		111: 30,               // OpTypeRegisterConstant // v011
-		7:   9 + 2*(32+43+64), // OpTypeDoublePreEndorsementEvidence // v012
-		20:  43,               // OpTypePreEndorsement // v012
+		7:   9 + 2*(32+43+64), // OpTypeDoublePreendorsementEvidence // v012
+		20:  43,               // OpTypePreendorsement // v012
 		21:  43,               // OpTypeEndorsement // v012
 		112: 27,               // OpTypeSetDepositsLimit // v012
 	}
@@ -376,7 +341,7 @@ func (t OpType) MinSize() int {
 
 func (t OpType) ListId() int {
 	switch t {
-	case OpTypeEndorsement, OpTypeEndorsementWithSlot, OpTypePreEndorsement:
+	case OpTypeEndorsement, OpTypeEndorsementWithSlot, OpTypePreendorsement:
 		return 0
 	case OpTypeProposals, OpTypeBallot:
 		return 1
@@ -384,7 +349,7 @@ func (t OpType) ListId() int {
 		OpTypeDoubleBakingEvidence,
 		OpTypeDoubleEndorsementEvidence,
 		OpTypeSeedNonceRevelation,
-		OpTypeDoublePreEndorsementEvidence:
+		OpTypeDoublePreendorsementEvidence:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
@@ -393,13 +358,8 @@ func (t OpType) ListId() int {
 		OpTypeRegisterConstant,
 		OpTypeSetDepositsLimit:
 		return 3
-	case OpTypeBake, OpTypeUnfreeze, OpTypeSeedSlash:
-		return -1 // block level ops
-	case OpTypeInvoice, OpTypeAirdrop, OpTypeMigration:
-		return -2 // migration ops
 	default:
-		// OpTypeBatch: // custom, indexer only
-		return -255 // invalid
+		return -1 // invalid
 	}
 }
 
@@ -434,11 +394,11 @@ func ParseOpTag(t byte) OpType {
 	case 111:
 		return OpTypeRegisterConstant
 	case 20:
-		return OpTypePreEndorsement
+		return OpTypePreendorsement
 	case 21:
 		return OpTypeEndorsement
 	case 7:
-		return OpTypeDoublePreEndorsementEvidence
+		return OpTypeDoublePreendorsementEvidence
 	case 112:
 		return OpTypeSetDepositsLimit
 	default:
