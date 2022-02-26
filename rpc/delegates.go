@@ -13,8 +13,12 @@ import (
 
 // Delegate holds information about an active delegate
 type Delegate struct {
-	Delegate             tezos.Address   `json:"-"`
-	Block                string          `json:"-"`
+	// extra info
+	Delegate tezos.Address `json:"-"`
+	Height   int64         `json:"-"`
+	Block    string        `json:"-"`
+
+	// tezos data
 	Deactivated          bool            `json:"deactivated"`
 	Balance              int64           `json:"balance,string"`
 	DelegatedContracts   []tezos.Address `json:"delegated_contracts"`
@@ -22,6 +26,7 @@ type Delegate struct {
 	FrozenBalanceByCycle []CycleBalance  `json:"frozen_balance_by_cycle"`
 	GracePeriod          int64           `json:"grace_period"`
 	StakingBalance       int64           `json:"staking_balance,string"`
+	DelegatedBalance     int64           `json:"delegated_balance,string"`
 	VotingPower          int64           `json:"voting_power"`
 
 	// v012+
@@ -66,6 +71,7 @@ func (c *Client) ListActiveDelegatesWithRolls(ctx context.Context, id BlockID) (
 func (c *Client) GetDelegate(ctx context.Context, addr tezos.Address, id BlockID) (*Delegate, error) {
 	delegate := &Delegate{
 		Delegate: addr,
+		Height:   id.Int64(),
 		Block:    id.String(),
 	}
 	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates/%s", id, addr)

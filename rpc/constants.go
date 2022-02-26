@@ -101,7 +101,7 @@ func (c Constants) HaveV12Rewards() bool {
 func (c Constants) GetBlockReward() int64 {
 	switch {
 	case c.HaveV12Rewards():
-		return c.BakingRewardFixedPortion + c.BakingRewardBonusPerSlot*int64(c.ConsensusCommitteeSize)
+		return c.BakingRewardFixedPortion + c.BakingRewardBonusPerSlot*int64(c.ConsensusCommitteeSize-c.ConsensusThreshold)
 	case c.HaveV6Rewards():
 		return c.BakingRewardPerEndorsement_v6[0] * int64(c.EndorsersPerBlock)
 	default:
@@ -170,28 +170,22 @@ func (c *Client) GetConstants(ctx context.Context, id BlockID) (con Constants, e
 	return
 }
 
-// GetConstantsHeight returns chain configuration constants at a block height
-// https://tezos.gitlab.io/tezos/api/rpc.html#get-block-id-context-constants
-func (c *Client) GetConstantsHeight(ctx context.Context, height int64) (Constants, error) {
-	return c.GetConstants(ctx, BlockLevel(height))
-}
-
-// GetParamsByHeight returns a translated parameters structure for the current
-// network
-func (c *Client) GetParamsByHeight(ctx context.Context, height int64) (*tezos.Params, error) {
-	con, err := c.GetConstantsHeight(ctx, height)
+// GetParams returns a translated parameters structure for the current
+// network at block id.
+func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, error) {
+	p, err := c.ResolveChainConfig(ctx)
 	if err != nil {
 		return nil, err
 	}
-	head, err := c.GetBlockHeader(ctx, BlockLevel(height))
-	if err != nil {
-		return nil, err
+	height := id.Int64()
+	if height < 0 {
+		head, err := c.GetBlockHeader(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		height = head.Level
 	}
-	params := con.MapToChainParams()
-	if !head.ChainId.IsValid() || !head.Protocol.IsValid() {
-		return params, nil
-	}
-	return params.ForNetwork(head.ChainId).ForProtocol(head.Protocol), nil
+	return p.ForHeight(height), nil
 }
 
 func (c Constants) MapToChainParams() *tezos.Params {
@@ -261,7 +255,7 @@ func (c Constants) MapToChainParams() *tezos.Params {
 	p.BakingRewardBonusPerSlot = c.BakingRewardBonusPerSlot
 	p.EndorsingRewardPerSlot = c.EndorsingRewardPerSlot
 	p.MaxOperationsTTL = c.MaxOperationsTimeToLive
-	p.DelayIncrementPerRound = c.DelayIncrementPerRound
+	p.DelayIncrementPerRound = time.Duration(c.DelayIncrementPerRound) * time.Second
 	p.ConsensusCommitteeSize = c.ConsensusCommitteeSize
 	p.ConsensusThreshold = c.ConsensusThreshold
 	p.MinimalParticipationRatio = c.MinimalParticipationRatio

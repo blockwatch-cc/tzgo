@@ -13,6 +13,7 @@ import (
 // BlockID is an interface to abstract different kinds of block addressing modes
 type BlockID interface {
 	fmt.Stringer
+	Int64() int64
 }
 
 // BlockLevel is a block addressing mode that uses the blocks sequence number a.k.a level
@@ -20,6 +21,10 @@ type BlockLevel int64
 
 func (b BlockLevel) String() string {
 	return strconv.FormatInt(int64(b), 10)
+}
+
+func (b BlockLevel) Int64() int64 {
+	return int64(b)
 }
 
 // BlockAlias is a block addressing mode that uses a constant string
@@ -32,6 +37,13 @@ const (
 
 func (b BlockAlias) String() string {
 	return string(b)
+}
+
+func (b BlockAlias) Int64() int64 {
+	if b == Genesis {
+		return 0
+	}
+	return -1
 }
 
 // BlockOffset is a block addressing mode that uses relative addressing from a given
@@ -56,6 +68,14 @@ func (o BlockOffset) String() string {
 		ref += strconv.FormatInt(o.Offset, 10)
 	}
 	return ref
+}
+
+func (b BlockOffset) Int64() int64 {
+	base := b.Base.Int64()
+	if base >= 0 {
+		return base + b.Offset
+	}
+	return -1
 }
 
 func unmarshalMultiTypeJSONArray(data []byte, vals ...interface{}) (err error) {

@@ -19,7 +19,7 @@ type BalanceUpdate struct {
 	Delegate  tezos.Address `json:"delegate"`  // freezer and burn only
 	Committer tezos.Address `json:"committer"` // committer only
 
-	//
+	// Ithaca only
 	IsParticipationBurn bool `json:"participation"` // burn only
 	IsRevelationBurn    bool `json:"revelation"`    // burn only
 

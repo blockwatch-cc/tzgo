@@ -71,7 +71,7 @@ func run() error {
 		}
 		fmt.Printf("Block %d does not exist yet. Using constants at current head block %d\n", height, block.GetLevel())
 	}
-	cons, err := c.GetConstantsHeight(ctx, block.GetLevel())
+	cons, err := c.GetConstants(ctx, rpc.BlockLevel(block.GetLevel()))
 	if err != nil {
 		return err
 	}

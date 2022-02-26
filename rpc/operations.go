@@ -225,7 +225,7 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeDoubleBakingEvidence:
 			op = &DoubleBaking{}
 		case tezos.OpTypeDoubleEndorsementEvidence,
-			tezos.OpTypeDoublePreEndorsementEvidence:
+			tezos.OpTypeDoublePreendorsementEvidence:
 			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
 			op = &SeedNonce{}
@@ -233,7 +233,7 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		// consensus operations
 		case tezos.OpTypeEndorsement,
 			tezos.OpTypeEndorsementWithSlot,
-			tezos.OpTypePreEndorsement:
+			tezos.OpTypePreendorsement:
 			op = &Endorsement{}
 
 		// amendment operations
