@@ -11,7 +11,9 @@ import (
 type Features uint16
 
 const (
-	FeatureAccountFactory Features = 1 << iota
+	FeatureSpendable Features = 1 << iota
+	FeatureDelegatable
+	FeatureAccountFactory
 	FeatureContractFactory
 	FeatureSetDelegate
 	FeatureLambda
