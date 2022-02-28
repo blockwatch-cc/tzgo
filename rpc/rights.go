@@ -136,6 +136,9 @@ func (c *Client) ListBakingRights(ctx context.Context, id BlockID, max int) ([]B
 	if p.Version >= 12 {
 		maxSelector = "max_round=%d"
 	}
+	if p.Version < 6 {
+		max++
+	}
 	rights := make([]BakingRight, 0)
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/baking_rights?all=true&"+maxSelector, id, max)
 	if err := c.Get(ctx, u, &rights); err != nil {
@@ -156,6 +159,9 @@ func (c *Client) ListBakingRightsCycle(ctx context.Context, id BlockID, cycle in
 	maxSelector := "max_priority=%d"
 	if p.Version >= 12 {
 		maxSelector = "max_round=%d"
+	}
+	if p.Version < 6 {
+		max++
 	}
 	rights := make([]BakingRight, 0, (max+1)*int(p.BlocksPerCycle))
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/baking_rights?all=true&cycle=%d&"+maxSelector, id, cycle, max)

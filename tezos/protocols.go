@@ -11,33 +11,28 @@ var (
 	ProtoV002      = ParseProtocolHashSafe("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")
 	ProtoV003      = ParseProtocolHashSafe("PsddFKi32cMJ2qPjf43Qv5GDWLDPZb3T3bF6fLKiF5HtvHNU7aP")
 	ProtoV004      = ParseProtocolHashSafe("Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd")
-	ProtoV005_1    = ParseProtocolHashSafe("PsBABY5HQTSkA4297zNHfsZNKtxULfL18y95qb3m53QJiXGmrbU")
 	ProtoV005_2    = ParseProtocolHashSafe("PsBabyM1eUXZseaJdmXFApDSBqj8YBfwELoxZHHW77EMcAbbwAS")
-	ProtoV006_1    = ParseProtocolHashSafe("PtCarthavAMoXqbjBPVgDCRd5LgT7qqKWUPXnYii3xCaHRBMfHH")
 	ProtoV006_2    = ParseProtocolHashSafe("PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb")
 	ProtoV007      = ParseProtocolHashSafe("PsDELPH1Kxsxt8f9eWbxQeRxkjfbxoqM52jvs5Y5fBxWWh4ifpo")
-	ProtoV008_1    = ParseProtocolHashSafe("PtEdoTezd3RHSC31mpxxo1npxFjoWWcFgQtxapi51Z8TLu6v6Uq")
 	ProtoV008_2    = ParseProtocolHashSafe("PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA")
 	ProtoV009      = ParseProtocolHashSafe("PsFLorenaUUuikDWvMDr6fGBRG8kt3e3D3fHoXK1j1BFRxeSH4i")
 	ProtoV010      = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
-	ProtoV011_1    = ParseProtocolHashSafe("PtHangzHogokSuiMHemCuowEavgYTP8J5qQ9fQS793MHYFpCY3r")
 	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
-	ProtoV012_1    = ParseProtocolHashSafe("PsiThaCaT47Zboaw71QWScM8sXeMM7bbQFncK9FLqYc6EKdpjVP")
 	ProtoV012_2    = ParseProtocolHashSafe("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
 
+	// aliases
+	Pt24m4xi = ProtoV004
+	PsBabyM1 = ProtoV005_2
+	PsCARTHA = ProtoV006_2
+	PsDELPH1 = ProtoV007
+	PtEdo2   = ProtoV008_2
+	PsFLoren = ProtoV009
+	PtGRANAD = ProtoV010
+	PtHangz2 = ProtoV011_2
+	Psithaca = ProtoV012_2
+
 	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Alphanet     = MustParseChainIdHash("NetXgtSLGNJvNye")
-	Zeronet      = MustParseChainIdHash("NetXKakFj1A7ouL")
-	Babylonnet   = MustParseChainIdHash("NetXUdfLh6Gm88t")
-	Carthagenet  = MustParseChainIdHash("NetXjD3HPJJjmcd")
-	Delphinet    = MustParseChainIdHash("NetXm8tYqnMWky1")
-	Edonet       = MustParseChainIdHash("NetXSp4gfdanies")
-	Edonet2      = MustParseChainIdHash("NetXSgo1ZT2DRUG")
-	Florencenet  = MustParseChainIdHash("NetXxkAx4woPLyu")
-	Granadanet   = MustParseChainIdHash("NetXz969SFaFn8k")
-	Hangzhounet  = MustParseChainIdHash("NetXuXoGoLxNK6o")
 	Hangzhounet2 = MustParseChainIdHash("NetXZSsxBpMQeAT")
-	Ithacanet    = MustParseChainIdHash("NetXbhmtAbMukLc")
 	Ithacanet2   = MustParseChainIdHash("NetXnHfVqm9iesp")
 
 	// Order of deployed protocols on different networks
@@ -57,13 +52,7 @@ var (
 			ProtoV009,    // 9
 			ProtoV010,    // 10
 			ProtoV011_2,  // 11
-			ProtoV012_2,  // 11
-		},
-		Granadanet.Uint32(): {
-			ProtoGenesis,   // -1
-			ProtoBootstrap, // 0
-			ProtoV009,      // 1
-			ProtoV010,      // 2
+			ProtoV012_2,  // 12
 		},
 		Hangzhounet2.Uint32(): {
 			ProtoGenesis,   // -1
@@ -88,30 +77,8 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
 		pp.SecurityDepositRampUpCycles = 64
-	case Alphanet.Equal(net):
-		pp.Network = "Alphanet"
-	case Zeronet.Equal(net):
-		pp.Network = "Zeronet"
-	case Babylonnet.Equal(net):
-		pp.Network = "Babylonnet"
-	case Carthagenet.Equal(net):
-		pp.Network = "Carthagenet"
-	case Delphinet.Equal(net):
-		pp.Network = "Delphinet"
-	case Edonet.Equal(net):
-		pp.Network = "Edonet"
-	case Edonet2.Equal(net):
-		pp.Network = "Edonet2"
-	case Florencenet.Equal(net):
-		pp.Network = "Florencenet"
-	case Granadanet.Equal(net):
-		pp.Network = "Granadanet"
-	case Hangzhounet.Equal(net):
-		pp.Network = "Hangzhounet"
 	case Hangzhounet2.Equal(net):
 		pp.Network = "Hangzhounet2"
-	case Ithacanet.Equal(net):
-		pp.Network = "Ithacanet"
 	case Ithacanet2.Equal(net):
 		pp.Network = "Ithacanet2"
 	default:
@@ -129,56 +96,42 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	switch true {
 	case ProtoV000.Equal(proto):
 		pp.Version = 0
-		pp.ReactivateByTx = true
-		pp.HasOriginationBug = true
 		pp.StartHeight = 1
 		pp.EndHeight = 1
 
 	case ProtoV001.Equal(proto):
 		pp.Version = 1
-		pp.ReactivateByTx = true
-		pp.HasOriginationBug = true
 		pp.StartHeight = 2
 		pp.EndHeight = 28082
 
 	case ProtoV002.Equal(proto):
 		pp.Version = 2
-		pp.ReactivateByTx = true
 		pp.StartHeight = 28083
 		pp.EndHeight = 204761
 
 	case ProtoV003.Equal(proto):
 		pp.Version = 3
-		pp.ReactivateByTx = true
 		pp.StartHeight = 204762
 		pp.EndHeight = 458752
 
 	case ProtoV004.Equal(proto): // Athens
 		pp.Version = 4
-		pp.Invoices = map[string]int64{
-			"tz1iSQEcaGpUn6EW5uAy3XhPiNg7BHMnRSXi": 100 * 1000000,
-		}
 		pp.StartHeight = 458753
 		pp.EndHeight = 655360
 
-	case ProtoV005_1.Equal(proto) || ProtoV005_2.Equal(proto): // Babylon
-		// changed binary operation format
+	case PsBabyM1.Equal(proto): // Babylon
 		pp.Version = 5
-		pp.Invoices = map[string]int64{
-			"KT1DUfaMfTRZZkvZAYQT5b3byXnvqoAykc43": 500 * 1000000,
-		}
 		pp.OperationTagsVersion = 1
 		pp.StartHeight = 655361
 		pp.EndHeight = 851968
 
-	case ProtoV006_1.Equal(proto) || ProtoV006_2.Equal(proto): // Carthage
-		// no invoice
+	case PsCARTHA.Equal(proto): // Carthage
 		pp.Version = 6
 		pp.OperationTagsVersion = 1
 		pp.StartHeight = 851969
 		pp.EndHeight = 1212416
 
-	case ProtoV007.Equal(proto): // Delphi
+	case PsDELPH1.Equal(proto): // Delphi
 		pp.Version = 7
 		pp.OperationTagsVersion = 1
 		// this is extremely hacky!
@@ -192,8 +145,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.StartHeight = 1212417
 		pp.EndHeight = 1343488
 
-	case ProtoV008_2.Equal(proto) || ProtoV008_1.Equal(proto): // Edo
-		// no invoice
+	case PtEdo2.Equal(proto): // Edo
 		pp.Version = 8
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
@@ -225,15 +177,15 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndHeight = 1466367
 		}
 
-	case ProtoV009.Equal(proto): // Florence
-		// invoice (will be applied as balance update from v009+)
+	case PsFLoren.Equal(proto): // Florence
 		pp.Version = 9
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
 		if Mainnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 1343488 // same as Edo (!!)
-			pp.StartCycle = 328           // same as Edo (!!)
-			pp.VoteBlockOffset = 1        // same as Edo (!!)
+			// pp.StartBlockOffset = 1343488 // same as Edo (!!)
+			pp.StartBlockOffset = 1466368
+			pp.StartCycle = 358
+			pp.VoteBlockOffset = 1 // same as Edo (!!)
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 4096
 			pp.BlocksPerCommitment = 32
@@ -241,24 +193,9 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerVotingPeriod = 20480
 			pp.StartHeight = 1466368
 			pp.EndHeight = 1589247
-		} else if Granadanet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 0
-			pp.StartCycle = 0
-			// FIXME: this is extremely hacky!
-			pp.BlocksPerCycle = 2048
-			pp.BlocksPerCommitment = 16
-			pp.BlocksPerRollSnapshot = 128
-			pp.BlocksPerVotingPeriod = 10240
-			pp.EndorsersPerBlock = 32
-		} else {
-			pp.BlocksPerCycle = 2048
-			pp.BlocksPerCommitment = 16
-			pp.BlocksPerRollSnapshot = 128
-			pp.BlocksPerVotingPeriod = 10240
-			pp.EndorsersPerBlock = 32
 		}
 
-	case ProtoV010.Equal(proto): // Granada
+	case PtGRANAD.Equal(proto): // Granada
 		pp.Version = 10
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
@@ -307,11 +244,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1589248
 			pp.EndHeight = 1916928
-		} else if Granadanet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 4096
-			pp.StartCycle = 2
 		}
-	case ProtoV011_1.Equal(proto) || ProtoV011_2.Equal(proto): // Hangzhou
+	case PtHangz2.Equal(proto): // Hangzhou
 		pp.Version = 11
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
@@ -328,11 +262,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1916929
 			pp.EndHeight = 2244608
-		} else if Hangzhounet.Equal(p.ChainId) || Hangzhounet2.Equal(p.ChainId) {
+		} else if Hangzhounet2.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 		}
-	case ProtoV012_1.Equal(proto) || ProtoV012_2.Equal(proto): // Ithaca
+	case Psithaca.Equal(proto): // Ithaca
 		pp.Version = 12
 		pp.OperationTagsVersion = 2
 		pp.NumVotingPeriods = 5
@@ -349,7 +283,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
-		} else if Ithacanet.Equal(p.ChainId) || Ithacanet2.Equal(p.ChainId) {
+		} else if Ithacanet2.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8192
@@ -361,9 +295,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 
 func (p Params) Clean() *Params {
 	pp := p
-	pp.Invoices = nil
-	pp.HasOriginationBug = false
-	pp.ReactivateByTx = false
 	pp.OperationTagsVersion = 0
 	pp.NumVotingPeriods = 0
 	pp.StartBlockOffset = 0

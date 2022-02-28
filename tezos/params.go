@@ -116,15 +116,12 @@ type Params struct {
 	RatioOfFrozenDepositsSlashedPerDoubleEndorsement Ratio         `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
 
 	// extra features to follow protocol upgrades
-	MaxOperationsTTL     int64            `json:"max_operations_ttl"`               // in block meta until v011, explicit from v012+
-	Invoices             map[string]int64 `json:"invoices,omitempty"`               // hidden invoice feature, explicit since v007+ (?)
-	HasOriginationBug    bool             `json:"has_origination_bug,omitempty"`    // bugfix applied before v002
-	ReactivateByTx       bool             `json:"reactivate_by_tx,omitempty"`       // bugfix applied before v004
-	OperationTagsVersion int              `json:"operation_tags_version,omitempty"` // 1 after v005
-	NumVotingPeriods     int              `json:"num_voting_periods,omitempty"`     // 5 after v008, 4 before
-	StartBlockOffset     int64            `json:"start_block_offset,omitempty"`     // correct start/end cycle since Granada
-	StartCycle           int64            `json:"start_cycle,omitempty"`            // correction since Granada v10
-	VoteBlockOffset      int64            `json:"vote_block_offset,omitempty"`      // correction for Edo + Florence Mainnet-only +1 bug
+	MaxOperationsTTL     int64 `json:"max_operations_ttl"`               // in block meta until v011, explicit from v012+
+	OperationTagsVersion int   `json:"operation_tags_version,omitempty"` // 1 after v005
+	NumVotingPeriods     int   `json:"num_voting_periods,omitempty"`     // 5 after v008, 4 before
+	StartBlockOffset     int64 `json:"start_block_offset,omitempty"`     // correct start/end cycle since Granada
+	StartCycle           int64 `json:"start_cycle,omitempty"`            // correction since Granada v10
+	VoteBlockOffset      int64 `json:"vote_block_offset,omitempty"`      // correction for Edo + Florence Mainnet-only +1 bug
 }
 
 func NewParams() *Params {
