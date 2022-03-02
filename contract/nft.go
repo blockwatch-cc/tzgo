@@ -70,6 +70,12 @@ type NftLedger struct {
     Bigmap  int64
 }
 
+func (l NftLedger) DecodeBalance(prim micheline.Prim) (bal NftBalance, err error) {
+    bal.schema = l.Schema
+    err = prim.Decode(&bal)
+    return
+}
+
 type NftBalance struct {
     Owner   tezos.Address
     TokenId tezos.Z
