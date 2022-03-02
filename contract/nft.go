@@ -4,13 +4,9 @@
 package contract
 
 import (
-    "context"
     "fmt"
 
-    "blockwatch.cc/tzgo/codec"
     "blockwatch.cc/tzgo/micheline"
-    "blockwatch.cc/tzgo/rpc"
-    "blockwatch.cc/tzgo/signer"
     "blockwatch.cc/tzgo/tezos"
 )
 
