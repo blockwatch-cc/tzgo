@@ -270,49 +270,27 @@ func (c *Client) GetStakingSnapshotInfoCycle(ctx context.Context, id BlockID, cy
 // GetSnapshotIndexCycle returns information about a roll or staking snapshot that
 // produced rights at cycle.
 // Note block and cycle must be no further than preserved cycles away.
-func (c *Client) GetSnapshotIndexCycle(ctx context.Context, cycle int64) (*SnapshotIndex, error) {
-	var id BlockID
-	if c.Params == nil {
-		id = Head
-	} else {
-		id = BlockLevel(c.Params.CycleStartHeight(cycle))
-	}
+func (c *Client) GetSnapshotIndexCycle(ctx context.Context, id BlockID, cycle int64) (*SnapshotIndex, error) {
 	p, err := c.GetParams(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	idx := &SnapshotIndex{}
 	if p.Version >= 12 {
-		// post-Ithaca we can no longer look ahead N cycles, i.e. query the snapshot
-		// that just happened at N-1, instead we can at most query cycle
-		// N-PRESERVED_CYCLES-1. This is a limitation of the new Tezos RPC which
-		// allows no cycle argument.
-		//
-		// The second important change happened to the protocol. Now the distance
-		// between snapshot and rights is no longer N-PRESEREVD-2, instead its -1!
-		//
-		// Tezos docu says
-		// Add ``/chains/main/blocks/<block>/context/selected_snapshot`` RPC to
-		// retrieve the snapshot index used to compute baking right for the
-		// given block's cycle. Context entry at
-		// ``/chains/main/blocks/<block>/context/raw/bytes/cycle/<cycle>/roll_snapshot``
-		// are no longer accessible in Tenderbake.
-		//
-		// ref: https://gitlab.com/tezos/tezos/-/merge_requests/4479/diffs#a164b2628ca1dfd5974b47defa53b423b606f373_166_167
-		u := fmt.Sprintf("chains/main/blocks/%s/context/selected_snapshot", id)
-		if err := c.Get(ctx, u, &idx.Index); err != nil {
-			return nil, err
-		}
 		idx.Cycle = cycle
-		idx.Base = cycle
+		idx.Base = p.SnapshotBaseCycle(cycle)
+		idx.Index = -1
+		if cycle >= p.PreservedCycles+1 {
+			u := fmt.Sprintf("chains/main/blocks/%s/context/selected_snapshot?cycle=%d", id, cycle)
+			if err := c.Get(ctx, u, &idx.Index); err != nil {
+				return nil, err
+			}
+		} else {
+			log.Warnf("No snapshot for cycle %d", cycle)
+		}
 	} else {
 		// pre-Ithaca we can at most look PRESERVED_CYCLES into the future since
 		// the snapshot happened 2 cycles back from the block we're looking from.
-		base := p.SnapshotBaseCycle(cycle)
-		if base < 0 {
-			base = cycle
-		}
-		id = BlockLevel(p.CycleStartHeight(base))
 		var info RollSnapshotInfo
 		u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/cycle/%d", id, cycle)
 		if err := c.Get(ctx, u, &info); err != nil {
@@ -322,7 +300,7 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, cycle int64) (*Snaps
 			return nil, fmt.Errorf("missing snapshot for cycle %d at block %s", cycle, id)
 		}
 		idx.Cycle = cycle
-		idx.Base = base
+		idx.Base = p.SnapshotBaseCycle(cycle)
 		idx.Index = info.RollSnapshot
 	}
 	return idx, nil
