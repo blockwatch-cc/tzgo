@@ -1490,6 +1490,17 @@ func (p Prim) GetPath(path string) (Prim, error) {
 	return p.GetIndex(index)
 }
 
+func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
+	prim, err := p.GetPath(path)
+	if err != nil {
+		return InvalidPrim, err
+	}
+	if prim.OpCode != typ {
+		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s", prim.OpCode)
+	}
+	return prim, nil
+}
+
 func (p Prim) GetIndex(index []int) (Prim, error) {
 	prim := p
 	for _, v := range index {
@@ -1497,6 +1508,17 @@ func (p Prim) GetIndex(index []int) (Prim, error) {
 			return InvalidPrim, fmt.Errorf("micheline: index %d out of bounds", v)
 		}
 		prim = prim.Args[v]
+	}
+	return prim, nil
+}
+
+func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
+	prim, err := p.GetIndex(index)
+	if err != nil {
+		return InvalidPrim, err
+	}
+	if prim.OpCode != typ {
+		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s", prim.OpCode)
 	}
 	return prim, nil
 }
