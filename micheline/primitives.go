@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io"
 	"math/big"
-	"strconv"
 	"strings"
 	"time"
 
@@ -1453,72 +1452,4 @@ func (p Prim) FindLabels(label string) ([]Prim, bool) {
 		}
 	}
 	return found, len(found) > 0
-}
-
-func (p Prim) Index(label string) ([]int, bool) {
-	if p.MatchesAnno(label) {
-		return []int{}, true
-	}
-	found := make([]int, 0)
-	for i := range p.Args {
-		x, ok := p.Args[i].Index(label)
-		if ok {
-			found = append(found, x...)
-		}
-	}
-	return found, len(found) > 0
-}
-
-func (p Prim) GetPath(path string) (Prim, error) {
-	index := make([]int, 0)
-	path = strings.TrimPrefix(path, "/")
-	path = strings.TrimSuffix(path, "/")
-	for i, v := range strings.Split(path, "/") {
-		switch v {
-		case "L", "l", "0":
-			index = append(index, 0)
-		case "R", "r", "1":
-			index = append(index, 1)
-		default:
-			idx, err := strconv.Atoi(v)
-			if err != nil {
-				return InvalidPrim, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
-			}
-			index = append(index, idx)
-		}
-	}
-	return p.GetIndex(index)
-}
-
-func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
-	prim, err := p.GetPath(path)
-	if err != nil {
-		return InvalidPrim, err
-	}
-	if prim.OpCode != typ {
-		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s", prim.OpCode)
-	}
-	return prim, nil
-}
-
-func (p Prim) GetIndex(index []int) (Prim, error) {
-	prim := p
-	for _, v := range index {
-		if v < 0 || len(prim.Args) <= v {
-			return InvalidPrim, fmt.Errorf("micheline: index %d out of bounds", v)
-		}
-		prim = prim.Args[v]
-	}
-	return prim, nil
-}
-
-func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
-	prim, err := p.GetIndex(index)
-	if err != nil {
-		return InvalidPrim, err
-	}
-	if prim.OpCode != typ {
-		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s", prim.OpCode)
-	}
-	return prim, nil
 }
