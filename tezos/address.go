@@ -28,6 +28,9 @@ var (
 
 	// ZeroAddress is a tz1 address with all bytes zero
 	ZeroAddress = Address{Type: AddressTypeEd25519, Hash: make([]byte, HashTypePkhEd25519.Len())}
+
+	// Burn Address
+	BurnAddress = MustParseAddress("tz1burnburnburnburnburnburnburjAYjjX")
 )
 
 // AddressType represents the type of a Tezos signature.
