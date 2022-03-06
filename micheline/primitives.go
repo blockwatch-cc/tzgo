@@ -14,6 +14,7 @@ package micheline
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
@@ -137,6 +138,12 @@ func (p Prim) IsValid() bool {
 
 func (p Prim) IsEmpty() bool {
 	return p.Type == PrimNullary && p.OpCode == 255
+}
+
+func (p Prim) Hash64() uint64 {
+	buf, _ := p.MarshalBinary()
+	h := sha256.Sum256(buf)
+	return binary.BigEndian.Uint64(h[:8])
 }
 
 func (p Prim) Clone() Prim {

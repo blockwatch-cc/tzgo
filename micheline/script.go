@@ -5,7 +5,6 @@ package micheline
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
@@ -115,27 +114,21 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 //
 // To identify syntactically equal entrypoints with or without annotations use
 // `IsEqual()`, `IsEqualWithAnno()` or `IsEqualPrim()`.
-func (s *Script) InterfaceHash() []byte {
-	buf, _ := s.Code.Param.MarshalBinary()
-	h := sha256.Sum256(buf)
-	return h[:4]
+func (s *Script) InterfaceHash() uint64 {
+	return s.Code.Param.Hash64()
 }
 
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded storage type
 // definition. This value is sufficiently unique to identify contracts with exactly
 // the same entrypoints including annotations.
-func (s *Script) StorageHash() []byte {
-	buf, _ := s.Code.Storage.MarshalBinary()
-	h := sha256.Sum256(buf)
-	return h[:4]
+func (s *Script) StorageHash() uint64 {
+	return s.Code.Storage.Hash64()
 }
 
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded code section
 // of a contract.
-func (s *Script) CodeHash() []byte {
-	buf, _ := s.Code.Code.MarshalBinary()
-	h := sha256.Sum256(buf)
-	return h[:4]
+func (s *Script) CodeHash() uint64 {
+	return s.Code.Code.Hash64()
 }
 
 // Returns a list of bigmaps referenced by a contracts current storage. Note that
