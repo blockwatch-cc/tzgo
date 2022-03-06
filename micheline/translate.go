@@ -123,14 +123,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
             switch val.Type {
             case PrimInt:
                 // Babylon bigmaps contain a reference here
-                m[label] = val.Value(T_INT)
+                m[label] = val.Int.Int64()
             case PrimSequence:
                 if len(val.Args) == 0 {
                     // pre-babylon there's only an empty sequence
                     // FIXME: we could insert the bigmap id, but this is unknown at ths point
                     m[label] = nil
                 } else {
-                    m[label] = val.Args[0].Value(T_INT)
+                    m[label] = val.Args[0].Int.Int64()
                     stack.Push(val.Args[1:]...)
                 }
             }
