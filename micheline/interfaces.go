@@ -76,7 +76,7 @@ func (m Interface) Matches(e Entrypoints) bool {
 		var matched bool
 		for _, ep := range e {
 			// check entrypoint name
-			if ep.Call != spec.GetVarAnnoAny() {
+			if ep.Name != spec.GetVarAnnoAny() {
 				continue
 			}
 
@@ -108,7 +108,7 @@ func (m Interface) MatchesStrict(e Entrypoints) bool {
 		var matched bool
 		for _, ep := range e {
 			// check entrypoint name
-			if ep.Call != spec.GetVarAnnoAny() {
+			if ep.Name != spec.GetVarAnnoAny() {
 				continue
 			}
 
@@ -130,7 +130,7 @@ func (m Interface) Contains(e Entrypoint) bool {
 	epType := NewType(*e.Prim).Typedef("")
 	for _, spec := range InterfaceSpecs[m] {
 		// check entrypoint name
-		if e.Call != spec.GetVarAnnoAny() {
+		if e.Name != spec.GetVarAnnoAny() {
 			continue
 		}
 		// check entrypoint type
@@ -146,7 +146,7 @@ func (m Interface) ContainsStrict(e Entrypoint) bool {
 	epType := NewType(*e.Prim).Typedef("")
 	for _, spec := range InterfaceSpecs[m] {
 		// check entrypoint name
-		if e.Call != spec.GetVarAnnoAny() {
+		if e.Name != spec.GetVarAnnoAny() {
 			continue
 		}
 		// check entrypoint type

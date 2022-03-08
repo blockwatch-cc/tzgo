@@ -10,7 +10,7 @@ import (
 
 type Entrypoint struct {
 	Id      int       `json:"id"`
-	Call    string    `json:"call"`
+	Name    string    `json:"name"`
 	Branch  string    `json:"branch"`
 	Typedef []Typedef `json:"type"`
 	Prim    *Prim     `json:"prim,omitempty"`
@@ -22,7 +22,7 @@ func (e Entrypoint) Type() Type {
 	}
 	typ := NewType(*e.Prim)
 	if !typ.HasLabel() {
-		typ.Prim.Anno = []string{"@" + e.Call}
+		typ.Prim.Anno = []string{"@" + e.Name}
 	}
 	return typ
 }
@@ -154,7 +154,7 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 	ep := Entrypoint{
 		Id:     len(e),
 		Branch: branch,
-		Call:   name,
+		Name:   name,
 		Prim:   &cp,
 	}
 	if node.IsScalarType() || node.IsContainerType() {
