@@ -213,7 +213,11 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 			return false
 		}
 		for i := range p1.Anno {
-			if p1.Anno[i][1:] != p2.Anno[i][1:] {
+			l1, l2 := len(p1.Anno[i]), len(p2.Anno[i])
+			if l1 != l2 {
+				return false
+			}
+			if l1 > 0 && l2 > 0 && p1.Anno[i][1:] != p2.Anno[i][1:] {
 				return false
 			}
 		}
