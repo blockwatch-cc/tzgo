@@ -149,51 +149,47 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.Version = 8
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
-		if Mainnet.Equal(p.ChainId) {
-			// OK, bear with me. If you are from the future, forgive the Tezos
-			// core devs.
-			//
-			// Apparently Tezos can switch cycle lengths which messes up all
-			// kinds of calculations big-time. They have also introduced a bug
-			// into vote block alignment during the switch from Delphi to Edo
-			// (Granada is supposed to fix this). We use an extra offset for
-			// tracking this bug. Note that it only starts to appear from
-			// cycle end of the first Edo vote epoch.
-			//
-			// Edo has also added a 5th vote period and decreased period
-			// durations from 32,768 blocks to 20,480 so we need a custom start
-			// offset to keep our vote start/end calculations correct.
-			//
-			pp.StartBlockOffset = 1343488
-			pp.StartCycle = 328
-			pp.VoteBlockOffset = 1
-			// this is extremely hacky!
-			pp.BlocksPerCycle = 4096
-			pp.BlocksPerCommitment = 32
-			pp.BlocksPerRollSnapshot = 256
-			pp.BlocksPerVotingPeriod = 20480
-			pp.EndorsersPerBlock = 32
-			pp.StartHeight = 1343489
-			pp.EndHeight = 1466367
-		}
+
+		// OK, bear with me. If you are from the future, forgive the Tezos
+		// core devs.
+		//
+		// Apparently Tezos can switch cycle lengths which messes up all
+		// kinds of calculations big-time. They have also introduced a bug
+		// into vote block alignment during the switch from Delphi to Edo
+		// (Granada is supposed to fix this). We use an extra offset for
+		// tracking this bug. Note that it only starts to appear from
+		// cycle end of the first Edo vote epoch.
+		//
+		// Edo has also added a 5th vote period and decreased period
+		// durations from 32,768 blocks to 20,480 so we need a custom start
+		// offset to keep our vote start/end calculations correct.
+		//
+		pp.StartBlockOffset = 1343488
+		pp.StartCycle = 328
+		pp.VoteBlockOffset = 1
+		// this is extremely hacky!
+		pp.BlocksPerCycle = 4096
+		pp.BlocksPerCommitment = 32
+		pp.BlocksPerRollSnapshot = 256
+		pp.BlocksPerVotingPeriod = 20480
+		pp.EndorsersPerBlock = 32
+		pp.StartHeight = 1343489
+		pp.EndHeight = 1466367
 
 	case PsFLoren.Equal(proto): // Florence
 		pp.Version = 9
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
-		if Mainnet.Equal(p.ChainId) {
-			// pp.StartBlockOffset = 1343488 // same as Edo (!!)
-			pp.StartBlockOffset = 1466368
-			pp.StartCycle = 358
-			pp.VoteBlockOffset = 1 // same as Edo (!!)
-			// FIXME: this is extremely hacky!
-			pp.BlocksPerCycle = 4096
-			pp.BlocksPerCommitment = 32
-			pp.BlocksPerRollSnapshot = 256
-			pp.BlocksPerVotingPeriod = 20480
-			pp.StartHeight = 1466368
-			pp.EndHeight = 1589247
-		}
+		pp.StartBlockOffset = 1466368
+		pp.StartCycle = 358
+		pp.VoteBlockOffset = 1 // same as Edo (!!)
+		// FIXME: this is extremely hacky!
+		pp.BlocksPerCycle = 4096
+		pp.BlocksPerCommitment = 32
+		pp.BlocksPerRollSnapshot = 256
+		pp.BlocksPerVotingPeriod = 20480
+		pp.StartHeight = 1466368
+		pp.EndHeight = 1589247
 
 	case PtGRANAD.Equal(proto): // Granada
 		pp.Version = 10
@@ -232,19 +228,18 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		// 1,589,248  Granada                    x                        x
 		// 1,589,249  Granada       x                          x
 		//
-		if Mainnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 1589248
-			pp.StartCycle = 388
-			pp.VoteBlockOffset = 0
-			// FIXME: this is extremely hacky!
-			pp.BlocksPerCycle = 8192
-			pp.BlocksPerCommitment = 64
-			pp.BlocksPerRollSnapshot = 512
-			pp.BlocksPerVotingPeriod = 40960
-			pp.EndorsersPerBlock = 256
-			pp.StartHeight = 1589248
-			pp.EndHeight = 1916928
-		}
+		pp.StartBlockOffset = 1589248
+		pp.StartCycle = 388
+		pp.VoteBlockOffset = 0
+		// FIXME: this is extremely hacky!
+		pp.BlocksPerCycle = 8192
+		pp.BlocksPerCommitment = 64
+		pp.BlocksPerRollSnapshot = 512
+		pp.BlocksPerVotingPeriod = 40960
+		pp.EndorsersPerBlock = 256
+		pp.StartHeight = 1589248
+		pp.EndHeight = 1916928
+
 	case PtHangz2.Equal(proto): // Hangzhou
 		pp.Version = 11
 		pp.OperationTagsVersion = 1
