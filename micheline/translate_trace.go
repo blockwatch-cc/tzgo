@@ -161,7 +161,13 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
                     // FIXME: we could insert the bigmap id, but this is unknown at ths point
                     m[label] = nil
                 } else {
-                    m[label] = val.Args[0].Int.Int64()
+                    if val.Args[0].IsSequence() {
+                        if err := walkTree(m, label, typ, NewStack(val.Args[0]), lvl); err != nil {
+                            return err
+                        }
+                    } else {
+                        m[label] = val.Args[0].Int.Int64()
+                    }
                     stack.Push(val.Args[1:]...)
                 }
             }
