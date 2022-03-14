@@ -219,11 +219,11 @@
       "pending_admin": null
     },
     "assets": {
-      "ledger": "643",
+      "ledger": 643,
       "next_token_id": "1",
-      "operators": "644",
-      "token_metadata": "645"
+      "operators": 644,
+      "token_metadata": 645
     },
-    "metadata": "646"
+    "metadata": 646
   }
 }]

@@ -870,7 +870,7 @@
     "latestRoundId": "262",
     "linkToken": "KT1L88uFw2PygVSRPyt7Q6P17SQ8P8TkSZCK",
     "maxSubmissions": "6",
-    "metadata": "49530",
+    "metadata": 49530,
     "minSubmissions": "3",
     "oraclePayment": "1",
     "oracles": {
@@ -961,7 +961,7 @@
     },
     "reportingRoundId": "262",
     "restartDelay": "1",
-    "rounds": "49531",
+    "rounds": 49531,
     "timeout": "5"
   }
 }]

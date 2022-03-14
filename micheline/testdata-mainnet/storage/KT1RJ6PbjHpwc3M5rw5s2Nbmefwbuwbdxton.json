@@ -202,10 +202,10 @@
   "want_value": {
     "administrator": "KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9",
     "all_tokens": "19362",
-    "ledger": "511",
-    "metadata": "512",
-    "operators": "513",
+    "ledger": 511,
+    "metadata": 512,
+    "operators": 513,
     "paused": false,
-    "token_metadata": "514"
+    "token_metadata": 514
   }
 }]

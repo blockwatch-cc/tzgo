@@ -6106,18 +6106,18 @@
         "slash_division_value": "0",
         "slash_scale_value": "1"
       },
-      "ledger": "-2",
+      "ledger": -2,
       "max_proposals": "500",
       "max_quorum_threshold": "1000",
       "max_votes": "1000",
       "max_voting_period": "2592000",
-      "metadata": "-3",
+      "metadata": -3,
       "migration_status": {
         "not_in_migration": null
       },
       "min_quorum_threshold": "1",
       "min_voting_period": "1",
-      "operators": "-4",
+      "operators": -4,
       "pending_owner": "tz1QozfhaUW4wLnohDo6yiBUmh7cPCSXE9Af",
       "permits_counter": "0",
       "proposal_check": [
@@ -6565,7 +6565,7 @@
         ]
       ],
       "proposal_key_list_sort_by_date": [],
-      "proposals": "-5",
+      "proposals": -5,
       "quorum_threshold": "2",
       "rejected_proposal_return_value": [
         {

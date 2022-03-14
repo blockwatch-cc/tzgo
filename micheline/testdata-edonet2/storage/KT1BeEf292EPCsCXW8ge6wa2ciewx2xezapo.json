@@ -265,12 +265,12 @@
       "pending_admin": null
     },
     "assets": {
-      "ledger": "46369",
-      "token_metadata": "46370"
+      "ledger": 46369,
+      "token_metadata": 46370
     },
-    "cert_family": "46371",
-    "credits_contracts": "46372",
-    "metadata": "46373",
+    "cert_family": 46371,
+    "credits_contracts": 46372,
+    "metadata": 46373,
     "next_token_id": "8"
   }
 }]

@@ -245,11 +245,11 @@
       "pending_admin": null
     },
     "assets": {
-      "ledger": "37779",
-      "operators": "37780",
-      "token_metadata": "37781",
-      "token_total_supply": "37782"
+      "ledger": 37779,
+      "operators": 37780,
+      "token_metadata": 37781,
+      "token_total_supply": 37782
     },
-    "metadata": "37783"
+    "metadata": 37783
   }
 }]

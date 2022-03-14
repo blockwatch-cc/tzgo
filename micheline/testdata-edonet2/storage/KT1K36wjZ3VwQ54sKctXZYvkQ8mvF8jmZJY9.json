@@ -752,12 +752,12 @@
       "slash_division_value": "100",
       "slash_scale_value": "10"
     },
-    "ledger": "44831",
-    "metadata": "44834",
+    "ledger": 44831,
+    "metadata": 44834,
     "migration_status": {
       "notInMigration": null
     },
-    "operators": "44832",
+    "operators": 44832,
     "pending_owner": "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
     "permits_counter": "0",
     "proposal_key_list_sort_by_date": [
@@ -798,7 +798,7 @@
         "1": "a25df28895da57b6aaacff66dea8512090dec88b381f445954472e81f712e109"
       }
     ],
-    "proposals": "44833",
+    "proposals": 44833,
     "quorum_threshold": "0",
     "token_address": "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
     "total_supply": {

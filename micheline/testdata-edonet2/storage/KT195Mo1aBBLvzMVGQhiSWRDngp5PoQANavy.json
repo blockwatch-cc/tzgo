@@ -288,15 +288,15 @@
   "want_value": {
     "admin": "tz1bhFWjzYLw9uDnHLaQAYLo4ydfuCkVZaBr",
     "credit": "150000000",
-    "ledger": "48965",
-    "metadata": "48966",
+    "ledger": 48965,
+    "metadata": 48966,
     "mint_key": "edpkujzHAyugKrsHesEDrV573XTSzb1344tX5eoUHdwri7ApnqAnJg",
     "minter": "tz1fv24LFEcYBrZwGxM981aMX6HcVD6AkqHy",
     "next_id": "592",
-    "operators": "48967",
+    "operators": 48967,
     "paused": false,
     "pending_admin": null,
-    "shareholders": "48968",
-    "token_metadata": "48969"
+    "shareholders": 48968,
+    "token_metadata": 48969
   }
 }]

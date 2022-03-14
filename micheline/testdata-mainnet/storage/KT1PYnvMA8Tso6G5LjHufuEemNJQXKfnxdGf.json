@@ -404,8 +404,8 @@
       "pending_admin": null
     },
     "assets": {
-      "ledger": "781",
-      "operators": "782",
+      "ledger": 781,
+      "operators": 782,
       "permissions": {
         "custom": null,
         "operator": {
@@ -418,9 +418,9 @@
           "owner_no_hook": null
         }
       },
-      "token_metadata": "783"
+      "token_metadata": 783
     },
-    "metadata": "784",
+    "metadata": 784,
     "minting_closed": true
   }
 }]

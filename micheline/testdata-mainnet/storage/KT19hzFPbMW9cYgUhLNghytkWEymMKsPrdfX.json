@@ -6916,7 +6916,7 @@
           "8": "8",
           "9": "9"
         },
-        "claimers": "8132",
+        "claimers": 8132,
         "claiming_price": "125000",
         "cur_claim_key": "4",
         "max_claims_per_period": "5000",
@@ -7288,12 +7288,12 @@
         "period_start": "2021-07-29T02:29:30Z"
       },
       "distributor": "KT1ChhhChpxSrsPSNa8XzzQ6uUFRZ3cyjRci",
-      "ledger": "3669",
-      "metadata": "3670",
-      "operators": "3671",
+      "ledger": 3669,
+      "metadata": 3670,
+      "operators": 3671,
       "paused": false,
       "payouts": {},
-      "series": "3672",
+      "series": 3672,
       "series_meta": {
         "1000": {
           "cap": "10000",
@@ -7326,9 +7326,9 @@
           "upgrade_req": "0"
         }
       },
-      "stats": "3673",
-      "tokens": "3674",
-      "trades": "3675",
+      "stats": 3673,
+      "tokens": 3674,
+      "trades": 3675,
       "trading_fee": "25",
       "treasure": "1219600000",
       "treasure_cnt": "0",

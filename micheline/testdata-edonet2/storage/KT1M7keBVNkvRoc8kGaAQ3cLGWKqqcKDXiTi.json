@@ -593,8 +593,8 @@
       "maxSubmissions": "3",
       "minSubmissions": "2",
       "timeout": "10",
-      "toActivate": "28134",
-      "toDeactivate": "28135"
+      "toActivate": 28134,
+      "toDeactivate": 28135
     },
     "latestRoundData": {
       "answer": "3466050",
@@ -603,8 +603,8 @@
       "startedAt": "1970-01-01T00:00:00Z",
       "updatedAt": "2021-03-11T13:22:29Z"
     },
-    "metaData": "28136",
-    "oracles": "28137",
+    "metaData": 28136,
+    "oracles": 28137,
     "previousRound": {
       "activeOracles": [],
       "maxSubmissions": "3",

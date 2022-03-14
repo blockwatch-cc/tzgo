@@ -381,15 +381,15 @@
     "LPMembers": [
       "tz1Y5mVVME7BbAa9YHqLgPfdmZ91P3KhkSDo"
     ],
-    "balances": "26540",
+    "balances": 26540,
     "investors": [
       "tz1Kr2h88qgEWGbru7Egd1jnvXZs7AWePw6Z",
       "tz1Y5mVVME7BbAa9YHqLgPfdmZ91P3KhkSDo"
     ],
-    "lambdaEntryPoints": "26541",
+    "lambdaEntryPoints": 26541,
     "lastDivYear": "0",
     "lastNavDate": "0",
-    "nav": "26542",
+    "nav": 26542,
     "owner": "tz1ernQcEU7qqR1t9R4mPFUCSkp9DLQqA7hW",
     "paused": false,
     "roles": [

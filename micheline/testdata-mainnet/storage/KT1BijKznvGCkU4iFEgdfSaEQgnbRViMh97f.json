@@ -1176,7 +1176,7 @@
       "jackpot": "557400000000",
       "last_commission": "6846",
       "oracle": "tz1LGWV7a5DZYwmArB3L7Qek6vHeiZEz3qwf",
-      "outcomes": "7685",
+      "outcomes": 7685,
       "pending_bets": {
         "tz1Vq5mYKXw1dD9js26An8dXdASuzo3bfE2w": {
           "0": "JSaoU1uq",

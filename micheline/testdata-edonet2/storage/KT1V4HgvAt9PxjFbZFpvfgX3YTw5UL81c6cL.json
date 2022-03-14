@@ -12595,24 +12595,24 @@
         "slash_scale_value": "1"
       },
       "fixed_proposal_fee_in_token": "0",
-      "freeze_history": "36996",
+      "freeze_history": 36996,
       "frozen_token_id": "1",
       "last_period_change": {
         "changed_on": "2021-03-19T14:55:35Z",
         "period_num": "70"
       },
-      "ledger": "36997",
+      "ledger": 36997,
       "max_proposals": "500",
       "max_quorum_threshold": "1000",
       "max_votes": "1000",
       "max_voting_period": "2592000",
-      "metadata": "36998",
+      "metadata": 36998,
       "migration_status": {
         "migratingTo": "KT1V4HgvAt9PxjFbZFpvfgX3YTw5UL81c6cL"
       },
       "min_quorum_threshold": "1",
       "min_voting_period": "1",
-      "operators": "36999",
+      "operators": 36999,
       "pending_owner": "tz1ZvZCqjaBLEyJLYHCfzq6B8MCFu2SRjzJG",
       "permits_counter": "0",
       "proposal_check": [
@@ -15049,7 +15049,7 @@
           "1": "039c776032d9f137afaa0b5468a4e2949f22dc77decf633a145162e84913836d"
         }
       ],
-      "proposals": "37000",
+      "proposals": 37000,
       "quorum_threshold": "2",
       "rejected_proposal_return_value": [
         {

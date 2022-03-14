@@ -278,14 +278,14 @@
     "value_hex": "020000004f0086c1050087c1050088c1050089c1050a000000160000c201d70c22f5d75f7b2246efb471d67a24ab0bc00a000000160174869a6b39c4a183127363da438f16bef0b4941d00000100903800a0d102",
     "want_value": {
       "admin": "tz1dKqzBVeZBDUx5UvTJyjuKckLjdNLjfdBY",
-      "auctionByToken": "45127",
-      "auctions": "45126",
-      "auctionsByUser": "45128",
+      "auctionByToken": 45127,
+      "auctions": 45126,
+      "auctionsByUser": 45128,
       "lastAuctionId": "1",
       "maxExtensionTime": "21600",
       "minAuctionLifetime": "3600",
       "token": "KT1KCuCQqzvF2wiiXgT3qktZfyVjTeXRXx6B",
-      "tokensByUser": "45129"
+      "tokensByUser": 45129
     }
   }
 ]

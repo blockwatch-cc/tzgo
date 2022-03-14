@@ -96,7 +96,7 @@
   "value_hex": "020000002600240a00000016000024e6abbd990e6bbf280861eeaef3e6985f7e30d40303008ac0c7a0ab13",
   "want_value": {
     "admin": "tz1P19MKNTwB7qxoU47bvsu2c3u54vdM8R4m",
-    "ledger": "36",
+    "ledger": 36,
     "paused": false,
     "totalSupply": "332223016970"
   }

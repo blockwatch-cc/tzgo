@@ -248,7 +248,7 @@
         "XTZ-USD",
         "ZRX-USD"
       ],
-      "assetMap": "1542",
+      "assetMap": 1542,
       "numDataPoints": "3",
       "oracleContract": "KT1D2F12dbneCAJUXDxzYgoZu8gb5Mjf618m"
     }
