@@ -7,8 +7,8 @@ platform:
 trigger:
   branch:
   - refs/heads/kuba/**
-  event:
-  - push
+#  event:
+#  - push
 
 steps:
 - name: run linter
