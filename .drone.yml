@@ -4,11 +4,11 @@ platform:
   os: linux
   arch: amd64
 
-trigger:
-  branch:
-  - kuba/**
-  event:
-  - pull_request
+#trigger:
+#  branch:
+#  - kuba
+#  event:
+#  - push
 
 steps:
 #- name: run linter
