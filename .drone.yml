@@ -6,7 +6,7 @@ platform:
 
 trigger:
   branch:
-  - refs/heads/kuba/**
+  - kuba/**
 #  event:
 #  - push
 
