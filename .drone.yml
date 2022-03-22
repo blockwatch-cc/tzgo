@@ -11,10 +11,10 @@ trigger:
   - push
 
 steps:
-- name: run linter
-  image: golangci/golangci-lint:v1.45-alpine
-  commands:
-    - golangci-lint run
+#- name: run linter
+#  image: golangci/golangci-lint:v1.45-alpine
+#  commands:
+#    - golangci-lint run
 
 - name: scan the files
   image: aquasec/trivy:0.24.3
