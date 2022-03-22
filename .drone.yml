@@ -4,6 +4,12 @@ platform:
   os: linux
   arch: amd64
 
+trigger:
+  branch:
+  - refs/heads/kuba/**
+  event:
+  - push
+
 steps:
 - name: run linter
   image: golangci/golangci-lint:v1.45-alpine
