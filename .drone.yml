@@ -8,7 +8,7 @@ trigger:
   branch:
   - kuba/**
   event:
-  - push
+  - pull_request
 
 steps:
 #- name: run linter
