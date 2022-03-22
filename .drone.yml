@@ -1,0 +1,28 @@
+kind: pipeline
+name: Pull Request Check
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+  - pull_request
+
+steps:
+- name: run linter
+  image: golangci/golangci-lint:v1.45-alpine
+  commands:
+    - golangci-lint run
+
+- name: scan the files
+  image: aquasec/trivy:0.24.3
+  commands:
+    - trivy fs --exit-code 1 --security-checks vuln,config ./
+    - trivy config --exit-code 1 ./
+
+- name: go build
+  image: golang:1.18.0-alpine3.15
+  commands:
+    - go vet
+    - go test ./...
+    - go build
