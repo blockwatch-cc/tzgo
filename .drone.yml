@@ -1,8 +1,13 @@
 kind: pipeline
-name: TzGo pipeline
+name: TzGo Pipeline
 platform:
   os: linux
   arch: amd64
+
+trigger:
+  branch:
+  event:
+    - push
 
 steps:
 - name: run linter
