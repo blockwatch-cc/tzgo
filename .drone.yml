@@ -1,20 +1,14 @@
 kind: pipeline
-name: Pull Request Check
+name: TzGo pipeline
 platform:
   os: linux
   arch: amd64
 
-#trigger:
-#  branch:
-#  - kuba
-#  event:
-#  - push
-
 steps:
-#- name: run linter
-#  image: golangci/golangci-lint:v1.45-alpine
-#  commands:
-#    - golangci-lint run
+- name: run linter
+  image: golangci/golangci-lint:v1.45-alpine
+  commands:
+    - golangci-lint run
 
 - name: scan the files
   image: aquasec/trivy:0.24.3

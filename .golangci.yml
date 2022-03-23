@@ -13,3 +13,5 @@ linters:
     - structcheck
     - varcheck
     - unused
+  disable:
+    - errcheck
