@@ -5,12 +5,11 @@ platform:
   arch: amd64
 
 trigger:
-  branch:
   event:
     - push
   paths:
     include:
-    - README.md
+      - README.md
 
 steps:
 - name: run linter
