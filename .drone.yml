@@ -7,9 +7,9 @@ platform:
 trigger:
   event:
     - push
-  paths:
-    include:
-      - README.md
+#  paths:
+#    include:
+#      - README.md
 
 steps:
 - name: run linter
