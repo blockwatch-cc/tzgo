@@ -12,13 +12,17 @@ import (
     "io"
     "strconv"
 
+    "blockwatch.cc/tzgo/micheline"
     "blockwatch.cc/tzgo/tezos"
 )
 
 const (
-    BlockWatermark byte = iota + 1
-    EndorsementWatermark
-    OperationWatermark
+    EmmyBlockWatermark                byte = 1 // deprecated
+    EmmyEndorsementWatermark               = 2 // deprecated
+    OperationWatermark                     = 3
+    TenderbakeBlockWatermark               = 11
+    TenderbakePreendorsementWatermark      = 12
+    TenderbakeEndorsementWatermark         = 13
 )
 
 var (
@@ -52,6 +56,7 @@ type Op struct {
     Signature tezos.Signature `json:"signature"`
     TTL       int64           `json:"-"`
     Params    *tezos.Params   `json:"-"`
+    Source    tezos.Address   `json:"-"`
 }
 
 // NewOp creates a new empty operation that uses default params and a
@@ -59,7 +64,7 @@ type Op struct {
 func NewOp() *Op {
     return &Op{
         Params: tezos.DefaultParams,
-        TTL:    tezos.DefaultParams.MaxOperationsTTL,
+        TTL:    tezos.DefaultParams.MaxOperationsTTL - 2, // Ithaca recommendation
     }
 }
 
@@ -87,6 +92,123 @@ func (o *Op) WithSource(addr tezos.Address) *Op {
     for _, v := range o.Contents {
         v.WithSource(addr)
     }
+    o.Source = addr
+    return o
+}
+
+// WithTransfer adds a simple value transfer transaction to the contents list.
+func (o *Op) WithTransfer(to tezos.Address, amount int64) *Op {
+    o.Contents = append(o.Contents, &Transaction{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Amount:      tezos.N(amount),
+        Destination: to,
+    })
+    return o
+}
+
+// WithCall adds a contract call transaction to the contents list.
+func (o *Op) WithCall(to tezos.Address, params micheline.Parameters) *Op {
+    o.Contents = append(o.Contents, &Transaction{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Destination: to,
+        Parameters:  &params,
+    })
+    return o
+}
+
+// WithCallExt adds a contract call with value transfer transaction to the contents list.
+func (o *Op) WithCallExt(to tezos.Address, params micheline.Parameters, amount int64) *Op {
+    o.Contents = append(o.Contents, &Transaction{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Amount:      tezos.N(amount),
+        Destination: to,
+        Parameters:  &params,
+    })
+    return o
+}
+
+// WithOrigination adds a contract origination transaction to the contents list.
+func (o *Op) WithOrigination(script micheline.Script) *Op {
+    o.Contents = append(o.Contents, &Origination{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Script: script,
+    })
+    return o
+}
+
+// WithOriginationExt adds a contract origination transaction with optional delegation to
+// baker and an optional value transfer to the contents list.
+func (o *Op) WithOriginationExt(script micheline.Script, baker tezos.Address, amount int64) *Op {
+    o.Contents = append(o.Contents, &Origination{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Balance:  tezos.N(amount),
+        Delegate: baker,
+        Script:   script,
+    })
+    return o
+}
+
+// WithDelegation adds a delegation transaction to the contents list.
+func (o *Op) WithDelegation(to tezos.Address) *Op {
+    o.Contents = append(o.Contents, &Delegation{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Delegate: to,
+    })
+    return o
+}
+
+// WithUndelegation adds a delegation transaction that resets the callers baker to null
+// to the contents list.
+func (o *Op) WithUndelegation() *Op {
+    o.Contents = append(o.Contents, &Delegation{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+    })
+    return o
+}
+
+// WithRegisterBaker adds a delegation transaction that registers the caller
+// as baker to the contents list.
+func (o *Op) WithRegisterBaker() *Op {
+    o.Contents = append(o.Contents, &Delegation{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Delegate: o.Source,
+    })
+    return o
+}
+
+// WithRegisterConstant adds a global constant registration transaction to the contents list.
+func (o *Op) WithRegisterConstant(value micheline.Prim) *Op {
+    o.Contents = append(o.Contents, &RegisterGlobalConstant{
+        Manager: Manager{
+            Source:  o.Source,
+            Counter: -1,
+        },
+        Value: value,
+    })
     return o
 }
 
@@ -96,7 +218,7 @@ func (o *Op) WithSource(addr tezos.Address) *Op {
 // of block head~N as branch. Note that serialization will fail until a brach is set.
 func (o *Op) WithTTL(n int64) *Op {
     if n > o.Params.MaxOperationsTTL {
-        n = o.Params.MaxOperationsTTL
+        n = o.Params.MaxOperationsTTL - 2 // Ithaca adjusted
     } else if n < 0 {
         n = 1
     }
@@ -184,9 +306,16 @@ func (o *Op) WatermarkedBytes() []byte {
         p = tezos.DefaultParams
     }
     buf := bytes.NewBuffer(nil)
-    if k := o.Contents[0].Kind(); k == tezos.OpTypeEndorsement || k == tezos.OpTypeEndorsementWithSlot {
-        buf.WriteByte(EndorsementWatermark)
-    } else {
+    switch o.Contents[0].Kind() {
+    case tezos.OpTypeEndorsement, tezos.OpTypeEndorsementWithSlot:
+        if p.Version < 12 {
+            buf.WriteByte(EmmyEndorsementWatermark)
+        } else {
+            buf.WriteByte(TenderbakeEndorsementWatermark)
+        }
+    case tezos.OpTypePreendorsement:
+        buf.WriteByte(TenderbakePreendorsementWatermark)
+    default:
         buf.WriteByte(OperationWatermark)
     }
     buf.Write(o.Branch.Bytes())

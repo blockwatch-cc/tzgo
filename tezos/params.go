@@ -15,13 +15,9 @@ var (
 	// op.WithParams().
 	DefaultParams = NewParams().
 		ForNetwork(Mainnet).
-		ForProtocol(ProtoV011_2).
+		ForProtocol(ProtoV012_2).
 		Mixin(&Params{
-			OperationTagsVersion: 1,
-			TimeBetweenBlocks: [2]time.Duration{
-				60 * time.Second,
-				40 * time.Second,
-			},
+			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
 			HardGasLimitPerBlock:         5200000,
@@ -363,4 +359,8 @@ func (p *Params) BlockTime() time.Duration {
 		return p.MinimalBlockDelay
 	}
 	return p.TimeBetweenBlocks[0]
+}
+
+func (p *Params) NumEndorsers() int {
+	return p.EndorsersPerBlock + p.ConsensusCommitteeSize
 }

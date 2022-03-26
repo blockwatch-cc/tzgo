@@ -24,7 +24,7 @@ var (
 	// for transfers to tz1/2/3
 	defaultTransferLimitsEOA = tezos.Limits{
 		Fee:      1000,
-		GasLimit: 1420,
+		GasLimit: 1420, // 1820 when source is emptied
 	}
 	// for transfers to manager.tz
 	defaultTransferLimitsKT1 = tezos.Limits{
