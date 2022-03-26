@@ -12,6 +12,7 @@ import (
     "io"
     "math/big"
     "strconv"
+    "sync"
 )
 
 type Bool byte
@@ -91,20 +92,22 @@ func (z *Z) UnmarshalBinary(data []byte) error {
 }
 
 func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
-    var (
-        s uint     = 6
-        y *big.Int = big.NewInt(0)
-    )
+    var s uint = 6
     b := buf.Next(1)
     if len(b) == 0 {
         return io.ErrShortBuffer
     }
-    x := big.NewInt(int64(b[0] & 0x3f)) // clip two bits
+    xi := bigIntPool.Get()
+    x := xi.(*big.Int).SetInt64(int64(b[0] & 0x3f)) // clip two bits
+    yi := bigIntPool.Get()
+    y := yi.(*big.Int).SetInt64(0)
     sign := b[0]&0x40 > 0
     if b[0] >= 0x80 {
         for i := 1; ; i++ {
             b = buf.Next(1)
             if len(b) == 0 {
+                bigIntPool.Put(xi)
+                bigIntPool.Put(yi)
                 return io.ErrShortBuffer
             }
             if b[0] < 0x80 {
@@ -122,6 +125,8 @@ func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
     } else {
         (*big.Int)(z).Set(x)
     }
+    bigIntPool.Put(xi)
+    bigIntPool.Put(yi)
     return nil
 }
 
@@ -134,27 +139,32 @@ func (z Z) MarshalBinary() ([]byte, error) {
 }
 
 func (z *Z) EncodeBuffer(buf *bytes.Buffer) error {
-    x := big.NewInt(0).Set(z.Big())
+    xi := bigIntPool.Get()
+    x := xi.(*big.Int).Set((*big.Int)(z))
+    yi := bigIntPool.Get()
+    y := yi.(*big.Int).SetInt64(0)
     var sign byte
-    mask := big.NewInt(0x3f)
-    y := big.NewInt(0)
     if x.Sign() < 0 {
         sign = 0x40
         x.Neg(x)
     }
     if x.IsInt64() && x.Int64() < 0x40 {
         buf.WriteByte(byte(x.Int64()) | sign)
+        bigIntPool.Put(xi)
+        bigIntPool.Put(yi)
         return nil
     } else {
-        buf.WriteByte(byte(y.And(x, mask).Int64()) | 0x80 | sign)
+        buf.WriteByte(byte(y.And(x, mask3f).Int64()) | 0x80 | sign)
         x.Rsh(x, 6)
     }
-    mask.SetInt64(0x7f)
+
     for !x.IsInt64() || x.Int64() >= 0x80 {
-        buf.WriteByte(byte(y.And(x, mask).Int64()) | 0x80)
+        buf.WriteByte(byte(y.And(x, mask7f).Int64()) | 0x80)
         x.Rsh(x, 7)
     }
     buf.WriteByte(byte(x.Int64()))
+    bigIntPool.Put(xi)
+    bigIntPool.Put(yi)
     return nil
 }
 
@@ -169,6 +179,14 @@ func (z *Z) UnmarshalText(d []byte) error {
 func (z Z) String() string {
     return (*big.Int)(&z).Text(10)
 }
+
+var (
+    mask3f     = big.NewInt(0x3f)
+    mask7f     = big.NewInt(0x7f)
+    bigIntPool = &sync.Pool{
+        New: func() interface{} { return big.NewInt(0) },
+    }
+)
 
 // A variable length sequence of bytes, encoding a Zarith number.
 // Each byte has a running unary size bit: the most significant bit

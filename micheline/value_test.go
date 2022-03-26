@@ -156,7 +156,10 @@ func checkTypeEncoding(T *testing.T, test testcase) Type {
 	}
 	// compare prim trees
 	if !typ1.IsEqualWithAnno(typ2) {
-		T.Errorf("bigmap type decoding mismatch:\n  want=%s\n  have=%s", typ1.Dump(), typ2.Dump())
+		b1, _ := typ1.MarshalBinary()
+		b2, _ := typ2.MarshalBinary()
+		T.Errorf("bigmap type decoding mismatch:\n  want=%s %x\n  have=%s %x",
+			typ1.Dump(), b1, typ2.Dump(), b2)
 	}
 	return typ1
 }
@@ -179,7 +182,10 @@ func checkValueEncoding(T *testing.T, test testcase) Prim {
 		T.FailNow()
 	}
 	if !val1.IsEqualWithAnno(val2) {
-		T.Errorf("json/hex value mismatch:\n  A=%s\n  B=%s", val1.Dump(), val2.Dump())
+		b1, _ := val1.MarshalBinary()
+		b2, _ := val2.MarshalBinary()
+		T.Errorf("json/hex value mismatch:\n  A=%s %x\n  B=%s %x",
+			val1.Dump(), b1, val2.Dump(), b2)
 		T.FailNow()
 	}
 	return val1

@@ -1100,9 +1100,7 @@ func (p *Prim) UnpackScalar(val interface{}) error {
 	switch v := val.(type) {
 	case json.Number:
 		i := big.NewInt(0)
-		if err := i.UnmarshalText([]byte(v.String())); err != nil {
-			return err
-		}
+		i.SetString(v.String(), 0)
 		p.Int = i
 		p.Type = PrimInt
 	default:
@@ -1122,19 +1120,16 @@ func (p *Prim) UnpackScalar(val interface{}) error {
 
 func (p *Prim) UnpackSequence(val []interface{}) error {
 	p.Type = PrimSequence
-	p.Args = make([]Prim, 0)
-	for _, v := range val {
-		prim := Prim{}
-		if err := prim.UnpackJSON(v); err != nil {
+	p.Args = make([]Prim, len(val))
+	for i, v := range val {
+		if err := p.Args[i].UnpackJSON(v); err != nil {
 			return err
 		}
-		p.Args = append(p.Args, prim)
 	}
 	return nil
 }
 
 func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
-	p.Args = make([]Prim, 0)
 	for n, v := range val {
 		switch n {
 		case "prim":
@@ -1154,9 +1149,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 				return fmt.Errorf("micheline: invalid int value type %T %v", v, v)
 			}
 			i := big.NewInt(0)
-			if err := i.UnmarshalText([]byte(str)); err != nil {
-				return err
-			}
+			i.SetString(str, 0)
 			p.Int = i
 			p.Type = PrimInt
 		case "string":
@@ -1220,12 +1213,11 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 		}
 
 		// every arg is handled as embedded primitive
-		for _, v := range args {
-			prim := Prim{}
-			if err := prim.UnpackJSON(v); err != nil {
+		p.Args = make([]Prim, len(args))
+		for i, v := range args {
+			if err := p.Args[i].UnpackJSON(v); err != nil {
 				return err
 			}
-			p.Args = append(p.Args, prim)
 		}
 	}
 	return nil
