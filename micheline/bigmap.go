@@ -121,9 +121,7 @@ func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
 							Type: PrimInt,
 							Int:  big.NewInt(0),
 						}
-						if err := p.Int.UnmarshalText([]byte(vv)); err != nil {
-							return fmt.Errorf("micheline: decoding bigmap int key '%s': %w", v, err)
-						}
+						p.Int.SetString(vv, 0)
 						e.Key = p
 					case "bytes":
 						p := Prim{
