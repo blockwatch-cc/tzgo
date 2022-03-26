@@ -24,7 +24,6 @@ type BlockHeader struct {
     Context          tezos.ContextHash    `json:"context"`
     PayloadHash      tezos.PayloadHash    `json:"payload_hash"`
     PayloadRound     int                  `json:"payload_round"`
-    Priority         uint16               `json:"priority"`
     ProofOfWorkNonce tezos.HexBytes       `json:"proof_of_work_nonce"`
     SeedNonceHash    tezos.NonceHash      `json:"seed_nonce_hash"`
     LbEscapeVote     bool                 `json:"liquidity_baking_escape_vote"`
@@ -44,7 +43,7 @@ func (h BlockHeader) Bytes() []byte {
 // This format is only used for signing.
 func (h BlockHeader) WatermarkedBytes() []byte {
     buf := bytes.NewBuffer(nil)
-    buf.WriteByte(BlockWatermark)
+    buf.WriteByte(TenderbakeBlockWatermark)
     _ = h.EncodeBuffer(buf)
     return buf.Bytes()
 }
@@ -105,16 +104,10 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
     }
     buf.WriteString(`],"context":`)
     buf.WriteString(strconv.Quote(h.Context.String()))
-    // switch pre-Itahca and post-Itaca
-    if h.PayloadHash.IsValid() {
-        buf.WriteString(`,"payload_hash":`)
-        buf.WriteString(h.PayloadHash.String())
-        buf.WriteString(`,"payload_round":`)
-        buf.WriteString(strconv.Itoa(h.PayloadRound))
-    } else {
-        buf.WriteString(`,"priority":`)
-        buf.WriteString(strconv.Itoa(int(h.Priority)))
-    }
+    buf.WriteString(`,"payload_hash":`)
+    buf.WriteString(h.PayloadHash.String())
+    buf.WriteString(`,"payload_round":`)
+    buf.WriteString(strconv.Itoa(h.PayloadRound))
     buf.WriteString(`,"proof_of_work_nonce":`)
     buf.WriteString(strconv.Quote(h.ProofOfWorkNonce.String()))
     if h.SeedNonceHash.IsValid() {
@@ -148,13 +141,8 @@ func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
         buf.Write(v)
     }
     buf.Write(h.Context.Bytes())
-    // switch pre-Itahca and post-Itaca
-    if h.PayloadHash.IsValid() {
-        buf.Write(h.PayloadHash.Bytes())
-        binary.Write(buf, enc, uint32(h.PayloadRound))
-    } else {
-        binary.Write(buf, enc, h.Priority)
-    }
+    buf.Write(h.PayloadHash.Bytes())
+    binary.Write(buf, enc, uint32(h.PayloadRound))
     buf.Write(h.ProofOfWorkNonce)
     if h.SeedNonceHash.IsValid() {
         buf.WriteByte(0xff)
@@ -218,22 +206,14 @@ func (h *BlockHeader) DecodeBuffer(buf *bytes.Buffer) (err error) {
     if err = h.Context.UnmarshalBinary(buf.Next(32)); err != nil {
         return
     }
-    // switch pre-Itahca and post-Itaca
-    if len(h.Fitness) > 2 {
-        if err = h.PayloadHash.UnmarshalBinary(buf.Next(32)); err != nil {
-            return
-        }
-        l, err = readInt32(buf.Next(4))
-        if err != nil {
-            return
-        }
-        h.PayloadRound = int(l)
-    } else {
-        h.Priority, err = readUint16(buf.Next(2))
-        if err != nil {
-            return
-        }
+    if err = h.PayloadHash.UnmarshalBinary(buf.Next(32)); err != nil {
+        return
     }
+    l, err = readInt32(buf.Next(4))
+    if err != nil {
+        return
+    }
+    h.PayloadRound = int(l)
     h.ProofOfWorkNonce = make([]byte, 8)
     copy(h.ProofOfWorkNonce[:], buf.Next(8))
     var ok bool
