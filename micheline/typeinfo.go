@@ -43,6 +43,7 @@ var (
     primUnmarshalerType   = reflect.TypeOf((*PrimUnmarshaler)(nil)).Elem()
     stringerType          = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
     byteSliceType         = reflect.TypeOf([]byte(nil))
+    szPrim                = int(reflect.TypeOf(Prim{}).Size())
 )
 
 // getTypeInfo returns the typeInfo structure with details necessary
