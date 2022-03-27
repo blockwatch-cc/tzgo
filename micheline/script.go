@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package micheline
@@ -353,6 +353,54 @@ func (c *Code) DecodeBuffer(buf *bytes.Buffer) error {
 		}
 	}
 	return nil
+}
+
+// UnmarshalScriptType is an optimized binary unmarshaller which decodes type trees only.
+// Use this to access smart contract types when script and storage are not required.
+func UnmarshalScriptType(data []byte) (param Type, storage Type, err error) {
+	buf := bytes.NewBuffer(data)
+
+	// starts with BE uint32 total size
+	size := int(binary.BigEndian.Uint32(buf.Next(4)))
+	if buf.Len() < size {
+		err = io.ErrShortBuffer
+		return
+	}
+
+	// we expect a sequence
+	b := buf.Next(1)
+	if len(b) == 0 {
+		err = io.ErrShortBuffer
+		return
+	}
+
+	// check tag
+	if PrimType(b[0]) != PrimSequence {
+		err = fmt.Errorf("micheline: unexpected program tag 0x%x", b[0])
+		return
+	}
+
+	// cross-check content size
+	size = int(binary.BigEndian.Uint32(buf.Next(4)))
+	if buf.Len() < size {
+		err = io.ErrShortBuffer
+		return
+	}
+
+	// decode K_PARAMETER primitive and unwrap outer prim
+	var pPrim Prim
+	if err = pPrim.DecodeBuffer(buf); err != nil {
+		return
+	}
+	param.Prim = pPrim.Args[0]
+
+	// decode K_STORAGE primitive and unwrap outer prim
+	var sPrim Prim
+	if err = sPrim.DecodeBuffer(buf); err != nil {
+		return
+	}
+	storage.Prim = sPrim.Args[0]
+	return
 }
 
 func (c Code) MarshalJSON() ([]byte, error) {
