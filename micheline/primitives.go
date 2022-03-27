@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"strconv"
 	"strings"
 	"time"
 
@@ -925,45 +926,75 @@ func (p Prim) Value(as OpCode) interface{} {
 	}
 
 	if warn && !p.WasPacked {
-		buf, _ := json.Marshal(p)
-		log.Warnf("Rendering prim type %s as %s: not implemented (%s)", p.Type, as, string(buf))
+		log.Warnf("Rendering prim type %s as %s: not implemented (%s)", p.Type, as, p.Dump())
 	}
 
 	return p
 }
 
 func (p Prim) MarshalJSON() ([]byte, error) {
+	buf := bytes.NewBuffer(make([]byte, 0, 4096))
+	p.EncodeJSON(buf)
+	return buf.Bytes(), nil
+}
+
+func (p Prim) EncodeJSON(buf *bytes.Buffer) {
 	if !p.IsValid() {
-		return []byte("{}"), nil
+		buf.WriteString("{}")
+		return
 	}
-	m := make(map[string]interface{})
 	switch p.Type {
 	case PrimSequence:
-		return json.Marshal(p.Args)
+		buf.WriteByte('[')
+		for i, v := range p.Args {
+			if i > 0 {
+				buf.WriteByte(',')
+			}
+			v.EncodeJSON(buf)
+		}
+		buf.WriteByte(']')
+
 	case PrimInt:
-		m["int"] = p.Int.Text(10)
+		buf.WriteString(`{"int":"`)
+		buf.WriteString(p.Int.Text(10))
+		buf.WriteString(`"}`)
+
 	case PrimString:
-		m["string"] = p.String
+		buf.WriteString(`{"string":`)
+		buf.WriteString(strconv.Quote(p.String))
+		buf.WriteByte('}')
+
 	case PrimBytes:
-		m["bytes"] = hex.EncodeToString(p.Bytes)
+		buf.WriteString(`{"bytes":"`)
+		buf.WriteString(hex.EncodeToString(p.Bytes))
+		buf.WriteString(`"}`)
+
 	default:
-		m["prim"] = p.OpCode.String()
+		buf.WriteString(`{"prim":"`)
+		buf.WriteString(p.OpCode.String())
+		buf.WriteByte('"')
 		if len(p.Anno) > 0 {
-			m["annots"] = p.Anno
+			buf.WriteString(`,"annots":[`)
+			for i, v := range p.Anno {
+				if i > 0 {
+					buf.WriteByte(',')
+				}
+				buf.WriteString(strconv.Quote(v))
+			}
+			buf.WriteByte(']')
 		}
 		if len(p.Args) > 0 {
-			args := make([]json.RawMessage, 0, len(p.Args))
-			for _, v := range p.Args {
-				arg, err := json.Marshal(v)
-				if err != nil {
-					return nil, err
+			buf.WriteString(`,"args":[`)
+			for i, v := range p.Args {
+				if i > 0 {
+					buf.WriteByte(',')
 				}
-				args = append(args, arg)
+				v.EncodeJSON(buf)
 			}
-			m["args"] = args
+			buf.WriteByte(']')
 		}
+		buf.WriteByte('}')
 	}
-	return json.Marshal(m)
 }
 
 func (p Prim) MarshalBinary() ([]byte, error) {
