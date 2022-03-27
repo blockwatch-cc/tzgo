@@ -140,6 +140,20 @@ func (p Prim) IsEmpty() bool {
 	return p.Type == PrimNullary && p.OpCode == 255
 }
 
+func (p Prim) Size() int {
+	sz := szPrim + len(p.String) + len(p.Bytes)
+	if p.Int != nil {
+		sz += len(p.Int.Bytes())
+	}
+	for _, v := range p.Anno {
+		sz += len(v)
+	}
+	for _, v := range p.Args {
+		sz += v.Size()
+	}
+	return sz
+}
+
 func (p Prim) Hash64() uint64 {
 	buf, _ := p.MarshalBinary()
 	h := sha256.Sum256(buf)
