@@ -177,6 +177,7 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 	if err != nil {
 		return nil, err
 	}
+
 	height := id.Int64()
 	if height < 0 {
 		head, err := c.GetBlockHeader(ctx, id)
@@ -185,6 +186,13 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 		}
 		height = head.Level
 	}
+
+	chainId, err := c.GetChainId(ctx)
+	if err != nil {
+		return nil, err
+	}
+	p.ChainId = chainId
+
 	return p.ForHeight(height), nil
 }
 
