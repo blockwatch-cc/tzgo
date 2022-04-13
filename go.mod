@@ -1,4 +1,4 @@
-module blockwatch.cc/tzgo
+module github.com/legonian/tzgo
 
 go 1.17
 
