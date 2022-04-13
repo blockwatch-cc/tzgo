@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // Block holds information about a Tezos block

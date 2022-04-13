@@ -8,7 +8,7 @@ package base58_test
 import (
 	"testing"
 
-	"blockwatch.cc/tzgo/base58"
+	"github.com/legonian/tzgo/base58"
 )
 
 var checkEncodingStringTests = []struct {

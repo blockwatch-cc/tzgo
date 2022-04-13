@@ -10,8 +10,8 @@ import (
 
 	"fmt"
 
-	"blockwatch.cc/tzgo/hash"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/hash"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // WIP: interface may change

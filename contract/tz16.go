@@ -3,9 +3,9 @@
 package contract
 
 import (
-	"blockwatch.cc/tzgo/micheline"
-	// "blockwatch.cc/tzgo/rpc"
-	// "blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/micheline"
+	// "github.com/legonian/tzgo/rpc"
+	// "github.com/legonian/tzgo/tezos"
 )
 
 // Represents Tzip16 contract metadata

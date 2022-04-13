@@ -20,11 +20,11 @@ import (
 	"strconv"
 	"strings"
 
-	"blockwatch.cc/tzgo/contract"
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
 	"github.com/echa/log"
+	"github.com/legonian/tzgo/contract"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/tezos"
 )
 
 var (

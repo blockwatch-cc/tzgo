@@ -10,10 +10,10 @@ import (
 	"fmt"
 	"sort"
 
-	"blockwatch.cc/tzgo/codec"
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/codec"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // Represents a generic FA2 (tzip12) token

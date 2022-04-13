@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // Delegate holds information about an active delegate

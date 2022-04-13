@@ -11,8 +11,8 @@ import (
 
 	"github.com/go-bson/bson"
 
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // lacking the algorithm to compute KT1 addresses from content,

@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"testing"
 
-	"blockwatch.cc/tzgo/base58"
+	"github.com/legonian/tzgo/base58"
 )
 
 var (

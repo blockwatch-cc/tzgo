@@ -9,9 +9,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"blockwatch.cc/tzgo/codec"
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/codec"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/tezos"
 )
 
 const GasSafetyMargin int64 = 100

@@ -4,7 +4,7 @@
 package contract
 
 import (
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/tezos"
 )
 
 // Represents Tzip12 token metadata used by FA1 and FA2 tokens

@@ -10,8 +10,8 @@ import (
 	"os"
 	"strconv"
 
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/tezos"
 )
 
 var (

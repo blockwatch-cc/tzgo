@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/tezos"
 )
 
 var BigmapRefType = Prim{

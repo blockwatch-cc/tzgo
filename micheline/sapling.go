@@ -3,15 +3,13 @@
 
 package micheline
 
-import (
 // "bytes"
 // "encoding/binary"
 // "encoding/hex"
 // "encoding/json"
 // "fmt"
 // "math/big"
-// "blockwatch.cc/tzgo/tezos"
-)
+// "github.com/legonian/tzgo/tezos"
 
 type SaplingDiffElem struct {
 	Action   DiffAction    `json:"action"`

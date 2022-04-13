@@ -10,11 +10,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"blockwatch.cc/tzgo/codec"
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
-	"blockwatch.cc/tzgo/wallet"
+	"github.com/legonian/tzgo/codec"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/tezos"
+	"github.com/legonian/tzgo/wallet"
 )
 
 // WIP

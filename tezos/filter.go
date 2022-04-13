@@ -4,7 +4,7 @@
 package tezos
 
 import (
-	"blockwatch.cc/tzgo/hash"
+	"github.com/legonian/tzgo/hash"
 )
 
 type AddressFilter struct {

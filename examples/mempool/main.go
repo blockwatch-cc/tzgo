@@ -14,9 +14,9 @@ import (
 	"io"
 	"os"
 
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
 	"github.com/echa/log"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/tezos"
 )
 
 var (

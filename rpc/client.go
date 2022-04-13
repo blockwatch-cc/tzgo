@@ -15,8 +15,8 @@ import (
 	"net/url"
 	"strings"
 
-	"blockwatch.cc/tzgo/signer"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/signer"
+	"github.com/legonian/tzgo/tezos"
 )
 
 const (

@@ -7,11 +7,11 @@ import (
 	"context"
 	"fmt"
 
-	"blockwatch.cc/tzgo/codec"
-	"blockwatch.cc/tzgo/micheline"
-	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/signer"
-	"blockwatch.cc/tzgo/tezos"
+	"github.com/legonian/tzgo/codec"
+	"github.com/legonian/tzgo/micheline"
+	"github.com/legonian/tzgo/rpc"
+	"github.com/legonian/tzgo/signer"
+	"github.com/legonian/tzgo/tezos"
 )
 
 type CallArguments interface {
