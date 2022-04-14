@@ -73,6 +73,18 @@ func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]F
 	return resp, err
 }
 
+func (t FA2Token) AddOperator(owner, operator tezos.Address) *FA2ApprovalArgs {
+	return NewFA2ApprovalArgs().AddOperator(owner, operator, t.TokenId)
+}
+
+func (t FA2Token) RemoveOperator(owner, operator tezos.Address) *FA2ApprovalArgs {
+	return NewFA2ApprovalArgs().RemoveOperator(owner, operator, t.TokenId)
+}
+
+func (t FA2Token) Transfer(from, to tezos.Address, amount tezos.Z) *FA2TransferArgs {
+	return NewFA2TransferArgs().WithTransfer(from, to, t.TokenId, amount)
+}
+
 type FA2Approval struct {
 	Owner    tezos.Address `json:"owner"`
 	Operator tezos.Address `json:"operator"`
