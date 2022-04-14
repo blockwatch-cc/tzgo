@@ -14,7 +14,7 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// BakingRight holds information about the right to bake a specific Tezos block
+// BakingRight holds information about the right to bake a specific Tezos block.
 type BakingRight struct {
 	Delegate      tezos.Address `json:"delegate"`
 	Level         int64         `json:"level"`
@@ -27,19 +27,22 @@ func (r BakingRight) Address() tezos.Address {
 	return r.Delegate
 }
 
-// EndorsingRight holds information about the right to endorse a specific Tezos block
-// valid for all protocols up to v001
+// EndorsingRight holds information about the right to endorse a specific Tezos block.
 type EndorsingRight struct {
-	Delegate      tezos.Address `json:"delegate"`
-	Level         int64         `json:"level"`
-	EstimatedTime time.Time     `json:"estimated_time"`
-	Slots         []int         `json:"slots,omitempty"` // until v011
-	FirstSlot     int           `json:"first_slot"`      // v012+
-	Power         int           `json:"endorsing_power"` // v012+
+	Delegate       tezos.Address `json:"delegate"`
+	Level          int64         `json:"level"`
+	EstimatedTime  time.Time     `json:"estimated_time"`
+	Slots          []int         `json:"slots,omitempty"` // until v011
+	FirstSlot      int           `json:"first_slot"`      // v012+
+	EndorsingPower int           `json:"endorsing_power"` // v012+
 }
 
 func (r EndorsingRight) Address() tezos.Address {
 	return r.Delegate
+}
+
+func (r EndorsingRight) Power() int {
+	return r.EndorsingPower + len(r.Slots)
 }
 
 type RollSnapshotInfo struct {
@@ -163,7 +166,7 @@ func (c *Client) ListBakingRightsCycle(ctx context.Context, id BlockID, cycle in
 	if p.Version < 6 {
 		max++
 	}
-	rights := make([]BakingRight, 0, (max+1)*int(p.BlocksPerCycle))
+	rights := make([]BakingRight, 0)
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/baking_rights?all=true&cycle=%d&"+maxSelector, id, cycle, max)
 	if err := c.Get(ctx, u, &rights); err != nil {
 		return nil, err
@@ -178,9 +181,9 @@ func (c *Client) ListEndorsingRights(ctx context.Context, id BlockID) ([]Endorsi
 		return nil, err
 	}
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true", id)
-	rights := make([]EndorsingRight, 0, (p.EndorsersPerBlock + p.ConsensusCommitteeSize))
+	rights := make([]EndorsingRight, 0)
 	// Note: future cycles are seen from current protocol (!)
-	if p.Version >= 12 && p.StartHeight <= id.Int64() {
+	if p.Version >= 12 {
 		type V12Rights struct {
 			Level         int64            `json:"level"`
 			Delegates     []EndorsingRight `json:"delegates"`
@@ -215,7 +218,7 @@ func (c *Client) ListEndorsingRightsCycle(ctx context.Context, id BlockID, cycle
 		return nil, err
 	}
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
-	rights := make([]EndorsingRight, 0, (p.EndorsersPerBlock+p.ConsensusCommitteeSize)*int(p.BlocksPerCycle))
+	rights := make([]EndorsingRight, 0)
 	// Note: future cycles are seen from current protocol (!)
 	if p.Version >= 12 && p.StartHeight <= id.Int64() {
 		type V12Rights struct {

@@ -70,19 +70,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 }
 
 func (c *Client) Init(ctx context.Context) error {
-	// pull chain id if not yet set
-	_, err := c.ResolveChainId(ctx)
-	if err != nil {
-		return err
-	}
-
-	// pull chain params
-	_, err = c.ResolveChainConfig(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.ResolveChainConfig(ctx)
 }
 
 func (c *Client) Listen() {
@@ -96,24 +84,14 @@ func (c *Client) Close() {
 	c.MempoolObserver.Close()
 }
 
-func (c *Client) ResolveChainId(ctx context.Context) (tezos.ChainIdHash, error) {
-	id, err := c.GetChainId(ctx)
-	if c.ChainId.IsValid() {
-		if !c.ChainId.Equal(id) {
-			return id, fmt.Errorf("rpc: chain mismatch detected, expected=%s seen=%s", c.ChainId, id)
-		}
-	}
-	c.ChainId = id
-	return id, err
-}
-
-func (c *Client) ResolveChainConfig(ctx context.Context) (*tezos.Params, error) {
-	con, err := c.GetConstants(ctx, Head)
+func (c *Client) ResolveChainConfig(ctx context.Context) error {
+	p, err := c.GetParams(ctx, Head)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	c.Params = con.MapToChainParams()
-	return c.Params, nil
+	c.Params = p
+	c.ChainId = p.ChainId
+	return nil
 }
 
 func (c *Client) Get(ctx context.Context, urlpath string, result interface{}) error {
