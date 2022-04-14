@@ -147,3 +147,195 @@ func (o EndorsementWithSlot) MarshalBinary() ([]byte, error) {
 func (o *EndorsementWithSlot) UnmarshalBinary(data []byte) error {
     return o.DecodeBuffer(bytes.NewBuffer(data), tezos.DefaultParams)
 }
+
+// TenderbakeEndorsement represents tenderbake endorsement operation
+type TenderbakeEndorsement struct {
+    Simple
+    Slot             int16             `json:"slot"`
+    Level            int32             `json:"level"`
+    Round            int32             `json:"round"`
+    BlockPayloadHash tezos.PayloadHash `json:"payload_hash"`
+}
+
+func (o TenderbakeEndorsement) Kind() tezos.OpType {
+    return tezos.OpTypeEndorsement
+}
+
+func (o TenderbakeEndorsement) MarshalJSON() ([]byte, error) {
+    buf := bytes.NewBuffer(nil)
+    buf.WriteByte('{')
+    buf.WriteString(`"kind":`)
+    buf.WriteString(strconv.Quote(o.Kind().String()))
+    buf.WriteString(`,"slot":`)
+    buf.WriteString(strconv.Itoa(int(o.Slot)))
+    buf.WriteString(`,"level":`)
+    buf.WriteString(strconv.Itoa(int(o.Level)))
+    buf.WriteString(`,"round":`)
+    buf.WriteString(strconv.Itoa(int(o.Round)))
+    buf.WriteByte('}')
+    return buf.Bytes(), nil
+}
+
+func (o TenderbakeEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+    buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
+    binary.Write(buf, enc, o.Slot)
+    binary.Write(buf, enc, o.Level)
+    binary.Write(buf, enc, o.Round)
+    buf.Write(o.BlockPayloadHash.Bytes())
+    return nil
+}
+
+func (o *TenderbakeEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
+    if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
+        return
+    }
+    o.Slot, err = readInt16(buf.Next(2))
+    if err != nil {
+        return err
+    }
+    o.Level, err = readInt32(buf.Next(4))
+    if err != nil {
+        return err
+    }
+    o.Round, err = readInt32(buf.Next(4))
+    if err != nil {
+        return err
+    }
+    err = o.BlockPayloadHash.UnmarshalBinary(buf.Next(32))
+    return err
+}
+
+func (o TenderbakeEndorsement) MarshalBinary() ([]byte, error) {
+    buf := bytes.NewBuffer(nil)
+    err := o.EncodeBuffer(buf, tezos.DefaultParams)
+    return buf.Bytes(), err
+}
+
+func (o *TenderbakeEndorsement) UnmarshalBinary(data []byte) error {
+    return o.DecodeBuffer(bytes.NewBuffer(data), tezos.DefaultParams)
+}
+
+// TenderbakeInlinedEndorsement represents inlined endorsement operation with signature. This
+// type is uses as part of other operations, but is not a stand-alone operation.
+type TenderbakeInlinedEndorsement struct {
+    Branch      tezos.BlockHash       `json:"branch"`
+    Endorsement TenderbakeEndorsement `json:"operations"`
+    Signature   tezos.Signature       `json:"signature"`
+}
+
+func (o TenderbakeInlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+    buf.Write(o.Branch.Bytes())
+    o.Endorsement.EncodeBuffer(buf, p)
+    buf.Write(o.Signature.Data) // generic sig, no tag (!)
+    return nil
+}
+
+func (o *TenderbakeInlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
+    err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+    if err != nil {
+        return
+    }
+    if err = o.Endorsement.DecodeBuffer(buf, p); err != nil {
+        return
+    }
+    if err := o.Signature.DecodeBuffer(buf); err != nil {
+        return err
+    }
+    return nil
+}
+
+// TenderbakePreendorsement represents tenderbake preendorsement operation
+type TenderbakePreendorsement struct {
+    Simple
+    Slot             int16             `json:"slot"`
+    Level            int32             `json:"level"`
+    Round            int32             `json:"round"`
+    BlockPayloadHash tezos.PayloadHash `json:"payload_hash"`
+}
+
+func (o TenderbakePreendorsement) Kind() tezos.OpType {
+    return tezos.OpTypePreendorsement
+}
+
+func (o TenderbakePreendorsement) MarshalJSON() ([]byte, error) {
+    buf := bytes.NewBuffer(nil)
+    buf.WriteByte('{')
+    buf.WriteString(`"kind":`)
+    buf.WriteString(strconv.Quote(o.Kind().String()))
+    buf.WriteString(`,"slot":`)
+    buf.WriteString(strconv.Itoa(int(o.Slot)))
+    buf.WriteString(`,"level":`)
+    buf.WriteString(strconv.Itoa(int(o.Level)))
+    buf.WriteString(`,"round":`)
+    buf.WriteString(strconv.Itoa(int(o.Round)))
+    buf.WriteByte('}')
+    return buf.Bytes(), nil
+}
+
+func (o TenderbakePreendorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+    buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
+    binary.Write(buf, enc, o.Slot)
+    binary.Write(buf, enc, o.Level)
+    binary.Write(buf, enc, o.Round)
+    buf.Write(o.BlockPayloadHash.Bytes())
+    return nil
+}
+
+func (o *TenderbakePreendorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
+    if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
+        return
+    }
+    o.Slot, err = readInt16(buf.Next(2))
+    if err != nil {
+        return err
+    }
+    o.Level, err = readInt32(buf.Next(4))
+    if err != nil {
+        return err
+    }
+    o.Round, err = readInt32(buf.Next(4))
+    if err != nil {
+        return err
+    }
+    err = o.BlockPayloadHash.UnmarshalBinary(buf.Next(32))
+    return err
+}
+
+func (o TenderbakePreendorsement) MarshalBinary() ([]byte, error) {
+    buf := bytes.NewBuffer(nil)
+    err := o.EncodeBuffer(buf, tezos.DefaultParams)
+    return buf.Bytes(), err
+}
+
+func (o *TenderbakePreendorsement) UnmarshalBinary(data []byte) error {
+    return o.DecodeBuffer(bytes.NewBuffer(data), tezos.DefaultParams)
+}
+
+// TenderbakeInlinedPreendorsement represents inlined preendorsement operation with signature. This
+// type is uses as part of other operations, but is not a stand-alone operation.
+type TenderbakeInlinedPreendorsement struct {
+    Branch      tezos.BlockHash          `json:"branch"`
+    Endorsement TenderbakePreendorsement `json:"operations"`
+    Signature   tezos.Signature          `json:"signature"`
+}
+
+func (o TenderbakeInlinedPreendorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+    buf.Write(o.Branch.Bytes())
+    o.Endorsement.EncodeBuffer(buf, p)
+    buf.Write(o.Signature.Data) // generic sig, no tag (!)
+    return nil
+}
+
+func (o *TenderbakeInlinedPreendorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
+    err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+    if err != nil {
+        return
+    }
+    if err = o.Endorsement.DecodeBuffer(buf, p); err != nil {
+        return
+    }
+    if err := o.Signature.DecodeBuffer(buf); err != nil {
+        return err
+    }
+    return nil
+}

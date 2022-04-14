@@ -45,7 +45,7 @@ func (o *Reveal) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
         return
     }
     if err = o.Manager.DecodeBuffer(buf, p); err != nil {
-        return err
+        return
     }
     if err = o.PublicKey.DecodeBuffer(buf); err != nil {
         return
