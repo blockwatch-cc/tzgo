@@ -662,3 +662,11 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 func ParsePrivateKey(s string) (PrivateKey, error) {
 	return ParseEncryptedPrivateKey(s, nil)
 }
+
+func MustParsePrivateKey(key string) PrivateKey {
+	k, err := ParsePrivateKey(key)
+	if err != nil {
+		panic(err)
+	}
+	return k
+}
