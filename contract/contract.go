@@ -50,7 +50,7 @@ type CallOptions struct {
 }
 
 var DefaultOptions = CallOptions{
-	Confirmations: 6,
+	Confirmations: 2,
 	TTL:           120,
 	MaxFee:        1000000,
 }

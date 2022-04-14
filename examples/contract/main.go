@@ -23,6 +23,7 @@ import (
 	"blockwatch.cc/tzgo/contract"
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/rpc"
+	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/tezos"
 	"github.com/echa/log"
 )
@@ -54,10 +55,11 @@ func main() {
 			fmt.Printf("  getTotalSupply <contract>                   FA1: fetch total token supply\n")
 			fmt.Printf("  getAllowance   <contract> <owner> <spender> FA1: fetch spender permit\n")
 			fmt.Println("\nTransaction Commands (require private key")
-			fmt.Printf("  transfer       <contract> <token_id> <amount> <receiver>  FA1+2: transfer tokens to receiver\n")
-			fmt.Printf("  approve        <contract> <owner> <spender> <amount>      FA1: grant spending right\n")
-			fmt.Printf("  addOperator    <contract> <token_id> <owner> <spender>    FA2: grant operator right\n")
-			fmt.Printf("  removeOperator <contract> <token_id> <owner> <spender>    FA2: revoke operator right\n")
+			fmt.Printf("  transfer       <contract> <token_id> <amount> <receiver> <privkey> FA1+2: transfer tokens to receiver\n")
+			fmt.Printf("  approve        <contract> <spender> <amount> <privkey>     FA1: grant spending right\n")
+			fmt.Printf("  revoke         <contract> <spender> <amount> <privkey>     FA1: revoke spending right\n")
+			fmt.Printf("  addOperator    <contract> <token_id> <spender> <privkey>   FA2: grant full operator permissions\n")
+			fmt.Printf("  removeOperator <contract> <token_id> <spender> <privkey>   FA2: revoke full operator permissions\n")
 			os.Exit(0)
 		}
 		fmt.Println("Error:", err)
@@ -131,6 +133,31 @@ func run() error {
 			return fmt.Errorf("Missing arguments")
 		}
 		return getAllowance(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
+	case "transfer":
+		if n < 5 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return transfer(ctx, c)
+	case "approve":
+		if n < 4 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return approve(ctx, c)
+	case "revoke":
+		if n < 3 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return revoke(ctx, c)
+	case "addOperator":
+		if n < 4 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return addOperator(ctx, c)
+	case "removeOperator":
+		if n < 4 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return removeOperator(ctx, c)
 	default:
 		return fmt.Errorf("Unknown command %q", cmd)
 	}
@@ -375,4 +402,204 @@ func getTotalSupply(ctx context.Context, c *rpc.Client, addr string) error {
 	buf, _ := json.MarshalIndent(res, "  ", "  ")
 	fmt.Printf("Result: %s\n", string(buf))
 	return nil
+}
+
+// FA1/2
+// <contract> <token_id> <amount> <receiver> <privkey>
+func transfer(ctx context.Context, c *rpc.Client) error {
+	fContract := flags.Arg(1)
+	fId := flags.Arg(2)
+	fAmount := flags.Arg(3)
+	fReceiver := flags.Arg(4)
+	fKey := flags.Arg(5)
+
+	id, err := strconv.ParseInt(fId, 10, 64)
+	if err != nil {
+		return fmt.Errorf("Invalid token id %q: %v", fId, err)
+	}
+	var amount tezos.Z
+	if err := amount.UnmarshalText([]byte(fAmount)); err != nil {
+		return fmt.Errorf("Invalid amount %q: %v", fAmount, err)
+	}
+	to, err := tezos.ParseAddress(fReceiver)
+	if err != nil {
+		return fmt.Errorf("Invalid receiver %q: %v", fReceiver, err)
+	}
+	key, err := tezos.ParsePrivateKey(fKey)
+	if err != nil {
+		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
+	}
+
+	opts := contract.DefaultOptions
+	opts.Signer = signer.NewFromKey(key)
+	from := key.Address()
+
+	// load contract
+	con, err := loadContract(ctx, c, fContract, false)
+	if err != nil {
+		return err
+	}
+
+	if con.IsFA1() {
+		args := con.AsFA1().Transfer(from, to, amount)
+		_, err := con.Call(ctx, args, &opts)
+		return err
+	}
+
+	if con.IsFA2() {
+		args := con.AsFA2(id).Transfer(from, to, amount)
+		_, err := con.Call(ctx, args, &opts)
+		return err
+	}
+
+	return fmt.Errorf("Contract is not FA1 or FA2 compatible.")
+}
+
+// FA1 approve  <contract> <spender> <amount> <privkey>
+func approve(ctx context.Context, c *rpc.Client) error {
+	fContract := flags.Arg(1)
+	fReceiver := flags.Arg(2)
+	fAmount := flags.Arg(3)
+	fKey := flags.Arg(4)
+
+	var amount tezos.Z
+	if err := amount.UnmarshalText([]byte(fAmount)); err != nil {
+		return fmt.Errorf("Invalid amount %q: %v", fAmount, err)
+	}
+	to, err := tezos.ParseAddress(fReceiver)
+	if err != nil {
+		return fmt.Errorf("Invalid spender %q: %v", fReceiver, err)
+	}
+	key, err := tezos.ParsePrivateKey(fKey)
+	if err != nil {
+		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
+	}
+
+	opts := contract.DefaultOptions
+	opts.Signer = signer.NewFromKey(key)
+
+	// load contract
+	con, err := loadContract(ctx, c, fContract, false)
+	if err != nil {
+		return err
+	}
+
+	if !con.IsFA1() {
+		return fmt.Errorf("Contract is not FA1 compatible.")
+	}
+
+	args := con.AsFA1().Approve(to, amount)
+	_, err = con.Call(ctx, args, &opts)
+	return err
+}
+
+// FA1 revoke <contract> <spender> <privkey>
+func revoke(ctx context.Context, c *rpc.Client) error {
+	fContract := flags.Arg(1)
+	fReceiver := flags.Arg(2)
+	fKey := flags.Arg(3)
+
+	to, err := tezos.ParseAddress(fReceiver)
+	if err != nil {
+		return fmt.Errorf("Invalid spender %q: %v", fReceiver, err)
+	}
+	key, err := tezos.ParsePrivateKey(fKey)
+	if err != nil {
+		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
+	}
+
+	opts := contract.DefaultOptions
+	opts.Signer = signer.NewFromKey(key)
+
+	// load contract
+	con, err := loadContract(ctx, c, fContract, false)
+	if err != nil {
+		return err
+	}
+
+	if !con.IsFA1() {
+		return fmt.Errorf("Contract is not FA1 compatible.")
+	}
+
+	args := con.AsFA1().Revoke(to)
+	_, err = con.Call(ctx, args, &opts)
+	return err
+}
+
+// FA2 addOperator    <contract> <token_id> <spender> <privkey>
+func addOperator(ctx context.Context, c *rpc.Client) error {
+	fContract := flags.Arg(1)
+	fId := flags.Arg(2)
+	fReceiver := flags.Arg(3)
+	fKey := flags.Arg(4)
+
+	id, err := strconv.ParseInt(fId, 10, 64)
+	if err != nil {
+		return fmt.Errorf("Invalid token id %q: %v", fId, err)
+	}
+	to, err := tezos.ParseAddress(fReceiver)
+	if err != nil {
+		return fmt.Errorf("Invalid spender %q: %v", fReceiver, err)
+	}
+	key, err := tezos.ParsePrivateKey(fKey)
+	if err != nil {
+		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
+	}
+
+	opts := contract.DefaultOptions
+	opts.Signer = signer.NewFromKey(key)
+	from := key.Address()
+
+	// load contract
+	con, err := loadContract(ctx, c, fContract, false)
+	if err != nil {
+		return err
+	}
+
+	if !con.IsFA2() {
+		return fmt.Errorf("Contract is not FA2 compatible.")
+	}
+
+	args := con.AsFA2(id).AddOperator(from, to)
+	_, err = con.Call(ctx, args, &opts)
+	return err
+}
+
+// FA2 removeOperator <contract> <token_id> <spender> <privkey>
+func removeOperator(ctx context.Context, c *rpc.Client) error {
+	fContract := flags.Arg(1)
+	fId := flags.Arg(2)
+	fReceiver := flags.Arg(3)
+	fKey := flags.Arg(4)
+
+	id, err := strconv.ParseInt(fId, 10, 64)
+	if err != nil {
+		return fmt.Errorf("Invalid token id %q: %v", fId, err)
+	}
+	to, err := tezos.ParseAddress(fReceiver)
+	if err != nil {
+		return fmt.Errorf("Invalid spender %q: %v", fReceiver, err)
+	}
+	key, err := tezos.ParsePrivateKey(fKey)
+	if err != nil {
+		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
+	}
+
+	opts := contract.DefaultOptions
+	opts.Signer = signer.NewFromKey(key)
+	from := key.Address()
+
+	// load contract
+	con, err := loadContract(ctx, c, fContract, false)
+	if err != nil {
+		return err
+	}
+
+	if !con.IsFA2() {
+		return fmt.Errorf("Contract is not FA2 compatible.")
+	}
+
+	args := con.AsFA2(id).RemoveOperator(from, to)
+	_, err = con.Call(ctx, args, &opts)
+	return err
 }

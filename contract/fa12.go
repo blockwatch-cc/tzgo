@@ -69,6 +69,34 @@ func (t FA1Token) GetAllowance(ctx context.Context, owner, spender tezos.Address
 	return allowance, err
 }
 
+func (t FA1Token) Approve(spender tezos.Address, amount tezos.Z) *FA1ApprovalArgs {
+	return &FA1ApprovalArgs{
+		Approval: FA1Approval{
+			Spender: spender,
+			Value:   amount,
+		},
+	}
+}
+
+func (t FA1Token) Revoke(spender tezos.Address) *FA1ApprovalArgs {
+	return &FA1ApprovalArgs{
+		Approval: FA1Approval{
+			Spender: spender,
+			Value:   tezos.NewZ(0),
+		},
+	}
+}
+
+func (t FA1Token) Transfer(from, to tezos.Address, amount tezos.Z) *FA1TransferArgs {
+	return &FA1TransferArgs{
+		Transfer: FA1Transfer{
+			From:   from,
+			To:     to,
+			Amount: amount,
+		},
+	}
+}
+
 type FA1Approval struct {
 	Spender tezos.Address `json:"spender"`
 	Value   tezos.Z       `json:"value"`
