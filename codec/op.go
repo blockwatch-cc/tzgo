@@ -308,7 +308,7 @@ func (o *Op) WatermarkedBytes() []byte {
     buf := bytes.NewBuffer(nil)
     switch o.Contents[0].Kind() {
     case tezos.OpTypeEndorsement, tezos.OpTypeEndorsementWithSlot:
-        if p.Version < 12 {
+        if p.OperationTagsVersion < 2 {
             buf.WriteByte(EmmyEndorsementWatermark)
         } else {
             buf.WriteByte(TenderbakeEndorsementWatermark)
@@ -403,13 +403,25 @@ func DecodeOp(data []byte) (*Op, error) {
         buf.UnreadByte()
         switch tezos.ParseOpTag(tag) {
         case tezos.OpTypeEndorsement:
-            op = new(Endorsement)
+            if o.Params.OperationTagsVersion < 2 {
+                op = new(Endorsement)
+            } else {
+                op = new(TenderbakeEndorsement)
+            }
+        case tezos.OpTypePreendorsement:
+            op = new(TenderbakePreendorsement)
         case tezos.OpTypeEndorsementWithSlot:
             op = new(EndorsementWithSlot)
         case tezos.OpTypeSeedNonceRevelation:
             op = new(SeedNonceRevelation)
         case tezos.OpTypeDoubleEndorsementEvidence:
-            op = new(DoubleEndorsementEvidence)
+            if o.Params.OperationTagsVersion < 2 {
+                op = new(DoubleEndorsementEvidence)
+            } else {
+                op = new(TenderbakeDoubleEndorsementEvidence)
+            }
+        case tezos.OpTypeDoublePreendorsementEvidence:
+            op = new(TenderbakeDoublePreendorsementEvidence)
         case tezos.OpTypeDoubleBakingEvidence:
             op = new(DoubleBakingEvidence)
         case tezos.OpTypeActivateAccount:

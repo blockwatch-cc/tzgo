@@ -13,7 +13,7 @@ import (
 // SetDepositsLimit represents "set_deposits_limit" operation
 type SetDepositsLimit struct {
     Manager
-    Limit tezos.N `json:"limit"`
+    Limit *tezos.N `json:"limit"`
 }
 
 func (o SetDepositsLimit) Kind() tezos.OpType {
@@ -27,8 +27,10 @@ func (o SetDepositsLimit) MarshalJSON() ([]byte, error) {
     buf.WriteString(strconv.Quote(o.Kind().String()))
     buf.WriteByte(',')
     o.Manager.EncodeJSON(buf)
-    buf.WriteString(`,"limit":`)
-    buf.WriteString(strconv.Quote(o.Limit.String()))
+    if o.Limit != nil {
+        buf.WriteString(`,"limit":`)
+        buf.WriteString(strconv.Quote(o.Limit.String()))
+    }
     buf.WriteByte('}')
     return buf.Bytes(), nil
 }
@@ -36,7 +38,7 @@ func (o SetDepositsLimit) MarshalJSON() ([]byte, error) {
 func (o SetDepositsLimit) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
-    if o.Limit.IsZero() {
+    if o.Limit == nil {
         buf.WriteByte(0x00)
     } else {
         buf.WriteByte(0xff)
@@ -58,9 +60,11 @@ func (o *SetDepositsLimit) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err
         return err
     }
     if ok {
-        if err = o.Limit.DecodeBuffer(buf); err != nil {
+        var limit tezos.N
+        if err = limit.DecodeBuffer(buf); err != nil {
             return err
         }
+        o.Limit = &limit
     }
     return nil
 }
