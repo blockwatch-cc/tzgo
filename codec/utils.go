@@ -20,9 +20,9 @@ const (
 // CalculateMinFee returns the minimum fee at/above which bakers will accept
 // this operation under default config settings. Lower fee operations may not
 // pass the fee filter and may time out in the mempool.
-func CalculateMinFee(o Operation, gas int64, withHeader bool) int64 {
+func CalculateMinFee(o Operation, gas int64, withHeader bool, p *tezos.Params) int64 {
     buf := bytes.NewBuffer(nil)
-    _ = o.EncodeBuffer(buf, nil)
+    _ = o.EncodeBuffer(buf, p)
     sz := int64(buf.Len())
     if withHeader {
         sz += 32 + 64 // branch + signature

@@ -5,12 +5,10 @@ package contract
 
 import (
 	"context"
-	"fmt"
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/tezos"
 )
 
@@ -38,21 +36,6 @@ func (a *TxArgs) WithDestination(addr tezos.Address) {
 
 func (a *TxArgs) WithAmount(amount tezos.N) {
 	a.Amount = amount
-}
-
-type CallOptions struct {
-	Confirmations int64         // number of confirmations to wait after broadcast
-	TTL           int64         // max number of blocks to wait in total
-	Limits        tezos.Limits  // optional gas, storage and fee limits to override estimations
-	MaxFee        int64         // max acceptable fee, optional (default = 0)
-	Signer        signer.Signer // optional signer interface to use for signing the transaction
-	Observer      *rpc.Observer // optional custom block observer for waiting on confirmations
-}
-
-var DefaultOptions = CallOptions{
-	Confirmations: 2,
-	TTL:           120,
-	MaxFee:        1000000,
 }
 
 type Contract struct {
@@ -227,13 +210,13 @@ func (c *Contract) RunViewExt(ctx context.Context, name string, args micheline.P
 	return res.Data, err
 }
 
-func (c *Contract) Call(ctx context.Context, args CallArguments, opts *CallOptions) (*rpc.Receipt, error) {
+func (c *Contract) Call(ctx context.Context, args CallArguments, opts *rpc.CallOptions) (*rpc.Receipt, error) {
 	return c.CallMulti(ctx, []CallArguments{args}, opts)
 }
 
-func (c *Contract) CallMulti(ctx context.Context, args []CallArguments, opts *CallOptions) (*rpc.Receipt, error) {
+func (c *Contract) CallMulti(ctx context.Context, args []CallArguments, opts *rpc.CallOptions) (*rpc.Receipt, error) {
 	if opts == nil {
-		opts = &DefaultOptions
+		opts = &rpc.DefaultOptions
 	}
 
 	// assemble batch transaction
@@ -244,16 +227,16 @@ func (c *Contract) CallMulti(ctx context.Context, args []CallArguments, opts *Ca
 	}
 
 	// prepare, sign and broadcast
-	return c.signAndBroadcast(ctx, op, opts)
+	return c.rpc.Send(ctx, op, opts)
 }
 
-func (c *Contract) Deploy(ctx context.Context, opts *CallOptions) (*rpc.Receipt, error) {
+func (c *Contract) Deploy(ctx context.Context, opts *rpc.CallOptions) (*rpc.Receipt, error) {
 	return c.DeployExt(ctx, tezos.ZeroAddress, 0, opts)
 }
 
-func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balance tezos.N, opts *CallOptions) (*rpc.Receipt, error) {
+func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balance tezos.N, opts *rpc.CallOptions) (*rpc.Receipt, error) {
 	if opts == nil {
-		opts = &DefaultOptions
+		opts = &rpc.DefaultOptions
 	}
 
 	// assemble origination op
@@ -269,74 +252,5 @@ func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balanc
 	op := codec.NewOp().WithTTL(opts.TTL).WithContents(orig)
 
 	// prepare, sign and broadcast
-	return c.signAndBroadcast(ctx, op, opts)
-}
-
-func (c *Contract) signAndBroadcast(ctx context.Context, op *codec.Op, opts *CallOptions) (*rpc.Receipt, error) {
-	signer := c.rpc.Signer
-	if opts.Signer != nil {
-		signer = opts.Signer
-	}
-
-	key, err := opts.Signer.Key(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// set source on all ops
-	op.WithSource(key.Address())
-
-	// auto-complete op with branch/ttl, source counter, reveal
-	err = c.rpc.Complete(ctx, op, key)
-	if err != nil {
-		return nil, err
-	}
-
-	// simulate to check tx validity and estimate cost
-	sim, err := c.rpc.Simulate(ctx, op)
-	if err != nil {
-		return nil, err
-	}
-
-	// apply simulated cost as limits to tx list
-	op.WithLimits(sim.MapLimits(), rpc.GasSafetyMargin)
-
-	// check minFee calc against maxFee if set
-	if opts.MaxFee > 0 {
-		if l := op.Limits(); l.Fee > opts.MaxFee {
-			return nil, fmt.Errorf("estimated cost %d > max %d", l.Fee, opts.MaxFee)
-		}
-	}
-
-	// sign digest
-	sig, err := signer.SignOperation(ctx, op)
-	if err != nil {
-		return nil, err
-	}
-	op.WithSignature(sig)
-
-	// broadcast
-	hash, err := c.rpc.Broadcast(ctx, op)
-	if err != nil {
-		return nil, err
-	}
-
-	// wait for confirmations
-	res := rpc.NewResult(hash).WithTTL(opts.TTL).WithConfirmations(opts.Confirmations)
-
-	// use custom observer when provided
-	mon := c.rpc.BlockObserver
-	if opts.Observer != nil {
-		mon = opts.Observer
-	}
-
-	// wait for confirmations
-	res.Listen(mon)
-	res.WaitContext(ctx)
-	if err := res.Err(); err != nil {
-		return nil, err
-	}
-
-	// return receipt
-	return res.GetReceipt(ctx)
+	return c.rpc.Send(ctx, op, opts)
 }

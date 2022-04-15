@@ -52,20 +52,22 @@ func main() {
 			fmt.Printf("  broadcast <msg> <sig>      broadcast signed operation\n")
 			fmt.Printf("  wait <ophash> [<n>]        waits for operation to be included after n confirmations (optional)\n")
 			fmt.Println("\nOperation types & required JSON keys")
-			fmt.Printf("  endorsement                 level:int\n")
-			fmt.Printf("  endorsement_with_slot       level:int slot:int\n")
-			fmt.Printf("  double_baking_evidence      <complex>\n")
-			fmt.Printf("  double_endorsement_evidence <complex>\n")
-			fmt.Printf("  seed_nonce_revelation       level:str(int) nonce:hash\n")
-			fmt.Printf("  activate_account            pkh:addr secret:hex32\n")
-			fmt.Printf("  reveal                      source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) public_key:key \n")
-			fmt.Printf("  transaction                 source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) amount:str(int) destination:addr \n")
-			fmt.Printf("  origination                 source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) balance:str(int) delegate?:addr script:prim\n")
-			fmt.Printf("  delegation                  source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) delegate?:addr\n")
-			fmt.Printf("  proposals                   source:addr period:str(int) proposal:[hash]\n")
-			fmt.Printf("  ballot                      source:addr period:str(int) proposal:hash ballot:(yay,nay,pass)\n")
-			fmt.Printf("  register_global_constant    source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) value:prim\n")
-			fmt.Printf("  failing_noop                arbitrary:str\n")
+			fmt.Printf("  endorsement                    level:int slot:int round:int payload_hash:hash\n")
+			fmt.Printf("  preendorsement                 level:int slot:int round:int payload_hash:hash\n")
+			fmt.Printf("  double_baking_evidence         <complex>\n")
+			fmt.Printf("  double_endorsement_evidence    <complex>\n")
+			fmt.Printf("  double_preendorsement_evidence <complex>\n")
+			fmt.Printf("  seed_nonce_revelation          level:str(int) nonce:hash\n")
+			fmt.Printf("  activate_account               pkh:addr secret:hex32\n")
+			fmt.Printf("  reveal                         source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) public_key:key \n")
+			fmt.Printf("  transaction                    source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) amount:str(int) destination:addr \n")
+			fmt.Printf("  origination                    source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) balance:str(int) delegate?:addr script:prim\n")
+			fmt.Printf("  delegation                     source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) delegate?:addr\n")
+			fmt.Printf("  proposals                      source:addr period:str(int) proposal:[hash]\n")
+			fmt.Printf("  ballot                         source:addr period:str(int) proposal:hash ballot:(yay,nay,pass)\n")
+			fmt.Printf("  register_global_constant       source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) value:prim\n")
+			fmt.Printf("  set_deposits_limit             source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) limit:int\n")
+			fmt.Printf("  failing_noop                   arbitrary:str\n")
 			os.Exit(0)
 		}
 		fmt.Println("Error:", err)
@@ -156,7 +158,7 @@ func run() error {
 	}
 }
 
-func makeOp(t, data string) (codec.Operation, error) {
+func makeOp(c *rpc.Client, t, data string) (codec.Operation, error) {
 	var o codec.Operation
 	switch tezos.ParseOpType(t) {
 	case tezos.OpTypeActivateAccount:
@@ -164,7 +166,13 @@ func makeOp(t, data string) (codec.Operation, error) {
 	case tezos.OpTypeDoubleBakingEvidence:
 		o = new(codec.DoubleBakingEvidence)
 	case tezos.OpTypeDoubleEndorsementEvidence:
-		o = new(codec.DoubleEndorsementEvidence)
+		if c.Params.OperationTagsVersion < 2 {
+			o = new(codec.DoubleEndorsementEvidence)
+		} else {
+			o = new(codec.TenderbakeDoubleEndorsementEvidence)
+		}
+	case tezos.OpTypeDoublePreendorsementEvidence:
+		o = new(codec.TenderbakeDoublePreendorsementEvidence)
 	case tezos.OpTypeSeedNonceRevelation:
 		o = new(codec.SeedNonceRevelation)
 	case tezos.OpTypeTransaction:
@@ -175,8 +183,14 @@ func makeOp(t, data string) (codec.Operation, error) {
 		o = new(codec.Delegation)
 	case tezos.OpTypeReveal:
 		o = new(codec.Reveal)
+	case tezos.OpTypePreendorsement:
+		o = new(codec.TenderbakePreendorsement)
 	case tezos.OpTypeEndorsement:
-		o = new(codec.Endorsement)
+		if c.Params.OperationTagsVersion < 2 {
+			o = new(codec.Endorsement)
+		} else {
+			o = new(codec.TenderbakeEndorsement)
+		}
 	case tezos.OpTypeEndorsementWithSlot:
 		o = new(codec.EndorsementWithSlot)
 	case tezos.OpTypeProposals:
@@ -187,6 +201,8 @@ func makeOp(t, data string) (codec.Operation, error) {
 		o = new(codec.FailingNoop)
 	case tezos.OpTypeRegisterConstant:
 		o = new(codec.RegisterGlobalConstant)
+	case tezos.OpTypeSetDepositsLimit:
+		o = new(codec.SetDepositsLimit)
 	default:
 		return nil, fmt.Errorf("Unsupported op type %q", t)
 	}
@@ -229,7 +245,7 @@ func encodeN(s string) error {
 }
 
 func encode(ctx context.Context, c *rpc.Client, typ, data string) error {
-	o, err := makeOp(typ, data)
+	o, err := makeOp(c, typ, data)
 	if err != nil {
 		return err
 	}
@@ -262,7 +278,7 @@ func decode(msg string) error {
 }
 
 func validate(ctx context.Context, c *rpc.Client, typ, data string) error {
-	o, err := makeOp(typ, data)
+	o, err := makeOp(c, typ, data)
 	if err != nil {
 		return err
 	}
@@ -331,7 +347,7 @@ func simulate(ctx context.Context, c *rpc.Client, msg string) error {
 		es.Endorsement.Branch = head
 		op.WithBranch(head)
 	}
-	res, err := c.Simulate(ctx, op)
+	res, err := c.Simulate(ctx, op, nil)
 	if err != nil {
 		return err
 	}

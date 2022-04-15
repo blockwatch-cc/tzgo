@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"fmt"
-
 	"blockwatch.cc/tzgo/hash"
 	"blockwatch.cc/tzgo/tezos"
 )
@@ -88,7 +86,7 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 	hashval := hash.NewInlineFNV64a()
 	hashval.Write(oh.Hash.Hash)
 	m.hashmap[hashval.Sum64()] = seq
-	fmt.Printf("Monitor: %03d subscribed %s\n", seq, oh)
+	log.Debugf("monitor: %03d subscribed %s", seq, oh)
 	return seq
 }
 
@@ -101,7 +99,7 @@ func (m *Observer) Unsubscribe(id int) {
 		hashval.Write(req.oh.Hash.Hash)
 		delete(m.hashmap, hashval.Sum64())
 		delete(m.registry, id)
-		fmt.Printf("Monitor: %03d unsubscribed %s\n", id, req.oh)
+		log.Debugf("monitor: %03d unsubscribed %s", id, req.oh)
 	}
 }
 
@@ -153,7 +151,7 @@ func (m *Observer) listenBlocks() {
 				mon.Close()
 				mon = nil
 				if e, ok := err.(HTTPStatus); ok && e.StatusCode() == 404 {
-					fmt.Println("monitor: event mode unsupported, falling back to poll mode.")
+					log.Debug("monitor: event mode unsupported, falling back to poll mode.")
 					useEvents = false
 				} else {
 					// wait 5 sec, but also return on close
@@ -180,7 +178,7 @@ func (m *Observer) listenBlocks() {
 				mon = nil
 				continue
 			}
-			fmt.Println("monitor: new head", head.Hash)
+			log.Debugf("monitor: new head %s", head.Hash)
 			headBlock = head.Hash
 			headHeight = head.Level
 		} else {
@@ -211,7 +209,7 @@ func (m *Observer) listenBlocks() {
 			}
 			continue
 		}
-		fmt.Printf("Monitor: new block %d %s\n", headHeight, headBlock)
+		log.Debugf("monitor: new block %d %s", headHeight, headBlock)
 
 		// TODO: check for reorg and gaps
 
@@ -219,7 +217,7 @@ func (m *Observer) listenBlocks() {
 		m.mu.Lock()
 		for _, v := range m.registry {
 			if v.matched {
-				fmt.Printf("Monitor: signal n-th match for %d %s\n", v.id, v.oh)
+				log.Debugf("monitor: signal n-th match for %d %s", v.id, v.oh)
 				if remove := v.cb(headBlock, -1, -1, false); remove {
 					delete(m.registry, v.id)
 				}
@@ -230,7 +228,7 @@ func (m *Observer) listenBlocks() {
 		// pull block ops and fan-out matches
 		ohs, err := m.c.GetBlockOperationHashes(m.ctx, headBlock)
 		if err != nil {
-			fmt.Printf("Monitor: cannot fetch block ops: %v\n", err)
+			log.Warnf("monitor: cannot fetch block ops: %v", err)
 			continue
 		}
 		hashval := hash.NewInlineFNV64a()
@@ -243,17 +241,17 @@ func (m *Observer) listenBlocks() {
 				match, ok := m.registry[id]
 				hashval.Reset()
 				if !ok {
-					fmt.Printf("--- !! %s\n", h)
+					log.Debugf("monitor: --- !! %s", h)
 					continue
 				}
 
 				// cross check hash to guard against hash collisions
 				if !match.oh.Equal(h) {
-					fmt.Printf("%03d != %s\n", id, h)
+					log.Debugf("monitor: %03d != %s", id, h)
 					continue
 				}
 
-				fmt.Printf("Monitor: matched %d %s\n", match.id, match.oh)
+				log.Debugf("monitor: matched %d %s", match.id, match.oh)
 
 				// callback
 				if remove := match.cb(headBlock, l, n, false); remove {

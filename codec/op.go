@@ -68,6 +68,17 @@ func NewOp() *Op {
     }
 }
 
+// NeedCounter returns true if any of the contained operations has not assigned
+// a valid counter value.
+func (o Op) NeedCounter() bool {
+    for _, v := range o.Contents {
+        if v.GetCounter() == 0 {
+            return true
+        }
+    }
+    return false
+}
+
 // WithParams defines the protocol and other chain configuration params for which
 // the operation will be encoded. If unset, defaults to tezos.DefaultParams.
 func (o *Op) WithParams(p *tezos.Params) *Op {
@@ -101,7 +112,7 @@ func (o *Op) WithTransfer(to tezos.Address, amount int64) *Op {
     o.Contents = append(o.Contents, &Transaction{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Amount:      tezos.N(amount),
         Destination: to,
@@ -114,7 +125,7 @@ func (o *Op) WithCall(to tezos.Address, params micheline.Parameters) *Op {
     o.Contents = append(o.Contents, &Transaction{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Destination: to,
         Parameters:  &params,
@@ -127,7 +138,7 @@ func (o *Op) WithCallExt(to tezos.Address, params micheline.Parameters, amount i
     o.Contents = append(o.Contents, &Transaction{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Amount:      tezos.N(amount),
         Destination: to,
@@ -141,7 +152,7 @@ func (o *Op) WithOrigination(script micheline.Script) *Op {
     o.Contents = append(o.Contents, &Origination{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Script: script,
     })
@@ -154,7 +165,7 @@ func (o *Op) WithOriginationExt(script micheline.Script, baker tezos.Address, am
     o.Contents = append(o.Contents, &Origination{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Balance:  tezos.N(amount),
         Delegate: baker,
@@ -168,7 +179,7 @@ func (o *Op) WithDelegation(to tezos.Address) *Op {
     o.Contents = append(o.Contents, &Delegation{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Delegate: to,
     })
@@ -181,7 +192,7 @@ func (o *Op) WithUndelegation() *Op {
     o.Contents = append(o.Contents, &Delegation{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
     })
     return o
@@ -193,7 +204,7 @@ func (o *Op) WithRegisterBaker() *Op {
     o.Contents = append(o.Contents, &Delegation{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Delegate: o.Source,
     })
@@ -205,7 +216,7 @@ func (o *Op) WithRegisterConstant(value micheline.Prim) *Op {
     o.Contents = append(o.Contents, &RegisterGlobalConstant{
         Manager: Manager{
             Source:  o.Source,
-            Counter: -1,
+            Counter: 0,
         },
         Value: value,
     })
@@ -246,15 +257,21 @@ func (o *Op) WithBranch(hash tezos.BlockHash) *Op {
 // remaining fees to zero).
 func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
     for i, v := range o.Contents {
-        if len(limits) >= i {
+        if len(limits) < i {
             continue
         }
+        // apply simulated limit to get a better size estimate
+        v.WithLimits(limits[i])
+
+        // re-calculate limits with gas safety margin
         gas := limits[i].GasLimit + margin
         adj := tezos.Limits{
             GasLimit:     gas,
             StorageLimit: limits[i].StorageLimit,
-            Fee:          max64(limits[i].Fee, CalculateMinFee(v, gas, i == 0)),
+            Fee:          max64(limits[i].Fee, CalculateMinFee(v, gas, i == 0, o.Params)),
         }
+
+        // use adjusted limits
         v.WithLimits(adj)
     }
     return o
@@ -265,7 +282,7 @@ func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
 func (o Op) Limits() tezos.Limits {
     var l tezos.Limits
     for _, v := range o.Contents {
-        l.Add(v.Limits())
+        l = l.Add(v.Limits())
     }
     return l
 }
