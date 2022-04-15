@@ -1,5 +1,45 @@
 # Changelog
 
+## v1.12.1
+
+* Add simple transfer example
+* Refactor tx and contract call sending
+* Add FA examples and convenience methods
+* Add in-memory signer
+* Support more tenderbake op type changes, add tests
+* Refactor params loading to avoid uninitialized chain id
+* Add base tests
+* Optimize primitive JSON encoding
+* Add prim size counter
+* Add optimized script decoder
+* Default to Ithaca
+* Improve encoding performance
+* Fix vesting contract test case
+* Fix translating embedded Elts in bigmap origination data
+* Fix comparing zero length annots
+* Cleanup old protocol settings
+* Update entrypoint testcases
+* Update testcases to new bigmap ptr type
+
+## v1.12.0
+
+* Rename entrypoint call to name
+* Use uint64 for script and storage hashes
+* Use int64 as bigmap pointers
+* Add schema decode helper
+* Update rights RPC call
+* Add known burn address
+* Fix imports
+* Add initial NFT ledger unmarshalling support
+* Add type checked prim path getters
+* Remove deprecated hashes and flags
+* Support Ithaca snapshot RPC, cleanup params
+* Support pre-Carthage contract flags
+* Add helper functions to hashes
+* Remove v002 bug handling, support Ithaca snapshot offset change
+* Remove indexer-centric operation types
+* Fix set deposits limit encoding
+
 ## v1.12-rc1
 
 - Refactored wallet functionality into rpc package
