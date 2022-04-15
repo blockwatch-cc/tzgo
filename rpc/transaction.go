@@ -38,7 +38,13 @@ func (t Transaction) Costs() tezos.Costs {
 		GasUsed:     res.ConsumedGas,
 		StorageUsed: res.PaidStorageSizeDiff,
 	}
+	if !t.Result().IsSuccess() {
+		return cost
+	}
 	var i int
+	if t.Amount > 0 {
+		i += 2
+	}
 	if res.PaidStorageSizeDiff > 0 {
 		burn := res.BalanceUpdates[i].Amount()
 		cost.StorageBurn += -burn

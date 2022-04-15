@@ -39,19 +39,38 @@ func (r *Receipt) Costs() []tezos.Costs {
 	return nil
 }
 
-// MapLimits returns a list of individual operation costs mapped to limits for use
-// in simulation results.
-func (r *Receipt) MapLimits() []tezos.Limits {
-	if r.Op != nil {
-		lims := make([]tezos.Limits, len(r.Op.Contents))
-		for i, v := range r.Op.Costs() {
-			lims[i].Fee = v.Fee
-			lims[i].GasLimit = v.GasUsed
-			lims[i].StorageLimit = v.StorageUsed
+// IsSuccess returns true when all operations in this group have been applied successfully.
+func (r *Receipt) IsSuccess() bool {
+	for _, v := range r.Op.Contents {
+		if v.Result().Status != tezos.OpStatusApplied {
+			return false
 		}
-		return lims
+	}
+	return true
+}
+
+// Error returns the first execution error found in this operation group as GenericError.
+// To access error details or multiple errors, visit r.Op.Contents[].OperationResult.Errors[].
+func (r *Receipt) Error() error {
+	for _, v := range r.Op.Contents {
+		if res := v.Result(); len(res.Errors) > 0 {
+			return res.Errors[0].GenericError
+		}
 	}
 	return nil
+}
+
+// MinLimits returns a list of individual operation costs mapped to limits for use
+// in simulation results. Fee is reset to zero to prevent higher simulation fee from
+// spilling over into real fees paid.
+func (r *Receipt) MinLimits() []tezos.Limits {
+	lims := make([]tezos.Limits, len(r.Op.Contents))
+	for i, v := range r.Op.Costs() {
+		lims[i].Fee = 0
+		lims[i].GasLimit = v.GasUsed
+		lims[i].StorageLimit = v.StorageUsed + v.AllocationBurn/tezos.DefaultParams.CostPerByte
+	}
+	return lims
 }
 
 type Result struct {

@@ -40,17 +40,17 @@ type GenericError struct {
 	Kind string `json:"kind"`
 }
 
-func (e *GenericError) Error() string {
-	return fmt.Sprintf("tezos: kind = %q, id = %q", e.Kind, e.ID)
+func (e GenericError) Error() string {
+	return fmt.Sprintf("tezos: kind=%s, id=%s", e.Kind, e.ID)
 }
 
 // ErrorID returns Tezos error id
-func (e *GenericError) ErrorID() string {
+func (e GenericError) ErrorID() string {
 	return e.ID
 }
 
 // ErrorKind returns Tezos error kind
-func (e *GenericError) ErrorKind() string {
+func (e GenericError) ErrorKind() string {
 	return e.Kind
 }
 

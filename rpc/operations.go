@@ -100,6 +100,10 @@ type OperationResult struct {
 	GlobalAddress       tezos.ExprHash       `json:"global_address"`                 // const
 }
 
+func (r OperationResult) IsSuccess() bool {
+	return r.Status == tezos.OpStatusApplied
+}
+
 func (o OperationError) MarshalJSON() ([]byte, error) {
 	return o.Raw, nil
 }
@@ -188,6 +192,17 @@ func (o OperationList) Select(typ tezos.OpType, n int) TypedOperation {
 		cnt++
 	}
 	return nil
+}
+
+func (o OperationList) Len() int {
+	return len(o)
+}
+
+func (o OperationList) N(n int) TypedOperation {
+	if n < 0 {
+		n += len(o)
+	}
+	return o[n]
 }
 
 // UnmarshalJSON implements json.Unmarshaler

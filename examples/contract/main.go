@@ -96,6 +96,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	c.Listen()
 
 	switch cmd := flags.Arg(0); cmd {
 	case "run_view":
@@ -430,12 +431,12 @@ func transfer(ctx context.Context, c *rpc.Client) error {
 		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
 	}
 
-	opts := contract.DefaultOptions
+	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(key)
 	from := key.Address()
 
 	// load contract
-	con, err := loadContract(ctx, c, fContract, false)
+	con, err := loadContract(ctx, c, fContract, true)
 	if err != nil {
 		return err
 	}
@@ -475,11 +476,11 @@ func approve(ctx context.Context, c *rpc.Client) error {
 		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
 	}
 
-	opts := contract.DefaultOptions
+	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(key)
 
 	// load contract
-	con, err := loadContract(ctx, c, fContract, false)
+	con, err := loadContract(ctx, c, fContract, true)
 	if err != nil {
 		return err
 	}
@@ -508,11 +509,11 @@ func revoke(ctx context.Context, c *rpc.Client) error {
 		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
 	}
 
-	opts := contract.DefaultOptions
+	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(key)
 
 	// load contract
-	con, err := loadContract(ctx, c, fContract, false)
+	con, err := loadContract(ctx, c, fContract, true)
 	if err != nil {
 		return err
 	}
@@ -546,12 +547,12 @@ func addOperator(ctx context.Context, c *rpc.Client) error {
 		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
 	}
 
-	opts := contract.DefaultOptions
+	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(key)
 	from := key.Address()
 
 	// load contract
-	con, err := loadContract(ctx, c, fContract, false)
+	con, err := loadContract(ctx, c, fContract, true)
 	if err != nil {
 		return err
 	}
@@ -585,12 +586,12 @@ func removeOperator(ctx context.Context, c *rpc.Client) error {
 		return fmt.Errorf("Invalid private key %q: %v", fKey, err)
 	}
 
-	opts := contract.DefaultOptions
+	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(key)
 	from := key.Address()
 
 	// load contract
-	con, err := loadContract(ctx, c, fContract, false)
+	con, err := loadContract(ctx, c, fContract, true)
 	if err != nil {
 		return err
 	}

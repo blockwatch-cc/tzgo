@@ -44,3 +44,9 @@ func (c logClosure) String() string {
 func newLogClosure(c func() string) logClosure {
 	return logClosure(c)
 }
+
+func logDebug(c func()) {
+	if log.Level() <= logpkg.LevelDebug {
+		c()
+	}
+}
