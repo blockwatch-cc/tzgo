@@ -52,6 +52,7 @@ type CallOptions struct {
 	TTL           int64         // max lifetime for operations in blocks
 	IgnoreLimits  bool          // ignore simulated limits and use user-defined limits from op
 	Signer        signer.Signer // optional signer interface to use for signing the transaction
+	Sender        tezos.Address // optional address to sign for (use when signer manages multiple addresses)
 	Observer      *Observer     // optional custom block observer for waiting on confirmations
 }
 
@@ -233,7 +234,17 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 		signer = opts.Signer
 	}
 
-	key, err := signer.Key(ctx)
+	// identify the sender address for signing the message
+	addr := opts.Sender
+	if !addr.IsValid() {
+		addrs, err := signer.ListAddresses(ctx)
+		if err != nil {
+			return nil, err
+		}
+		addr = addrs[0]
+	}
+
+	key, err := signer.GetKey(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +298,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	}
 
 	// sign digest
-	sig, err := signer.SignOperation(ctx, op)
+	sig, err := signer.SignOperation(ctx, addr, op)
 	if err != nil {
 		return nil, err
 	}
