@@ -11,18 +11,18 @@ import (
 )
 
 type Signer interface {
-	Address(context.Context) (tezos.Address, error) // returns address
-	Key(context.Context) (tezos.Key, error)         // returns public key
-	SignMessage(context.Context, string) (tezos.Signature, error)
-	SignOperation(context.Context, *codec.Op) (tezos.Signature, error)
-	SignBlock(context.Context, *codec.BlockHeader) (tezos.Signature, error)
+	// Return a list of addresses the signer manages.
+	ListAddresses(context.Context) ([]tezos.Address, error)
+
+	// Returns the public key for a managed address. Required for reveal ops.
+	GetKey(context.Context, tezos.Address) (tezos.Key, error)
+
+	// Sign an arbitrary text message.
+	SignMessage(context.Context, tezos.Address, string) (tezos.Signature, error)
+
+	// Sign an operation.
+	SignOperation(context.Context, tezos.Address, *codec.Op) (tezos.Signature, error)
+
+	// Sign a block header.
+	SignBlock(context.Context, tezos.Address, *codec.BlockHeader) (tezos.Signature, error)
 }
-
-// https://pkg.go.dev/github.com/cosmos/cosmos-sdk@v0.45.0/crypto/keyring#Keyring
-// type Signer interface {
-//     // Sign sign byte messages with a user key.
-//     Sign(uid string, msg []byte) ([]byte, types.PubKey, error)
-
-//     // SignByAddress sign byte messages with a user key providing the address.
-//     SignByAddress(address sdk.Address, msg []byte) ([]byte, types.PubKey, error)
-// }

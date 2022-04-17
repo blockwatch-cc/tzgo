@@ -5,10 +5,13 @@ package signer
 
 import (
     "context"
+    "errors"
 
     "blockwatch.cc/tzgo/codec"
     "blockwatch.cc/tzgo/tezos"
 )
+
+var ErrAddressMismatch = errors.New("address mismatch")
 
 type MemorySigner struct {
     key tezos.PrivateKey
@@ -20,25 +23,38 @@ func NewFromKey(k tezos.PrivateKey) *MemorySigner {
     }
 }
 
-func (s MemorySigner) Address(_ context.Context) (tezos.Address, error) {
-    return s.key.Address(), nil
+func (s MemorySigner) ListAddresses(_ context.Context) ([]tezos.Address, error) {
+    return []tezos.Address{s.key.Address()}, nil
 }
 
-func (s MemorySigner) Key(_ context.Context) (tezos.Key, error) {
-    return s.key.Public(), nil
+func (s MemorySigner) GetKey(_ context.Context, addr tezos.Address) (tezos.Key, error) {
+    pk := s.key.Public()
+    if !pk.Address().Equal(addr) {
+        return tezos.InvalidKey, ErrAddressMismatch
+    }
+    return pk, nil
 }
 
-func (s MemorySigner) SignMessage(_ context.Context, msg string) (tezos.Signature, error) {
+func (s MemorySigner) SignMessage(_ context.Context, addr tezos.Address, msg string) (tezos.Signature, error) {
+    if !s.key.Address().Equal(addr) {
+        return tezos.InvalidSignature, ErrAddressMismatch
+    }
     digest := tezos.Digest([]byte(msg))
     return s.key.Sign(digest[:])
 }
 
-func (s MemorySigner) SignOperation(_ context.Context, op *codec.Op) (tezos.Signature, error) {
+func (s MemorySigner) SignOperation(_ context.Context, addr tezos.Address, op *codec.Op) (tezos.Signature, error) {
+    if !s.key.Address().Equal(addr) {
+        return tezos.InvalidSignature, ErrAddressMismatch
+    }
     err := op.Sign(s.key)
     return op.Signature, err
 }
 
-func (s MemorySigner) SignBlock(_ context.Context, head *codec.BlockHeader) (tezos.Signature, error) {
+func (s MemorySigner) SignBlock(_ context.Context, addr tezos.Address, head *codec.BlockHeader) (tezos.Signature, error) {
+    if !s.key.Address().Equal(addr) {
+        return tezos.InvalidSignature, ErrAddressMismatch
+    }
     err := head.Sign(s.key)
     return head.Signature, err
 }
