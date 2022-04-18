@@ -1,5 +1,10 @@
 # Changelog
 
+## unreleased
+
+* Add a remote signer client
+* Refactor signer interface for compatibility with remote signers
+
 ## v1.12.1
 
 * Add simple transfer example
