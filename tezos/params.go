@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -14,9 +14,41 @@ var (
 	// either overwrite this default or set custom params per operation using
 	// op.WithParams().
 	DefaultParams = NewParams().
-		ForNetwork(Mainnet).
-		ForProtocol(ProtoV012_2).
-		Mixin(&Params{
+			ForNetwork(Mainnet).
+			ForProtocol(ProtoV012_2).
+			Mixin(&Params{
+			OperationTagsVersion:         2,
+			MaxOperationsTTL:             120,
+			HardGasLimitPerOperation:     1040000,
+			HardGasLimitPerBlock:         5200000,
+			OriginationSize:              257,
+			CostPerByte:                  250,
+			HardStorageLimitPerOperation: 60000,
+			MinimalBlockDelay:            30 * time.Second,
+		})
+
+	// HangzhounetParams defines the blockchain configuration for Hangzhou testnet.
+	// To produce compliant transactions, use these defaults in op.WithParams().
+	HangzhounetParams = NewParams().
+				ForNetwork(Hangzhounet2).
+				ForProtocol(ProtoV011_2).
+				Mixin(&Params{
+			OperationTagsVersion:         1,
+			MaxOperationsTTL:             120,
+			HardGasLimitPerOperation:     1040000,
+			HardGasLimitPerBlock:         5200000,
+			OriginationSize:              257,
+			CostPerByte:                  250,
+			HardStorageLimitPerOperation: 60000,
+			MinimalBlockDelay:            30 * time.Second,
+		})
+
+	// IthacanetParams defines the blockchain configuration for Ithaca testnet.
+	// To produce compliant transactions, use these defaults in op.WithParams().
+	IthacanetParams = NewParams().
+			ForNetwork(Ithacanet2).
+			ForProtocol(ProtoV012_2).
+			Mixin(&Params{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
