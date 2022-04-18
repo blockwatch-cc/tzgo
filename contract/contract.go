@@ -24,6 +24,7 @@ type TxArgs struct {
 	Source      tezos.Address
 	Destination tezos.Address
 	Amount      tezos.N
+	Params      micheline.Parameters
 }
 
 func (a *TxArgs) WithSource(addr tezos.Address) {
@@ -36,6 +37,24 @@ func (a *TxArgs) WithDestination(addr tezos.Address) {
 
 func (a *TxArgs) WithAmount(amount tezos.N) {
 	a.Amount = amount
+}
+
+func (a *TxArgs) WithParameters(params micheline.Parameters) {
+	a.Params = params
+}
+
+func (a *TxArgs) Parameters() *micheline.Parameters {
+	return &a.Params
+}
+
+func (a *TxArgs) Encode() *codec.Transaction {
+	return &codec.Transaction{
+		Manager: codec.Manager{
+			Source: a.Source,
+		},
+		Destination: a.Destination,
+		Parameters:  &a.Params,
+	}
 }
 
 type Contract struct {
