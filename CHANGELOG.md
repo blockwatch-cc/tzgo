@@ -1,7 +1,12 @@
 # Changelog
 
-## unreleased
+## v1.12.2
 
+* Add method to create TxArgs
+* Add default testnet params
+* Allow custom contract calls via TxArgs
+* Read contract address after origination
+* Avoid double fee estimation during Send()
 * Add a remote signer client
 * Refactor signer interface for compatibility with remote signers
 
