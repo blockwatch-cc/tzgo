@@ -12,7 +12,7 @@ import (
     "blockwatch.cc/tzgo/tezos"
 )
 
-// BlockHeader represents block header
+// BlockHeader represents a Tenderbake compatible block header
 type BlockHeader struct {
     Level            int32                `json:"level"`
     Proto            byte                 `json:"proto"`
@@ -28,6 +28,7 @@ type BlockHeader struct {
     SeedNonceHash    tezos.NonceHash      `json:"seed_nonce_hash"`
     LbEscapeVote     bool                 `json:"liquidity_baking_escape_vote"`
     Signature        tezos.Signature      `json:"signature"`
+    ChainId          *tezos.ChainIdHash   `json:"-"` // remote signer use only
 }
 
 // Bytes serializes the block header into binary form. When no signature is set, the
@@ -68,6 +69,14 @@ func (h *BlockHeader) Sign(key tezos.PrivateKey) error {
     }
     h.Signature = sig
     return nil
+}
+
+// WithChainId sets chain_id for this block to id. Use this only for remote signing
+// of blocks as it creates an invalid binary encoding otherwise.
+func (h *BlockHeader) WithChainId(id tezos.ChainIdHash) *BlockHeader {
+    clone := id.Clone()
+    h.ChainId = &clone
+    return h
 }
 
 // WithSignature adds an externally created signature to the block header. Converts
@@ -125,6 +134,9 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 }
 
 func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
+    if h.ChainId != nil {
+        buf.Write(h.ChainId.Bytes())
+    }
     binary.Write(buf, enc, h.Level)
     buf.WriteByte(h.Proto)
     buf.Write(h.Predecessor.Bytes())

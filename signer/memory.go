@@ -39,7 +39,12 @@ func (s MemorySigner) SignMessage(_ context.Context, addr tezos.Address, msg str
     if !s.key.Address().Equal(addr) {
         return tezos.InvalidSignature, ErrAddressMismatch
     }
-    digest := tezos.Digest([]byte(msg))
+    op := codec.NewOp().
+        WithBranch(tezos.ZeroBlockHash).
+        WithContents(&codec.FailingNoop{
+            Arbitrary: msg,
+        })
+    digest := tezos.Digest(op.Bytes())
     return s.key.Sign(digest[:])
 }
 
