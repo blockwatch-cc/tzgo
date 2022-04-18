@@ -17,7 +17,7 @@ type Signer interface {
 	// Returns the public key for a managed address. Required for reveal ops.
 	GetKey(context.Context, tezos.Address) (tezos.Key, error)
 
-	// Sign an arbitrary text message.
+	// Sign an arbitrary text message wrapped into a failing noop
 	SignMessage(context.Context, tezos.Address, string) (tezos.Signature, error)
 
 	// Sign an operation.
