@@ -27,6 +27,10 @@ type TxArgs struct {
 	Params      micheline.Parameters
 }
 
+func NewTxArgs() *TxArgs {
+	return &TxArgs{}
+}
+
 func (a *TxArgs) WithSource(addr tezos.Address) {
 	a.Source = addr.Clone()
 }
