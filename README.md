@@ -8,6 +8,7 @@ Our main focus is on **correctness**, **stability**, and **compliance** with the
 
 Current TzGo protocol support
 
+- Ithaca v012
 - Hangzhou v011
 - Granada v010
 - Florence v009
@@ -25,8 +26,9 @@ TzGo contains a full set of features to read, monitor, decode, translate, analyz
 - a low-level **Types library** `tzgo/tezos` to handle hashes, addresses, keys, signatures other types found on-chain
 - a powerful **Micheline library** `tzgo/micheline` to decode and translate data found in smart contract calls, storage, and bigmaps
 - an **RPC library** `tzgo/rpc` for accessing the Tezos Node RPC
-- an **Codec library** `tzgo/codec` to construct and serialize all operation types
-- a **Wallet library** `tzgo/wallet` for account and operation management
+- an **Codec library** `tzgo/codec` to construct and serialize operations
+- a **Contract library** `tzgo/contract` for smart contract calls and tokens
+- a **Signer library** `tzgo/signer` to sign transactions local or remote
 - helpers like an efficient base58 en/decoder, hash maps, etc
 
 ### TzGo Versioning
@@ -37,7 +39,7 @@ As long as TzGo is in beta status we will use major version 0.x. Once interfaces
 
 When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet but will add support in the future as usage of these features becomes more widespread.
 
-TzGo used to be read-only until v0.11, i.e. you could use it to access Tezos on-chain data, but you could not send transactions. Starting with v0.11.1 we have added transaction serialization, signing and broadcast support.
+TzGo used to be read-only until v0.11, i.e. you could use it to access Tezos on-chain data, but you could not send transactions. Starting with v0.11.1 we have added transaction serialization, signing and broadcast support which later has been finalized and published as  release v1.12.
 
 
 ### Usage
