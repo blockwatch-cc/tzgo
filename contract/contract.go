@@ -53,6 +53,12 @@ func NewContract(addr tezos.Address, cli *rpc.Client) *Contract {
 	}
 }
 
+func NewEmptyContract(cli *rpc.Client) *Contract {
+	return &Contract{
+		rpc: cli,
+	}
+}
+
 func (c *Contract) Resolve(ctx context.Context) error {
 	// use normalized script to have the node embed global constants
 	script, err := c.rpc.GetNormalizedScript(ctx, c.addr, rpc.UnparsingModeOptimized)
@@ -252,5 +258,15 @@ func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balanc
 	op := codec.NewOp().WithTTL(opts.TTL).WithContents(orig)
 
 	// prepare, sign and broadcast
-	return c.rpc.Send(ctx, op, opts)
+	rcpt, err := c.rpc.Send(ctx, op, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// set contract address from deployment result if successful
+	if !rcpt.IsSuccess() {
+		return nil, rcpt.Error()
+	}
+	c.addr = rcpt.Op.Contents[0].Result().OriginatedContracts[0]
+	return rcpt, nil
 }
