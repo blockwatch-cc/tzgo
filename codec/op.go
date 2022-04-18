@@ -51,12 +51,13 @@ type Operation interface {
 // operations, but is agnostic to the order/lifecycle in which data is added
 // or updated.
 type Op struct {
-    Branch    tezos.BlockHash `json:"branch"`
-    Contents  []Operation     `json:"contents"`
-    Signature tezos.Signature `json:"signature"`
-    TTL       int64           `json:"-"`
-    Params    *tezos.Params   `json:"-"`
-    Source    tezos.Address   `json:"-"`
+    Branch    tezos.BlockHash    `json:"branch"`    // used for TTL handling
+    Contents  []Operation        `json:"contents"`  // non-zero list of transactions
+    Signature tezos.Signature    `json:"signature"` // added during the lifecycle
+    ChainId   *tezos.ChainIdHash `json:"-"`         // optional, used for remote signing only
+    TTL       int64              `json:"-"`         // optional, specify TTL in blocks
+    Params    *tezos.Params      `json:"-"`         // optional, define protocol to encode for
+    Source    tezos.Address      `json:"-"`         // optional, used as manager/sender
 }
 
 // NewOp creates a new empty operation that uses default params and a
@@ -243,6 +244,14 @@ func (o *Op) WithBranch(hash tezos.BlockHash) *Op {
     return o
 }
 
+// WithChainId sets chain_id for this operation to id. Use this only for remote signing
+// of (pre)endorsements as it creates an invalid binary encoding otherwise.
+func (o *Op) WithChainId(id tezos.ChainIdHash) *Op {
+    clone := id.Clone()
+    o.ChainId = &clone
+    return o
+}
+
 // WithLimits sets the limits (fee, gas and storage limit) of each
 // contained operation to provided limits. Use this to apply values from
 // simulation with an optional safety margin on gas. This will also
@@ -330,8 +339,14 @@ func (o *Op) WatermarkedBytes() []byte {
         } else {
             buf.WriteByte(TenderbakeEndorsementWatermark)
         }
+        if o.ChainId != nil {
+            buf.Write(o.ChainId.Bytes())
+        }
     case tezos.OpTypePreendorsement:
         buf.WriteByte(TenderbakePreendorsementWatermark)
+        if o.ChainId != nil {
+            buf.Write(o.ChainId.Bytes())
+        }
     default:
         buf.WriteByte(OperationWatermark)
     }
