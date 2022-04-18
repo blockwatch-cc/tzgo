@@ -166,16 +166,13 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 
 	if opts != nil && !opts.IgnoreLimits {
 		// use default gas/storage limits, set min fee
-		for i, op := range o.Contents {
+		for _, op := range o.Contents {
 			l := op.Limits()
 			if l.GasLimit == 0 {
 				l.GasLimit = defaultSimulationLimits.GasLimit / int64(len(o.Contents))
 			}
 			if l.StorageLimit == 0 {
 				l.StorageLimit = defaultSimulationLimits.StorageLimit / int64(len(o.Contents))
-			}
-			if l.Fee == 0 {
-				l.Fee = codec.CalculateMinFee(op, l.GasLimit, i == 0, o.Params)
 			}
 			op.WithLimits(l)
 		}
