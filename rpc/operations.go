@@ -375,22 +375,3 @@ func (c *Client) ForgeOperation(ctx context.Context, id BlockID, body, resp inte
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/forge/operations", id)
 	return c.Post(ctx, u, body, resp)
 }
-
-// RunCode simulates executing of provided code on the context of a contract at selected block.
-func (c *Client) RunCode(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_code", id)
-	return c.Post(ctx, u, body, resp)
-}
-
-// RunView simulates executing of on on-chain view on the context of a contract at selected block.
-func (c *Client) RunView(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_view", id)
-	return c.Post(ctx, u, body, resp)
-}
-
-// TraceCode simulates executing of code on the context of a contract at selected block and
-// returns a full execution trace.
-func (c *Client) TraceCode(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/trace_code", id)
-	return c.Post(ctx, u, body, resp)
-}

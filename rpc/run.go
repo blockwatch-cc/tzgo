@@ -82,6 +82,26 @@ type RunViewResponse struct {
 	Data micheline.Prim `json:"data"`
 }
 
+type RunCodeRequest struct {
+	ChainId    tezos.ChainIdHash `json:"chain_id"`
+	Script     micheline.Code    `json:"script"`
+	Storage    micheline.Prim    `json:"storage"`
+	Input      micheline.Prim    `json:"input"`
+	Amount     tezos.N           `json:"amount"`
+	Balance    tezos.N           `json:"balance"`
+	Source     *tezos.Address    `json:"source,omitempty"`
+	Payer      *tezos.Address    `json:"payer,omitempty"`
+	Gas        *tezos.N          `json:"gas,omitempty"`
+	Entrypoint string            `json:"entrypoint,omitempty"`
+}
+
+// RunCodeResponse -
+type RunCodeResponse struct {
+	Operations []Operation          `json:"operations"`
+	Storage    micheline.Prim       `json:"storage"`
+	BigmapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
+}
+
 // Complete ensures an operation is compatible with the current source account's
 // on-chain state. Sets branch for TTL control, replay counters, and reveals
 // the sender's pubkey if not published yet.
@@ -325,4 +345,23 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 
 	// return receipt
 	return res.GetReceipt(ctx)
+}
+
+// RunCode simulates executing of provided code on the context of a contract at selected block.
+func (c *Client) RunCode(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_code", id)
+	return c.Post(ctx, u, body, resp)
+}
+
+// RunView simulates executing of on on-chain view on the context of a contract at selected block.
+func (c *Client) RunView(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_view", id)
+	return c.Post(ctx, u, body, resp)
+}
+
+// TraceCode simulates executing of code on the context of a contract at selected block and
+// returns a full execution trace.
+func (c *Client) TraceCode(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/trace_code", id)
+	return c.Post(ctx, u, body, resp)
 }
