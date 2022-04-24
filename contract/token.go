@@ -125,6 +125,11 @@ func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos
 		err   error
 	)
 
+	// we need contract script and storage
+	if err = contract.Resolve(ctx); err != nil {
+		return nil, err
+	}
+
 	// prefer off-chain view via run_code, but don't fail if not present
 	tz16, _ := contract.ResolveMetadata(ctx)
 	if tz16 != nil && tz16.HasView(TOKEN_METADATA) {
