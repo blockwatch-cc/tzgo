@@ -25,6 +25,7 @@ var (
 	// ZeroHash
 	ZeroOpHash    = NewOpHash(make([]byte, HashTypeOperation.Len()))
 	ZeroBlockHash = NewBlockHash(make([]byte, HashTypeBlock.Len()))
+	EmptyExprHash = MustParseExprHash("expru5X1yxJG6ezR2uHMotwMLNmSzQyh5t1vUnhjx4cS6Pv9qE1Sdo")
 )
 
 type HashType byte

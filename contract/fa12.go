@@ -32,9 +32,8 @@ func (t FA1Token) Equal(v FA1Token) bool {
 	return t.Address.Equal(v.Address)
 }
 
-func (t FA1Token) GetMetadata(ctx context.Context) (TokenMetadata, error) {
-	// TODO
-	return TokenMetadata{}, nil
+func (t FA1Token) ResolveMetadata(ctx context.Context) (*TokenMetadata, error) {
+	return ResolveTokenMetadata(ctx, t.contract, tezos.NewZ(0))
 }
 
 func (t FA1Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z, error) {

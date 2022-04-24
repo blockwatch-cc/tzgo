@@ -83,6 +83,11 @@ func NewPrim(c OpCode, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: c, Anno: anno}
 }
 
+func (p Prim) WithAnno(anno string) Prim {
+	p.Anno = append(p.Anno, anno)
+	return p
+}
+
 // Macros
 func ASSERT_CMPEQ() Prim {
 	return NewSeq(
