@@ -238,9 +238,6 @@ var (
 	ITzip5       = Interface("TZIP-005")
 	ITzip7       = Interface("TZIP-007")
 	ITzip12      = Interface("TZIP-012")
-	IDexter      = Interface("DEXTER")
-	// IKolibriVault = Interface("KOLIBRI_VAULT")
-	// IWXTZVault    = Interface("WXTZ_VAULT")
 
 	WellKnownInterfaces = []Interface{
 		IManager,
@@ -248,10 +245,6 @@ var (
 		ITzip5,
 		ITzip7,
 		ITzip12,
-		// ITzip13,
-		IDexter,
-		// IKolibriVault,
-		// IWXTZVault,
 	}
 )
 
@@ -445,162 +438,4 @@ var InterfaceSpecs = map[Interface][]Prim{
 			),
 		),
 	},
-	IDexter: []Prim{
-		// 1 ( pair %approve
-		//     ( address :spender )
-		//     ( pair ( nat :allowance ) ( nat :currentAllowance ) ) )
-		NewPairType(
-			NewCodeAnno(T_ADDRESS, ":spender"),
-			NewPairType(
-				NewCodeAnno(T_NAT, ":allowance"),
-				NewCodeAnno(T_NAT, ":currentAllowance"),
-			),
-			"%approve",
-		),
-
-		// 2 ( pair %addLiquidity
-		//     ( pair ( address :owner ) ( nat :minLqtMinted ) )
-		//     ( pair ( nat :maxTokensDeposited ) ( timestamp :deadline ) ) ) )
-		NewPairType(
-			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":owner"),
-				NewCodeAnno(T_NAT, ":minLqtMinted"),
-			),
-			NewPairType(
-				NewCodeAnno(T_NAT, ":maxTokensDeposited"),
-				NewCodeAnno(T_TIMESTAMP, ":deadline"),
-			),
-			"%addLiquidity",
-		),
-
-		// 3 ( pair %removeLiquidity
-		//     ( pair ( address :owner ) ( pair ( address :to ) ( nat :lqtBurned ) ) )
-		//     ( pair ( mutez :minXtzWithdrawn ) ( pair ( nat :minTokensWithdrawn ) ( timestamp :deadline ) ) ) )
-		NewPairType(
-			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":owner"),
-				NewPairType(
-					NewCodeAnno(T_ADDRESS, ":to"),
-					NewCodeAnno(T_NAT, ":lqtBurned"),
-				),
-			),
-			NewPairType(
-				NewCodeAnno(T_MUTEZ, ":minXtzWithdrawn"),
-				NewPairType(
-					NewCodeAnno(T_NAT, ":minTokensWithdrawn"),
-					NewCodeAnno(T_TIMESTAMP, ":deadline"),
-				),
-			),
-			"%removeLiquidity",
-		),
-
-		// 4 ( pair %xtzToToken
-		//     ( address :to )
-		//     ( pair ( nat :minTokensBought ) ( timestamp :deadline ) ) )
-		NewPairType(
-			NewCodeAnno(T_ADDRESS, ":to"),
-			NewPairType(
-				NewCodeAnno(T_NAT, ":minTokensBought"),
-				NewCodeAnno(T_TIMESTAMP, ":deadline"),
-			),
-			"%xtzToToken",
-		),
-
-		// 5 pair %tokenToXtz
-		//     ( pair ( address :owner ) ( address :to ) )
-		//     ( pair ( nat :tokensSold ) ( pair ( mutez :minXtzBought ) ( timestamp :deadline ) ) ) ) ) ) )
-		NewPairType(
-			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":owner"),
-				NewCodeAnno(T_ADDRESS, ":to"),
-			),
-			NewPairType(
-				NewCodeAnno(T_NAT, ":tokensSold"),
-				NewPairType(
-					NewCodeAnno(T_MUTEZ, ":minXtzBought"),
-					NewCodeAnno(T_TIMESTAMP, ":deadline"),
-				),
-			),
-			"%tokenToXtz",
-		),
-
-		// 6 pair %tokenToToken
-		//     ( pair ( address :outputDexterContract ) ( pair ( nat :minTokensBought ) ( address :owner ) ) )
-		//     ( pair ( address :to ) ( pair ( nat :tokensSold ) ( timestamp :deadline ) ) ) )
-		NewPairType(
-			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":outputDexterContract"),
-				NewPairType(
-					NewCodeAnno(T_NAT, ":minTokensBought"),
-					NewCodeAnno(T_ADDRESS, ":owner"),
-				),
-			),
-			NewPairType(
-				NewCodeAnno(T_ADDRESS, ":to"),
-				NewPairType(
-					NewCodeAnno(T_NAT, ":tokensSold"),
-					NewCodeAnno(T_TIMESTAMP, ":deadline"),
-				),
-			),
-			"%tokenToToken",
-		),
-
-		// 7 ( key_hash %updateTokenPool )
-		NewCodeAnno(T_KEY_HASH, "%updateTokenPool"),
-
-		// 8 ( nat %updateTokenPoolInternal ) )
-		NewCodeAnno(T_NAT, "%updateTokenPoolInternal"),
-
-		// 9 pair %setBaker ( option key_hash ) bool
-		NewPairType(
-			NewCode(T_OPTION, NewCode(T_KEY_HASH)),
-			NewCode(T_BOOL),
-			"%setBaker",
-		),
-
-		// 10 address %setManager
-		NewCodeAnno(T_ADDRESS, "%setManager"),
-	},
-
-	// Note: Kolibri and wXTZ vault interfaces are ambiguous, i.e. wXTZ is a
-	// superset of Kolibri and there's little use to distinguish them, so
-	// detection is disabled until we know any better
-	// IKolibriVault: []Prim{
-	// 	// 0 borrow
-	// 	NewCodeAnno(T_NAT, "%borrow"),
-	// 	// 1 default
-	// 	NewCodeAnno(T_UNIT, "%default"),
-	// 	// 2 liquidate
-	// 	NewCodeAnno(T_UNIT, "%liquidate"),
-	// 	// 3 repay
-	// 	NewCodeAnno(T_NAT, "%repay"),
-	// 	// 4 setDelegate
-	// 	NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
-	// 	// 5 updateState
-	// 	NewPairType(
-	// 		NewCode(T_ADDRESS),
-	// 		NewPairType(
-	// 			NewCode(T_NAT),
-	// 			NewPairType(
-	// 				NewCode(T_INT),
-	// 				NewPairType(
-	// 					NewCode(T_INT),
-	// 					NewCode(T_BOOL),
-	// 				),
-	// 			),
-	// 		),
-	// 		"%updateState",
-	// 	),
-	// 	// 6 withdraw
-	// 	NewCodeAnno(T_MUTEZ, "%withdraw"),
-	// },
-	// // https://medium.com/stakerdao/the-wrapped-tezos-wxtz-beta-guide-6917fa70116e
-	// IWXTZVault: []*Prim{
-	// 	// 1 default
-	// 	NewCodeAnno(T_UNIT, "%default"),
-	// 	// 2 setDelegate
-	// 	NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
-	// 	// 3 withdraw
-	// 	NewCodeAnno(T_MUTEZ, "%withdraw"),
-	// },
 }
