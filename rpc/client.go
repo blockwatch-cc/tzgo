@@ -23,6 +23,7 @@ const (
 	libraryVersion = "1.12.2"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
+	ipfsUrl        = "https://ipfs.io"
 )
 
 // Client manages communication with a Tezos RPC server.
@@ -31,6 +32,8 @@ type Client struct {
 	client *http.Client
 	// Base URL for API requests.
 	BaseURL *url.URL
+	// Base URL for IPFS requests.
+	IpfsURL *url.URL
 	// User agent name for client.
 	UserAgent string
 	// Optional API key for protected endpoints
@@ -59,9 +62,11 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	ipfs, _ := url.Parse(ipfsUrl)
 	c := &Client{
 		client:          httpClient,
 		BaseURL:         u,
+		IpfsURL:         ipfs,
 		UserAgent:       userAgent,
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
@@ -71,6 +76,10 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 
 func (c *Client) Init(ctx context.Context) error {
 	return c.ResolveChainConfig(ctx)
+}
+
+func (c *Client) Client() *http.Client {
+	return c.client
 }
 
 func (c *Client) Listen() {
