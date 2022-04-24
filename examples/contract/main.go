@@ -11,6 +11,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
@@ -37,7 +38,7 @@ var (
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.StringVar(&node, "node", "https://rpc.hangzhou.tzstats.com", "Tezos node URL")
+	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node URL")
 }
 
 func main() {
@@ -50,6 +51,7 @@ func main() {
 			fmt.Printf("  run_view       <contract> <name> <data>     run view entrypoint `name` with JSON-encoded micheline input `data`\n")
 			fmt.Printf("  info           <contract>                   load contract, print entrypoints and views\n")
 			fmt.Printf("  metadata       <contract>                   fetch contract metadata\n")
+			fmt.Printf("  token_metadata <contract> <token_id>        fetch token metadata\n")
 			fmt.Printf("  balance_of     <contract> <owner>           FA2: fetch token balance for owner\n")
 			fmt.Printf("  getBalance     <contract> <owner>           FA1: fetch token balance for owner\n")
 			fmt.Printf("  getTotalSupply <contract>                   FA1: fetch total token supply\n")
@@ -114,6 +116,11 @@ func run() error {
 			return fmt.Errorf("Missing contract address")
 		}
 		return meta(ctx, c, flags.Arg(1))
+	case "token_metadata":
+		if n < 3 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return token_meta(ctx, c, flags.Arg(1), flags.Arg(2))
 	case "balance_of":
 		if n < 4 {
 			return fmt.Errorf("Missing arguments")
@@ -310,8 +317,44 @@ func meta(ctx context.Context, c *rpc.Client, addr string) error {
 	if err != nil {
 		return err
 	}
-	buf, _ := json.MarshalIndent(m, "  ", "  ")
-	fmt.Printf("Result:  \n%s\n", string(buf))
+	buf := bytes.NewBuffer(nil)
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("  ", "  ")
+	_ = enc.Encode(m)
+	fmt.Printf("Result:  \n%s\n", buf.String())
+	return nil
+}
+
+func token_meta(ctx context.Context, c *rpc.Client, addr, id string) error {
+	con, err := loadContract(ctx, c, addr, true)
+	if err != nil {
+		return err
+	}
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	var meta *contract.TokenMetadata
+	if con.IsFA1() || con.IsFA12() {
+		meta, err = con.AsFA1().ResolveMetadata(ctx)
+	} else if con.IsFA2() {
+		meta, err = con.AsFA2(i).ResolveMetadata(ctx)
+	}
+	if err != nil {
+		return err
+	}
+	if meta == nil {
+		return fmt.Errorf("Not FA1/2 compatible")
+	}
+
+	buf := bytes.NewBuffer(nil)
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("  ", "  ")
+	_ = enc.Encode(meta)
+	fmt.Printf("Result:  \n%s\n", buf.String())
 	return nil
 }
 
@@ -441,7 +484,7 @@ func transfer(ctx context.Context, c *rpc.Client) error {
 		return err
 	}
 
-	if con.IsFA1() {
+	if con.IsFA1() || con.IsFA12() {
 		args := con.AsFA1().Transfer(from, to, amount)
 		_, err := con.Call(ctx, args, &opts)
 		return err
@@ -485,7 +528,7 @@ func approve(ctx context.Context, c *rpc.Client) error {
 		return err
 	}
 
-	if !con.IsFA1() {
+	if !(con.IsFA1() || con.IsFA12()) {
 		return fmt.Errorf("Contract is not FA1 compatible.")
 	}
 
@@ -518,7 +561,7 @@ func revoke(ctx context.Context, c *rpc.Client) error {
 		return err
 	}
 
-	if !con.IsFA1() {
+	if !(con.IsFA1() || con.IsFA12()) {
 		return fmt.Errorf("Contract is not FA1 compatible.")
 	}
 

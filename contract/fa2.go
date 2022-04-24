@@ -37,9 +37,8 @@ func (t FA2Token) Equal(v FA2Token) bool {
 	return t.Address.Equal(v.Address) && t.TokenId.Equal(v.TokenId)
 }
 
-func (t FA2Token) GetMetadata(ctx context.Context) (TokenMetadata, error) {
-	// TODO
-	return TokenMetadata{}, nil
+func (t FA2Token) ResolveMetadata(ctx context.Context) (*TokenMetadata, error) {
+	return ResolveTokenMetadata(ctx, t.contract, t.TokenId)
 }
 
 type FA2BalanceRequest struct {

@@ -84,7 +84,9 @@ func NewEmptyContract(cli *rpc.Client) *Contract {
 
 func (c *Contract) Resolve(ctx context.Context) error {
 	// use normalized script to have the node embed global constants
-	script, err := c.rpc.GetNormalizedScript(ctx, c.addr, rpc.UnparsingModeOptimized)
+	script, err := c.rpc.GetNormalizedScript(ctx, c.addr, rpc.UnparsingModeReadable)
+	// use regular script to read bigmaps correctly (sometimes required)
+	// script, err := c.rpc.GetContractScript(ctx, c.addr)
 	if err != nil {
 		return err
 	}
@@ -98,8 +100,16 @@ func (c *Contract) Resolve(ctx context.Context) error {
 }
 
 func (c *Contract) ResolveMetadata(ctx context.Context) (*Tz16, error) {
-	// TODO
-	return nil, nil
+	if c.script == nil {
+		if err := c.Resolve(ctx); err != nil {
+			return nil, err
+		}
+	}
+	tz16 := &Tz16{}
+	if err := c.resolveStorageUri(ctx, "tezos-storage:", tz16, nil); err != nil {
+		return nil, err
+	}
+	return tz16, nil
 }
 
 func (c *Contract) WithScript(script *micheline.Script) *Contract {
