@@ -215,6 +215,9 @@ func (s *Signature) UnmarshalText(data []byte) error {
 }
 
 func (s Signature) Bytes() []byte {
+	if s.Type == SignatureTypeGeneric {
+		return s.Data
+	}
 	return append([]byte{s.Type.Tag()}, s.Data...)
 }
 
