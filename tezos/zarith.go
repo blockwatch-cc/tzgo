@@ -12,6 +12,7 @@ import (
     "io"
     "math/big"
     "strconv"
+    "strings"
     "sync"
 )
 
@@ -180,6 +181,19 @@ func (z Z) String() string {
     return (*big.Int)(&z).Text(10)
 }
 
+func (z Z) Decimals(d int) string {
+    s := z.String()
+    if d <= 0 {
+        return s
+    }
+    l := len(s)
+    if l <= d {
+        s = strings.Repeat("0", d-l+1) + s
+    }
+    l = len(s)
+    return s[:l-d] + "." + s[l-d:]
+}
+
 var (
     mask3f     = big.NewInt(0x3f)
     mask7f     = big.NewInt(0x7f)
@@ -283,4 +297,17 @@ func (n *N) UnmarshalText(d []byte) error {
 
 func (n N) String() string {
     return strconv.FormatInt(int64(n), 10)
+}
+
+func (n N) Decimals(d int) string {
+    s := n.String()
+    if d <= 0 {
+        return s
+    }
+    l := len(s)
+    if l <= d {
+        s = strings.Repeat("0", d-l+1) + s
+    }
+    l = len(s)
+    return s[:l-d] + "." + s[l-d:]
 }
