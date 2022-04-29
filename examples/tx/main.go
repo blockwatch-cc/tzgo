@@ -20,6 +20,7 @@ import (
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/rpc"
+	"blockwatch.cc/tzgo/signer/remote"
 	"blockwatch.cc/tzgo/tezos"
 	"github.com/echa/log"
 )
@@ -48,6 +49,7 @@ func main() {
 			fmt.Printf("  decode <msg>               decode binary operation\n")
 			fmt.Printf("  digest <msg>               generate operation digest for signing\n")
 			fmt.Printf("  sign <key> <msg>           sign message digest\n")
+			fmt.Printf("  sign-remoate <key> <msg>   sign message digest using remote signer\n")
 			fmt.Printf("  simulate <msg>             simulate executing operation using invalid signature\n")
 			fmt.Printf("  broadcast <msg> <sig>      broadcast signed operation\n")
 			fmt.Printf("  wait <ophash> [<n>]        waits for operation to be included after n confirmations (optional)\n")
@@ -141,6 +143,11 @@ func run() error {
 			return fmt.Errorf("Missing key or message")
 		}
 		return sign(ctx, c, flags.Arg(1), flags.Arg(2))
+	case "sign_remote":
+		if n < 3 {
+			return fmt.Errorf("Missing key or message")
+		}
+		return sign_remote(ctx, c, flags.Arg(1), flags.Arg(2))
 	case "simulate":
 		if n < 2 {
 			return fmt.Errorf("Missing message")
@@ -206,7 +213,7 @@ func makeOp(c *rpc.Client, t, data string) (codec.Operation, error) {
 	default:
 		return nil, fmt.Errorf("Unsupported op type %q", t)
 	}
-	if err := json.Unmarshal([]byte(data), o); err != nil {
+	if err := json.Unmarshal([]byte(data), &o); err != nil {
 		return nil, err
 	}
 	return o, nil
@@ -328,6 +335,31 @@ func sign(ctx context.Context, c *rpc.Client, key, msg string) error {
 	}
 	fmt.Println("Signature:", op.Signature.String())
 	fmt.Println("Binary:", hex.EncodeToString(op.Signature.Bytes()))
+	return nil
+}
+
+func sign_remote(ctx context.Context, c *rpc.Client, addr, msg string) error {
+	buf, err := hex.DecodeString(msg)
+	if err != nil {
+		return err
+	}
+	op, err := codec.DecodeOp(buf)
+	if err != nil {
+		return err
+	}
+	a, err := tezos.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	rs, err := remote.New("http://localhost:6732", nil)
+
+	sig, err := rs.SignOperation(ctx, a, op)
+	if err != nil {
+		return err
+	}
+	op.WithSignature(sig)
+	fmt.Println("Signature:", sig.String())
+	fmt.Println("Binary:", hex.EncodeToString(sig.Bytes()))
 	return nil
 }
 
