@@ -313,7 +313,11 @@ func verify(key, sig, msg string) error {
     if err != nil {
         return err
     }
-    digest := tezos.Digest([]byte(msg))
+    m, err := hex.DecodeString(msg)
+    if err != nil {
+        return err
+    }
+    digest := tezos.Digest([]byte(m))
     if err := pk.Verify(digest[:], s); err == nil {
         fmt.Println("Signature OK")
     } else {
