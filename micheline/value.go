@@ -274,7 +274,13 @@ func (v *Value) GetInt64(label string) (int64, bool) {
 				return 0, ok
 			}
 			switch t := vv.(type) {
+			case int:
+				return int64(t), true
+			case int64:
+				return t, true
 			case *big.Int:
+				return t.Int64(), true
+			case tezos.Z:
 				return t.Int64(), true
 			case string:
 				i, err := strconv.ParseInt(t, 10, 64)
@@ -297,8 +303,32 @@ func (v *Value) GetBig(label string) (*big.Int, bool) {
 			switch t := vv.(type) {
 			case *big.Int:
 				return t, true
+			case tezos.Z:
+				return t.Big(), true
 			case string:
 				return big.NewInt(0).SetString(t, 10)
+			}
+		}
+	}
+	return nil, false
+}
+
+func (v *Value) GetZ(label string) (*tezos.Z, bool) {
+	if m, err := v.Map(); err == nil {
+		if vv, ok := getPath(m, label); ok {
+			// big, string or nil
+			var z tezos.Z
+			if vv == nil {
+				return &z, ok
+			}
+			switch t := vv.(type) {
+			case *big.Int:
+				return z.Set(t), true
+			case tezos.Z:
+				return &t, true
+			case string:
+				b, ok := big.NewInt(0).SetString(t, 10)
+				return z.Set(b), ok
 			}
 		}
 	}
