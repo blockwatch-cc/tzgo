@@ -1,7 +1,7 @@
 // Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
-package signer
+package remote
 
 import (
     "context"
