@@ -5,6 +5,7 @@ package contract
 
 import (
 	"context"
+	"fmt"
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/micheline"
@@ -150,6 +151,23 @@ func (c Contract) IsManagerTz() bool {
 	return c.script != nil && c.script.Implements(micheline.IManager)
 }
 
+func (c Contract) IsToken() bool {
+	return c.IsFA1() || c.IsFA12() || c.IsFA2()
+}
+
+func (c Contract) TokenKind() TokenKind {
+	switch {
+	case c.IsFA1():
+		return TokenKindFA1
+	case c.IsFA12():
+		return TokenKindFA1_2
+	case c.IsFA2():
+		return TokenKindFA2
+	default:
+		return TokenKindInvalid
+	}
+}
+
 func (c Contract) IsFA1() bool {
 	return c.script != nil && c.script.Implements(micheline.ITzip5)
 }
@@ -194,6 +212,10 @@ func (c Contract) Storage() *micheline.Prim {
 	return c.store
 }
 
+func (c Contract) StorageValue() micheline.Value {
+	return micheline.NewValue(c.script.StorageType(), *c.store)
+}
+
 // entrypoints and callbacks
 func (c *Contract) Entrypoint(name string) (micheline.Entrypoint, bool) {
 	if c.script == nil {
@@ -216,7 +238,28 @@ func (c *Contract) View(name string) (micheline.View, bool) {
 
 // func (c *Contract) GetStorageValue(path string) (*micheline.Value, error) {}
 
-// func (c *Contract) GetBigmapValue(path string, key micheline.Key) (*micheline.Value, error) {}
+func (c *Contract) GetBigmapValue(ctx context.Context, path string, args micheline.Prim) (*micheline.Value, error) {
+	store := c.StorageValue()
+	bigmap, ok := store.GetInt64(path)
+	if !ok {
+		return nil, fmt.Errorf("bigmap %q not found in storage", path)
+	}
+	typ, ok := c.script.Code.Storage.FindLabel(path)
+	if !ok {
+		return nil, fmt.Errorf("bigmap %q not found in type", path)
+	}
+	key, err := micheline.NewKey(micheline.NewType(typ.Args[0]), args)
+	if err != nil {
+		return nil, err
+	}
+	prim, err := c.rpc.GetActiveBigmapValue(ctx, bigmap, key.Hash())
+	if err != nil {
+		return nil, err
+	}
+	// fmt.Printf("Bigmap value %s typ %s\n", prim.Dump(), typ.Args[1].Dump())
+	val := micheline.NewValue(micheline.NewType(typ.Args[1]), prim)
+	return &val, nil
+}
 
 // Executes TZIP-4 fake views from callback entrypoints
 func (c *Contract) RunView(ctx context.Context, name string, args micheline.Prim) (micheline.Prim, error) {

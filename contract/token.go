@@ -16,6 +16,7 @@ type TokenKind byte
 
 const (
 	TokenKindInvalid TokenKind = iota
+	TokenKindTez
 	TokenKindFA1
 	TokenKindFA1_2
 	TokenKindFA2
@@ -24,6 +25,8 @@ const (
 
 func (k TokenKind) String() string {
 	switch k {
+	case TokenKindTez:
+		return "tez"
 	case TokenKindFA1:
 		return "fa1"
 	case TokenKindFA1_2:
@@ -35,6 +38,10 @@ func (k TokenKind) String() string {
 	default:
 		return ""
 	}
+}
+
+func (k TokenKind) IsValid() bool {
+	return k != TokenKindInvalid
 }
 
 const TOKEN_METADATA = "token_metadata"
@@ -130,6 +137,11 @@ func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos
 		return nil, err
 	}
 
+	// lookup well known (pre-tz16 or wrong) tokens
+	if m, ok := wellKnown[contract.Address().String()]; ok {
+		return m, nil
+	}
+
 	// prefer off-chain view via run_code, but don't fail if not present
 	tz16, _ := contract.ResolveMetadata(ctx)
 	if tz16 != nil && tz16.HasView(TOKEN_METADATA) {
@@ -167,6 +179,11 @@ func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos
 		if err := contract.ResolveTz16Uri(ctx, meta.uri, meta, nil); err != nil {
 			return nil, err
 		}
+	}
+
+	// fill empty token name from contract metadata
+	if meta.Name == "" && tz16 != nil {
+		meta.Name = tz16.Name
 	}
 
 	return meta, nil
