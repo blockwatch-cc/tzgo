@@ -19,6 +19,7 @@ var (
 	ProtoV010      = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
 	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
 	ProtoV012_2    = ParseProtocolHashSafe("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
+	ProtoV013_2    = ParseProtocolHashSafe("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
 
 	// aliases
 	Pt24m4xi = ProtoV004
@@ -30,10 +31,11 @@ var (
 	PtGRANAD = ProtoV010
 	PtHangz2 = ProtoV011_2
 	Psithaca = ProtoV012_2
+	PtJakart = ProtoV013_2
 
-	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Hangzhounet2 = MustParseChainIdHash("NetXZSsxBpMQeAT")
-	Ithacanet2   = MustParseChainIdHash("NetXnHfVqm9iesp")
+	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
+	Ithacanet  = MustParseChainIdHash("NetXnHfVqm9iesp")
+	Jakartanet = MustParseChainIdHash("NetXLH1uAxK7CCh")
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
@@ -54,17 +56,17 @@ var (
 			ProtoV011_2,  // 11
 			ProtoV012_2,  // 12
 		},
-		Hangzhounet2.Uint32(): {
-			ProtoGenesis,   // -1
-			ProtoBootstrap, // 0
-			ProtoV010,      // 1
-			ProtoV011_2,    // 2
-		},
-		Ithacanet2.Uint32(): {
+		Ithacanet.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV011_2,    // 1
 			ProtoV012_2,    // 2
+		},
+		Jakartanet.Uint32(): {
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV012_2,    // 1
+			ProtoV013_2,    // 2
 		},
 	}
 )
@@ -77,10 +79,10 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
 		pp.SecurityDepositRampUpCycles = 64
-	case Hangzhounet2.Equal(net):
-		pp.Network = "Hangzhounet2"
-	case Ithacanet2.Equal(net):
-		pp.Network = "Ithacanet2"
+	case Ithacanet.Equal(net):
+		pp.Network = "Ithacanet"
+	case Jakartanet.Equal(net):
+		pp.Network = "Jakartanet"
 	default:
 		pp.Network = "Sandbox"
 	}
@@ -257,9 +259,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1916929
 			pp.EndHeight = 2244608
-		} else if Hangzhounet2.Equal(p.ChainId) {
-			pp.StartBlockOffset = 8192
-			pp.StartCycle = 2
 		}
 	case Psithaca.Equal(proto): // Ithaca
 		pp.Version = 12
@@ -278,10 +277,33 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
-		} else if Ithacanet2.Equal(p.ChainId) {
+		} else if Ithacanet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8192
+			pp.EndHeight = -1
+		}
+	case PtJakart.Equal(proto): // Jakarta
+		pp.Version = 13
+		pp.OperationTagsVersion = 2
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		if Mainnet.Equal(p.ChainId) {
+			pp.StartBlockOffset = 2490368
+			pp.StartCycle = 498
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 0
+			pp.StartHeight = 2490369
+			pp.EndHeight = -1
+		} else if Jakartanet.Equal(p.ChainId) {
+			pp.StartBlockOffset = 8192
+			pp.StartCycle = 2
+			pp.StartHeight = 8193
 			pp.EndHeight = -1
 		}
 	}
