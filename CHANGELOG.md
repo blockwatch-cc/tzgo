@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.12.3
+
+* Add quipuswap pool example
+* Add remote signer example
+* Fix remote signer package name
+* Improve path extraction from raw Micheline
+* Fix getting integers from Value
+* Add decimal string export to Zarith numbers
+* Improve contract and token handling
+* Fix generic signature bytes output
+* Decode contract and token metadata
+* Support run_code execution
+* Add IPFS Url and allow access to http client
+
 ## v1.12.2
 
 * Add method to create TxArgs
