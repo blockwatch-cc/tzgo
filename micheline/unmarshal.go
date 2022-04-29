@@ -22,18 +22,53 @@ type PrimMarshaler interface {
     MarshalPrim() (Prim, error)
 }
 
-func (p Prim) Index(label string) ([]int, bool) {
-    if p.MatchesAnno(label) {
-        return []int{}, true
+func (p Prim) FindLabel(label string) (Prim, bool) {
+    idx, ok := p.LabelIndex(label)
+    if !ok {
+        return InvalidPrim, false
     }
-    found := make([]int, 0)
-    for i := range p.Args {
-        x, ok := p.Args[i].Index(label)
-        if ok {
-            found = append(found, x...)
+    prim, _ := p.GetIndex(idx)
+    return prim, true
+}
+
+func (p Prim) LabelIndex(label string) ([]int, bool) {
+    return p.findLabelPath(strings.Split(label, "."), nil)
+}
+
+func (p Prim) findLabelPath(path []string, idx []int) ([]int, bool) {
+    prim := p
+next:
+    for {
+        if len(path) == 0 {
+            return idx, true
+        }
+        var found bool
+        for i, v := range prim.Args {
+            if v.HasAnno() && v.MatchesAnno(path[0]) {
+                idx = append(idx, i)
+                path = path[1:]
+                prim = v
+                found = true
+                continue next
+            }
+        }
+
+        for i, v := range prim.Args {
+            if v.HasAnno() {
+                continue
+            }
+            idx2, ok := v.findLabelPath(path, append(idx, i))
+            if ok {
+                path = path[:0]
+                found = true
+                idx = idx2
+                continue next
+            }
+        }
+        if !found {
+            return nil, false
         }
     }
-    return found, len(found) > 0
 }
 
 func (p Prim) GetPath(path string) (Prim, error) {
