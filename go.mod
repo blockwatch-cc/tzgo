@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/decred/dcrd/dcrec/secp256k1 v1.0.3
-	github.com/echa/bson v0.0.0-20220430083243-3bb2c0d94f60
+	github.com/echa/bson v0.0.0-20220430141917-c0fbdf7f8b79
 	github.com/echa/log v1.1.0
 	github.com/pmezard/go-difflib v1.0.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
