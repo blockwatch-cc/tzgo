@@ -8,8 +8,8 @@ github.com/decred/dcrd/dcrec/secp256k1 v1.0.3 h1:u4XpHqlscRolxPxt2YHrFBDVZYY1AK+
 github.com/decred/dcrd/dcrec/secp256k1 v1.0.3/go.mod h1:eCL8H4MYYjRvsw2TuANvEOcVMFbmi9rt/6hJUWU5wlU=
 github.com/decred/dcrd/dcrec/secp256k1/v2 v2.0.0 h1:3GIJYXQDAKpLEFriGFN8SbSffak10UXHGdIcFaMPykY=
 github.com/decred/dcrd/dcrec/secp256k1/v2 v2.0.0/go.mod h1:3s92l0paYkZoIHuj4X93Teg/HB7eGM9x/zokGw+u4mY=
-github.com/echa/bson v0.0.0-20220430083243-3bb2c0d94f60 h1:jVw7VAsWUTbD3rGbrdlAFoN2qtpdqbRCOCofpryuBHk=
-github.com/echa/bson v0.0.0-20220430083243-3bb2c0d94f60/go.mod h1:Ih8Pfj34Z/kOmaLua+KtFWFK3AviGsH5siipj6Gmoa8=
+github.com/echa/bson v0.0.0-20220430141917-c0fbdf7f8b79 h1:J+/tX7s5mN1aoeQi2ySzix7+zyEhnymkudOxn7VMze4=
+github.com/echa/bson v0.0.0-20220430141917-c0fbdf7f8b79/go.mod h1:Ih8Pfj34Z/kOmaLua+KtFWFK3AviGsH5siipj6Gmoa8=
 github.com/echa/log v1.1.0 h1:UsQonBkSiQwJeAaT6MAdWgtGM5JAGOqjqVsW/a+bWTU=
 github.com/echa/log v1.1.0/go.mod h1:V8lWE4YGcwDdg0IPBqDQ9eWp2MdsMHfvHpSjaIp4+VQ=
 github.com/kr/pretty v0.2.1 h1:Fmg33tUaq4/8ym9TJN1x7sLJnHVwhP33CNkpYV/7rwI=
