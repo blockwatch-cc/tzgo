@@ -4,7 +4,9 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
 	"fmt"
 	"time"
 
@@ -127,6 +129,49 @@ type BlockHeader struct {
 	Hash     tezos.BlockHash    `json:"hash"`
 	Protocol tezos.ProtocolHash `json:"protocol"`
 	ChainId  tezos.ChainIdHash  `json:"chain_id"`
+}
+
+// ProtocolData exports protocol-specific extra header fields as binary encoded data.
+// Used to produce compliant block monitor data streams.
+//
+// tezos-codec describe 012-Psithaca.block_header.protocol_data binary schema
+// +---------------------------------------+----------+-------------------------------------+
+// | Name                                  | Size     | Contents                            |
+// +=======================================+==========+=====================================+
+// | payload_hash                          | 32 bytes | bytes                               |
+// +---------------------------------------+----------+-------------------------------------+
+// | payload_round                         | 4 bytes  | signed 32-bit integer               |
+// +---------------------------------------+----------+-------------------------------------+
+// | proof_of_work_nonce                   | 8 bytes  | bytes                               |
+// +---------------------------------------+----------+-------------------------------------+
+// | ? presence of field "seed_nonce_hash" | 1 byte   | boolean (0 for false, 255 for true) |
+// +---------------------------------------+----------+-------------------------------------+
+// | seed_nonce_hash                       | 32 bytes | bytes                               |
+// +---------------------------------------+----------+-------------------------------------+
+// | liquidity_baking_escape_vote          | 1 byte   | boolean (0 for false, 255 for true) |
+// +---------------------------------------+----------+-------------------------------------+
+// | signature                             | 64 bytes | bytes                               |
+// +---------------------------------------+----------+-------------------------------------+
+func (h BlockHeader) ProtocolData() []byte {
+	buf := bytes.NewBuffer(nil)
+	buf.Write(h.PayloadHash.Bytes())
+	binary.Write(buf, binary.BigEndian, uint32(h.PayloadRound))
+	buf.Write(h.ProofOfWorkNonce)
+	if h.SeedNonceHash != nil {
+		buf.WriteByte(0xff)
+		buf.Write(h.SeedNonceHash.Bytes())
+	} else {
+		buf.WriteByte(0x0)
+	}
+	if h.LiquidityBakingEscapeVote {
+		buf.WriteByte(0xff)
+	} else {
+		buf.WriteByte(0x0)
+	}
+	if h.Signature.IsValid() {
+		buf.Write(h.Signature.Data) // raw, no tag!
+	}
+	return buf.Bytes()
 }
 
 // BlockContent is part of block 1 header that seeds the initial context

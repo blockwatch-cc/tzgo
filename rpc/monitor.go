@@ -115,21 +115,24 @@ type BlockHeaderLogEntry struct {
 	ProtocolData   tezos.HexBytes       `json:"protocol_data"`
 }
 
-// TODO: handle protocol data
-// tezos-codec describe 012-Psithaca.block_header.protocol_data binary schema
+func (h *BlockHeader) LogEntry() *BlockHeaderLogEntry {
+	return &BlockHeaderLogEntry{
+		Level:          h.Level,
+		Proto:          h.Proto,
+		Predecessor:    h.Predecessor,
+		Timestamp:      h.Timestamp,
+		ValidationPass: h.ValidationPass,
+		OperationsHash: h.OperationsHash,
+		Fitness:        h.Fitness,
+		Context:        h.Context,
+		ProtocolData:   tezos.HexBytes(h.ProtocolData()),
+	}
+}
 
 func (b *Block) LogEntry() *BlockHeaderLogEntry {
-	return &BlockHeaderLogEntry{
-		Hash:           b.Hash,
-		Level:          b.Header.Level,
-		Proto:          b.Header.Proto,
-		Predecessor:    b.Header.Predecessor,
-		Timestamp:      b.Header.Timestamp,
-		ValidationPass: b.Header.ValidationPass,
-		OperationsHash: b.Header.OperationsHash,
-		Fitness:        b.Header.Fitness,
-		Context:        b.Header.Context,
-	}
+	e := b.Header.LogEntry()
+	e.Hash = b.Hash
+	return e
 }
 
 type BlockHeaderMonitor struct {
