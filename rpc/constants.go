@@ -173,7 +173,7 @@ func (c *Client) GetConstants(ctx context.Context, id BlockID) (con Constants, e
 // GetParams returns a translated parameters structure for the current
 // network at block id.
 func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, error) {
-	head, err := c.GetBlockHeader(ctx, id)
+	meta, err := c.GetBlockMetadata(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -182,9 +182,9 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 		return nil, err
 	}
 	return con.MapToChainParams().
-		ForNetwork(head.ChainId).
-		ForProtocol(head.Protocol).
-		ForHeight(head.Level), nil
+		ForNetwork(c.ChainId).
+		ForProtocol(meta.Protocol).
+		ForHeight(meta.GetLevel()), nil
 }
 
 func (c Constants) MapToChainParams() *tezos.Params {
