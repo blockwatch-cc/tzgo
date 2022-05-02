@@ -1,5 +1,10 @@
 # Changelog
 
+## unreleased
+* RPC: Preserve API key privacy
+* RPC: fix initializing chain params
+* Fix examples
+
 ## v1.12.3
 
 * Add quipuswap pool example
