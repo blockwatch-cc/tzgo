@@ -1,4 +1,4 @@
-## FA 1.2 Transfer Parameter Decoding
+## Decode FA 1.2 Transfers
 
 Use TzGo to extract FA1.2 token transfer parameters from an operation receipt. 
 

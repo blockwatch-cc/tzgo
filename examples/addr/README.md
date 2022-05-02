@@ -1,4 +1,4 @@
-## Tezos addresses and public keys
+## Read Tezos addresses and public keys
 
 This example shows how Tezos addresses and keys can be detected and decoded.
 
