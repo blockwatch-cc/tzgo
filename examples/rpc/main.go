@@ -40,14 +40,15 @@ func main() {
 	if err := flags.Parse(os.Args[1:]); err != nil {
 		if err == flag.ErrHelp {
 			fmt.Println("Usage: rpc [args] <cmd> [sub-args]")
-			flags.PrintDefaults()
-			fmt.Printf("\nOperations\n")
+			fmt.Printf("\nCommands\n")
 			fmt.Printf("  block <hash>|head        show block info\n")
-			fmt.Printf("  op <hash>:<list>:<pos>   show operation info\n")
+			fmt.Printf("  op <block>/<list>/<pos>  show operation info\n")
 			fmt.Printf("  contract <hash>          show contract info\n")
 			fmt.Printf("  search <ops> <lvl>       output blocks containing operations in list\n")
 			fmt.Printf("  bootstrap                wait until node is bootstrapped\n")
 			fmt.Printf("  monitor                  wait and show new heads as they are baked\n")
+			fmt.Printf("\nGlobal arguments\n")
+			flags.PrintDefaults()
 			os.Exit(0)
 		}
 		log.Fatal("Error:", err)
@@ -106,22 +107,11 @@ func run() error {
 		if h == "" {
 			return fmt.Errorf("Missing operation identifier")
 		}
-		parts := strings.SplitN(h, ":", 3)
+		parts := strings.SplitN(h, "/", 3)
 		if len(parts) != 3 {
 			return fmt.Errorf("Invalid operation identifier (form: block-hash:list:pos)")
 		}
-		var bid rpc.BlockID
-		bh, err := tezos.ParseBlockHash(parts[0])
-		if err == nil {
-			bid = bh
-		} else {
-			// parse as height
-			height, err := strconv.ParseInt(parts[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("Invalid block identifier: %v", err)
-			}
-			bid = rpc.BlockLevel(height)
-		}
+		bid := rpc.BlockAlias(parts[0])
 		list, err := strconv.Atoi(parts[1])
 		if err != nil {
 			return fmt.Errorf("Invalid list identifier: %v", err)
@@ -516,7 +506,7 @@ func showOpInfo(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos in
 	fmt.Printf("Parts  %d\n", len(op.Contents))
 	for i, o := range op.Contents {
 		fmt.Printf("Part   %d\n", i+1)
-		fmt.Printf("  Type   %s\n", o.Kind())
+		fmt.Printf("  Type       %s\n", o.Kind())
 		switch o.Kind() {
 		case tezos.OpTypeTransaction:
 			tx := o.(*rpc.Transaction)
