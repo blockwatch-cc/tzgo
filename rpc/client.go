@@ -62,12 +62,15 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	key := u.Query().Get("X-Api-Key")
+	u.Query().Del("X-Api-Key")
 	ipfs, _ := url.Parse(ipfsUrl)
 	c := &Client{
 		client:          httpClient,
 		BaseURL:         u,
 		IpfsURL:         ipfs,
 		UserAgent:       userAgent,
+		ApiKey:          key,
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
 	}
@@ -94,12 +97,16 @@ func (c *Client) Close() {
 }
 
 func (c *Client) ResolveChainConfig(ctx context.Context) error {
+	id, err := c.GetChainId(ctx)
+	if err != nil {
+		return err
+	}
+	c.ChainId = id
 	p, err := c.GetParams(ctx, Head)
 	if err != nil {
 		return err
 	}
 	c.Params = p
-	c.ChainId = p.ChainId
 	return nil
 }
 
