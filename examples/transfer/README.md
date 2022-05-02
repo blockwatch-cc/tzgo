@@ -1,4 +1,4 @@
-## A simple tez batch transfer example
+## Transfer tez with ease
 
 Use TzGo to construct and broadcast valid Tezos transactions. There are many convenience wrappers that help with the construction side and a simple one-stop-shop `Send()` call that does all the heavy lifting of fee estimation, coordinating signing, broadcasting and waitinh for confirmations. Checkout the source code in the `codec` package and `rpc/run.go` to get a sense of what's possible.
 

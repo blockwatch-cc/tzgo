@@ -1,4 +1,4 @@
-## Create and use private keys in Tezos
+## Know your block
 
 Use TzGo to compute static information about a given block height. Since mainnet has switched from 4096 blocks/cycle to 8192 it has become necessary to have a good baseline set of functions to keep track of such info, in particular, since some protocols contain off-by-1 bugs.
 

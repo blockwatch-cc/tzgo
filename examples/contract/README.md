@@ -1,4 +1,4 @@
-## Contract and token examples
+## Work with smart contract and tokens
 
 Use TzGo to work with smart contracts and tokens. This examples shows you how to
 
