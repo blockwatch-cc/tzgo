@@ -138,7 +138,6 @@ type contract struct {
 func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 	// ignore non-mainnet contract lists (we don't know their addresses)
 	if len(b.Contracts) != len(vestingContractAddrs) {
-		log.Warnf("ignoring genesis contracts")
 		return nil, nil
 	}
 	c := make([]*X1, len(b.Contracts))
