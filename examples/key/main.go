@@ -313,9 +313,12 @@ func verify(key, sig, msg string) error {
     if err != nil {
         return err
     }
-    m, err := hex.DecodeString(msg)
-    if err != nil {
-        return err
+    m := []byte(msg)
+    if strings.HasPrefix(msg, "0x") {
+        m, err = hex.DecodeString(msg)
+        if err != nil {
+            return err
+        }
     }
     digest := tezos.Digest([]byte(m))
     if err := pk.Verify(digest[:], s); err == nil {

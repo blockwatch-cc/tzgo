@@ -2,8 +2,10 @@
 // Author: alex@blockwatch.cc
 
 // Contract and token examples
-// - query metadata and views
-// - mutations: require private key
+// - display contract info
+// - query contract and token metadata
+// - execute views
+// - mutations (private key required)
 //   - transfer
 //   - approve
 //   - updateOperator

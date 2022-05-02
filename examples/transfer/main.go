@@ -30,7 +30,7 @@ func init() {
     flags.Usage = func() {}
     flags.BoolVar(&verbose, "v", false, "be verbose")
     flags.StringVar(&key, "key", "", "private key")
-    flags.StringVar(&node, "node", "https://rpc.hangzhou.tzstats.com", "Tezos node URL")
+    flags.StringVar(&node, "node", "https://rpc.ithaca.tzstats.com", "Tezos node URL")
 }
 
 func main() {
@@ -85,7 +85,7 @@ func run() error {
 
     switch cmd := flags.Arg(0); cmd {
     case "transfer":
-        if n < 3 || (n-1)/2 == 1 {
+        if n < 3 || (n-1)%2 == 1 {
             return fmt.Errorf("Missing arguments")
         }
         return transfer(ctx, c)
