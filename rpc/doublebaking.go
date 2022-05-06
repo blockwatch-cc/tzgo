@@ -13,14 +13,8 @@ var _ TypedOperation = (*DoubleBaking)(nil)
 // DoubleBaking represents a double_baking_evidence operation
 type DoubleBaking struct {
 	Generic
-	BH1      BlockHeader       `json:"bh1"`
-	BH2      BlockHeader       `json:"bh2"`
-	Metadata OperationMetadata `json:"metadata"`
-}
-
-// Meta returns operation metadata to implement TypedOperation interface.
-func (d DoubleBaking) Meta() OperationMetadata {
-	return d.Metadata
+	BH1 BlockHeader `json:"bh1"`
+	BH2 BlockHeader `json:"bh2"`
 }
 
 // Costs returns operation cost to implement TypedOperation interface.

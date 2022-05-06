@@ -17,17 +17,6 @@ type Transaction struct {
 	Destination tezos.Address         `json:"destination"`
 	Amount      int64                 `json:"amount,string"`
 	Parameters  *micheline.Parameters `json:"parameters,omitempty"`
-	Metadata    OperationMetadata     `json:"metadata"`
-}
-
-// Meta returns operation metadata to implement TypedOperation interface.
-func (t Transaction) Meta() OperationMetadata {
-	return t.Metadata
-}
-
-// Result returns operation result to implement TypedOperation interface.
-func (t Transaction) Result() OperationResult {
-	return t.Metadata.Result
 }
 
 // Costs returns operation cost to implement TypedOperation interface.

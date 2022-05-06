@@ -85,19 +85,26 @@ func (m OperationMetadata) Address() tezos.Address {
 // This type is a generic container for all possible results. Which fields are actually
 // used depends on operation type and performed actions.
 type OperationResult struct {
-	Status              tezos.OpStatus       `json:"status"`
-	BalanceUpdates      BalanceUpdates       `json:"balance_updates"` // burn, etc
-	ConsumedGas         int64                `json:"consumed_gas,string"`
-	ConsumedMilliGas    int64                `json:"consumed_milligas,string"` // v007+
-	Errors              []OperationError     `json:"errors,omitempty"`
-	Allocated           bool                 `json:"allocated_destination_contract"` // tx only
-	Storage             *micheline.Prim      `json:"storage,omitempty"`              // tx, orig
-	OriginatedContracts []tezos.Address      `json:"originated_contracts"`           // orig only
-	StorageSize         int64                `json:"storage_size,string"`            // tx, orig, const
-	PaidStorageSizeDiff int64                `json:"paid_storage_size_diff,string"`  // tx, orig
-	BigmapDiff          micheline.BigmapDiff `json:"big_map_diff,omitempty"`         // tx, orig
-	LazyStorageDiff     LazyStorageDiff      `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
-	GlobalAddress       tezos.ExprHash       `json:"global_address"`                 // const
+	Status              tezos.OpStatus         `json:"status"`
+	BalanceUpdates      BalanceUpdates         `json:"balance_updates"` // burn, etc
+	ConsumedGas         int64                  `json:"consumed_gas,string"`
+	ConsumedMilliGas    int64                  `json:"consumed_milligas,string"` // v007+
+	Errors              []OperationError       `json:"errors,omitempty"`
+	Allocated           bool                   `json:"allocated_destination_contract"` // tx only
+	Storage             *micheline.Prim        `json:"storage,omitempty"`              // tx, orig
+	OriginatedContracts []tezos.Address        `json:"originated_contracts"`           // orig only
+	StorageSize         int64                  `json:"storage_size,string"`            // tx, orig, const
+	PaidStorageSizeDiff int64                  `json:"paid_storage_size_diff,string"`  // tx, orig
+	BigmapDiff          micheline.BigmapEvents `json:"big_map_diff,omitempty"`         // tx, orig, <v013
+	LazyStorageDiff     micheline.LazyEvents   `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
+	GlobalAddress       tezos.ExprHash         `json:"global_address"`                 // const
+}
+
+func (r OperationResult) BigmapEvents() micheline.BigmapEvents {
+	if r.BigmapDiff != nil {
+		return r.BigmapDiff
+	}
+	return r.LazyStorageDiff.BigmapEvents()
 }
 
 func (r OperationResult) IsSuccess() bool {
@@ -120,17 +127,8 @@ func (o *OperationError) UnmarshalJSON(data []byte) error {
 
 // Generic is the most generic operation type.
 type Generic struct {
-	OpKind tezos.OpType `json:"kind"`
-}
-
-// Manager represents data common for all manager operations.
-type Manager struct {
-	Generic
-	Source       tezos.Address `json:"source"`
-	Fee          int64         `json:"fee,string"`
-	Counter      int64         `json:"counter,string"`
-	GasLimit     int64         `json:"gas_limit,string"`
-	StorageLimit int64         `json:"storage_limit,string"`
+	OpKind   tezos.OpType      `json:"kind"`
+	Metadata OperationMetadata `json:"metadata"`
 }
 
 // Kind returns the operation's type. Implements TypedOperation interface.
@@ -140,12 +138,12 @@ func (e Generic) Kind() tezos.OpType {
 
 // Meta returns an empty operation metadata to implement TypedOperation interface.
 func (e Generic) Meta() OperationMetadata {
-	return OperationMetadata{}
+	return e.Metadata
 }
 
 // Result returns an empty operation result to implement TypedOperation interface.
 func (e Generic) Result() OperationResult {
-	return OperationResult{}
+	return e.Metadata.Result
 }
 
 // Costs returns empty operation costs to implement TypedOperation interface.
@@ -156,6 +154,16 @@ func (e Generic) Costs() tezos.Costs {
 // Limits returns empty operation limits to implement TypedOperation interface.
 func (e Generic) Limits() tezos.Limits {
 	return tezos.Limits{}
+}
+
+// Manager represents data common for all manager operations.
+type Manager struct {
+	Generic
+	Source       tezos.Address `json:"source"`
+	Fee          int64         `json:"fee,string"`
+	Counter      int64         `json:"counter,string"`
+	GasLimit     int64         `json:"gas_limit,string"`
+	StorageLimit int64         `json:"storage_limit,string"`
 }
 
 // Limits returns manager operation limits to implement TypedOperation interface.
@@ -272,12 +280,28 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeSetDepositsLimit:
 			op = &SetDepositsLimit{}
 
+			// rollup operations
+		case tezos.OpTypeToruOrigination,
+			tezos.OpTypeToruSubmitBatch,
+			tezos.OpTypeToruCommit,
+			tezos.OpTypeToruReturnBond,
+			tezos.OpTypeToruFinalizeCommitment,
+			tezos.OpTypeToruRemoveCommitment,
+			tezos.OpTypeToruRejection,
+			tezos.OpTypeToruDispatchTickets,
+			tezos.OpTypeToruTransferTicket,
+			tezos.OpTypeScruOriginate,
+			tezos.OpTypeScruAdd_messages,
+			tezos.OpTypeScruCement,
+			tezos.OpTypeScruPublish:
+			op = &Manager{}
+
 		default:
-			return fmt.Errorf("rpc: unsupported op %q", kind)
+			return fmt.Errorf("rpc: unsupported op %q", string(data[start:end]))
 		}
 
 		if err := dec.Decode(op); err != nil {
-			return fmt.Errorf("rpc: operation kind %s: %w", kind, err)
+			return fmt.Errorf("rpc: operation kind %s: %v", kind, err)
 		}
 		(*e) = append(*e, op)
 	}

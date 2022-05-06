@@ -97,9 +97,10 @@ type RunCodeRequest struct {
 
 // RunCodeResponse -
 type RunCodeResponse struct {
-	Operations []Operation          `json:"operations"`
-	Storage    micheline.Prim       `json:"storage"`
-	BigmapDiff micheline.BigmapDiff `json:"big_map_diff,omitempty"`
+	Operations      []Operation            `json:"operations"`
+	Storage         micheline.Prim         `json:"storage"`
+	BigmapDiff      micheline.BigmapEvents `json:"big_map_diff,omitempty"`
+	LazyStorageDiff micheline.LazyEvents   `json:"lazy_storage_diff,omitempty"`
 }
 
 // Complete ensures an operation is compatible with the current source account's

@@ -13,18 +13,7 @@ var _ TypedOperation = (*Delegation)(nil)
 // Delegation represents a transaction operation
 type Delegation struct {
 	Manager
-	Delegate tezos.Address     `json:"delegate,omitempty"`
-	Metadata OperationMetadata `json:"metadata"`
-}
-
-// Meta returns an empty operation metadata to implement TypedOperation interface.
-func (d Delegation) Meta() OperationMetadata {
-	return d.Metadata
-}
-
-// Result returns an empty operation result to implement TypedOperation interface.
-func (d Delegation) Result() OperationResult {
-	return d.Metadata.Result
+	Delegate tezos.Address `json:"delegate,omitempty"`
 }
 
 // Cost returns operation cost to implement TypedOperation interface.

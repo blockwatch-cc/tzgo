@@ -90,7 +90,63 @@ const (
 	OpTypePreendorsement                      // 15 v012
 	OpTypeDoublePreendorsementEvidence        // 16 v012
 	OpTypeSetDepositsLimit                    // 17 v012
+	OpTypeToruOrigination                     // 18 v013
+	OpTypeToruSubmitBatch                     // 19 v013
+	OpTypeToruCommit                          // 20 v013
+	OpTypeToruReturnBond                      // 21 v013
+	OpTypeToruFinalizeCommitment              // 22 v013
+	OpTypeToruRemoveCommitment                // 23 v013
+	OpTypeToruRejection                       // 24 v013
+	OpTypeToruDispatchTickets                 // 25 v013
+	OpTypeToruTransferTicket                  // 26 v013
+	OpTypeScruOriginate                       // 27 v013
+	OpTypeScruAdd_messages                    // 28 v013
+	OpTypeScruCement                          // 29 v013
+	OpTypeScruPublish                         // 30 v013
 )
+
+var (
+	opTypeStrings = map[OpType]string{
+		OpTypeInvalid:                      "",
+		OpTypeActivateAccount:              "activate_account",
+		OpTypeDoubleBakingEvidence:         "double_baking_evidence",
+		OpTypeDoubleEndorsementEvidence:    "double_endorsement_evidence",
+		OpTypeSeedNonceRevelation:          "seed_nonce_revelation",
+		OpTypeTransaction:                  "transaction",
+		OpTypeOrigination:                  "origination",
+		OpTypeDelegation:                   "delegation",
+		OpTypeReveal:                       "reveal",
+		OpTypeEndorsement:                  "endorsement",
+		OpTypeProposals:                    "proposals",
+		OpTypeBallot:                       "ballot",
+		OpTypeFailingNoop:                  "failing_noop",
+		OpTypeEndorsementWithSlot:          "endorsement_with_slot",
+		OpTypeRegisterConstant:             "register_global_constant",
+		OpTypePreendorsement:               "preendorsement",
+		OpTypeDoublePreendorsementEvidence: "double_preendorsement_evidence",
+		OpTypeSetDepositsLimit:             "set_deposits_limit",
+		OpTypeToruOrigination:              "tx_rollup_origination",
+		OpTypeToruSubmitBatch:              "tx_rollup_submit_batch",
+		OpTypeToruCommit:                   "tx_rollup_commit",
+		OpTypeToruReturnBond:               "tx_rollup_return_bond",
+		OpTypeToruFinalizeCommitment:       "tx_rollup_finalize_commitment",
+		OpTypeToruRemoveCommitment:         "tx_rollup_remove_commitment",
+		OpTypeToruRejection:                "tx_rollup_rejection",
+		OpTypeToruDispatchTickets:          "tx_rollup_dispatch_tickets",
+		OpTypeToruTransferTicket:           "transfer_ticket",
+		OpTypeScruOriginate:                "sc_rollup_originate",
+		OpTypeScruAdd_messages:             "sc_rollup_add_messages",
+		OpTypeScruCement:                   "sc_rollup_cement",
+		OpTypeScruPublish:                  "sc_rollup_publish",
+	}
+	opTypeReverseStrings = make(map[string]OpType)
+)
+
+func init() {
+	for n, v := range opTypeStrings {
+		opTypeReverseStrings[v] = n
+	}
+}
 
 func (t OpType) IsValid() bool {
 	return t != OpTypeInvalid
@@ -110,85 +166,15 @@ func (t OpType) MarshalText() ([]byte, error) {
 }
 
 func ParseOpType(s string) OpType {
-	switch s {
-	case "activate_account":
-		return OpTypeActivateAccount
-	case "double_baking_evidence":
-		return OpTypeDoubleBakingEvidence
-	case "double_endorsement_evidence":
-		return OpTypeDoubleEndorsementEvidence
-	case "seed_nonce_revelation":
-		return OpTypeSeedNonceRevelation
-	case "transaction":
-		return OpTypeTransaction
-	case "origination":
-		return OpTypeOrigination
-	case "delegation":
-		return OpTypeDelegation
-	case "reveal":
-		return OpTypeReveal
-	case "endorsement":
-		return OpTypeEndorsement
-	case "endorsement_with_slot":
-		return OpTypeEndorsementWithSlot
-	case "proposals":
-		return OpTypeProposals
-	case "ballot":
-		return OpTypeBallot
-	case "failing_noop":
-		return OpTypeFailingNoop
-	case "register_global_constant":
-		return OpTypeRegisterConstant
-	case "preendorsement":
-		return OpTypePreendorsement
-	case "double_preendorsement_evidence":
-		return OpTypeDoublePreendorsementEvidence
-	case "set_deposits_limit":
-		return OpTypeSetDepositsLimit
-	default:
-		return OpTypeInvalid
+	t, ok := opTypeReverseStrings[s]
+	if !ok {
+		t = OpTypeInvalid
 	}
+	return t
 }
 
 func (t OpType) String() string {
-	switch t {
-	case OpTypeActivateAccount:
-		return "activate_account"
-	case OpTypeDoubleBakingEvidence:
-		return "double_baking_evidence"
-	case OpTypeDoubleEndorsementEvidence:
-		return "double_endorsement_evidence"
-	case OpTypeSeedNonceRevelation:
-		return "seed_nonce_revelation"
-	case OpTypeTransaction:
-		return "transaction"
-	case OpTypeOrigination:
-		return "origination"
-	case OpTypeDelegation:
-		return "delegation"
-	case OpTypeReveal:
-		return "reveal"
-	case OpTypeEndorsement:
-		return "endorsement"
-	case OpTypeEndorsementWithSlot:
-		return "endorsement_with_slot"
-	case OpTypeProposals:
-		return "proposals"
-	case OpTypeBallot:
-		return "ballot"
-	case OpTypeFailingNoop:
-		return "failing_noop"
-	case OpTypeRegisterConstant:
-		return "register_global_constant"
-	case OpTypePreendorsement:
-		return "preendorsement"
-	case OpTypeDoublePreendorsementEvidence:
-		return "double_preendorsement_evidence"
-	case OpTypeSetDepositsLimit:
-		return "set_deposits_limit"
-	default:
-		return ""
-	}
+	return opTypeStrings[t]
 }
 
 var (
