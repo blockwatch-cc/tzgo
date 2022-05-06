@@ -173,6 +173,13 @@ func (c *Client) GetConstants(ctx context.Context, id BlockID) (con Constants, e
 // GetParams returns a translated parameters structure for the current
 // network at block id.
 func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, error) {
+	if !c.ChainId.IsValid() {
+		id, err := c.GetChainId(ctx)
+		if err != nil {
+			return nil, err
+		}
+		c.ChainId = id
+	}
 	meta, err := c.GetBlockMetadata(ctx, id)
 	if err != nil {
 		return nil, err
