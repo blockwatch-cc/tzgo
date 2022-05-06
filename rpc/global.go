@@ -14,18 +14,7 @@ var _ TypedOperation = (*ConstantRegistration)(nil)
 // ConstantRegistration represents a global constant registration operation
 type ConstantRegistration struct {
 	Manager
-	Value    micheline.Prim    `json:"value,omitempty"`
-	Metadata OperationMetadata `json:"metadata"`
-}
-
-// Meta returns an empty operation metadata to implement TypedOperation interface.
-func (c ConstantRegistration) Meta() OperationMetadata {
-	return c.Metadata
-}
-
-// Result returns an empty operation result to implement TypedOperation interface.
-func (c ConstantRegistration) Result() OperationResult {
-	return c.Metadata.Result
+	Value micheline.Prim `json:"value,omitempty"`
 }
 
 // Costs returns operation cost to implement TypedOperation interface.

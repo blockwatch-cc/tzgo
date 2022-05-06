@@ -6,7 +6,6 @@ package micheline
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -37,21 +36,21 @@ func NewBigmapRef(id int64) Prim {
 	}
 }
 
-type BigmapDiff []BigmapDiffElem
+type BigmapEvents []BigmapEvent
 
-type BigmapDiffElem struct {
-	Action    DiffAction
-	Id        int64
-	SourceId  int64 // used on copy
-	DestId    int64 // used on copy
-	KeyHash   tezos.ExprHash
-	Key       Prim // works with any type
-	Value     Prim
-	KeyType   Prim // used on alloc/copy, uses Prim for native marshalling
-	ValueType Prim // used on alloc/copy, uses Prim for native marshalling
+type BigmapEvent struct {
+	Action    DiffAction     `json:"action"`
+	Id        int64          `json:"big_map,string"`
+	KeyHash   tezos.ExprHash `json:"key_hash"`                   // update/remove
+	Key       Prim           `json:"key"`                        // update/remove
+	Value     Prim           `json:"value"`                      // update
+	KeyType   Prim           `json:"key_type"`                   // alloc
+	ValueType Prim           `json:"value_type"`                 // alloc
+	SourceId  int64          `json:"source_big_map,string"`      // copy
+	DestId    int64          `json:"destination_big_map,string"` // copy
 }
 
-func (e BigmapDiffElem) Encoding() PrimType {
+func (e BigmapEvent) Encoding() PrimType {
 	switch e.Action {
 	case DiffActionRemove, DiffActionUpdate:
 		return e.Key.OpCode.PrimType()
@@ -63,7 +62,7 @@ func (e BigmapDiffElem) Encoding() PrimType {
 	}
 }
 
-func (e BigmapDiffElem) GetKey(typ Type) Key {
+func (e BigmapEvent) GetKey(typ Type) Key {
 	k, err := NewKey(typ, e.Key)
 	if err != nil {
 		log.Error(err)
@@ -71,7 +70,7 @@ func (e BigmapDiffElem) GetKey(typ Type) Key {
 	return k
 }
 
-func (e BigmapDiffElem) GetKeyPtr(typ Type) *Key {
+func (e BigmapEvent) GetKeyPtr(typ Type) *Key {
 	k, err := NewKey(typ, e.Key)
 	if err != nil {
 		log.Error(err)
@@ -79,171 +78,42 @@ func (e BigmapDiffElem) GetKeyPtr(typ Type) *Key {
 	return &k
 }
 
-// TODO: lazy_storage_diff updates
-func (e *BigmapDiffElem) UnmarshalJSON(data []byte) error {
-	var val struct {
-		Id        int64          `json:"big_map,string"`
-		Action    DiffAction     `json:"action"`
-		KeyType   Prim           `json:"key_type"`                   // alloc
-		ValueType Prim           `json:"value_type"`                 // alloc
-		Key       interface{}    `json:"key"`                        // update/remove
-		KeyHash   tezos.ExprHash `json:"key_hash"`                   // update/remove
-		Value     Prim           `json:"value"`                      // update
-		SourceId  int64          `json:"source_big_map,string"`      // copy
-		DestId    int64          `json:"destination_big_map,string"` // copy
-	}
-	err := json.Unmarshal(data, &val)
+func (e *BigmapEvent) UnmarshalJSON(data []byte) error {
+	type alias BigmapEvent
+	err := json.Unmarshal(data, (*alias)(e))
 	if err != nil {
 		return err
 	}
-
-	switch val.Action {
-	case DiffActionUpdate, DiffActionRemove:
-		// Note: on Edo key can be list or object
-		switch key := val.Key.(type) {
-		case map[string]interface{}:
-			switch len(key) {
-			case 0:
-				// EMPTY_BIG_MAP opcode emits a remove action without key
-				e.Key = Prim{
-					Type:   PrimNullary,
-					OpCode: I_EMPTY_BIG_MAP,
-				}
-			case 1:
-				for n, v := range key {
-					vv, ok := v.(string)
-					if !ok {
-						return fmt.Errorf("micheline: decoding bigmap key '%v': unexpected type %T", v, v)
-					}
-					switch n {
-					case "int":
-						p := Prim{
-							Type: PrimInt,
-							Int:  big.NewInt(0),
-						}
-						p.Int.SetString(vv, 0)
-						e.Key = p
-					case "bytes":
-						p := Prim{
-							Type: PrimBytes,
-						}
-						p.Bytes, err = hex.DecodeString(vv)
-						if err != nil {
-							return fmt.Errorf("micheline: decoding bigmap bytes key '%s': %w", v, err)
-						}
-						e.Key = p
-					case "string":
-						e.Key = Prim{
-							Type:   PrimString,
-							String: vv,
-						}
-					case "prim":
-						p := Prim{}
-						if err := p.UnpackPrimitive(key); err != nil {
-							return fmt.Errorf("micheline: decoding bigmap prim key: %w", err)
-						}
-						e.Key = p
-					default:
-						return fmt.Errorf("micheline: unsupported bigmap key type %s", n)
-					}
-				}
-			default:
-				p := Prim{}
-				if err := p.UnpackPrimitive(key); err != nil {
-					return fmt.Errorf("micheline: decoding bigmap pair key: %w", err)
-				}
-				e.Key = p
-			}
-		case []interface{}:
-			p := Prim{}
-			if err := p.UnpackSequence(key); err != nil {
-				return fmt.Errorf("micheline: decoding bigmap list key: %w", err)
-			}
-			e.Key = p
-		default:
-			// EMPTY_BIG_MAP opcode emits a remove action without key
-			if val.Key == nil {
-				e.Key = Prim{
-					Type:   PrimNullary,
-					OpCode: I_EMPTY_BIG_MAP,
-				}
-			}
-		}
-
-		e.KeyHash = val.KeyHash
-		e.Value = val.Value
-
-	case DiffActionAlloc:
-		if !val.KeyType.OpCode.IsValid() {
-			return fmt.Errorf("micheline: unsupported bigmap key type (opcode) %s [%d]",
-				e.KeyType.OpCode, e.KeyType.OpCode)
-		}
-		e.KeyType = val.KeyType
-		e.ValueType = val.ValueType
-
-	case DiffActionCopy:
-		e.SourceId = val.SourceId
-		e.DestId = val.DestId
-	}
-
-	// assign remaining values
-	e.Id = val.Id
-	e.Action = val.Action
-
-	// pre-v005: set correct action on value deletion (missing value in JSON)
-	if !e.Value.IsValid() && e.Action == DiffActionUpdate {
+	// translate update with empty value to remove
+	if e.Action == DiffActionUpdate && !e.Value.IsValid() {
 		e.Action = DiffActionRemove
 	}
-
 	return nil
 }
 
-func (e BigmapDiffElem) MarshalJSON() ([]byte, error) {
+func (e BigmapEvent) MarshalJSON() ([]byte, error) {
 	var res interface{}
 	switch e.Action {
 	case DiffActionUpdate, DiffActionRemove:
 		// set key, keyhash, value
 		val := struct {
-			Id      int64                  `json:"big_map,string"`
-			Action  DiffAction             `json:"action"`
-			Key     map[string]interface{} `json:"key,omitempty"`
-			KeyHash *tezos.ExprHash        `json:"key_hash,omitempty"`
-			Value   *Prim                  `json:"value,omitempty"`
+			Id      int64           `json:"big_map,string"`
+			Action  DiffAction      `json:"action"`
+			Key     *Prim           `json:"key,omitempty"`
+			KeyHash *tezos.ExprHash `json:"key_hash,omitempty"`
+			Value   *Prim           `json:"value,omitempty"`
 		}{
 			Id:     e.Id,
 			Action: e.Action,
-			Value:  &e.Value,
 		}
-		switch e.Key.Type {
-		case PrimNullary:
-			// no key on empty bigmap
-		case PrimInt:
-			val.Key = make(map[string]interface{})
-			val.Key["int"] = e.Key.Int.Text(10)
+		if e.KeyHash.IsValid() {
 			val.KeyHash = &e.KeyHash
-		case PrimBytes:
-			val.Key = make(map[string]interface{})
-			val.Key["bytes"] = hex.EncodeToString(e.Key.Bytes)
-			val.KeyHash = &e.KeyHash
-		case PrimString:
-			val.Key = make(map[string]interface{})
-			val.Key["string"] = e.Key.String
-			val.KeyHash = &e.KeyHash
-		case PrimBinary:
-			val.Key = make(map[string]interface{})
-			val.KeyHash = &e.KeyHash
-			buf, err := e.Key.MarshalJSON()
-			if err != nil {
-				return nil, err
-			}
-			if err := json.Unmarshal(buf, &val.Key); err != nil {
-				return nil, err
-			}
 		}
-
-		// be API compatible with Babylon
-		if e.Action == DiffActionRemove {
-			val.Value = nil
+		if e.Key.IsValid() {
+			val.Key = &e.Key
+		}
+		if e.Value.IsValid() {
+			val.Value = &e.Value
 		}
 		res = val
 
@@ -274,7 +144,7 @@ func (e BigmapDiffElem) MarshalJSON() ([]byte, error) {
 	return json.Marshal(res)
 }
 
-func (b BigmapDiff) MarshalBinary() ([]byte, error) {
+func (b BigmapEvents) MarshalBinary() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	for _, v := range b {
 		// prefix with id (4 byte) and action (1 byte)
@@ -349,11 +219,11 @@ func (b BigmapDiff) MarshalBinary() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (b *BigmapDiff) UnmarshalBinary(data []byte) error {
+func (b *BigmapEvents) UnmarshalBinary(data []byte) error {
 	buf := bytes.NewBuffer(data)
 	for buf.Len() > 0 {
 		id := int32(binary.BigEndian.Uint32(buf.Next(4)))
-		elem := BigmapDiffElem{
+		elem := BigmapEvent{
 			Id:     int64(id),
 			Action: DiffAction(buf.Next(1)[0]),
 		}

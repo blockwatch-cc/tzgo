@@ -13,14 +13,8 @@ var _ TypedOperation = (*DoubleEndorsement)(nil)
 // DoubleEndorsement represents a double_endorsement_evidence operation
 type DoubleEndorsement struct {
 	Generic
-	OP1      InlinedEndorsement `json:"op1"`
-	OP2      InlinedEndorsement `json:"op2"`
-	Metadata OperationMetadata  `json:"metadata"`
-}
-
-// Meta returns operation metadata to implement TypedOperation interface.
-func (d DoubleEndorsement) Meta() OperationMetadata {
-	return d.Metadata
+	OP1 InlinedEndorsement `json:"op1"`
+	OP2 InlinedEndorsement `json:"op2"`
 }
 
 // Costs returns operation cost to implement TypedOperation interface.

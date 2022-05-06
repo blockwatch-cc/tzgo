@@ -13,18 +13,7 @@ var _ TypedOperation = (*Reveal)(nil)
 // Reveal represents a reveal operation
 type Reveal struct {
 	Manager
-	PublicKey tezos.Key         `json:"public_key"`
-	Metadata  OperationMetadata `json:"metadata"`
-}
-
-// Meta returns operation metadata to implement TypedOperation interface.
-func (r Reveal) Meta() OperationMetadata {
-	return r.Metadata
-}
-
-// Result returns operation result to implement TypedOperation interface.
-func (r Reveal) Result() OperationResult {
-	return r.Metadata.Result
+	PublicKey tezos.Key `json:"public_key"`
 }
 
 // Costs returns operation cost to implement TypedOperation interface.
