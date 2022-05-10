@@ -45,6 +45,7 @@ const (
 	KeyTypeEd25519 KeyType = iota
 	KeyTypeSecp256k1
 	KeyTypeP256
+	KeyTypeBls12_381
 	KeyTypeInvalid
 )
 
@@ -75,6 +76,8 @@ func (t KeyType) PkHashType() HashType {
 		return HashTypePkSecp256k1
 	case KeyTypeP256:
 		return HashTypePkP256
+	case KeyTypeBls12_381:
+		return HashTypePkBls12_381
 	default:
 		return HashTypeInvalid
 	}
@@ -88,6 +91,8 @@ func (t KeyType) SkHashType() HashType {
 		return HashTypeSkSecp256k1
 	case KeyTypeP256:
 		return HashTypeSkP256
+	case KeyTypeBls12_381:
+		return HashTypeSkBls12_381
 	default:
 		return HashTypeInvalid
 	}
@@ -101,6 +106,8 @@ func (t KeyType) AddressType() AddressType {
 		return AddressTypeSecp256k1
 	case KeyTypeP256:
 		return AddressTypeP256
+	case KeyTypeBls12_381:
+		return AddressTypeBls12_381
 	default:
 		return AddressTypeInvalid
 	}
@@ -114,6 +121,8 @@ func (t KeyType) PkPrefixBytes() []byte {
 		return SECP256K1_PUBLIC_KEY_ID
 	case KeyTypeP256:
 		return P256_PUBLIC_KEY_ID
+	case KeyTypeBls12_381:
+		return BLS12_381_PUBLIC_KEY_ID
 	default:
 		return nil
 	}
@@ -127,6 +136,8 @@ func (t KeyType) PkPrefix() string {
 		return SECP256K1_PUBLIC_KEY_PREFIX
 	case KeyTypeP256:
 		return P256_PUBLIC_KEY_PREFIX
+	case KeyTypeBls12_381:
+		return BLS12_381_PUBLIC_KEY_PREFIX
 	default:
 		return ""
 	}
@@ -140,6 +151,8 @@ func (t KeyType) SkPrefixBytes() []byte {
 		return SECP256K1_SECRET_KEY_ID
 	case KeyTypeP256:
 		return P256_SECRET_KEY_ID
+	case KeyTypeBls12_381:
+		return BLS12_381_SECRET_KEY_ID
 	default:
 		return nil
 	}
@@ -153,6 +166,8 @@ func (t KeyType) SkePrefixBytes() []byte {
 		return SECP256K1_ENCRYPTED_SECRET_KEY_ID
 	case KeyTypeP256:
 		return P256_ENCRYPTED_SECRET_KEY_ID
+	case KeyTypeBls12_381:
+		return BLS12_381_SECRET_KEY_ID
 	default:
 		return nil
 	}
@@ -166,6 +181,8 @@ func (t KeyType) SkPrefix() string {
 		return SECP256K1_SECRET_KEY_PREFIX
 	case KeyTypeP256:
 		return P256_SECRET_KEY_PREFIX
+	case KeyTypeBls12_381:
+		return BLS12_381_SECRET_KEY_PREFIX
 	default:
 		return ""
 	}
@@ -179,6 +196,8 @@ func (t KeyType) SkePrefix() string {
 		return SECP256K1_ENCRYPTED_SECRET_KEY_PREFIX
 	case KeyTypeP256:
 		return P256_ENCRYPTED_SECRET_KEY_PREFIX
+	case KeyTypeBls12_381:
+		return BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX
 	default:
 		return ""
 	}
@@ -192,6 +211,8 @@ func (t KeyType) Tag() byte {
 		return 1
 	case KeyTypeP256:
 		return 2
+	case KeyTypeBls12_381:
+		return 3
 	default:
 		return 255
 	}
@@ -205,6 +226,8 @@ func ParseKeyTag(b byte) KeyType {
 		return KeyTypeSecp256k1
 	case 2:
 		return KeyTypeP256
+	case 3:
+		return KeyTypeBls12_381
 	default:
 		return KeyTypeInvalid
 	}
@@ -218,12 +241,16 @@ func ParseKeyType(s string) (KeyType, bool) {
 		return KeyTypeSecp256k1, true
 	case P256_ENCRYPTED_SECRET_KEY_PREFIX:
 		return KeyTypeP256, true
+	case BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX:
+		return KeyTypeBls12_381, true
 	case ED25519_SEED_PREFIX: // same as	ED25519_SECRET_KEY_PREFIX
 		return KeyTypeEd25519, false
 	case SECP256K1_SECRET_KEY_PREFIX:
 		return KeyTypeSecp256k1, false
 	case P256_SECRET_KEY_PREFIX:
 		return KeyTypeP256, false
+	case BLS12_381_SECRET_KEY_PREFIX:
+		return KeyTypeBls12_381, false
 	default:
 		return KeyTypeInvalid, false
 	}
@@ -234,6 +261,7 @@ func IsPublicKey(s string) bool {
 		ED25519_PUBLIC_KEY_PREFIX,
 		SECP256K1_PUBLIC_KEY_PREFIX,
 		P256_PUBLIC_KEY_PREFIX,
+		BLS12_381_PUBLIC_KEY_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -248,9 +276,11 @@ func IsPrivateKey(s string) bool {
 		ED25519_SECRET_KEY_PREFIX,
 		SECP256K1_SECRET_KEY_PREFIX,
 		P256_SECRET_KEY_PREFIX,
+		BLS12_381_SECRET_KEY_PREFIX,
 		ED25519_ENCRYPTED_SEED_PREFIX,
 		SECP256K1_ENCRYPTED_SECRET_KEY_PREFIX,
 		P256_ENCRYPTED_SECRET_KEY_PREFIX,
+		BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -264,6 +294,7 @@ func IsEncryptedKey(s string) bool {
 		ED25519_ENCRYPTED_SEED_PREFIX,
 		SECP256K1_ENCRYPTED_SECRET_KEY_PREFIX,
 		P256_ENCRYPTED_SECRET_KEY_PREFIX,
+		BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -306,6 +337,8 @@ func (k Key) Verify(hash []byte, sig Signature) error {
 		if ok := ecVerifySignature(pk, hash, sig); !ok {
 			return ErrSignature
 		}
+	case KeyTypeBls12_381:
+		// TODO
 	}
 	return nil
 }
@@ -448,6 +481,8 @@ func ParseKey(s string) (Key, error) {
 		k.Type = KeyTypeSecp256k1
 	case bytes.Equal(version, P256_PUBLIC_KEY_ID):
 		k.Type = KeyTypeP256
+	case bytes.Equal(version, BLS12_381_PUBLIC_KEY_ID):
+		k.Type = KeyTypeBls12_381
 	default:
 		return k, fmt.Errorf("tezos: unknown version %x for key %s", version, s)
 	}
@@ -481,7 +516,7 @@ func (k PrivateKey) String() string {
 	switch k.Type {
 	case KeyTypeEd25519:
 		buf = ed25519.PrivateKey(k.Data).Seed()
-	case KeyTypeSecp256k1, KeyTypeP256:
+	case KeyTypeSecp256k1, KeyTypeP256, KeyTypeBls12_381:
 		buf = k.Data
 	default:
 		return ""
@@ -526,6 +561,8 @@ func GenerateKey(typ KeyType) (PrivateKey, error) {
 		}
 		key.Data = make([]byte, typ.SkHashType().Len())
 		ecKey.D.FillBytes(key.Data)
+	case KeyTypeBls12_381:
+		// TODO
 	}
 	return key, nil
 }
@@ -546,6 +583,8 @@ func (k PrivateKey) Public() Key {
 			return pk
 		}
 		pk.Data = elliptic.MarshalCompressed(curve, ecKey.PublicKey.X, ecKey.PublicKey.Y)
+	case KeyTypeBls12_381:
+		// TODO
 	}
 	return pk
 }
@@ -558,6 +597,8 @@ func (k PrivateKey) Encrypt(fn PassphraseFunc) (string, error) {
 		buf = []byte(ed25519.PrivateKey(k.Data).Seed())
 	case KeyTypeSecp256k1, KeyTypeP256:
 		buf = k.Data
+	case KeyTypeBls12_381:
+		// TODO
 	}
 	enc, err := encryptPrivateKey(buf, fn)
 	if err != nil {
@@ -588,6 +629,9 @@ func (k PrivateKey) Sign(hash []byte) (Signature, error) {
 		}
 		sig.Data, err = ecSign(ecKey, hash)
 		return sig, err
+	case KeyTypeBls12_381:
+		// TODO
+		return Signature{}, ErrUnknownKeyType
 	default:
 		return Signature{}, ErrUnknownKeyType
 	}
@@ -630,6 +674,8 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 			version = SECP256K1_SECRET_KEY_ID
 		case bytes.Equal(version, P256_ENCRYPTED_SECRET_KEY_ID):
 			version = P256_SECRET_KEY_ID
+		case bytes.Equal(version, BLS12_381_ENCRYPTED_SECRET_KEY_ID):
+			version = BLS12_381_SECRET_KEY_ID
 		}
 	}
 
@@ -648,6 +694,8 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 		k.Type = KeyTypeSecp256k1
 	case bytes.Equal(version, P256_SECRET_KEY_ID):
 		k.Type = KeyTypeP256
+	case bytes.Equal(version, BLS12_381_SECRET_KEY_ID):
+		k.Type = KeyTypeBls12_381
 	default:
 		err = fmt.Errorf("tezos: unknown version %x for private key %s", version, s)
 		return

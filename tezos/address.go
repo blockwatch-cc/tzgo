@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -43,8 +43,9 @@ const (
 	AddressTypeP256
 	AddressTypeContract
 	AddressTypeBlinded
-	AddressTypeBaker
 	AddressTypeSapling
+	AddressTypeBls12_381
+	AddressTypeToru
 )
 
 func ParseAddressType(s string) AddressType {
@@ -59,10 +60,12 @@ func ParseAddressType(s string) AddressType {
 		return AddressTypeContract
 	case "blinded", BLINDED_PUBLIC_KEY_HASH_PREFIX:
 		return AddressTypeBlinded
-	case "baker", BAKER_PUBLIC_KEY_HASH_PREFIX:
-		return AddressTypeBaker
 	case "sapling", SAPLING_ADDRESS_PREFIX:
 		return AddressTypeSapling
+	case "bls12_381", BLS12_381_PUBLIC_KEY_HASH_PREFIX:
+		return AddressTypeBls12_381
+	case "txrollup", "toru", TORU_ADDRESS_PREFIX:
+		return AddressTypeToru
 	default:
 		return AddressTypeInvalid
 	}
@@ -84,10 +87,12 @@ func (t AddressType) String() string {
 		return "contract"
 	case AddressTypeBlinded:
 		return "blinded"
-	case AddressTypeBaker:
-		return "baker"
 	case AddressTypeSapling:
 		return "sapling"
+	case AddressTypeBls12_381:
+		return "bls12_381"
+	case AddressTypeToru:
+		return "txrollup"
 	default:
 		return "invalid"
 	}
@@ -105,10 +110,12 @@ func (t AddressType) Prefix() string {
 		return NOCURVE_PUBLIC_KEY_HASH_PREFIX
 	case AddressTypeBlinded:
 		return BLINDED_PUBLIC_KEY_HASH_PREFIX
-	case AddressTypeBaker:
-		return BAKER_PUBLIC_KEY_HASH_PREFIX
 	case AddressTypeSapling:
 		return SAPLING_ADDRESS_PREFIX
+	case AddressTypeBls12_381:
+		return BLS12_381_PUBLIC_KEY_HASH_PREFIX
+	case AddressTypeToru:
+		return TORU_ADDRESS_PREFIX
 	default:
 		return ""
 	}
@@ -124,6 +131,8 @@ func (t AddressType) Tag() byte {
 		return 2
 	case AddressTypeBlinded:
 		return 3
+	case AddressTypeBls12_381:
+		return 4
 	default:
 		return 255
 	}
@@ -139,6 +148,8 @@ func ParseAddressTag(b byte) AddressType {
 		return AddressTypeP256
 	case 3:
 		return AddressTypeBlinded
+	case 4:
+		return AddressTypeBls12_381
 	default:
 		return AddressTypeInvalid
 	}
@@ -164,8 +175,9 @@ func HasAddressPrefix(s string) bool {
 		P256_PUBLIC_KEY_HASH_PREFIX,
 		NOCURVE_PUBLIC_KEY_HASH_PREFIX,
 		BLINDED_PUBLIC_KEY_HASH_PREFIX,
-		BAKER_PUBLIC_KEY_HASH_PREFIX,
 		SAPLING_ADDRESS_PREFIX,
+		BLS12_381_PUBLIC_KEY_HASH_PREFIX,
+		TORU_ADDRESS_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -186,10 +198,12 @@ func (t AddressType) HashType() HashType {
 		return HashTypePkhNocurve
 	case AddressTypeBlinded:
 		return HashTypePkhBlinded
-	case AddressTypeBaker:
-		return HashTypePkhBaker
 	case AddressTypeSapling:
 		return HashTypeSaplingAddress
+	case AddressTypeBls12_381:
+		return HashTypePkhBls12_381
+	case AddressTypeToru:
+		return HashTypeToruAddress
 	default:
 		return HashTypeInvalid
 	}
@@ -203,6 +217,8 @@ func (t AddressType) KeyType() KeyType {
 		return KeyTypeSecp256k1
 	case AddressTypeP256:
 		return KeyTypeP256
+	case AddressTypeBls12_381:
+		return KeyTypeBls12_381
 	default:
 		return KeyTypeInvalid
 	}
@@ -228,7 +244,7 @@ func (a Address) IsValid() bool {
 
 func (a Address) IsEOA() bool {
 	switch a.Type {
-	case AddressTypeEd25519, AddressTypeSecp256k1, AddressTypeP256:
+	case AddressTypeEd25519, AddressTypeSecp256k1, AddressTypeP256, AddressTypeBls12_381:
 		return true
 	default:
 		return false
@@ -236,7 +252,11 @@ func (a Address) IsEOA() bool {
 }
 
 func (a Address) IsContract() bool {
-	return a.Type == AddressTypeContract || a.Type == AddressTypeBaker
+	return a.Type == AddressTypeContract
+}
+
+func (a Address) IsRollup() bool {
+	return a.Type == AddressTypeToru
 }
 
 func (a Address) Equal(b Address) bool {
@@ -283,43 +303,58 @@ func (a Address) MarshalText() ([]byte, error) {
 // Bytes returns the 21 (implicit) or 22 byte (contract) tagged and optionally padded
 // binary hash value of the address.
 func (a Address) Bytes() []byte {
-	if !a.Type.IsValid() {
+	switch a.Type {
+	case AddressTypeInvalid:
 		return nil
-	}
-	if a.Type == AddressTypeContract {
+	case AddressTypeContract:
 		buf := append([]byte{01}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
+	case AddressTypeToru:
+		buf := append([]byte{02}, a.Hash...)
+		buf = append(buf, byte(0)) // padding
+		return buf
+	default:
+		return append([]byte{a.Type.Tag()}, a.Hash...)
 	}
-	return append([]byte{a.Type.Tag()}, a.Hash...)
 }
 
 // Bytes22 returns the 22 byte tagged and padded binary encoding for contracts
 // and EOAs (tz1/2/3). In contrast to Bytes which outputs the 21 byte address for EOAs
 // here we add a leading 0-byte.
 func (a Address) Bytes22() []byte {
-	if !a.Type.IsValid() {
+	switch a.Type {
+	case AddressTypeInvalid:
 		return nil
-	}
-	if a.Type == AddressTypeContract {
+	case AddressTypeContract:
 		buf := append([]byte{01}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
+	case AddressTypeToru:
+		buf := append([]byte{02}, a.Hash...)
+		buf = append(buf, byte(0)) // padding
+		return buf
+	default:
+		return append([]byte{00, a.Type.Tag()}, a.Hash...)
 	}
-	return append([]byte{00, a.Type.Tag()}, a.Hash...)
 }
 
 // MarshalBinary always output the 22 byte version for contracts and EOAs.
 func (a Address) MarshalBinary() ([]byte, error) {
-	if !a.Type.IsValid() {
+	switch a.Type {
+	case AddressTypeInvalid:
 		return nil, ErrUnknownAddressType
-	}
-	if a.Type == AddressTypeContract {
+	case AddressTypeContract:
 		buf := append([]byte{01}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf, nil
+	case AddressTypeToru:
+		buf := append([]byte{02}, a.Hash...)
+		buf = append(buf, byte(0)) // padding
+		return buf, nil
+	default:
+		return append([]byte{00, a.Type.Tag()}, a.Hash...), nil
 	}
-	return append([]byte{00, a.Type.Tag()}, a.Hash...), nil
 }
 
 // UnmarshalBinary reads a 21 byte or 22 byte address versions and is
@@ -327,14 +362,18 @@ func (a Address) MarshalBinary() ([]byte, error) {
 // (e.g. an entrypoint suffix as found in smart contract data).
 func (a *Address) UnmarshalBinary(b []byte) error {
 	switch true {
-	case len(b) >= 22 && (b[0] == 0 || b[0] == 1):
-		if b[0] == 0 {
+	case len(b) >= 22 && (b[0] == 0 || b[0] == 1 || b[0] == 2):
+		switch b[0] {
+		case 0:
 			a.Type = ParseAddressTag(b[1])
 			b = b[2:22]
-		} else if b[0] == 1 {
+		case 1:
 			a.Type = AddressTypeContract
 			b = b[1:21]
-		} else {
+		case 2:
+			a.Type = AddressTypeToru
+			b = b[1:21]
+		default:
 			return fmt.Errorf("tezos: invalid binary address prefix %x", b[0])
 		}
 	case len(b) >= 21:
@@ -361,7 +400,7 @@ func IsAddressBytes(b []byte) bool {
 		return false
 	}
 	switch true {
-	case len(b) == 22 && (b[0] == 0 || b[0] == 1):
+	case len(b) == 22 && (b[0] == 0 || b[0] == 1 || b[0] == 2):
 		return true
 	case len(b) == 21:
 		return ParseAddressTag(b[0]) != AddressTypeInvalid
@@ -377,10 +416,10 @@ func (a Address) ContractAddress() string {
 	return s
 }
 
-// BakerAddress returns the string encoding of the address when used
-// as baker contract.
-func (a Address) BakerAddress() string {
-	s, _ := EncodeAddress(AddressTypeBaker, a.Hash)
+// ToruAddress returns the string encoding of the address when used
+// as rollup contract.
+func (a Address) ToruAddress() string {
+	s, _ := EncodeAddress(AddressTypeToru, a.Hash)
 	return s
 }
 
@@ -397,11 +436,12 @@ func ParseAddress(addr string) (Address, error) {
 		return InvalidAddress, nil
 	}
 	a := Address{}
-	// check for blinded address first
-	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) {
-		return DecodeBlindedAddress(addr)
+	sz := 3
+	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) ||
+		strings.HasPrefix(addr, TORU_ADDRESS_PREFIX) {
+		sz = 4
 	}
-	decoded, version, err := base58.CheckDecode(addr, 3, nil)
+	decoded, version, err := base58.CheckDecode(addr, sz, nil)
 	if err != nil {
 		if err == base58.ErrChecksum {
 			return a, ErrChecksumMismatch
@@ -412,8 +452,6 @@ func ParseAddress(addr string) (Address, error) {
 		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
 	switch true {
-	case bytes.Equal(version, BAKER_PUBLIC_KEY_HASH_ID):
-		return Address{Type: AddressTypeBaker, Hash: decoded}, nil
 	case bytes.Equal(version, ED25519_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeEd25519, Hash: decoded}, nil
 	case bytes.Equal(version, SECP256K1_PUBLIC_KEY_HASH_ID):
@@ -422,8 +460,14 @@ func ParseAddress(addr string) (Address, error) {
 		return Address{Type: AddressTypeP256, Hash: decoded}, nil
 	case bytes.Equal(version, NOCURVE_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeContract, Hash: decoded}, nil
+	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
+		return Address{Type: AddressTypeBlinded, Hash: decoded}, nil
 	case bytes.Equal(version, SAPLING_ADDRESS_ID):
 		return Address{Type: AddressTypeSapling, Hash: decoded}, nil
+	case bytes.Equal(version, BLS12_381_PUBLIC_KEY_HASH_ID):
+		return Address{Type: AddressTypeBls12_381, Hash: decoded}, nil
+	case bytes.Equal(version, TORU_ADDRESS_ID):
+		return Address{Type: AddressTypeToru, Hash: decoded}, nil
 	default:
 		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
 	}
@@ -434,8 +478,6 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 		return "", fmt.Errorf("tezos: invalid address hash")
 	}
 	switch typ {
-	case AddressTypeBaker:
-		return base58.CheckEncode(addrhash, BAKER_PUBLIC_KEY_HASH_ID), nil
 	case AddressTypeEd25519:
 		return base58.CheckEncode(addrhash, ED25519_PUBLIC_KEY_HASH_ID), nil
 	case AddressTypeSecp256k1:
@@ -448,6 +490,10 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 		return base58.CheckEncode(addrhash, BLINDED_PUBLIC_KEY_HASH_ID), nil
 	case AddressTypeSapling:
 		return base58.CheckEncode(addrhash, SAPLING_ADDRESS_ID), nil
+	case AddressTypeBls12_381:
+		return base58.CheckEncode(addrhash, BLS12_381_PUBLIC_KEY_HASH_ID), nil
+	case AddressTypeToru:
+		return base58.CheckEncode(addrhash, TORU_ADDRESS_ID), nil
 	default:
 		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x", typ, addrhash)
 	}
