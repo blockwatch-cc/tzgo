@@ -161,7 +161,7 @@ const (
 	T_BLS12_381_G2          // 81
 	T_BLS12_381_FR          // 82
 	T_SAPLING_STATE         // 83
-	T_SAPLING_TRANSACTION   // 84
+	_T_SAPLING_TRANSACTION  // 84, deprecated in v013
 	I_SAPLING_EMPTY_STATE   // 85
 	I_SAPLING_VERIFY_UPDATE // 86
 	T_TICKET                // 87
@@ -181,6 +181,11 @@ const (
 
 	// v012 additions
 	I_SUB_MUTEZ // 93
+
+	// v013 additions
+	T_TX_ROLLUP_L2_ADDRESS // 94
+	I_MIN_BLOCK_TIME       // 95
+	T_SAPLING_TRANSACTION  // 96
 )
 
 func (op OpCode) IsValid() bool {
@@ -321,7 +326,7 @@ var (
 		T_BLS12_381_G2:          "bls12_381_g2",
 		T_BLS12_381_FR:          "bls12_381_fr",
 		T_SAPLING_STATE:         "sapling_state",
-		T_SAPLING_TRANSACTION:   "sapling_transaction",
+		_T_SAPLING_TRANSACTION:  "sapling_transaction_deprecated",
 		I_SAPLING_EMPTY_STATE:   "SAPLING_EMPTY_STATE",
 		I_SAPLING_VERIFY_UPDATE: "SAPLING_VERIFY_UPDATE",
 		T_TICKET:                "ticket",
@@ -337,6 +342,9 @@ var (
 		K_VIEW:                  "view",
 		H_CONSTANT:              "constant",
 		I_SUB_MUTEZ:             "SUB_MUTEZ",
+		T_TX_ROLLUP_L2_ADDRESS:  "tx_rollup_l2_address",
+		I_MIN_BLOCK_TIME:        "MIN_BLOCK_TIME",
+		T_SAPLING_TRANSACTION:   "sapling_transaction",
 	}
 	stringToOp map[string]OpCode
 )
@@ -401,7 +409,8 @@ func (op OpCode) IsTypeCode() bool {
 		T_SAPLING_TRANSACTION,
 		T_TICKET,
 		T_CHEST,
-		T_CHEST_KEY:
+		T_CHEST_KEY,
+		T_TX_ROLLUP_L2_ADDRESS:
 		return true
 	default:
 		return false
