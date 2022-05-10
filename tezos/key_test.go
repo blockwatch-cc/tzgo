@@ -34,6 +34,12 @@ func TestKey(t *testing.T) {
             Pub:     "p2pk64zMPtYav6yiaHV2DhSQ65gbKMr3gkLQtK7TTQCpJEVUhxxEnxo",
             Address: MustParseAddress("tz3VCJEo1rRyyVejmpaRjbgGT9uE66sZmUtQ"),
         },
+        // bls12_381 unencrypted
+        // {
+        //     Priv:    "BLsk1eGhiPQXKtvvkBeXzmtVVJs6KPhEF45drF7MLjoCDcSnTGuyjL",
+        //     Pub:     "BLpk1ur5XXicWYMMzCVZZWyLZhybtyX8Zot2uCzDCZW8KcC5BdZiLVXRZvZzi4GuZYL9SarUvKpE",
+        //     Address: MustParseAddress("tz4TFJdv9Jd44FtBMAxi3KQT7AtazhVyaPa6"),
+        // },
         // ed25519 encrypted
         {
             Priv:    "edesk1uiM6BaysskGto8pRtzKQqFqsy1sea1QRjTzaQYuBxYNhuN6eqEU78TGRXZocsVRJYcN7AaU9JDykwUd8KW",

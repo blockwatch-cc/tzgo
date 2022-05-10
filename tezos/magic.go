@@ -18,7 +18,6 @@ const (
 	SECP256K1_PUBLIC_KEY_HASH_PREFIX = "tz2"
 	P256_PUBLIC_KEY_HASH_PREFIX      = "tz3"
 	NOCURVE_PUBLIC_KEY_HASH_PREFIX   = "KT1"  // originated contract identifier
-	BAKER_PUBLIC_KEY_HASH_PREFIX     = "SG1"  // baker contract (undeployed)
 	BLINDED_PUBLIC_KEY_HASH_PREFIX   = "btz1" // blinded tz1
 
 	// base58 prefixes for 32 byte hash magics
@@ -67,6 +66,21 @@ const (
 	// base58 prefixes for Sapling byte hash magics
 	SAPLING_SPENDING_KEY_PREFIX = "sask" // "\011\237\020\092" (* sask(241) *) // 169 bytes
 	SAPLING_ADDRESS_PREFIX      = "zet1" // "\018\071\040\223" (* zet1(69) *) // 43 bytes
+
+	// base58 prefixes for rollup hash magics
+	BLS12_381_PUBLIC_KEY_HASH_PREFIX      = "tz4"
+	GENERIC_AGGREGATE_SIGNATURE_PREFIX    = "asig"
+	BLS12_381_SIGNATURE_PREFIX            = "BLsig"
+	BLS12_381_PUBLIC_KEY_PREFIX           = "BLpk"
+	BLS12_381_SECRET_KEY_PREFIX           = "BLsk"
+	BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX = "BLesk"
+	TORU_ADDRESS_PREFIX                   = "txr1"
+	TORU_INBOX_HASH_PREFIX                = "txi"
+	TORU_MESSAGE_HASH_PREFIX              = "txm"
+	TORU_COMMITMENT_HASH_PREFIX           = "txc"
+	TORU_MESSAGE_RESULT_HASH_PREFIX       = "txmr"
+	TORU_MESSAGE_RESULT_LIST_HASH_PREFIX  = "txM"
+	TORU_WITHDRAW_LIST_HASH_PREFIX        = "txw"
 )
 
 var (
@@ -81,7 +95,6 @@ var (
 	SECP256K1_PUBLIC_KEY_HASH_ID = []byte{0x06, 0xA1, 0xA1}       // "\006\161\161" (* tz2(36) *)
 	P256_PUBLIC_KEY_HASH_ID      = []byte{0x06, 0xA1, 0xA4}       // "\006\161\164" (* tz3(36) *)
 	NOCURVE_PUBLIC_KEY_HASH_ID   = []byte{0x02, 0x5A, 0x79}       // "\002\090\121" (* KT1(36) *)
-	BAKER_PUBLIC_KEY_HASH_ID     = []byte{0x03, 0x38, 0xE2}       // "\003\056\226" (* SG1(36) *)
 	BLINDED_PUBLIC_KEY_HASH_ID   = []byte{0x01, 0x02, 0x31, 0xDF} // "\002\090\121" (* btz1(37) *)
 
 	// 32 byte hash magics
@@ -131,4 +144,19 @@ var (
 	// Sapling magics
 	SAPLING_SPENDING_KEY_ID = []byte{0x0b, 0xED, 0x14, 0x5C} // "\011\237\020\092" (* sask(241) *)
 	SAPLING_ADDRESS_ID      = []byte{0x12, 0x47, 0x28, 0xDF} // "\018\071\040\223" (* zet1(69) *)
+
+	// Rollup hash magics
+	BLS12_381_PUBLIC_KEY_HASH_ID      = []byte{6, 161, 166}       // "\006\161\166" tz4(36) 20
+	GENERIC_AGGREGATE_SIGNATURE_ID    = []byte{2, 075, 234, 101}  // "\002\075\234\101" asig(96) 141
+	BLS12_381_SIGNATURE_ID            = []byte{40, 171, 064, 207} // "\040\171\064\207" (* BLsig(96) *) 142
+	BLS12_381_PUBLIC_KEY_ID           = []byte{6, 149, 135, 204}  // "\006\149\135\204" (* BLpk(48) *) 76
+	BLS12_381_SECRET_KEY_ID           = []byte{3, 150, 192, 40}   // "\003\150\192\040" (* BLsk(32) *) 54
+	BLS12_381_ENCRYPTED_SECRET_KEY_ID = []byte{2, 5, 30, 53, 25}  // "\002\005\030\053\025" (* BLesk(58) *) 88
+	TORU_ADDRESS_ID                   = []byte{1, 128, 120, 31}   // "\001\128\120\031" txr1(37) 20
+	TORU_INBOX_HASH_ID                = []byte{79, 148, 196}      // "\079\148\196" txi(53) 32
+	TORU_MESSAGE_HASH_ID              = []byte{79, 149, 30}       // "\079\149\030" txm(53) 32
+	TORU_COMMITMENT_HASH_ID           = []byte{79, 148, 17}       // "\079\148\017" txc(53) 32
+	TORU_MESSAGE_RESULT_HASH_ID       = []byte{18, 7, 206, 87}    // "\018\007\206\087" txmr(54) 32
+	TORU_MESSAGE_RESULT_LIST_HASH_ID  = []byte{79, 146, 82}       // "\079\146\082" txM(53) 32
+	TORU_WITHDRAW_LIST_HASH_ID        = []byte{79, 150, 72}       // "\079\150\072" txw(53) 32
 )

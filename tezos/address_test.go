@@ -69,6 +69,22 @@ func TestAddress(t *testing.T) {
         },
         // AddressTypeSapling
         // TODO
+        // tz4
+        {
+            Address: "tz4HVR6aty9KwsQFHh81C1G7gBdhxT8kuytm",
+            Hash:    "5d1497f39b87599983fe8f29599b679564be822d",
+            Type:    AddressTypeBls12_381,
+            Bytes:   "045d1497f39b87599983fe8f29599b679564be822d",
+            Padded:  "00045d1497f39b87599983fe8f29599b679564be822d",
+        },
+        // txr1
+        {
+            Address: "txr1QVAMSfhGduYQoQwrWroJW5b2796Qmb9ej",
+            Hash:    "202e50c8eed224f3961d83522039be4eee40633d",
+            Type:    AddressTypeToru,
+            Bytes:   "02202e50c8eed224f3961d83522039be4eee40633d00",
+            Padded:  "02202e50c8eed224f3961d83522039be4eee40633d00",
+        },
     }
 
     for i, c := range cases {

@@ -39,7 +39,6 @@ const (
 	HashTypePkhP256
 	HashTypePkhNocurve
 	HashTypePkhBlinded
-	HashTypePkhBaker
 	HashTypeBlock
 	HashTypeOperation
 	HashTypeOperationList
@@ -73,6 +72,20 @@ const (
 	HashTypeEncryptedSecp256k1Scalar
 	HashTypeSaplingSpendingKey
 	HashTypeSaplingAddress
+
+	HashTypePkhBls12_381
+	HashTypeSigGenericAggregate
+	HashTypeSigBls12_381
+	HashTypePkBls12_381
+	HashTypeSkBls12_381
+	HashTypeEncryptedSkBls12_381
+	HashTypeToruAddress
+	HashTypeToruInbox
+	HashTypeToruMessage
+	HashTypeToruCommitment
+	HashTypeToruMessageResult
+	HashTypeToruMessageResultList
+	HashTypeToruWithdrawList
 )
 
 func ParseHashType(s string) HashType {
@@ -97,8 +110,13 @@ func ParseHashType(s string) HashType {
 			return HashTypePkhNocurve
 		case strings.HasPrefix(s, BLINDED_PUBLIC_KEY_HASH_PREFIX):
 			return HashTypePkhBlinded
-		case strings.HasPrefix(s, BAKER_PUBLIC_KEY_HASH_PREFIX):
-			return HashTypePkhBaker
+		case strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_HASH_PREFIX):
+			return HashTypePkhBls12_381
+		}
+	case 37:
+		switch true {
+		case strings.HasPrefix(s, TORU_ADDRESS_PREFIX):
+			return HashTypeToruAddress
 		}
 	case 43:
 		switch true {
@@ -139,6 +157,16 @@ func ParseHashType(s string) HashType {
 			return HashTypeNonce
 		case strings.HasPrefix(s, OPERATION_METADATA_LIST_LIST_HASH_PREFIX):
 			return HashTypeOperationMetadataListList
+		case strings.HasPrefix(s, TORU_INBOX_HASH_PREFIX):
+			return HashTypeToruInbox
+		case strings.HasPrefix(s, TORU_MESSAGE_HASH_PREFIX):
+			return HashTypeToruMessage
+		case strings.HasPrefix(s, TORU_COMMITMENT_HASH_PREFIX):
+			return HashTypeToruCommitment
+		case strings.HasPrefix(s, TORU_MESSAGE_RESULT_LIST_HASH_PREFIX):
+			return HashTypeToruMessageResultList
+		case strings.HasPrefix(s, TORU_WITHDRAW_LIST_HASH_PREFIX):
+			return HashTypeToruWithdrawList
 		}
 	case 54:
 		switch true {
@@ -154,6 +182,10 @@ func ParseHashType(s string) HashType {
 			return HashTypeElementSecp256k1
 		case strings.HasPrefix(s, SCRIPT_EXPR_HASH_PREFIX):
 			return HashTypeScriptExpr
+		case strings.HasPrefix(s, BLS12_381_SECRET_KEY_PREFIX):
+			return HashTypeSkBls12_381
+		case strings.HasPrefix(s, TORU_MESSAGE_RESULT_HASH_PREFIX):
+			return HashTypeToruMessageResult
 		}
 	case 55:
 		switch true {
@@ -161,6 +193,11 @@ func ParseHashType(s string) HashType {
 			return HashTypePkSecp256k1
 		case strings.HasPrefix(s, P256_PUBLIC_KEY_PREFIX):
 			return HashTypePkP256
+		}
+	case 76:
+		switch true {
+		case strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_PREFIX):
+			return HashTypePkBls12_381
 		}
 	case 88:
 		switch true {
@@ -170,6 +207,8 @@ func ParseHashType(s string) HashType {
 			return HashTypeEncryptedSkSecp256k1
 		case strings.HasPrefix(s, P256_ENCRYPTED_SECRET_KEY_PREFIX):
 			return HashTypeEncryptedSkP256
+		case strings.HasPrefix(s, BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX):
+			return HashTypeEncryptedSkBls12_381
 		}
 	case 93:
 		switch true {
@@ -193,6 +232,16 @@ func ParseHashType(s string) HashType {
 			return HashTypeSigEd25519
 		case strings.HasPrefix(s, SECP256K1_SIGNATURE_PREFIX):
 			return HashTypeSigSecp256k1
+		}
+	case 141:
+		switch true {
+		case strings.HasPrefix(s, GENERIC_AGGREGATE_SIGNATURE_PREFIX):
+			return HashTypeSigGenericAggregate
+		}
+	case 142:
+		switch true {
+		case strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX):
+			return HashTypeSigBls12_381
 		}
 	case 169:
 		switch true {
@@ -231,8 +280,6 @@ func (t HashType) Prefix() string {
 		return NOCURVE_PUBLIC_KEY_HASH_PREFIX
 	case HashTypePkhBlinded:
 		return BLINDED_PUBLIC_KEY_HASH_PREFIX
-	case HashTypePkhBaker:
-		return BAKER_PUBLIC_KEY_HASH_PREFIX
 	case HashTypeBlock:
 		return BLOCK_HASH_PREFIX
 	case HashTypeOperation:
@@ -297,6 +344,32 @@ func (t HashType) Prefix() string {
 		return SAPLING_SPENDING_KEY_PREFIX
 	case HashTypeSaplingAddress:
 		return SAPLING_ADDRESS_PREFIX
+	case HashTypePkhBls12_381:
+		return BLS12_381_PUBLIC_KEY_HASH_PREFIX
+	case HashTypeSigGenericAggregate:
+		return GENERIC_AGGREGATE_SIGNATURE_PREFIX
+	case HashTypeSigBls12_381:
+		return BLS12_381_SIGNATURE_PREFIX
+	case HashTypePkBls12_381:
+		return BLS12_381_PUBLIC_KEY_PREFIX
+	case HashTypeSkBls12_381:
+		return BLS12_381_SECRET_KEY_PREFIX
+	case HashTypeEncryptedSkBls12_381:
+		return BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX
+	case HashTypeToruAddress:
+		return TORU_ADDRESS_PREFIX
+	case HashTypeToruInbox:
+		return TORU_INBOX_HASH_PREFIX
+	case HashTypeToruMessage:
+		return TORU_MESSAGE_HASH_PREFIX
+	case HashTypeToruCommitment:
+		return TORU_COMMITMENT_HASH_PREFIX
+	case HashTypeToruMessageResult:
+		return TORU_MESSAGE_RESULT_HASH_PREFIX
+	case HashTypeToruMessageResultList:
+		return TORU_MESSAGE_RESULT_LIST_HASH_PREFIX
+	case HashTypeToruWithdrawList:
+		return TORU_WITHDRAW_LIST_HASH_PREFIX
 	default:
 		return ""
 	}
@@ -318,8 +391,6 @@ func (t HashType) PrefixBytes() []byte {
 		return NOCURVE_PUBLIC_KEY_HASH_ID
 	case HashTypePkhBlinded:
 		return BLINDED_PUBLIC_KEY_HASH_ID
-	case HashTypePkhBaker:
-		return BAKER_PUBLIC_KEY_HASH_ID
 	case HashTypeBlock:
 		return BLOCK_HASH_ID
 	case HashTypeOperation:
@@ -384,6 +455,32 @@ func (t HashType) PrefixBytes() []byte {
 		return SAPLING_SPENDING_KEY_ID
 	case HashTypeSaplingAddress:
 		return SAPLING_ADDRESS_ID
+	case HashTypePkhBls12_381:
+		return BLS12_381_PUBLIC_KEY_HASH_ID
+	case HashTypeSigGenericAggregate:
+		return GENERIC_AGGREGATE_SIGNATURE_ID
+	case HashTypeSigBls12_381:
+		return BLS12_381_SIGNATURE_ID
+	case HashTypePkBls12_381:
+		return BLS12_381_PUBLIC_KEY_ID
+	case HashTypeSkBls12_381:
+		return BLS12_381_SECRET_KEY_ID
+	case HashTypeEncryptedSkBls12_381:
+		return BLS12_381_ENCRYPTED_SECRET_KEY_ID
+	case HashTypeToruAddress:
+		return TORU_ADDRESS_ID
+	case HashTypeToruInbox:
+		return TORU_INBOX_HASH_ID
+	case HashTypeToruMessage:
+		return TORU_MESSAGE_HASH_ID
+	case HashTypeToruCommitment:
+		return TORU_COMMITMENT_HASH_ID
+	case HashTypeToruMessageResult:
+		return TORU_MESSAGE_RESULT_HASH_ID
+	case HashTypeToruMessageResultList:
+		return TORU_MESSAGE_RESULT_LIST_HASH_ID
+	case HashTypeToruWithdrawList:
+		return TORU_WITHDRAW_LIST_HASH_ID
 	default:
 		return nil
 	}
@@ -400,7 +497,8 @@ func (t HashType) Len() int {
 		HashTypePkhP256,
 		HashTypePkhNocurve,
 		HashTypePkhBlinded,
-		HashTypePkhBaker:
+		HashTypePkhBls12_381,
+		HashTypeToruAddress:
 		return 20
 	case HashTypeBlock,
 		HashTypeOperation,
@@ -418,7 +516,14 @@ func (t HashType) Len() int {
 		HashTypeBlockMetadata,
 		HashTypeOperationMetadata,
 		HashTypeOperationMetadataList,
-		HashTypeOperationMetadataListList:
+		HashTypeOperationMetadataListList,
+		HashTypeToruInbox,
+		HashTypeToruMessage,
+		HashTypeToruCommitment,
+		HashTypeToruMessageResultList,
+		HashTypeToruWithdrawList,
+		HashTypeToruMessageResult,
+		HashTypeSkBls12_381:
 		return 32
 	case HashTypePkSecp256k1,
 		HashTypePkP256,
@@ -427,10 +532,14 @@ func (t HashType) Len() int {
 		return 33
 	case HashTypeSaplingAddress:
 		return 43
+	case HashTypePkBls12_381:
+		return 48
 	case HashTypeEncryptedSeedEd25519,
 		HashTypeEncryptedSkSecp256k1,
 		HashTypeEncryptedSkP256:
 		return 56
+	case HashTypeEncryptedSkBls12_381:
+		return 58
 	case HashTypeEncryptedSecp256k1Scalar:
 		return 60
 	case HashTypeSkEd25519,
@@ -439,6 +548,9 @@ func (t HashType) Len() int {
 		HashTypeSigP256,
 		HashTypeSigGeneric:
 		return 64
+	case HashTypeSigGenericAggregate,
+		HashTypeSigBls12_381:
+		return 96
 	case HashTypeSaplingSpendingKey:
 		return 169
 	default:
@@ -455,9 +567,10 @@ func (t HashType) Base58Len() int {
 		HashTypePkhSecp256k1,
 		HashTypePkhP256,
 		HashTypePkhNocurve,
-		HashTypePkhBaker:
+		HashTypePkhBls12_381:
 		return 36
-	case HashTypePkhBlinded:
+	case HashTypePkhBlinded,
+		HashTypeToruAddress:
 		return 37
 	case HashTypeBlock,
 		HashTypeOperation,
@@ -473,23 +586,33 @@ func (t HashType) Base58Len() int {
 	case HashTypeOperationListList,
 		HashTypeNonce,
 		HashTypeScalarSecp256k1,
-		HashTypeOperationMetadataListList:
+		HashTypeOperationMetadataListList,
+		HashTypeToruInbox,
+		HashTypeToruMessage,
+		HashTypeToruCommitment,
+		HashTypeToruMessageResultList,
+		HashTypeToruWithdrawList:
 		return 53
 	case HashTypeSeedEd25519,
 		HashTypePkEd25519,
 		HashTypeSkSecp256k1,
 		HashTypeSkP256,
 		HashTypeElementSecp256k1,
-		HashTypeScriptExpr:
+		HashTypeScriptExpr,
+		HashTypeToruMessageResult,
+		HashTypeSkBls12_381:
 		return 54
 	case HashTypePkSecp256k1,
 		HashTypePkP256:
 		return 55
 	case HashTypeSaplingAddress:
 		return 69
+	case HashTypePkBls12_381:
+		return 76
 	case HashTypeEncryptedSeedEd25519,
 		HashTypeEncryptedSkSecp256k1,
-		HashTypeEncryptedSkP256:
+		HashTypeEncryptedSkP256,
+		HashTypeEncryptedSkBls12_381:
 		return 88
 	case HashTypeEncryptedSecp256k1Scalar:
 		return 93
@@ -501,6 +624,10 @@ func (t HashType) Base58Len() int {
 	case HashTypeSigEd25519,
 		HashTypeSigSecp256k1:
 		return 99
+	case HashTypeSigGenericAggregate:
+		return 141
+	case HashTypeSigBls12_381:
+		return 142
 	case HashTypeSaplingSpendingKey:
 		return 241
 	default:

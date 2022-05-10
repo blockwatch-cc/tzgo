@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -209,7 +209,7 @@ var (
 		OpTypeFailingNoop:               17,  // v009
 		OpTypeRegisterConstant:          111, // v011
 	}
-	// Itahca v012 and up
+	// Ithaca v012 and up
 	opTagV2 = map[OpType]byte{
 		OpTypeSeedNonceRevelation:          1,
 		OpTypeDoubleEndorsementEvidence:    2,
@@ -227,6 +227,19 @@ var (
 		OpTypeEndorsement:                  21,  // v012
 		OpTypeDoublePreendorsementEvidence: 7,   // v012
 		OpTypeSetDepositsLimit:             112, // v012
+		OpTypeToruOrigination:              150, // v013
+		OpTypeToruSubmitBatch:              151, // v013
+		OpTypeToruCommit:                   152, // v013
+		OpTypeToruReturnBond:               153, // v013
+		OpTypeToruFinalizeCommitment:       154, // v013
+		OpTypeToruRemoveCommitment:         155, // v013
+		OpTypeToruRejection:                156, // v013
+		OpTypeToruDispatchTickets:          157, // v013
+		OpTypeToruTransferTicket:           158, // v013
+		OpTypeScruOriginate:                200, // v013
+		OpTypeScruAdd_messages:             201, // v013
+		OpTypeScruCement:                   202, // v013
+		OpTypeScruPublish:                  203, // v013
 	}
 )
 
