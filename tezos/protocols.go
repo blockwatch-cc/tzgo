@@ -1,12 +1,11 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
 
 var (
 	ProtoGenesis   = ParseProtocolHashSafe("PrihK96nBAFSxVL1GLJTVhu9YnzkMFiBeuJRPA8NwuZVZCE1L6i")
-	ProtoBootstrap = ParseProtocolHashSafe("PtYuensgYBb3G3x1hLLbCmcav8ue8Kyd2khADcL5LsT5R1hcXex")
-	ProtoV000      = ParseProtocolHashSafe("Ps9mPmXaRzmzk35gbAYNCAw6UXdE2qoABTHbN2oEEc1qM7CwT9P")
+	ProtoBootstrap = ParseProtocolHashSafe("Ps9mPmXaRzmzk35gbAYNCAw6UXdE2qoABTHbN2oEEc1qM7CwT9P")
 	ProtoV001      = ParseProtocolHashSafe("PtCJ7pwoxe8JasnHY8YonnLYjcVHmhiARPJvqcC6VfHT5s8k8sY")
 	ProtoV002      = ParseProtocolHashSafe("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")
 	ProtoV003      = ParseProtocolHashSafe("PsddFKi32cMJ2qPjf43Qv5GDWLDPZb3T3bF6fLKiF5HtvHNU7aP")
@@ -22,11 +21,11 @@ var (
 	ProtoV013_2    = ParseProtocolHashSafe("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
 
 	// aliases
-	Pt24m4xi = ProtoV004
+	PtAthens = ProtoV004
 	PsBabyM1 = ProtoV005_2
 	PsCARTHA = ProtoV006_2
 	PsDELPH1 = ProtoV007
-	PtEdo2   = ProtoV008_2
+	PtEdo2Zk = ProtoV008_2
 	PsFLoren = ProtoV009
 	PtGRANAD = ProtoV010
 	PtHangz2 = ProtoV011_2
@@ -41,20 +40,20 @@ var (
 	// required to lookup correct block/vote/cycle offsets
 	ProtocolVersions = map[uint32][]ProtocolHash{
 		Mainnet.Uint32(): {
-			ProtoGenesis, // -1
-			ProtoV000,    // 0
-			ProtoV001,    // 1
-			ProtoV002,    // 2
-			ProtoV003,    // 3
-			ProtoV004,    // 4
-			ProtoV005_2,  // 5
-			ProtoV006_2,  // 6
-			ProtoV007,    // 7
-			ProtoV008_2,  // 8
-			ProtoV009,    // 9
-			ProtoV010,    // 10
-			ProtoV011_2,  // 11
-			ProtoV012_2,  // 12
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV001,      // 1
+			ProtoV002,      // 2
+			ProtoV003,      // 3
+			ProtoV004,      // 4
+			ProtoV005_2,    // 5
+			ProtoV006_2,    // 6
+			ProtoV007,      // 7
+			ProtoV008_2,    // 8
+			ProtoV009,      // 9
+			ProtoV010,      // 10
+			ProtoV011_2,    // 11
+			ProtoV012_2,    // 12
 		},
 		Ithacanet.Uint32(): {
 			ProtoGenesis,   // -1
@@ -81,8 +80,10 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 		pp.SecurityDepositRampUpCycles = 64
 	case Ithacanet.Equal(net):
 		pp.Network = "Ithacanet"
+		pp.Version = 11 // starts at Hangzhou
 	case Jakartanet.Equal(net):
 		pp.Network = "Jakartanet"
+		pp.Version = 12 // starts at Ithaca
 	default:
 		pp.Network = "Sandbox"
 	}
@@ -96,8 +97,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	pp.NumVotingPeriods = 4
 	pp.MaxOperationsTTL = 60
 	switch true {
-	case ProtoV000.Equal(proto):
-		pp.Version = 0
+	case ProtoBootstrap.Equal(proto):
+		// retain version set in ForNetwork()
 		pp.StartHeight = 1
 		pp.EndHeight = 1
 
@@ -147,7 +148,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.StartHeight = 1212417
 		pp.EndHeight = 1343488
 
-	case PtEdo2.Equal(proto): // Edo
+	case PtEdo2Zk.Equal(proto): // Edo
 		pp.Version = 8
 		pp.OperationTagsVersion = 1
 		pp.NumVotingPeriods = 5
