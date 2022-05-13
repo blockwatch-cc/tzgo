@@ -790,6 +790,8 @@ func (p Prim) Value(as OpCode) interface{} {
 			if err := a.UnmarshalBinary(p.Bytes); err == nil {
 				return a
 			}
+		case T_TX_ROLLUP_L2_ADDRESS:
+			return tezos.NewAddress(tezos.AddressTypeBls12_381, p.Bytes)
 
 		case T_KEY:
 			k := tezos.Key{}
