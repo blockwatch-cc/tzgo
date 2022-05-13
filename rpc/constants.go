@@ -88,6 +88,9 @@ type Constants struct {
 	FrozenDepositsPercentage                         int         `json:"frozen_deposits_percentage"`
 	DoubleBakingPunishment                           int64       `json:"double_baking_punishment,string"`
 	RatioOfFrozenDepositsSlashedPerDoubleEndorsement tezos.Ratio `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
+
+	// New in v13
+	CyclesPerVotingPeriod int64 `json:"cycles_per_voting_period"`
 }
 
 func (c Constants) HaveV6Rewards() bool {
@@ -269,5 +272,11 @@ func (c Constants) MapToChainParams() *tezos.Params {
 	p.FrozenDepositsPercentage = c.FrozenDepositsPercentage
 	p.DoubleBakingPunishment = c.DoubleBakingPunishment
 	p.RatioOfFrozenDepositsSlashedPerDoubleEndorsement = c.RatioOfFrozenDepositsSlashedPerDoubleEndorsement
+
+	// New in V13
+	if p.BlocksPerVotingPeriod == 0 {
+		p.BlocksPerVotingPeriod = c.CyclesPerVotingPeriod * c.BlocksPerCycle
+	}
+
 	return p
 }
