@@ -200,3 +200,94 @@ func ParseBallotTag(t byte) BallotVote {
 		return BallotVoteInvalid
 	}
 }
+
+// LbVote represents liquidity baking votes in Tezos block headers.
+type LbVote byte
+
+const (
+	LbVoteInvalid LbVote = iota
+	LbVoteOn
+	LbVoteOff
+	LbVotePass
+)
+
+func (v LbVote) IsValid() bool {
+	return v != LbVoteInvalid
+}
+
+func (v LbVote) String() string {
+	switch v {
+	case LbVoteOn:
+		return "on"
+	case LbVoteOff:
+		return "off"
+	case LbVotePass:
+		return "pass"
+	default:
+		return ""
+	}
+}
+
+func (v LbVote) Tag() byte {
+	switch v {
+	case LbVoteOn:
+		return 0
+	case LbVoteOff:
+		return 1
+	case LbVotePass:
+		return 2
+	default:
+		return 255
+	}
+}
+
+func ParseLbVoteTag(t byte) LbVote {
+	switch t {
+	case 0:
+		return LbVoteOn
+	case 1:
+		return LbVoteOff
+	case 2:
+		return LbVotePass
+	default:
+		return LbVoteInvalid
+	}
+}
+func (v *LbVote) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	var vv LbVote
+	if data[0] == '"' {
+		val := string(data[1 : len(data)-1])
+		switch val {
+		case "on":
+			vv = LbVoteOn
+		case "off":
+			vv = LbVoteOff
+		case "pass":
+			vv = LbVotePass
+		}
+	}
+	if !vv.IsValid() {
+		return fmt.Errorf("tezos: invalid lb vote %q", string(data))
+	}
+	*v = vv
+	return nil
+}
+
+func (v LbVote) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *LbVote) UnmarshalBinary(data []byte) error {
+	if len(data) < 1 {
+		return fmt.Errorf("tezos: short lb vote data")
+	}
+	vv := ParseLbVoteTag(data[0])
+	if !vv.IsValid() {
+		return fmt.Errorf("tezos: invalid lb vote tag %d", data[0])
+	}
+	*v = vv
+	return nil
+}

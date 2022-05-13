@@ -124,11 +124,22 @@ type BlockHeader struct {
 	Signature                 tezos.Signature      `json:"signature"`
 	Content                   *BlockContent        `json:"content,omitempty"`
 	LiquidityBakingEscapeVote bool                 `json:"liquidity_baking_escape_vote"`
+	LiquidityBakingToggleVote tezos.LbVote         `json:"liquidity_baking_toggle_vote"`
 
 	// only present when header is fetched explicitly
 	Hash     tezos.BlockHash    `json:"hash"`
 	Protocol tezos.ProtocolHash `json:"protocol"`
 	ChainId  tezos.ChainIdHash  `json:"chain_id"`
+}
+
+func (h BlockHeader) LbVote() tezos.LbVote {
+	if h.LiquidityBakingToggleVote.IsValid() {
+		return h.LiquidityBakingToggleVote
+	}
+	if h.LiquidityBakingEscapeVote {
+		return tezos.LbVoteOn
+	}
+	return tezos.LbVoteOff
 }
 
 // ProtocolData exports protocol-specific extra header fields as binary encoded data.
@@ -152,6 +163,11 @@ type BlockHeader struct {
 // +---------------------------------------+----------+-------------------------------------+
 // | signature                             | 64 bytes | bytes                               |
 // +---------------------------------------+----------+-------------------------------------+
+// Jakarta
+// +---------------------------------------+----------+-------------------------------------+
+// | liquidity_baking_toggle_vote          | 1 byte   | signed 8-bit integer                |
+// +---------------------------------------+----------+-------------------------------------+
+
 func (h BlockHeader) ProtocolData() []byte {
 	buf := bytes.NewBuffer(nil)
 	buf.Write(h.PayloadHash.Bytes())
@@ -163,7 +179,9 @@ func (h BlockHeader) ProtocolData() []byte {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	if h.LiquidityBakingEscapeVote {
+	if h.LiquidityBakingToggleVote.IsValid() {
+		buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
+	} else if h.LiquidityBakingEscapeVote == tezos.LbVoteOn {
 		buf.WriteByte(0xff)
 	} else {
 		buf.WriteByte(0x0)
