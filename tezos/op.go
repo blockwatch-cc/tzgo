@@ -98,9 +98,9 @@ const (
 	OpTypeToruRemoveCommitment                // 23 v013
 	OpTypeToruRejection                       // 24 v013
 	OpTypeToruDispatchTickets                 // 25 v013
-	OpTypeToruTransferTicket                  // 26 v013
+	OpTypeTransferTicket                      // 26 v013
 	OpTypeScruOriginate                       // 27 v013
-	OpTypeScruAdd_messages                    // 28 v013
+	OpTypeScruAddMessages                     // 28 v013
 	OpTypeScruCement                          // 29 v013
 	OpTypeScruPublish                         // 30 v013
 )
@@ -133,9 +133,9 @@ var (
 		OpTypeToruRemoveCommitment:         "tx_rollup_remove_commitment",
 		OpTypeToruRejection:                "tx_rollup_rejection",
 		OpTypeToruDispatchTickets:          "tx_rollup_dispatch_tickets",
-		OpTypeToruTransferTicket:           "transfer_ticket",
+		OpTypeTransferTicket:               "transfer_ticket",
 		OpTypeScruOriginate:                "sc_rollup_originate",
-		OpTypeScruAdd_messages:             "sc_rollup_add_messages",
+		OpTypeScruAddMessages:              "sc_rollup_add_messages",
 		OpTypeScruCement:                   "sc_rollup_cement",
 		OpTypeScruPublish:                  "sc_rollup_publish",
 	}
@@ -235,9 +235,9 @@ var (
 		OpTypeToruRemoveCommitment:         155, // v013
 		OpTypeToruRejection:                156, // v013
 		OpTypeToruDispatchTickets:          157, // v013
-		OpTypeToruTransferTicket:           158, // v013
+		OpTypeTransferTicket:               158, // v013
 		OpTypeScruOriginate:                200, // v013
-		OpTypeScruAdd_messages:             201, // v013
+		OpTypeScruAddMessages:              201, // v013
 		OpTypeScruCement:                   202, // v013
 		OpTypeScruPublish:                  203, // v013
 	}
@@ -355,7 +355,20 @@ func (t OpType) ListId() int {
 		OpTypeDelegation,
 		OpTypeReveal,
 		OpTypeRegisterConstant,
-		OpTypeSetDepositsLimit:
+		OpTypeSetDepositsLimit,
+		OpTypeToruOrigination,
+		OpTypeToruSubmitBatch,
+		OpTypeToruCommit,
+		OpTypeToruReturnBond,
+		OpTypeToruFinalizeCommitment,
+		OpTypeToruRemoveCommitment,
+		OpTypeToruRejection,
+		OpTypeToruDispatchTickets,
+		OpTypeTransferTicket,
+		OpTypeScruOriginate,
+		OpTypeScruAddMessages,
+		OpTypeScruCement,
+		OpTypeScruPublish:
 		return 3
 	default:
 		return -1 // invalid

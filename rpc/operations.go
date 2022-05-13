@@ -280,6 +280,9 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeSetDepositsLimit:
 			op = &SetDepositsLimit{}
 
+		case tezos.OpTypeTransferTicket:
+			op = &TransferTicket{}
+
 			// rollup operations
 		case tezos.OpTypeToruOrigination,
 			tezos.OpTypeToruSubmitBatch,
@@ -289,12 +292,11 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			tezos.OpTypeToruRemoveCommitment,
 			tezos.OpTypeToruRejection,
 			tezos.OpTypeToruDispatchTickets,
-			tezos.OpTypeToruTransferTicket,
 			tezos.OpTypeScruOriginate,
-			tezos.OpTypeScruAdd_messages,
+			tezos.OpTypeScruAddMessages,
 			tezos.OpTypeScruCement,
 			tezos.OpTypeScruPublish:
-			op = &Manager{}
+			op = &Rollup{}
 
 		default:
 			return fmt.Errorf("rpc: unsupported op %q", string(data[start:end]))
