@@ -181,7 +181,7 @@ func (h BlockHeader) ProtocolData() []byte {
 	}
 	if h.LiquidityBakingToggleVote.IsValid() {
 		buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
-	} else if h.LiquidityBakingEscapeVote == tezos.LbVoteOn {
+	} else if h.LiquidityBakingEscapeVote {
 		buf.WriteByte(0xff)
 	} else {
 		buf.WriteByte(0x0)
