@@ -3,6 +3,10 @@
 
 package micheline
 
+import (
+	"blockwatch.cc/tzgo/tezos"
+)
+
 // Wraps ticket value type into type structure that is compatible
 // with ticket values. This is necessary because T_TICKET uses an
 // implicit structure (extra fields amount, ticketer) in addition
@@ -23,4 +27,14 @@ func TicketType(t Prim) Type {
 			NewPrim(T_INT, ":amount"),
 		),
 	)}
+}
+
+// Wraps ticket content into structure that is compatible
+// with ticket type. This is necessary for transfer_ticket calls which
+// use explicit fields for value, amount and ticketer.
+func TicketValue(v Prim, ticketer tezos.Address, amount tezos.Z) Prim {
+	return NewPair(
+		NewBytes(ticketer.Bytes22()),
+		NewPair(v, NewNat(amount.Big())),
+	)
 }
