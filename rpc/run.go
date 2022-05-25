@@ -47,13 +47,14 @@ var (
 )
 
 type CallOptions struct {
-	Confirmations int64         // number of confirmations to wait after broadcast
-	MaxFee        int64         // max acceptable fee, optional (default = 0)
-	TTL           int64         // max lifetime for operations in blocks
-	IgnoreLimits  bool          // ignore simulated limits and use user-defined limits from op
-	Signer        signer.Signer // optional signer interface to use for signing the transaction
-	Sender        tezos.Address // optional address to sign for (use when signer manages multiple addresses)
-	Observer      *Observer     // optional custom block observer for waiting on confirmations
+	Confirmations     int64         // number of confirmations to wait after broadcast
+	MaxFee            int64         // max acceptable fee, optional (default = 0)
+	TTL               int64         // max lifetime for operations in blocks
+	IgnoreLimits      bool          // ignore simulated limits and use user-defined limits from op
+	SimulationBlockID BlockID       // custom block id to simulate operation
+	Signer            signer.Signer // optional signer interface to use for signing the transaction
+	Sender            tezos.Address // optional address to sign for (use when signer manages multiple addresses)
+	Observer          *Observer     // optional custom block observer for waiting on confirmations
 }
 
 var DefaultOptions = CallOptions{
@@ -199,12 +200,17 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		}
 	}
 
+	blockID := BlockID(Head)
+	if opts.SimulationBlockID != nil {
+		blockID = opts.SimulationBlockID
+	}
+
 	req := RunOperationRequest{
 		Operation: sim,
 		ChainId:   c.ChainId,
 	}
 	resp := &Operation{}
-	if err := c.RunOperation(ctx, Head, req, resp); err != nil {
+	if err := c.RunOperation(ctx, blockID, req, resp); err != nil {
 		return nil, err
 	}
 
