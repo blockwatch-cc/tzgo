@@ -1,5 +1,4 @@
-// Copyright (c) 2018 ECAD Labs Inc. MIT License
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -7,6 +6,8 @@ package rpc
 import (
 	"encoding/json"
 	"fmt"
+
+	"blockwatch.cc/tzgo/micheline"
 )
 
 const (
@@ -36,12 +37,17 @@ type Error interface {
 
 // GenericError is a basic error type
 type GenericError struct {
-	ID   string `json:"id"`
-	Kind string `json:"kind"`
+	ID   string         `json:"id"`
+	Kind string         `json:"kind"`
+	With micheline.Prim `json:"with"`
 }
 
 func (e GenericError) Error() string {
-	return fmt.Sprintf("tezos: kind=%s, id=%s", e.Kind, e.ID)
+	var reason string
+	if e.With.IsValid() {
+		reason = e.With.String
+	}
+	return fmt.Sprintf("tezos: kind=%s, id=%s, reason=%s", e.Kind, e.ID, reason)
 }
 
 // ErrorID returns Tezos error id
