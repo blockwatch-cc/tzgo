@@ -63,7 +63,7 @@ var (
 type Params struct {
 	// chain identity, not part of RPC
 	Name        string       `json:"name"`
-	Network     string       `json:"network"`
+	Network     string       `json:"network,omitempty"`
 	Symbol      string       `json:"symbol"`
 	Deployment  int          `json:"deployment"`
 	Version     int          `json:"version"`
