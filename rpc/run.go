@@ -186,7 +186,7 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		sim.Branch = hash
 	}
 
-	if opts != nil && !opts.IgnoreLimits {
+	if opts == nil || !opts.IgnoreLimits {
 		// use default gas/storage limits, set min fee
 		for _, op := range o.Contents {
 			l := op.Limits()
@@ -201,7 +201,7 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 	}
 
 	blockID := BlockID(Head)
-	if opts.SimulationBlockID != nil {
+	if opts != nil && opts.SimulationBlockID != nil {
 		blockID = opts.SimulationBlockID
 	}
 
@@ -214,10 +214,17 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		return nil, err
 	}
 
-	res := &Receipt{
+	// TODO: adjust min fee using known gas units before return so that res.Cost()
+	// reflects the entire cost that Send() will pay
+	rcpt := &Receipt{
 		Op: resp,
 	}
-	return res, nil
+
+	// fail with Tezos error when simulation failed
+	if !rcpt.IsSuccess() {
+		return rcpt, rcpt.Error()
+	}
+	return rcpt, nil
 }
 
 // Validate compares local serializiation against remote RPC serialization of the
