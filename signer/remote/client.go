@@ -16,7 +16,9 @@ import (
 var _ signer.Signer = (*RemoteSigner)(nil)
 
 type RemoteSigner struct {
-    c *rpc.Client
+    c     *rpc.Client
+    addrs []tezos.Address
+    auth  tezos.PrivateKey
 }
 
 // New creates a new remote signer client and initializes it with the remote url.
@@ -30,8 +32,19 @@ func New(url string, client *http.Client) (*RemoteSigner, error) {
     return &RemoteSigner{c: c}, nil
 }
 
-// ListAddresses returns a list of addresses the remote signer can produce signatures for.
-func (s RemoteSigner) ListAddresses(ctx context.Context) ([]tezos.Address, error) {
+func (s *RemoteSigner) WithAddress(addr tezos.Address) *RemoteSigner {
+    s.addrs = append(s.addrs, addr)
+    return s
+}
+
+func (s *RemoteSigner) WithAuthKey(sk tezos.PrivateKey) *RemoteSigner {
+    s.auth = sk
+    return s
+}
+
+// AuthorizedKeys returns a list of addresses the remote signer accepts for
+// authenticating requests.
+func (s RemoteSigner) AuthorizedKeys(ctx context.Context) ([]tezos.Address, error) {
     type response struct {
         Addrs []tezos.Address `json:"authorized_keys"`
     }
@@ -41,6 +54,11 @@ func (s RemoteSigner) ListAddresses(ctx context.Context) ([]tezos.Address, error
         return nil, err
     }
     return resp.Addrs, nil
+}
+
+// ListAddresses returns a list of addresses the remote signer can produce signatures for.
+func (s RemoteSigner) ListAddresses(ctx context.Context) ([]tezos.Address, error) {
+    return s.addrs, nil
 }
 
 // GetKey returns the public key associated with address.
