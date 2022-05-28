@@ -5,6 +5,8 @@ package micheline
 
 import (
 	"math/big"
+
+	"blockwatch.cc/tzgo/tezos"
 )
 
 func NewCode(c OpCode, args ...Prim) Prim {
@@ -37,6 +39,10 @@ func NewSeq(args ...Prim) Prim {
 
 func NewInt64(i int64) Prim {
 	return NewBig(big.NewInt(i))
+}
+
+func NewMutez(n tezos.N) Prim {
+	return NewBig(big.NewInt(int64(n)))
 }
 
 func NewBig(i *big.Int) Prim {
