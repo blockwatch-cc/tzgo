@@ -51,6 +51,14 @@ type FA2BalanceResponse struct {
 	Balance tezos.Z           `json:"balance"`
 }
 
+func (t FA2Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z, error) {
+	resp, err := t.GetBalances(ctx, []FA2BalanceRequest{FA2BalanceRequest{Owner: owner, TokenId: t.TokenId}})
+	if err != nil {
+		return tezos.Z{}, err
+	}
+	return resp[0].Balance, nil
+}
+
 func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]FA2BalanceResponse, error) {
 	args := micheline.NewSeq()
 	for _, r := range req {
