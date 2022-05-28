@@ -61,6 +61,14 @@ func (c *Client) GetContract(ctx context.Context, addr tezos.Address, id BlockID
 	return &info, nil
 }
 
+// GetContractBalance returns the spendable balance for this account at block id.
+func (c *Client) GetContractBalance(ctx context.Context, addr tezos.Address, id BlockID) (tezos.Z, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/balance", id, addr)
+	var bal tezos.Z
+	err := c.Get(ctx, u, &bal)
+	return bal, err
+}
+
 // GetManagerKey returns the revealed public key of an account at block id.
 func (c *Client) GetManagerKey(ctx context.Context, addr tezos.Address, id BlockID) (tezos.Key, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/contracts/%s/manager_key", id, addr)

@@ -49,12 +49,22 @@ func (r *Receipt) IsSuccess() bool {
 	return true
 }
 
-// Error returns the first execution error found in this operation group as GenericError.
-// To access error details or multiple errors, visit r.Op.Contents[].OperationResult.Errors[].
+// Error returns the first execution error found in this operation group or one of
+// its internal results that is of status failed. This helper only exports the error
+// as GenericError. To access error details or all errors, visit
+// r.Op.Contents[].OperationResult.Errors[] and
+// r.Op.Contents[].Metadata.InternalResults.Result.Errors[]
 func (r *Receipt) Error() error {
 	for _, v := range r.Op.Contents {
-		if res := v.Result(); len(res.Errors) > 0 {
-			return res.Errors[0].GenericError
+		res := v.Result()
+		if len(res.Errors) > 0 && res.Status == tezos.OpStatusFailed {
+			return res.Errors[len(res.Errors)-1].GenericError
+		}
+		for _, vv := range v.Meta().InternalResults {
+			res := vv.Result
+			if len(res.Errors) > 0 && res.Status == tezos.OpStatusFailed {
+				return res.Errors[len(res.Errors)-1].GenericError
+			}
 		}
 	}
 	return nil
