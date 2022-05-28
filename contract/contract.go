@@ -14,9 +14,9 @@ import (
 )
 
 type CallArguments interface {
-	WithSource(tezos.Address)
-	WithDestination(tezos.Address)
-	WithAmount(tezos.N)
+	WithSource(tezos.Address) CallArguments
+	WithDestination(tezos.Address) CallArguments
+	WithAmount(tezos.N) CallArguments
 	Encode() *codec.Transaction
 	Parameters() *micheline.Parameters
 }
@@ -32,16 +32,19 @@ func NewTxArgs() *TxArgs {
 	return &TxArgs{}
 }
 
-func (a *TxArgs) WithSource(addr tezos.Address) {
+func (a *TxArgs) WithSource(addr tezos.Address) CallArguments {
 	a.Source = addr.Clone()
+	return a
 }
 
-func (a *TxArgs) WithDestination(addr tezos.Address) {
+func (a *TxArgs) WithDestination(addr tezos.Address) CallArguments {
 	a.Destination = addr.Clone()
+	return a
 }
 
-func (a *TxArgs) WithAmount(amount tezos.N) {
+func (a *TxArgs) WithAmount(amount tezos.N) CallArguments {
 	a.Amount = amount
+	return a
 }
 
 func (a *TxArgs) WithParameters(params micheline.Parameters) {
@@ -83,6 +86,10 @@ func NewEmptyContract(cli *rpc.Client) *Contract {
 	}
 }
 
+func (c *Contract) Client() *rpc.Client {
+	return c.rpc
+}
+
 func (c *Contract) Resolve(ctx context.Context) error {
 	// use normalized script to have the node embed global constants
 	script, err := c.rpc.GetNormalizedScript(ctx, c.addr, rpc.UnparsingModeReadable)
@@ -94,6 +101,15 @@ func (c *Contract) Resolve(ctx context.Context) error {
 		return err
 	}
 	c.script = script
+	c.store = &store
+	return nil
+}
+
+func (c *Contract) Reload(ctx context.Context) error {
+	store, err := c.rpc.GetContractStorage(ctx, c.addr, rpc.Head)
+	if err != nil {
+		return err
+	}
 	c.store = &store
 	return nil
 }
@@ -306,6 +322,9 @@ func (c *Contract) CallMulti(ctx context.Context, args []CallArguments, opts *rp
 	// assemble batch transaction
 	op := codec.NewOp().WithTTL(opts.TTL)
 	for _, arg := range args {
+		if arg == nil {
+			continue
+		}
 		arg.WithDestination(c.addr)
 		op.WithContents(arg.Encode())
 	}
