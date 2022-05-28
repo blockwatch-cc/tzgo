@@ -21,6 +21,7 @@ const (
 	TokenKindFA1_2
 	TokenKindFA2
 	TokenKindNFT
+	TokenKindNoView
 )
 
 func (k TokenKind) String() string {
@@ -35,6 +36,8 @@ func (k TokenKind) String() string {
 		return "fa2"
 	case TokenKindNFT:
 		return "nft"
+	case TokenKindNoView:
+		return "noview"
 	default:
 		return ""
 	}
