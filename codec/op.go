@@ -286,6 +286,23 @@ func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
     return o
 }
 
+func (o *Op) WithMinFee() *Op {
+    for i, v := range o.Contents {
+        // extend current limit with minimum fee estimate based on size + gas
+        lim := v.Limits()
+
+        adj := tezos.Limits{
+            GasLimit:     lim.GasLimit,
+            StorageLimit: lim.StorageLimit,
+            Fee:          max64(lim.Fee, CalculateMinFee(v, lim.GasLimit, i == 0, o.Params)),
+        }
+
+        // use adjusted limits
+        v.WithLimits(adj)
+    }
+    return o
+}
+
 // Limits returns the sum of all limits (fee, gas, storage limit) currently
 // set for all contained operations.
 func (o Op) Limits() tezos.Limits {

@@ -11,9 +11,10 @@ import (
     "blockwatch.cc/tzgo/tezos"
 )
 
+// TODO: fetch dynamic from /chains/main/mempool/filter
 const (
     minFeeFixedNanoTez int64 = 100_000
-    minFeeByteNanoTez  int64 = 250_000
+    minFeeByteNanoTez  int64 = 1_000
     minFeeGasNanoTez   int64 = 100
 )
 
