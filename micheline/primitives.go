@@ -1000,6 +1000,9 @@ func (p Prim) EncodeJSON(buf *bytes.Buffer) {
 }
 
 func (p Prim) MarshalBinary() ([]byte, error) {
+	if !p.IsValid() {
+		return nil, nil
+	}
 	buf := bytes.NewBuffer(nil)
 	if err := p.EncodeBuffer(buf); err != nil {
 		return nil, err
