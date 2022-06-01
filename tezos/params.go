@@ -257,6 +257,14 @@ func (p *Params) CycleEndHeight(cycle int64) int64 {
 	return pp.StartBlockOffset + (cycle-pp.StartCycle+1)*pp.BlocksPerCycle
 }
 
+func (p *Params) CyclePosition(height int64) int64 {
+	pp := p
+	if !p.ContainsHeight(height) {
+		pp = p.ForHeight(height)
+	}
+	return height - pp.CycleStartHeight(pp.CycleFromHeight(height))
+}
+
 func (p *Params) SnapshotBaseCycle(cycle int64) int64 {
 	var offset int64 = 2
 	if p.Version >= 12 {
