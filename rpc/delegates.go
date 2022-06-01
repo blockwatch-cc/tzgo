@@ -27,7 +27,7 @@ type Delegate struct {
 	GracePeriod          int64           `json:"grace_period"`
 	StakingBalance       int64           `json:"staking_balance,string"`
 	DelegatedBalance     int64           `json:"delegated_balance,string"`
-	VotingPower          int64           `json:"voting_power"`
+	VotingPower          Int64orString   `json:"voting_power"`
 
 	// v012+
 	FullBalance           int64 `json:"full_balance,string"`
@@ -48,19 +48,16 @@ type DelegateList []tezos.Address
 
 // ListActiveDelegates returns information about all active delegates at a block.
 func (c *Client) ListActiveDelegates(ctx context.Context, id BlockID) (DelegateList, error) {
-	delegates := make(DelegateList, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates?active=true", id)
-	if err := c.Get(ctx, u, &delegates); err != nil {
+	p, err := c.GetParams(ctx, id)
+	if err != nil {
 		return nil, err
 	}
-	return delegates, nil
-}
-
-// ListActiveDelegatesWithRolls returns information about all active delegates at a block
-// who have at least one roll. Deprecated in Ithaca.
-func (c *Client) ListActiveDelegatesWithRolls(ctx context.Context, id BlockID) (DelegateList, error) {
+	selector := "active=true"
+	if p.Version >= 13 {
+		selector = "with_minimal_stake=true"
+	}
 	delegates := make(DelegateList, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/context/raw/json/active_delegates_with_rolls", id)
+	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates?%s", id, selector)
 	if err := c.Get(ctx, u, &delegates); err != nil {
 		return nil, err
 	}
