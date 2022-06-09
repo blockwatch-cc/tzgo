@@ -65,42 +65,43 @@ func DetectNftLedger(key, val micheline.Prim) NftLedgerSchema {
 }
 
 type NftLedger struct {
-    Address tezos.Address
-    Schema  NftLedgerSchema
-    Bigmap  int64
+    Address    tezos.Address
+    Schema     NftLedgerSchema
+    Bigmap     int64
+    FirstBlock int64
 }
 
-func (l NftLedger) DecodeBalance(prim micheline.Prim) (bal NftBalance, err error) {
+func (l NftLedger) DecodeEntry(prim micheline.Prim) (bal NftLedgerEntry, err error) {
     bal.schema = l.Schema
     err = prim.Decode(&bal)
     return
 }
 
-type NftBalance struct {
+type NftLedgerEntry struct {
     Owner   tezos.Address
     TokenId tezos.Z
     Balance tezos.Z
     schema  NftLedgerSchema
 }
 
-func (b *NftBalance) UnmarshalPrim(prim micheline.Prim) error {
+func (b *NftLedgerEntry) UnmarshalPrim(prim micheline.Prim) error {
     // schema switch to select the chosen struct type with custom struct tags
     switch b.schema {
     case NftLedgerSchema1:
-        return prim.Decode((*NftBalanceTyp1)(b))
+        return prim.Decode((*NftLedger1)(b))
     case NftLedgerSchema2:
-        return prim.Decode((*NftBalanceTyp2)(b))
+        return prim.Decode((*NftLedgerTyp2)(b))
     case NftLedgerSchema3:
-        return prim.Decode((*NftBalanceTyp3)(b))
+        return prim.Decode((*NftLedgerTyp3)(b))
     default:
         return fmt.Errorf("unsupported NFT ledger type %d", b.schema)
     }
 }
 
 // 1 @key: {0: address, 1: nat}     @value: nat
-type NftBalanceTyp1 NftBalance
+type NftLedger1 NftLedgerEntry
 
-func (b *NftBalanceTyp1) UnmarshalPrim(prim micheline.Prim) error {
+func (b *NftLedger1) UnmarshalPrim(prim micheline.Prim) error {
     var alias struct {
         Owner   tezos.Address `prim:"owner,path=0/0"`
         TokenId tezos.Z       `prim:"token_id,path=0/1"`
@@ -116,9 +117,9 @@ func (b *NftBalanceTyp1) UnmarshalPrim(prim micheline.Prim) error {
 }
 
 // 2 @key: nat  @value: address
-type NftBalanceTyp2 NftBalance
+type NftLedgerTyp2 NftLedgerEntry
 
-func (b *NftBalanceTyp2) UnmarshalPrim(prim micheline.Prim) error {
+func (b *NftLedgerTyp2) UnmarshalPrim(prim micheline.Prim) error {
     var alias struct {
         TokenId tezos.Z       `prim:"token_id,path=0"`
         Owner   tezos.Address `prim:"owner,path=1"`
@@ -133,9 +134,9 @@ func (b *NftBalanceTyp2) UnmarshalPrim(prim micheline.Prim) error {
 }
 
 // 3 @key: {0: nat, 1: address}     @value: nat
-type NftBalanceTyp3 NftBalance
+type NftLedgerTyp3 NftLedgerEntry
 
-func (b *NftBalanceTyp3) UnmarshalPrim(prim micheline.Prim) error {
+func (b *NftLedgerTyp3) UnmarshalPrim(prim micheline.Prim) error {
     var alias struct {
         TokenId tezos.Z       `prim:"token_id,path=0/0"`
         Owner   tezos.Address `prim:"owner,path=0/1"`
