@@ -67,6 +67,20 @@ func (a Typedef) StrictEqual(b Typedef) bool {
 	return a.Equal(b)
 }
 
+func (t Typedef) Left() Typedef {
+	if len(t.Args) > 0 {
+		return t.Args[0]
+	}
+	return Typedef{}
+}
+
+func (t Typedef) Right() Typedef {
+	if len(t.Args) > 1 {
+		return t.Args[1]
+	}
+	return Typedef{}
+}
+
 func (t Typedef) String() string {
 	var b strings.Builder
 	if t.Name != "" {
@@ -203,7 +217,10 @@ func (t Type) MarshalJSON() ([]byte, error) {
 
 func buildTypedef(name string, typ Prim) Typedef {
 	if typ.HasAnno() {
-		name = typ.GetVarAnnoAny()
+		n := typ.GetVarAnnoAny()
+		if n != "" {
+			name = n
+		}
 	}
 	td := Typedef{
 		Name: name,
