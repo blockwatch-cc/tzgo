@@ -81,6 +81,15 @@ func (c *Client) Init(ctx context.Context) error {
 	return c.ResolveChainConfig(ctx)
 }
 
+func (c *Client) UseIpfsUrl(uri string) error {
+	u, err := url.Parse(uri)
+	if err != nil {
+		return err
+	}
+	c.IpfsURL = u
+	return nil
+}
+
 func (c *Client) Client() *http.Client {
 	return c.client
 }
