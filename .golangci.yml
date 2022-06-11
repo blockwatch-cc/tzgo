@@ -1,0 +1,17 @@
+linters:
+  enable:
+    - bodyclose
+    - goconst
+    - gocritic
+    - gofmt
+    - govet
+    - prealloc
+    - unconvert
+    - unparam
+    - deadcode
+    - gosimple
+    - structcheck
+    - varcheck
+    - unused
+  disable:
+    - errcheck
