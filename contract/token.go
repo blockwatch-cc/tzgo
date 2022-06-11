@@ -129,6 +129,10 @@ func (t *TokenMetadata) UnmarshalPrim(prim micheline.Prim) error {
 	})
 }
 
+func (t *TokenMetadata) URI() string {
+	return t.uri
+}
+
 func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos.Z) (*TokenMetadata, error) {
 	var (
 		store micheline.Prim
