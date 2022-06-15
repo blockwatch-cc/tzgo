@@ -31,6 +31,6 @@ func (r SetDepositsLimit) Result() OperationResult {
 func (r SetDepositsLimit) Costs() tezos.Costs {
     return tezos.Costs{
         Fee:     r.Manager.Fee,
-        GasUsed: r.Metadata.Result.ConsumedGas,
+        GasUsed: r.Metadata.Result.Gas(),
     }
 }

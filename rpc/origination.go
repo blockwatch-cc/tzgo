@@ -35,7 +35,7 @@ func (o Origination) Costs() tezos.Costs {
 	res := o.Metadata.Result
 	cost := tezos.Costs{
 		Fee:         o.Manager.Fee,
-		GasUsed:     res.ConsumedGas,
+		GasUsed:     res.Gas(),
 		StorageUsed: res.PaidStorageSizeDiff,
 	}
 	var i int

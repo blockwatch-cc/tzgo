@@ -20,6 +20,6 @@ type Reveal struct {
 func (r Reveal) Costs() tezos.Costs {
 	return tezos.Costs{
 		Fee:     r.Manager.Fee,
-		GasUsed: r.Metadata.Result.ConsumedGas,
+		GasUsed: r.Metadata.Result.Gas(),
 	}
 }

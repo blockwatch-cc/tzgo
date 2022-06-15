@@ -24,7 +24,7 @@ func (t Transaction) Costs() tezos.Costs {
 	res := t.Metadata.Result
 	cost := tezos.Costs{
 		Fee:         t.Manager.Fee,
-		GasUsed:     res.ConsumedGas,
+		GasUsed:     res.Gas(),
 		StorageUsed: res.PaidStorageSizeDiff,
 	}
 	if !t.Result().IsSuccess() {
@@ -47,7 +47,7 @@ func (t Transaction) Costs() tezos.Costs {
 		i++
 	}
 	for _, in := range t.Metadata.InternalResults {
-		cost.GasUsed += in.Result.ConsumedGas
+		cost.GasUsed += in.Result.Gas()
 		cost.StorageUsed += in.Result.PaidStorageSizeDiff
 		var i int
 		if in.Amount > 0 {
@@ -93,4 +93,18 @@ type ImplicitResult struct {
 	OriginatedContracts []tezos.Address   `json:"originated_contracts,omitempty"`
 	PaidStorageSizeDiff int64             `json:"paid_storage_size_diff,string"`
 	Script              *micheline.Script `json:"script,omitempty"`
+}
+
+func (r ImplicitResult) Gas() int64 {
+	if r.ConsumedMilliGas > 0 {
+		return r.ConsumedMilliGas / 1000
+	}
+	return r.ConsumedGas
+}
+
+func (r ImplicitResult) MilliGas() int64 {
+	if r.ConsumedMilliGas > 0 {
+		return r.ConsumedMilliGas
+	}
+	return r.ConsumedGas * 1000
 }
