@@ -54,6 +54,7 @@ var (
 			ProtoV010,      // 10
 			ProtoV011_2,    // 11
 			ProtoV012_2,    // 12
+			ProtoV013_2,    // 13
 		},
 		Ithacanet.Uint32(): {
 			ProtoGenesis,   // -1
