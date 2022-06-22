@@ -156,7 +156,10 @@ func (p Prim) Size() int {
 }
 
 func (p Prim) Hash64() uint64 {
-	buf, _ := p.MarshalBinary()
+	var buf []byte
+	if p.IsValid() {
+		buf, _ := p.MarshalBinary()
+	}
 	h := sha256.Sum256(buf)
 	return binary.BigEndian.Uint64(h[:8])
 }
