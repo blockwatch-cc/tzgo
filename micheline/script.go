@@ -20,11 +20,11 @@ type Script struct {
 }
 
 type Code struct {
-	Param   Prim  // call types
-	Storage Prim  // storage types
-	Code    Prim  // program code
-	View    Prim  // view code (i.e. list of views, may be empty)
-	BadCode *Prim // catch-all for ill-formed contracts
+	Param   Prim // call types
+	Storage Prim // storage types
+	Code    Prim // program code
+	View    Prim // view code (i.e. list of views, may be empty)
+	BadCode Prim // catch-all for ill-formed contracts
 }
 
 func NewScript() *Script {
@@ -39,23 +39,27 @@ func NewScript() *Script {
 	}
 }
 
-func (s *Script) StorageType() Type {
+func (s Script) IsValid() bool {
+	return s.Code.Param.IsValid() && s.Code.Storage.IsValid()
+}
+
+func (s Script) StorageType() Type {
 	return Type{s.Code.Storage.Args[0]}
 }
 
-func (s *Script) ParamType() Type {
+func (s Script) ParamType() Type {
 	return Type{s.Code.Param.Args[0]}
 }
 
-func (s *Script) Entrypoints(withPrim bool) (Entrypoints, error) {
+func (s Script) Entrypoints(withPrim bool) (Entrypoints, error) {
 	return s.ParamType().Entrypoints(withPrim)
 }
 
-func (s *Script) ResolveEntrypointPath(name string) string {
+func (s Script) ResolveEntrypointPath(name string) string {
 	return s.ParamType().ResolveEntrypointPath(name)
 }
 
-func (s *Script) Views(withPrim, withCode bool) (Views, error) {
+func (s Script) Views(withPrim, withCode bool) (Views, error) {
 	views := make(Views, len(s.Code.View.Args))
 	for _, v := range s.Code.View.Args {
 		view := NewView(v)
@@ -70,13 +74,14 @@ func (s *Script) Views(withPrim, withCode bool) (Views, error) {
 	return views, nil
 }
 
-func (s *Script) Constants() []tezos.ExprHash {
+func (s Script) Constants() []tezos.ExprHash {
 	c := make([]tezos.ExprHash, 0)
 	for _, prim := range []Prim{
 		s.Code.Param,
 		s.Code.Storage,
 		s.Code.Code,
 		s.Code.View,
+		s.Code.BadCode,
 	} {
 		prim.Walk(func(p Prim) error {
 			if p.IsConstant() {
@@ -91,6 +96,19 @@ func (s *Script) Constants() []tezos.ExprHash {
 }
 
 func (s *Script) ExpandConstants(dict ConstantDict) {
+	// first check if the entire script is a constant
+	if s.Code.BadCode.IsConstant() {
+		if c, ok := dict.GetString(s.Code.BadCode.Args[0].String); ok {
+			// replace entire code section from constant
+			s.Code.Param = c.Args[0]
+			s.Code.Storage = c.Args[1]
+			s.Code.Code = c.Args[2]
+			if len(c.Args) > 3 {
+				s.Code.View = c.Args[3]
+			}
+		}
+	}
+	// continue replacing nested constants
 	for _, prim := range []*Prim{
 		&s.Code.Param,
 		&s.Code.Storage,
@@ -114,20 +132,20 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 //
 // To identify syntactically equal entrypoints with or without annotations use
 // `IsEqual()`, `IsEqualWithAnno()` or `IsEqualPrim()`.
-func (s *Script) InterfaceHash() uint64 {
+func (s Script) InterfaceHash() uint64 {
 	return s.Code.Param.Hash64()
 }
 
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded storage type
 // definition. This value is sufficiently unique to identify contracts with exactly
 // the same entrypoints including annotations.
-func (s *Script) StorageHash() uint64 {
+func (s Script) StorageHash() uint64 {
 	return s.Code.Storage.Hash64()
 }
 
 // Returns the first 4 bytes of the SHA256 hash from a binary encoded code section
 // of a contract.
-func (s *Script) CodeHash() uint64 {
+func (s Script) CodeHash() uint64 {
 	return s.Code.Code.Hash64()
 }
 
@@ -135,7 +153,7 @@ func (s *Script) CodeHash() uint64 {
 // in rare cases when storage type uses a T_OR branch above its bigmap type definitions
 // and the relevant branch is inactive/hidden the storage value lacks bigmap
 // references and this function will return an empty list, even though bigmaps exist.
-func (s *Script) BigmapsById() []int64 {
+func (s Script) BigmapsById() []int64 {
 	ids := make([]int64, 0)
 	stack := NewStack(s.Storage)
 	_ = s.Code.Storage.Walk(func(p Prim) error {
@@ -164,7 +182,7 @@ func (s *Script) BigmapsById() []int64 {
 // Returns a named map containing all bigmaps currently referenced by a contracts
 // storage value. Names are derived from Michelson type annotations and if missing,
 // a sequence number. Optionally appends a sequence number to prevent duplicate names.
-func (s *Script) BigmapsByName() map[string]int64 {
+func (s Script) BigmapsByName() map[string]int64 {
 	ids := s.BigmapsById()
 	named := make(map[string]int64)
 	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
@@ -184,7 +202,7 @@ func (s *Script) BigmapsByName() map[string]int64 {
 // Returns a named map containing all bigmaps defined in contracts storgae spec.
 // Names are derived from Michelson type annotations and if missing,
 // a sequence number. Optionally appends a sequence number to prevent duplicate names.
-func (s *Script) BigmapTypesByName() map[string]Type {
+func (s Script) BigmapTypesByName() map[string]Type {
 	named := make(map[string]Type)
 	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
 	for i := range bigmaps {
@@ -294,10 +312,10 @@ func (c Code) MarshalBinary() ([]byte, error) {
 	}
 
 	// store ill-formed contracts
-	if c.BadCode != nil {
+	if c.BadCode.IsValid() {
 		root = Prim{
 			Type: PrimSequence,
-			Args: []Prim{EmptyPrim, EmptyPrim, EmptyPrim, *c.BadCode},
+			Args: []Prim{EmptyPrim, EmptyPrim, EmptyPrim, c.BadCode},
 		}
 	}
 
@@ -347,7 +365,7 @@ func (c *Code) DecodeBuffer(buf *bytes.Buffer) error {
 			// append to view list
 			c.View.Args = append(c.View.Args, v)
 		case 255:
-			c.BadCode = &v
+			c.BadCode = v
 		default:
 			return fmt.Errorf("micheline: unexpected program key 0x%x", v.OpCode)
 		}
@@ -411,8 +429,8 @@ func (c Code) MarshalJSON() ([]byte, error) {
 	if len(c.View.Args) > 0 {
 		root.Args = append(root.Args, c.View.Args...)
 	}
-	if c.BadCode != nil {
-		root = *c.BadCode
+	if c.BadCode.IsValid() {
+		root = c.BadCode
 	}
 	return json.Marshal(root)
 }
@@ -427,7 +445,7 @@ func (c *Code) UnmarshalJSON(data []byte) error {
 	// check for sequence tag
 	if prim.Type != PrimSequence {
 		log.Warnf("micheline: unexpected program tag 0x%x", prim.Type)
-		c.BadCode = &prim
+		c.BadCode = prim
 		return nil
 	}
 
@@ -451,7 +469,7 @@ stopcode:
 		}
 	}
 	if isBadCode {
-		c.BadCode = &prim
+		c.BadCode = prim
 	}
 	return nil
 }
