@@ -249,6 +249,8 @@ func TestBigmapValues(t *testing.T) {
 					key1,        // from binary
 				)
 				if err != nil {
+					T.Logf("typ: %s", typ1.Left().Dump())
+					T.Logf("key: %s", key1.Dump())
 					T.Errorf("key render error: %v", err)
 				}
 				// try unpack
@@ -264,7 +266,7 @@ func TestBigmapValues(t *testing.T) {
 					T.Errorf("value render error: %v", err)
 				}
 				if !jsonDiff(t, buf, test.WantKey) {
-					T.Error("key render mismatch, see log for details")
+					T.Error("key render mismatch!")
 					t.FailNow()
 				}
 
@@ -287,7 +289,7 @@ func TestBigmapValues(t *testing.T) {
 					T.Errorf("value render error: %v", err)
 				}
 				if !jsonDiff(t, buf, test.WantValue) {
-					T.Error("value render mismatch, see log for details")
+					T.Error("value render mismatch!")
 					t.FailNow()
 				}
 			})

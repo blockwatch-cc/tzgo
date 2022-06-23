@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Mainnet/onmZTNuXQP5LivDJpEASkA1oYg4AA18YKW8AtqRh8qv8u3JUhBJ/0/0",
+    "type": {
+      "args": [
+        {
+          "annots": [
+            "%Pour"
+          ],
+          "args": [
+            {
+              "annots": [
+                "%pour_auth"
+              ],
+              "prim": "signature"
+            },
+            {
+              "annots": [
+                "%pour_amount"
+              ],
+              "prim": "mutez"
+            }
+          ],
+          "prim": "pair"
+        }
+      ],
+      "prim": "option"
+    },
+    "value": {
+      "prim": "None"
+    },
+    "type_hex": "0563086504670000000a25706f75725f61757468046a0000000c25706f75725f616d6f756e740000000525506f7572",
+    "value_hex": "0306",
+    "want_value": null
+  }
+]

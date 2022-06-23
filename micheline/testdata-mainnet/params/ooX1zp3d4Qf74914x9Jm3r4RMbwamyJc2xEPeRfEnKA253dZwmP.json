@@ -1,0 +1,735 @@
+[
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/82/6",
+    "type": {
+      "prim": "list",
+      "annots": [
+        "%set_royalties"
+      ],
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%creator"
+                  ]
+                },
+                {
+                  "prim": "map",
+                  "annots": [
+                    "%royalties"
+                  ],
+                  "args": [
+                    {
+                      "prim": "address"
+                    },
+                    {
+                      "prim": "nat"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%token_fa2"
+                  ]
+                },
+                {
+                  "prim": "nat",
+                  "annots": [
+                    "%token_id"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      {
+        "prim": "Pair",
+        "args": [
+          {
+            "prim": "Pair",
+            "args": [
+              {
+                "string": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N"
+              },
+              [
+                {
+                  "prim": "Elt",
+                  "args": [
+                    {
+                      "string": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N"
+                    },
+                    {
+                      "int": "150"
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          {
+            "prim": "Pair",
+            "args": [
+              {
+                "string": "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"
+              },
+              {
+                "int": "3875"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type_hex": "065f07650765046e000000082563726561746f720860036e03620000000a25726f79616c746965730765046e0000000a25746f6b656e5f66613204620000000925746f6b656e5f69640000000e257365745f726f79616c74696573",
+    "value_hex": "020000008e070707070100000024747a31587567386b3341746851573543626157334e327435694a636e747443506965324e020000002e07040100000024747a31587567386b3341746851573543626157334e327435694a636e747443506965324e009602070701000000244b543141467135586f725064756f59795778733567457972464b3666566a4a566274436a00a33c",
+    "want_value": {
+      "set_royalties": [
+      {
+        "creator": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N",
+        "royalties": {
+          "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N": "150"
+        },
+        "token_fa2": "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj",
+        "token_id": "3875"
+      }
+    ]}
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/83/6",
+    "type": {
+      "prim": "pair",
+      "annots": [
+        "%get_royalties"
+      ],
+      "args": [
+        {
+          "prim": "nat",
+          "annots": [
+            "%akaOBJ_id"
+          ]
+        },
+        {
+          "prim": "address",
+          "annots": [
+            "%callback"
+          ]
+        }
+      ]
+    },
+    "value": {
+      "prim": "Pair",
+      "args": [
+        {
+          "int": "3875"
+        },
+        {
+          "bytes": "015a7b91fed7fd0f068bdb440749594d78e205c5cc00726f79616c746965735f63616c6c6261636b"
+        }
+      ]
+    },
+    "type_hex": "086504620000000a25616b614f424a5f6964046e000000092563616c6c6261636b0000000e256765745f726f79616c74696573",
+    "value_hex": "070700a33c0a00000028015a7b91fed7fd0f068bdb440749594d78e205c5cc00726f79616c746965735f63616c6c6261636b",
+    "want_value": {
+      "get_royalties": {
+        "akaOBJ_id": "3875",
+        "callback": "KT1GqCQqwzSDXBkCr8nFJ932JtcSugfVS2vL"
+      }
+    }
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/84/6",
+    "type": {
+      "prim": "pair",
+      "annots": [
+        "%royalties_callback"
+      ],
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "nat",
+              "annots": [
+                "%akaOBJ_id"
+              ]
+            },
+            {
+              "prim": "map",
+              "annots": [
+                "%royalties"
+              ],
+              "args": [
+                {
+                  "prim": "address"
+                },
+                {
+                  "prim": "nat"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "address",
+              "annots": [
+                "%sender"
+              ]
+            },
+            {
+              "prim": "nat",
+              "annots": [
+                "%total_royalties"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": {
+      "prim": "Pair",
+      "args": [
+        {
+          "prim": "Pair",
+          "args": [
+            {
+              "int": "3875"
+            },
+            [
+              {
+                "prim": "Elt",
+                "args": [
+                  {
+                    "bytes": "0000869700effe4ec10282e1927c9aa6025cffcf83b1"
+                  },
+                  {
+                    "int": "150"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "prim": "Pair",
+          "args": [
+            {
+              "bytes": "0000869700effe4ec10282e1927c9aa6025cffcf83b1"
+            },
+            {
+              "int": "150"
+            }
+          ]
+        }
+      ]
+    },
+    "type_hex": "0865076504620000000a25616b614f424a5f69640860036e03620000000a25726f79616c746965730765046e000000072573656e64657204620000001025746f74616c5f726f79616c746965730000001325726f79616c746965735f63616c6c6261636b",
+    "value_hex": "0707070700a33c020000002007040a000000160000869700effe4ec10282e1927c9aa6025cffcf83b100960207070a000000160000869700effe4ec10282e1927c9aa6025cffcf83b1009602",
+    "want_value": {
+      "royalties_callback": {
+        "akaOBJ_id": "3875",
+        "royalties": {
+          "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N": "150"
+        },
+        "sender": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N",
+        "total_royalties": "150"
+      }
+    }
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/85/6",
+    "type": {
+      "prim": "list",
+      "annots": [
+        "%update_operators"
+      ],
+      "args": [
+        {
+          "prim": "or",
+          "args": [
+            {
+              "prim": "pair",
+              "annots": [
+                "%add_operator"
+              ],
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "address",
+                      "annots": [
+                        "%operator"
+                      ]
+                    },
+                    {
+                      "prim": "nat",
+                      "annots": [
+                        "%token_id"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "prim": "pair",
+              "annots": [
+                "%remove_operator"
+              ],
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "address",
+                      "annots": [
+                        "%operator"
+                      ]
+                    },
+                    {
+                      "prim": "nat",
+                      "annots": [
+                        "%token_id"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      {
+        "prim": "Left",
+        "args": [
+          {
+            "prim": "Pair",
+            "args": [
+              {
+                "string": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N"
+              },
+              {
+                "prim": "Pair",
+                "args": [
+                  {
+                    "string": "KT1B2BN4qgmtsaoLRhhnFVDNoTyybwTfdrE4"
+                  },
+                  {
+                    "int": "3875"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type_hex": "065f07640865046e00000006256f776e65720765046e00000009256f70657261746f7204620000000925746f6b656e5f69640000000d256164645f6f70657261746f720865046e00000006256f776e65720765046e00000009256f70657261746f7204620000000925746f6b656e5f6964000000102572656d6f76655f6f70657261746f7200000011257570646174655f6f70657261746f7273",
+    "value_hex": "020000005b050507070100000024747a31587567386b3341746851573543626157334e327435694a636e747443506965324e070701000000244b54314232424e3471676d7473616f4c5268686e4656444e6f547979627754666472453400a33c",
+    "want_value": {
+       "update_operators": [
+        {
+          "add_operator": {
+            "operator": "KT1B2BN4qgmtsaoLRhhnFVDNoTyybwTfdrE4",
+            "owner": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N",
+            "token_id": "3875"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/86/6",
+    "type": {
+      "prim": "pair",
+      "annots": [
+        "%make_auction"
+      ],
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "int",
+              "annots": [
+                "%auction_duration"
+              ]
+            },
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "mutez",
+                  "annots": [
+                    "%direct_price"
+                  ]
+                },
+                {
+                  "prim": "string",
+                  "annots": [
+                    "%metadata"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "nat",
+                  "annots": [
+                    "%raise_percentage"
+                  ]
+                },
+                {
+                  "prim": "mutez",
+                  "annots": [
+                    "%start_price"
+                  ]
+                }
+              ]
+            },
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%token_fa2"
+                  ]
+                },
+                {
+                  "prim": "nat",
+                  "annots": [
+                    "%token_id"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": {
+      "prim": "Pair",
+      "args": [
+        {
+          "prim": "Pair",
+          "args": [
+            {
+              "int": "168"
+            },
+            {
+              "prim": "Pair",
+              "args": [
+                {
+                  "int": "10000000000000000"
+                },
+                {
+                  "string": "QmS8xBJcZJYsRSrfYTsWtUZ4pD9QM4nSQguLWjtRKG1sJx"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "prim": "Pair",
+          "args": [
+            {
+              "prim": "Pair",
+              "args": [
+                {
+                  "int": "5"
+                },
+                {
+                  "int": "3000000"
+                }
+              ]
+            },
+            {
+              "prim": "Pair",
+              "args": [
+                {
+                  "string": "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"
+                },
+                {
+                  "int": "3875"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "type_hex": "08650765045b000000112561756374696f6e5f6475726174696f6e0765046a0000000d256469726563745f7072696365046800000009256d65746164617461076507650462000000112572616973655f70657263656e74616765046a0000000c2573746172745f70726963650765046e0000000a25746f6b656e5f66613204620000000925746f6b656e5f69640000000d256d616b655f61756374696f6e",
+    "value_hex": "0707070700a802070700808088fccdbcc323010000002e516d533878424a635a4a5973525372665954735774555a34704439514d346e535167754c576a74524b4731734a7807070707000500809bee02070701000000244b543141467135586f725064756f59795778733567457972464b3666566a4a566274436a00a33c",
+    "want_value": {
+      "make_auction": {
+        "auction_duration": "168",
+        "direct_price": "10000000000000000",
+        "metadata": "QmS8xBJcZJYsRSrfYTsWtUZ4pD9QM4nSQguLWjtRKG1sJx",
+        "raise_percentage": "5",
+        "start_price": "3000000",
+        "token_fa2": "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj",
+        "token_id": "3875"
+      }
+    }
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/87/6",
+    "type": {
+      "prim": "list",
+      "annots": [
+        "%transfer"
+      ],
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "address",
+              "annots": [
+                "%from_"
+              ]
+            },
+            {
+              "prim": "list",
+              "annots": [
+                "%txs"
+              ],
+              "args": [
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "address",
+                      "annots": [
+                        "%to_"
+                      ]
+                    },
+                    {
+                      "prim": "pair",
+                      "args": [
+                        {
+                          "prim": "nat",
+                          "annots": [
+                            "%token_id"
+                          ]
+                        },
+                        {
+                          "prim": "nat",
+                          "annots": [
+                            "%amount"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      {
+        "prim": "Pair",
+        "args": [
+          {
+            "bytes": "0000869700effe4ec10282e1927c9aa6025cffcf83b1"
+          },
+          [
+            {
+              "prim": "Pair",
+              "args": [
+                {
+                  "bytes": "011abe843520f3827a9646100ee641b5ea545be8f100"
+                },
+                {
+                  "prim": "Pair",
+                  "args": [
+                    {
+                      "int": "3875"
+                    },
+                    {
+                      "int": "1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    "type_hex": "065f0765046e000000062566726f6d5f065f0765046e0000000425746f5f076504620000000925746f6b656e5f696404620000000725616d6f756e74000000042574787300000009257472616e73666572",
+    "value_hex": "020000004607070a000000160000869700effe4ec10282e1927c9aa6025cffcf83b1020000002407070a00000016011abe843520f3827a9646100ee641b5ea545be8f100070700a33c0001",
+    "want_value": {
+      "transfer": [
+      {
+        "from_": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N",
+        "txs": [
+          {
+            "amount": "1",
+            "to_": "KT1B2BN4qgmtsaoLRhhnFVDNoTyybwTfdrE4",
+            "token_id": "3875"
+          }
+        ]
+      }
+    ]}
+  },
+  {
+    "name": "Mainnet/ooX1zp3d4Qf74914x9Jm3r4RMbwamyJc2xEPeRfEnKA253dZwmP/88/6",
+    "type": {
+      "prim": "list",
+      "annots": [
+        "%update_operators"
+      ],
+      "args": [
+        {
+          "prim": "or",
+          "args": [
+            {
+              "prim": "pair",
+              "annots": [
+                "%add_operator"
+              ],
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "address",
+                      "annots": [
+                        "%operator"
+                      ]
+                    },
+                    {
+                      "prim": "nat",
+                      "annots": [
+                        "%token_id"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "prim": "pair",
+              "annots": [
+                "%remove_operator"
+              ],
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "address",
+                      "annots": [
+                        "%operator"
+                      ]
+                    },
+                    {
+                      "prim": "nat",
+                      "annots": [
+                        "%token_id"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      {
+        "prim": "Right",
+        "args": [
+          {
+            "prim": "Pair",
+            "args": [
+              {
+                "string": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N"
+              },
+              {
+                "prim": "Pair",
+                "args": [
+                  {
+                    "string": "KT1B2BN4qgmtsaoLRhhnFVDNoTyybwTfdrE4"
+                  },
+                  {
+                    "int": "3875"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type_hex": "065f07640865046e00000006256f776e65720765046e00000009256f70657261746f7204620000000925746f6b656e5f69640000000d256164645f6f70657261746f720865046e00000006256f776e65720765046e00000009256f70657261746f7204620000000925746f6b656e5f6964000000102572656d6f76655f6f70657261746f7200000011257570646174655f6f70657261746f7273",
+    "value_hex": "020000005b050807070100000024747a31587567386b3341746851573543626157334e327435694a636e747443506965324e070701000000244b54314232424e3471676d7473616f4c5268686e4656444e6f547979627754666472453400a33c",
+    "want_value": {
+      "update_operators":[
+      {
+        "remove_operator": {
+          "operator": "KT1B2BN4qgmtsaoLRhhnFVDNoTyybwTfdrE4",
+          "owner": "tz1Xug8k3AthQW5CbaW3N2t5iJcnttCPie2N",
+          "token_id": "3875"
+        }
+      }
+    ]}
+  }
+]
