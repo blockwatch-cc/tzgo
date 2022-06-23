@@ -76,7 +76,8 @@ func (s *Script) Features() Features {
 	return s.Code.Param.Features() |
 		s.Code.Storage.Features() |
 		s.Code.Code.Features() |
-		s.Code.View.Features()
+		s.Code.View.Features() |
+		s.Code.BadCode.Features()
 }
 
 func (p Prim) Features() Features {
