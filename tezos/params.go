@@ -30,7 +30,7 @@ var (
 	// GhostnetParams defines the blockchain configuration for Ithaca testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
 	GhostnetParams = NewParams().
-			ForNetwork(Ithacanet).
+			ForNetwork(Ghostnet).
 			ForProtocol(ProtoV013_2).
 			Mixin(&Params{
 			OperationTagsVersion:         2,
