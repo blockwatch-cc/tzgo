@@ -100,11 +100,13 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 	if s.Code.BadCode.IsConstant() {
 		if c, ok := dict.GetString(s.Code.BadCode.Args[0].String); ok {
 			// replace entire code section from constant
-			s.Code.Param = c.Args[0]
-			s.Code.Storage = c.Args[1]
-			s.Code.Code = c.Args[2]
+			s.Code.Param = c.Args[0].Clone()
+			s.Code.Storage = c.Args[1].Clone()
+			s.Code.Code = c.Args[2].Clone()
 			if len(c.Args) > 3 {
-				s.Code.View = c.Args[3]
+				for _, view := range c.Args[3:] {
+					s.Code.View.Args = append(s.Code.View.Args, view.Clone())
+				}
 			}
 		}
 		s.Code.BadCode = Prim{}
@@ -119,7 +121,7 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 		_ = prim.Visit(func(p *Prim) error {
 			if p.IsConstant() {
 				if c, ok := dict.GetString(p.Args[0].String); ok {
-					*p = c
+					*p = c.Clone()
 				}
 			}
 			return nil
@@ -445,7 +447,6 @@ func (c *Code) UnmarshalJSON(data []byte) error {
 
 	// check for sequence tag
 	if prim.Type != PrimSequence {
-		log.Warnf("micheline: unexpected program tag 0x%x", prim.Type)
 		c.BadCode = prim
 		return nil
 	}
