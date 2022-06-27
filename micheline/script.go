@@ -107,6 +107,7 @@ func (s *Script) ExpandConstants(dict ConstantDict) {
 				s.Code.View = c.Args[3]
 			}
 		}
+		s.Code.BadCode = Prim{}
 	}
 	// continue replacing nested constants
 	for _, prim := range []*Prim{
