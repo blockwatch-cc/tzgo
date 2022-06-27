@@ -33,8 +33,8 @@ var (
 	PtJakart = ProtoV013_2
 
 	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Ithacanet  = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Jakartanet = MustParseChainIdHash("NetXLH1uAxK7CCh")
+	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
@@ -56,16 +56,17 @@ var (
 			ProtoV012_2,    // 12
 			ProtoV013_2,    // 13
 		},
-		Ithacanet.Uint32(): {
-			ProtoGenesis,   // -1
-			ProtoBootstrap, // 0
-			ProtoV011_2,    // 1
-			ProtoV012_2,    // 2
-		},
 		Jakartanet.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
 			ProtoV012_2,    // 1
+			ProtoV013_2,    // 2
+		},
+		Ghostnet.Uint32(): {
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV011_2,    // 1
+			ProtoV012_2,    // 2
 			ProtoV013_2,    // 2
 		},
 	}
@@ -79,8 +80,8 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
 		pp.SecurityDepositRampUpCycles = 64
-	case Ithacanet.Equal(net):
-		pp.Network = "Ithacanet"
+	case Ghostnet.Equal(net):
+		pp.Network = "Ghostnet"
 		pp.Version = 11 // starts at Hangzhou
 	case Jakartanet.Equal(net):
 		pp.Network = "Jakartanet"
@@ -279,11 +280,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
-		} else if Ithacanet.Equal(p.ChainId) {
+		} else if Ghostnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8192
-			pp.EndHeight = -1
+			pp.EndHeight = 765952
 		}
 	case PtJakart.Equal(proto): // Jakarta
 		pp.Version = 13
@@ -306,6 +307,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
+			pp.EndHeight = -1
+		} else if Ghostnet.Equal(p.ChainId) {
+			pp.StartBlockOffset = 765953
+			pp.StartCycle = 188
+			pp.StartHeight = 765953
 			pp.EndHeight = -1
 		}
 	}

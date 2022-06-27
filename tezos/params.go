@@ -27,11 +27,11 @@ var (
 			MinimalBlockDelay:            30 * time.Second,
 		})
 
-	// IthacanetParams defines the blockchain configuration for Ithaca testnet.
+	// GhostnetParams defines the blockchain configuration for Ithaca testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
-	IthacanetParams = NewParams().
+	GhostnetParams = NewParams().
 			ForNetwork(Ithacanet).
-			ForProtocol(ProtoV012_2).
+			ForProtocol(ProtoV013_2).
 			Mixin(&Params{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
