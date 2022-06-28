@@ -310,7 +310,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndHeight = -1
 		} else if Ghostnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 765953
-			pp.StartCycle = 188
+			pp.StartCycle = 187
 			pp.StartHeight = 765953
 			pp.EndHeight = -1
 		}
