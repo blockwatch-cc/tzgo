@@ -168,6 +168,9 @@ func (p Prim) unmarshal(val reflect.Value) error {
         }
         pp, err := p.GetIndex(finfo.path)
         if err != nil {
+            if finfo.nofail {
+                continue
+            }
             return err
         }
         switch finfo.typ {
@@ -176,7 +179,9 @@ func (p Prim) unmarshal(val reflect.Value) error {
                 pv := dst.Addr()
                 if pv.CanInterface() && pv.Type().Implements(binaryUnmarshalerType) {
                     if err := pv.Interface().(encoding.BinaryUnmarshaler).UnmarshalBinary(pp.Bytes); err != nil {
-                        return err
+                        if !finfo.nofail {
+                            return err
+                        }
                     }
                     break
                 }
@@ -190,12 +195,16 @@ func (p Prim) unmarshal(val reflect.Value) error {
                 if pv.CanInterface() && pv.Type().Implements(textUnmarshalerType) {
                     if pp.Bytes != nil {
                         if err := pv.Interface().(encoding.TextUnmarshaler).UnmarshalText(pp.Bytes); err != nil {
-                            return err
+                            if !finfo.nofail {
+                                return err
+                            }
                         }
                         break
                     }
                     if err := pv.Interface().(encoding.TextUnmarshaler).UnmarshalText([]byte(pp.String)); err != nil {
-                        return err
+                        if !finfo.nofail {
+                            return err
+                        }
                     }
                     break
                 }
@@ -207,12 +216,16 @@ func (p Prim) unmarshal(val reflect.Value) error {
                 if pv.CanInterface() && pv.Type().Implements(textUnmarshalerType) {
                     if pp.Int != nil {
                         if err := pv.Interface().(encoding.TextUnmarshaler).UnmarshalText([]byte(pp.Int.Text(10))); err != nil {
-                            return err
+                            if !finfo.nofail {
+                                return err
+                            }
                         }
                         break
                     }
                     if err := pv.Interface().(encoding.TextUnmarshaler).UnmarshalText([]byte(pp.String)); err != nil {
-                        return err
+                        if !finfo.nofail {
+                            return err
+                        }
                     }
                     break
                 }
@@ -232,7 +245,9 @@ func (p Prim) unmarshal(val reflect.Value) error {
             } else {
                 tm, err := time.Parse(time.RFC3339, pp.String)
                 if err != nil {
-                    return err
+                    if !finfo.nofail {
+                        return err
+                    }
                 }
                 dst.Set(reflect.ValueOf(tm))
             }
@@ -246,7 +261,7 @@ func (p Prim) unmarshal(val reflect.Value) error {
             } else {
                 err = addr.UnmarshalText([]byte(pp.String))
             }
-            if err != nil {
+            if err != nil && !finfo.nofail {
                 return err
             }
             dst.Set(reflect.ValueOf(addr))
@@ -260,7 +275,7 @@ func (p Prim) unmarshal(val reflect.Value) error {
             } else {
                 err = key.UnmarshalText([]byte(pp.String))
             }
-            if err != nil {
+            if err != nil && !finfo.nofail {
                 return err
             }
             dst.Set(reflect.ValueOf(key))
@@ -274,7 +289,7 @@ func (p Prim) unmarshal(val reflect.Value) error {
             } else {
                 err = sig.UnmarshalText([]byte(pp.String))
             }
-            if err != nil {
+            if err != nil && !finfo.nofail {
                 return err
             }
             dst.Set(reflect.ValueOf(sig))
@@ -288,10 +303,67 @@ func (p Prim) unmarshal(val reflect.Value) error {
             } else {
                 err = chain.UnmarshalText([]byte(pp.String))
             }
-            if err != nil {
+            if err != nil && !finfo.nofail {
                 return err
             }
             dst.Set(reflect.ValueOf(chain))
+        case T_LIST:
+            styp := dst.Type()
+            if dst.IsNil() {
+                dst.Set(reflect.MakeSlice(styp, 0, len(pp.Args)))
+            }
+            for idx, ppp := range pp.Args {
+                sval := reflect.New(styp.Elem())
+                if sval.Type().Kind() == reflect.Ptr && sval.IsNil() && sval.CanSet() {
+                    sval.Set(reflect.New(sval.Type().Elem()))
+                }
+                // decode from value prim
+                if err := ppp.unmarshal(sval); err != nil && !finfo.nofail {
+                    return err
+                }
+                dst.SetLen(idx + 1)
+                dst.Index(idx).Set(sval.Elem())
+            }
+        case T_MAP:
+            mtyp := dst.Type()
+            switch mtyp.Key().Kind() {
+            case reflect.String:
+            default:
+                return fmt.Errorf("micheline: only string keys are supported for map %s", finfo.name)
+            }
+            if dst.IsNil() {
+                dst.Set(reflect.MakeMap(mtyp))
+            }
+
+            // process ELT args
+            for _, ppp := range pp.Args {
+                // must be an ELT
+                if ppp.OpCode != D_ELT {
+                    return fmt.Errorf("micheline: expected ELT data for map field %s, got %s",
+                        finfo.name, ppp.Dump())
+                }
+                // decode string from ELT key
+                k, err := NewKey(ppp.Args[0].BuildType(), ppp.Args[0])
+                if err != nil {
+                    return fmt.Errorf("micheline: cannot convert ELT key for field %s val=%s: %v",
+                        finfo.name, ppp.Args[0].Dump(), err)
+                }
+                name := k.String()
+
+                // allocate value
+                mval := reflect.New(mtyp.Elem()).Elem()
+                if mval.Type().Kind() == reflect.Ptr && mval.IsNil() && mval.CanSet() {
+                    mval.Set(reflect.New(mval.Type().Elem()))
+                }
+
+                // decode from value prim
+                if err := ppp.Args[1].unmarshal(mval); err != nil && !finfo.nofail {
+                    return err
+                }
+
+                // assign to map
+                dst.SetMapIndex(reflect.ValueOf(name), reflect.ValueOf(mval))
+            }
         default:
             return fmt.Errorf("micheline: unsupported prim %#v for struct field %s", pp, finfo.name)
 

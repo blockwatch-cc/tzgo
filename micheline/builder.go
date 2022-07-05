@@ -69,6 +69,30 @@ func NewPairType(l, r Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: T_PAIR, Args: []Prim{l, r}, Anno: anno}
 }
 
+func NewMapType(k, v Prim, anno ...string) Prim {
+	typ := PrimBinary
+	if len(anno) > 0 {
+		typ = PrimBinaryAnno
+	}
+	return Prim{Type: typ, OpCode: T_MAP, Args: []Prim{k, v}, Anno: anno}
+}
+
+func NewSetType(e Prim, anno ...string) Prim {
+	typ := PrimUnary
+	if len(anno) > 0 {
+		typ = PrimUnaryAnno
+	}
+	return Prim{Type: typ, OpCode: T_SET, Args: []Prim{e}, Anno: anno}
+}
+
+func NewOptType(e Prim, anno ...string) Prim {
+	typ := PrimUnary
+	if len(anno) > 0 {
+		typ = PrimUnaryAnno
+	}
+	return Prim{Type: typ, OpCode: T_OPTION, Args: []Prim{e}, Anno: anno}
+}
+
 func NewPair(l, r Prim) Prim {
 	return Prim{Type: PrimBinary, OpCode: D_PAIR, Args: []Prim{l, r}}
 }
