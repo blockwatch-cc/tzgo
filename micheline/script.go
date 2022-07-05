@@ -168,7 +168,7 @@ func (s Script) BigmapsById() []int64 {
 		switch p.OpCode {
 		case T_OR, T_PAIR, T_OPTION, K_STORAGE:
 			// recurse
-			if val.IsScalar() {
+			if val.IsScalar() || val.LooksLikeContainer() {
 				stack.Push(val)
 			} else {
 				stack.Push(val.Args...)
@@ -202,7 +202,7 @@ func (s Script) BigmapsByName() map[string]int64 {
 	return named
 }
 
-// Returns a named map containing all bigmaps defined in contracts storgae spec.
+// Returns a named map containing all bigmaps defined in contracts storage spec.
 // Names are derived from Michelson type annotations and if missing,
 // a sequence number. Optionally appends a sequence number to prevent duplicate names.
 func (s Script) BigmapTypesByName() map[string]Type {
