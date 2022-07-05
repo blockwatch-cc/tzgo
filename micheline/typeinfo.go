@@ -21,10 +21,11 @@ type typeInfo struct {
 
 // fieldInfo holds details for the representation of a single field.
 type fieldInfo struct {
-    idx  []int  // Go struct index
-    name string // field name (= Go struct name)
-    typ  OpCode
-    path []int
+    idx    []int  // Go struct index
+    name   string // field name (= Go struct name)
+    typ    OpCode
+    path   []int
+    nofail bool
 }
 
 func (f fieldInfo) String() string {
@@ -128,6 +129,8 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
                     }
                     finfo.path = append(finfo.path, i)
                 }
+            case "nofail":
+                finfo.nofail = true
             }
         }
     }
@@ -144,8 +147,10 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
         } else if f.Type == byteSliceType {
             finfo.typ = T_BYTES
         } else {
-            return nil, fmt.Errorf("micheline: unsupported slice type %s", f.Type)
+            finfo.typ = T_LIST
         }
+    case reflect.Map:
+        finfo.typ = T_MAP
     case reflect.String:
         finfo.typ = T_STRING
     case reflect.Bool:
