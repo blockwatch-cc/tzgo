@@ -5,6 +5,7 @@ package contract
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -58,18 +59,25 @@ type TokenMetadata struct {
 
 	// non-standard (people mix this in from Tzip21)
 	Description        string `json:"description,omitempty"`
-	ThumbnailUri       string `json:"thumbnailUri,omitempty"`
 	ShouldPreferSymbol bool   `json:"shouldPreferSymbol,omitempty"`
-	IsBooleanAmount    bool   `json:"is_boolean_amount,omitempty"`
-	IsTransferable     bool   `json:"is_transferable,omitempty"`
+	IsBooleanAmount    bool   `json:"isBooleanAmount,omitempty"`
+	IsTransferable     bool   `json:"isTransferable,omitempty"`
+	ArtifactUri        string `json:"artifactUri,omitempty"`
+	DisplayUri         string `json:"displayUri,omitempty"`
+	ThumbnailUri       string `json:"thumbnailUri,omitempty"`
 
 	// internal
-	uri string `json:"-"`
+	uri string          `json:"-"`
+	raw json.RawMessage `json:"-"`
 }
 
 // (pair (nat %token_id) (map %token_info string bytes))
 func (t *TokenMetadata) UnmarshalPrim(prim micheline.Prim) error {
-	return prim.Args[1].Walk(func(p micheline.Prim) error {
+	if len(prim.Args) < 2 {
+		return fmt.Errorf("invalid metadata prim %s", prim.Dump())
+	}
+	t.IsTransferable = true // default
+	err := prim.Args[1].Walk(func(p micheline.Prim) error {
 		if p.IsSequence() {
 			return nil
 		}
@@ -98,6 +106,10 @@ func (t *TokenMetadata) UnmarshalPrim(prim micheline.Prim) error {
 			t.Symbol = string(data)
 		case "icon", "logo", "thumbnailUri", "thumbnail_uri":
 			t.ThumbnailUri = string(data)
+		case "artifactUri", "artifact_uri":
+			t.ArtifactUri = string(data)
+		case "displayUri", "display_uri":
+			t.DisplayUri = string(data)
 		case "decimals":
 			d, err := strconv.Atoi(string(data))
 			if err != nil {
@@ -122,15 +134,40 @@ func (t *TokenMetadata) UnmarshalPrim(prim micheline.Prim) error {
 				return fmt.Errorf("%q: %v", field, err)
 			}
 			t.IsTransferable = b
+		case "nonTransferable": // non-standard
+			b, err := strconv.ParseBool(string(data))
+			if err != nil {
+				return fmt.Errorf("%q: %v", field, err)
+			}
+			t.IsTransferable = !b
 		default:
-			fmt.Printf("token metadata: unsupported field %q\n", field)
+			log.Errorf("token metadata: unsupported field %q\n", field)
 		}
 		return micheline.PrimSkip
 	})
+	return err
 }
 
-func (t *TokenMetadata) URI() string {
+func (t *TokenMetadata) UnmarshalJSON(data []byte) error {
+	type Alias *TokenMetadata
+	err := json.Unmarshal(data, Alias(t))
+	if err != nil {
+		return err
+	}
+	t.raw = json.RawMessage(data)
+	return nil
+}
+
+func (t TokenMetadata) URI() string {
 	return t.uri
+}
+
+func (t TokenMetadata) Raw() []byte {
+	if t.raw != nil {
+		return t.raw
+	}
+	buf, _ := json.Marshal(t)
+	return buf
 }
 
 func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos.Z) (*TokenMetadata, error) {
