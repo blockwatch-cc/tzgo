@@ -57,7 +57,7 @@ func (s *AddressSet) Remove(addr Address) {
 		if !s.coll[i].Equal(addr) {
 			continue
 		}
-		s.coll = append(s.coll[:idx], s.coll[idx+1:]...)
+		s.coll = append(s.coll[:i], s.coll[i+1:]...)
 		return
 	}
 }
