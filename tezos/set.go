@@ -8,7 +8,8 @@ import (
 )
 
 type AddressSet struct {
-	set map[uint64]Address
+	set  map[uint64]Address
+	coll []Address
 }
 
 func NewAddressSet(addrs ...Address) *AddressSet {
@@ -33,36 +34,81 @@ func (s AddressSet) hash(addr Address) uint64 {
 
 func (s *AddressSet) AddUnique(addr Address) bool {
 	h := s.hash(addr)
-	_, ok := s.set[h]
-	s.set[h] = addr.Clone()
+	a, ok := s.set[h]
+	if ok {
+		if !a.Equal(addr) {
+			// hash collision
+			s.coll = append(s.coll, addr.Clone())
+			ok = false
+		}
+	} else {
+		s.set[h] = addr.Clone()
+	}
 	return !ok
 }
 
 func (s *AddressSet) Add(addr Address) {
-	s.set[s.hash(addr)] = addr.Clone()
+	s.AddUnique(addr)
 }
 
 func (s *AddressSet) Remove(addr Address) {
 	delete(s.set, s.hash(addr))
+	for i := range s.coll {
+		if !s.coll[i].Equal(addr) {
+			continue
+		}
+		s.coll = append(s.coll[:idx], s.coll[idx+1:]...)
+		return
+	}
 }
 
 func (s AddressSet) Contains(addr Address) bool {
-	_, ok := s.set[s.hash(addr)]
-	return ok
+	a, ok := s.set[s.hash(addr)]
+	if !ok {
+		return false
+	}
+	if a.Equal(addr) {
+		return true
+	}
+	for _, v := range s.coll {
+		if v.Equal(addr) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *AddressSet) Merge(b *AddressSet) {
-	for n, v := range b.set {
-		s.set[n] = v.Clone()
+	for bHash, bAddr := range b.set {
+		if aAddr, ok := s.set[bHash]; ok {
+			if !aAddr.Equal(bAddr) {
+				var found bool
+				for _, v := range s.coll {
+					if v.Equal(bAddr) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					s.coll = append(s.coll, bAddr)
+				}
+			}
+		} else {
+			s.set[bHash] = bAddr.Clone()
+		}
 	}
 }
 
 func (s *AddressSet) Len() int {
-	return len(s.set)
+	return len(s.set) + len(s.coll)
 }
 
 func (s AddressSet) Map() map[uint64]Address {
 	return s.set
+}
+
+func (s AddressSet) HasCollisions() bool {
+	return len(s.coll) > 0
 }
 
 func (s AddressSet) Slice() []Address {
@@ -73,5 +119,6 @@ func (s AddressSet) Slice() []Address {
 	for _, v := range s.Map() {
 		a = append(a, v)
 	}
+	a = append(a, s.coll...)
 	return a
 }
