@@ -65,7 +65,7 @@ func (o BlockOffset) String() string {
 	if o.Offset > 0 {
 		ref += "+" + strconv.FormatInt(o.Offset, 10)
 	} else if o.Offset < 0 {
-		ref += strconv.FormatInt(o.Offset, 10)
+		ref += "~" + strconv.FormatInt(-o.Offset, 10)
 	}
 	return ref
 }
