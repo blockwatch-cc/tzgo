@@ -394,15 +394,11 @@ func (k *Key) UnmarshalText(data []byte) error {
 }
 
 func (k Key) MarshalBinary() ([]byte, error) {
-	buf := k.Bytes()
-	if buf == nil {
-		return nil, ErrUnknownKeyType
-	}
-	return buf, nil
+	return k.Bytes(), nil
 }
 
 func (k Key) Bytes() []byte {
-	if !k.Type.IsValid() {
+	if !k.Type.IsValid() || len(k.Data) == 0 {
 		return nil
 	}
 	return append([]byte{k.Type.Tag()}, k.Data...)
@@ -421,6 +417,12 @@ func DecodeKey(buf []byte) (Key, error) {
 
 func (k *Key) UnmarshalBinary(b []byte) error {
 	l := len(b)
+	// allow empty keys
+	if l == 0 {
+		k.Type = KeyTypeInvalid
+		return nil
+	}
+	// check data size
 	if l < 33 {
 		return fmt.Errorf("tezos: invalid binary key length %d", l)
 	}
