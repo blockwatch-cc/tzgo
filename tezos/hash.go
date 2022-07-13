@@ -86,6 +86,8 @@ const (
 	HashTypeToruMessageResult
 	HashTypeToruMessageResultList
 	HashTypeToruWithdrawList
+
+	HashTypeDekuContract
 )
 
 func ParseHashType(s string) HashType {
@@ -112,6 +114,8 @@ func ParseHashType(s string) HashType {
 			return HashTypePkhBlinded
 		case strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_HASH_PREFIX):
 			return HashTypePkhBls12_381
+		case strings.HasPrefix(s, DEKU_CONTRACT_HASH_PREFIX):
+			return HashTypeDekuContract
 		}
 	case 37:
 		switch true {
@@ -370,6 +374,8 @@ func (t HashType) Prefix() string {
 		return TORU_MESSAGE_RESULT_LIST_HASH_PREFIX
 	case HashTypeToruWithdrawList:
 		return TORU_WITHDRAW_LIST_HASH_PREFIX
+	case HashTypeDekuContract:
+		return DEKU_CONTRACT_HASH_PREFIX
 	default:
 		return ""
 	}
@@ -481,6 +487,8 @@ func (t HashType) PrefixBytes() []byte {
 		return TORU_MESSAGE_RESULT_LIST_HASH_ID
 	case HashTypeToruWithdrawList:
 		return TORU_WITHDRAW_LIST_HASH_ID
+	case HashTypeDekuContract:
+		return DEKU_CONTRACT_HASH_ID
 	default:
 		return nil
 	}
@@ -498,7 +506,8 @@ func (t HashType) Len() int {
 		HashTypePkhNocurve,
 		HashTypePkhBlinded,
 		HashTypePkhBls12_381,
-		HashTypeToruAddress:
+		HashTypeToruAddress,
+		HashTypeDekuContract:
 		return 20
 	case HashTypeBlock,
 		HashTypeOperation,
@@ -567,7 +576,8 @@ func (t HashType) Base58Len() int {
 		HashTypePkhSecp256k1,
 		HashTypePkhP256,
 		HashTypePkhNocurve,
-		HashTypePkhBls12_381:
+		HashTypePkhBls12_381,
+		HashTypeDekuContract:
 		return 36
 	case HashTypePkhBlinded,
 		HashTypeToruAddress:
