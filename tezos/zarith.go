@@ -194,6 +194,18 @@ func (z Z) Decimals(d int) string {
     return s[:l-d] + "." + s[l-d:]
 }
 
+func (z Z) Neg() Z {
+    var n Z
+    n.Set(new(big.Int).Neg(z.Big()))
+    return n
+}
+
+func (z Z) Add(y Z) Z {
+    var x Z
+    x.Set(new(big.Int).Add(z.Big(), y.Big()))
+    return x
+}
+
 var (
     mask3f     = big.NewInt(0x3f)
     mask7f     = big.NewInt(0x7f)
