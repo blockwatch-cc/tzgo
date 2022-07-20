@@ -71,6 +71,13 @@ func (b BalanceUpdate) Amount() int64 {
 	return b.Change
 }
 
+func (b BalanceUpdate) AmountAbs() int64 {
+	if b.Change < 0 {
+		return -b.Change
+	}
+	return b.Change
+}
+
 func (b BalanceUpdate) Cycle() int64 {
 	if b.Level_ > 0 {
 		return b.Level_

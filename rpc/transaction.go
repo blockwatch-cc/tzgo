@@ -31,39 +31,51 @@ func (t Transaction) Costs() tezos.Costs {
 		return cost
 	}
 	var i int
-	if t.Amount > 0 {
-		i += 2
-	}
-	if res.PaidStorageSizeDiff > 0 {
-		burn := res.BalanceUpdates[i].Amount()
-		cost.StorageBurn += -burn
-		cost.Burn += -burn
-		i++
-	}
-	if res.Allocated {
-		burn := res.BalanceUpdates[i].Amount()
-		cost.AllocationBurn += -burn
-		cost.Burn += -burn
-		i++
+	for _, v := range res.BalanceUpdates {
+		if v.Kind != "contract" {
+			continue
+		}
+		if t.Amount > 0 && v.AmountAbs() == t.Amount {
+			continue
+		}
+		burn := v.Amount()
+		if burn >= 0 {
+			continue
+		}
+		if res.PaidStorageSizeDiff > 0 && i == 0 {
+			cost.StorageBurn += -burn
+			cost.Burn += -burn
+			i++
+		} else if res.Allocated {
+			cost.AllocationBurn += -burn
+			cost.Burn += -burn
+			i++
+		}
 	}
 	for _, in := range t.Metadata.InternalResults {
 		cost.GasUsed += in.Result.Gas()
 		cost.StorageUsed += in.Result.PaidStorageSizeDiff
 		var i int
-		if in.Amount > 0 {
-			i += 2
-		}
-		if in.Result.PaidStorageSizeDiff > 0 {
-			burn := in.Result.BalanceUpdates[i].Amount()
-			cost.StorageBurn += -burn
-			cost.Burn += -burn
-			i++
-		}
-		if len(in.Result.OriginatedContracts) > 0 || in.Result.Allocated {
-			burn := in.Result.BalanceUpdates[i].Amount()
-			cost.AllocationBurn += -burn
-			cost.Burn += -burn
-			i++
+		for _, v := range in.Result.BalanceUpdates {
+			if v.Kind != "contract" {
+				continue
+			}
+			if in.Amount > 0 && v.AmountAbs() == in.Amount {
+				continue
+			}
+			burn := v.Amount()
+			if burn >= 0 {
+				continue
+			}
+			if in.Result.PaidStorageSizeDiff > 0 && i == 0 {
+				cost.StorageBurn += -burn
+				cost.Burn += -burn
+				i++
+			} else if in.Result.Allocated {
+				cost.AllocationBurn += -burn
+				cost.Burn += -burn
+				i++
+			}
 		}
 	}
 	return cost
