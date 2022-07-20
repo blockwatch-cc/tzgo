@@ -39,17 +39,23 @@ func (o Origination) Costs() tezos.Costs {
 		StorageUsed: res.PaidStorageSizeDiff,
 	}
 	var i int
-	if res.PaidStorageSizeDiff > 0 {
-		burn := res.BalanceUpdates[i].Amount()
-		cost.StorageBurn += -burn
-		cost.Burn += -burn
-		i++
-	}
-	if len(res.OriginatedContracts) > 0 {
-		burn := res.BalanceUpdates[i].Amount()
-		cost.AllocationBurn += -burn
-		cost.Burn += -burn
-		i++
+	for _, v := range res.BalanceUpdates {
+		if v.Kind != "contract" {
+			continue
+		}
+		if res.PaidStorageSizeDiff > 0 && i == 0 {
+			burn := v.Amount()
+			cost.StorageBurn += -burn
+			cost.Burn += -burn
+			i++
+			continue
+		}
+		if len(res.OriginatedContracts) > 0 && i == 1 {
+			burn := v.Amount()
+			cost.AllocationBurn += -burn
+			cost.Burn += -burn
+			i++
+		}
 	}
 	return cost
 }
