@@ -57,12 +57,12 @@ func (r *Receipt) IsSuccess() bool {
 func (r *Receipt) Error() error {
 	for _, v := range r.Op.Contents {
 		res := v.Result()
-		if len(res.Errors) > 0 && res.Status == tezos.OpStatusFailed {
+		if len(res.Errors) > 0 && res.Status != tezos.OpStatusApplied {
 			return res.Errors[len(res.Errors)-1].GenericError
 		}
 		for _, vv := range v.Meta().InternalResults {
 			res := vv.Result
-			if len(res.Errors) > 0 && res.Status == tezos.OpStatusFailed {
+			if len(res.Errors) > 0 && res.Status != tezos.OpStatusApplied {
 				return res.Errors[len(res.Errors)-1].GenericError
 			}
 		}
