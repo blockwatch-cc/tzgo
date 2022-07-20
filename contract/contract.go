@@ -334,7 +334,7 @@ func (c *Contract) CallMulti(ctx context.Context, args []CallArguments, opts *rp
 }
 
 func (c *Contract) Deploy(ctx context.Context, opts *rpc.CallOptions) (*rpc.Receipt, error) {
-	return c.DeployExt(ctx, tezos.ZeroAddress, 0, opts)
+	return c.DeployExt(ctx, tezos.Address{}, 0, opts)
 }
 
 func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balance tezos.N, opts *rpc.CallOptions) (*rpc.Receipt, error) {
