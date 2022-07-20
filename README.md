@@ -8,6 +8,7 @@ Our main focus is on **correctness**, **stability**, and **compliance** with the
 
 Current TzGo protocol support
 
+- Jakarta v013
 - Ithaca v012
 - Hangzhou v011
 - Granada v010
