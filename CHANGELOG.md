@@ -1,9 +1,66 @@
 # Changelog
 
-## unreleased
-* RPC: Preserve API key privacy
-* RPC: fix initializing chain params
-* Fix examples
+## v1.13.2
+
+* Don't use zero address for contract deployments
+* Fix transaction burn accounting
+* Fix origination burn accounting
+* Remove unnecessary start block offsets from recent testnet configs
+* Fix RPC execution receipt error handling
+* Add simple Zarith arithmetic funcs
+* Add log to contract package
+* Fix negative block offset in RPC
+* Add Deku contract address support
+* Harden address set against hash collisions
+* Read more token metdata
+* Improve decoding Go structs from Micheline primitives
+* Improve bigmap detection
+* Fix ghostnet start cycle
+
+## v1.13.1
+
+* Add Ghostnet support
+* Clear old code after constants have been expanded
+* Handle top-level constant in script code
+* Update value render testdata
+* Skip hashing invalid prims
+* Add jakarta to list of mainnet protocols
+
+
+## v1.13.0
+
+* Add method to expose token uri
+* Support gas/milligas selection
+* Rollup data decoding
+* Rename nft ledger types
+* Add IPFS url helper
+* Improve typedefs
+* Calculate block in cycle position
+* Fix marshal empty primitive
+* Fix Jakarta voting power change
+* Add noview token type
+* Add fa2 balance helper
+* Make call args chainable
+* Add mutez prim helper
+* Support address add/list for remote signer
+* Fix merging params
+* Fix min fee, add min-fee helper
+* Client function to read contract balance
+* Expose contract errors
+* Fix RPC run call
+* Add call option to select BlockID when simulating operations
+* Fix writing binary block header
+* Simple rollup RPC support
+* Add cycles per vote period constant
+* Add ticket value wrapper
+* Add LB toggle vote
+* Fix bootstrap protocol identification
+* Add Jakarta support (params, hashes, opcodes, op types)
+* Fetch chain id if not yet set
+* Refactor lazy bigmap updates
+* Fix initializing chain params in RPC client
+* Preserve API key privacy
+* Fix BSON protocol data decode and encode
 
 ## v1.12.3
 
