@@ -67,7 +67,7 @@ var (
 			ProtoBootstrap, // 0
 			ProtoV011_2,    // 1
 			ProtoV012_2,    // 2
-			ProtoV013_2,    // 2
+			ProtoV013_2,    // 3
 		},
 	}
 )
@@ -281,7 +281,6 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
 		} else if Ghostnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8192
 			pp.EndHeight = 765952
@@ -304,12 +303,10 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartHeight = 2490369
 			pp.EndHeight = -1
 		} else if Jakartanet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
 			pp.EndHeight = -1
 		} else if Ghostnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 765953
 			pp.StartCycle = 187
 			pp.StartHeight = 765953
 			pp.EndHeight = -1
