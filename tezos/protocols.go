@@ -282,8 +282,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndHeight = -1
 		} else if Ghostnet.Equal(p.ChainId) {
 			pp.StartBlockOffset = 8192
-			pp.StartCycle = 2
-			pp.StartHeight = 8192
+			pp.StartCycle = 2     // block 8192 is not in c2, but whatever
+			pp.StartHeight = 8192 // off by one due to Tezos testnet fuckup !!
 			pp.EndHeight = 765952
 		}
 	case PtJakart.Equal(proto): // Jakarta
@@ -304,12 +304,12 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartHeight = 2490369
 			pp.EndHeight = -1
 		} else if Jakartanet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 8193
+			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
 			pp.EndHeight = -1
 		} else if Ghostnet.Equal(p.ChainId) {
-			pp.StartBlockOffset = 765953
+			pp.StartBlockOffset = 765952
 			pp.StartCycle = 187
 			pp.StartHeight = 765953
 			pp.EndHeight = -1
