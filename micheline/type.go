@@ -341,8 +341,13 @@ func (p Prim) BuildType() Type {
 		// detect address encoding first
 		var addr tezos.Address
 		if err := addr.UnmarshalBinary(p.Bytes); err == nil {
-			t.OpCode = T_ADDRESS
-		} else {
+			if addr.IsRollup() {
+				t.OpCode = T_TX_ROLLUP_L2_ADDRESS
+			} else {
+				t.OpCode = T_ADDRESS
+			}
+		}
+		if t.OpCode == 0 {
 			t.OpCode = p.Type.TypeCode()
 		}
 
@@ -352,12 +357,18 @@ func (p Prim) BuildType() Type {
 			// detect timestamp and address encoding first
 			if _, err := time.Parse(time.RFC3339, p.String); err == nil {
 				t.OpCode = T_TIMESTAMP
-			} else if _, err := tezos.ParseAddress(p.String); err == nil {
-				t.OpCode = T_ADDRESS
-			} else {
-				t.OpCode = p.Type.TypeCode()
+			} else if addr, err := tezos.ParseAddress(p.String); err == nil {
+				if addr.IsRollup() {
+					t.OpCode = T_TX_ROLLUP_L2_ADDRESS
+				} else {
+					t.OpCode = T_ADDRESS
+				}
+			} else if _, err := tezos.ParseSignature(p.String); err == nil {
+				t.OpCode = T_SIGNATURE
 			}
-		} else {
+		}
+		// fallback to string
+		if t.OpCode == 0 {
 			t.OpCode = p.Type.TypeCode()
 		}
 
