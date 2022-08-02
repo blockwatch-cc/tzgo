@@ -177,7 +177,7 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 		switch oc {
 		case T_BYTES, T_STRING, T_ADDRESS, T_CONTRACT, T_KEY_HASH, T_KEY,
 			T_SIGNATURE, T_TIMESTAMP, T_OR, T_CHAIN_ID, T_OPTION,
-			T_TICKET:
+			T_TICKET, T_TX_ROLLUP_L2_ADDRESS:
 		default:
 			mismatch = true
 		}
@@ -189,7 +189,8 @@ func (p Prim) matchOpCode(oc OpCode) bool {
 			T_CHAIN_ID, T_OPTION, T_SAPLING_STATE, T_SAPLING_TRANSACTION,
 			T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR, // maybe stored as bytes
 			T_TICKET, // allow ticket since first value is ticketer address
-			T_CHEST, T_CHEST_KEY:
+			T_CHEST, T_CHEST_KEY,
+			T_TX_ROLLUP_L2_ADDRESS:
 		default:
 			mismatch = true
 		}

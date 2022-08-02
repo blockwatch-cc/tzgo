@@ -107,6 +107,26 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
     case T_LIST:
         // list <type>
+
+        // fix for pair(list, x) - we wrongly prevent a nested list from being unpacked
+        // this is to compensate for CanUnfold() and another case where list/pair unfold
+        // does not work
+        //
+        // Conflicting cases
+        // TestParamsValues/Jakartanet/oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX
+        // TestStorageValues/Mainnet/KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY
+        //
+        if len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() {
+            Trace(func(log LogFn) {
+                log("L%0d: %s NESTED LIST args[%d(+%d)]=%s", lvl, label, stack.Len(), len(val.Args), val.Dump())
+            })
+            stack.Push(val.Args...)
+            Trace(func(log LogFn) {
+                log("L%0d: %s stack[%d]:\n%s\n", lvl, label, stack.Len(), stack.DumpIdent(4))
+            })
+            val = stack.Pop()
+        }
+
         arr := make([]interface{}, 0, len(val.Args))
         for i, v := range val.Args {
             // lists may contain different types, i.e. when unpack+detect is used

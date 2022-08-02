@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Jakartanet/ont9Gb1oa3h3tEYZj9GbEfUp4cSaqehtbjwepZPoMX6WC64uuBE/30/1",
+    "type": {
+      "prim": "tx_rollup_l2_address"
+    },
+    "value": {
+      "bytes": "7df6a960ae406d041e4434a64331903b1b14189d"
+    },
+    "type_hex": "0394",
+    "value_hex": "0a000000147df6a960ae406d041e4434a64331903b1b14189d",
+    "want_value": "tz4LVHYD4P4T5NHCuwJbxQvwVURF62seE3Qa"
+  }
+]
