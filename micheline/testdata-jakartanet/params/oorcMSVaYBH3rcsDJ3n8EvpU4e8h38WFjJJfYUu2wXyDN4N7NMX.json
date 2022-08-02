@@ -1,0 +1,139 @@
+[
+  {
+    "name": "Jakartanet/oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX/32/0",
+    "type": {
+      "prim": "pair",
+      "annots": [
+        "%balance_of"
+      ],
+      "args": [
+        {
+          "prim": "list",
+          "annots": [
+            "%requests"
+          ],
+          "args": [
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "nat",
+                  "annots": [
+                    "%token_id"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "prim": "contract",
+          "annots": [
+            "%callback"
+          ],
+          "args": [
+            {
+              "prim": "list",
+              "args": [
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "pair",
+                      "annots": [
+                        "%request"
+                      ],
+                      "args": [
+                        {
+                          "prim": "address",
+                          "annots": [
+                            "%owner"
+                          ]
+                        },
+                        {
+                          "prim": "nat",
+                          "annots": [
+                            "%token_id"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "prim": "nat",
+                      "annots": [
+                        "%balance"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      [],
+      {
+        "string": "KT1EYSnADB3wygAcLjaZfA4eWYvvUSi29qeU"
+      }
+    ],
+    "type_hex": "0865065f0765046e00000006256f776e657204620000000925746f6b656e5f696400000009257265717565737473065a055f07650865046e00000006256f776e657204620000000925746f6b656e5f69640000000825726571756573740462000000082562616c616e6365000000092563616c6c6261636b0000000b2562616c616e63655f6f66",
+    "value_hex": "020000002e020000000001000000244b54314559536e4144423377796741634c6a615a66413465575976765553693239716555",
+    "want_value": {
+     "balance_of": {
+       "callback": "KT1EYSnADB3wygAcLjaZfA4eWYvvUSi29qeU",
+       "requests": []
+     }
+    }
+  },
+  {
+    "name": "Jakartanet/oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX/33/0",
+    "type": {
+      "prim": "list",
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "pair",
+              "annots": [
+                "%request"
+              ],
+              "args": [
+                {
+                  "prim": "address",
+                  "annots": [
+                    "%owner"
+                  ]
+                },
+                {
+                  "prim": "nat",
+                  "annots": [
+                    "%token_id"
+                  ]
+                }
+              ]
+            },
+            {
+              "prim": "nat",
+              "annots": [
+                "%balance"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [],
+    "type_hex": "055f07650865046e00000006256f776e657204620000000925746f6b656e5f69640000000825726571756573740462000000082562616c616e6365",
+    "value_hex": "0200000000",
+    "want_value": []
+  }
+]
