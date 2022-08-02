@@ -116,7 +116,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
         // TestParamsValues/Jakartanet/oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX
         // TestStorageValues/Mainnet/KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY
         //
-        if len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() {
+        if len(typ.Args) > 0 && !typ.Args[0].IsList() && len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() {
             Trace(func(log LogFn) {
                 log("L%0d: %s NESTED LIST args[%d(+%d)]=%s", lvl, label, stack.Len(), len(val.Args), val.Dump())
             })
