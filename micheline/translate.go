@@ -259,6 +259,13 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
             // add empty option values as null
             m[label] = nil
         case D_SOME:
+            // detect nested type when missing, this can happen with option types
+            // inside containers when the first element (used to detect the type
+            // for all elements) has option None.
+            if len(typ.Args) == 0 {
+                typ = val.BuildType()
+            }
+
             // with annots (name) use it for scalar or complex render
             // when next level annot equals this option annot, skip this annot
             if val.IsScalar() || label == typ.Args[0].GetVarAnnoAny() {
