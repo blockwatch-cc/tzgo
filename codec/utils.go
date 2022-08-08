@@ -7,6 +7,7 @@ import (
     "bytes"
     "fmt"
     "io"
+    "math"
 
     "blockwatch.cc/tzgo/tezos"
 )
@@ -29,7 +30,7 @@ func CalculateMinFee(o Operation, gas int64, withHeader bool, p *tezos.Params) i
         sz += 32 + 64 // branch + signature
     }
     fee := minFeeFixedNanoTez + sz*minFeeByteNanoTez + gas*minFeeGasNanoTez
-    return fee / 1000 // nano -> micro
+    return int64(math.Ceil(float64(fee) / 1000)) // nano -> micro, round up
 }
 
 // ensureTagAndSize reads the binary operation's tag and matches it against the expected
