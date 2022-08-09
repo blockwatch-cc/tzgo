@@ -277,11 +277,17 @@ func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
         adj := tezos.Limits{
             GasLimit:     gas,
             StorageLimit: limits[i].StorageLimit,
-            Fee:          max64(limits[i].Fee, CalculateMinFee(v, gas, i == 0, o.Params)),
         }
 
-        // use adjusted limits
-        v.WithLimits(adj)
+        // Apply limits, and re-compute the fee if needed.
+        // This is required, because the value of the fee has an impact on the operation size.
+        var lastFee int64 = -1
+        for lastFee < adj.Fee {
+            lastFee = adj.Fee
+
+            adj.Fee = max64(limits[i].Fee, CalculateMinFee(v, gas, i == 0, o.Params))
+            v.WithLimits(adj)
+        }
     }
     return o
 }
