@@ -11,6 +11,9 @@ trigger:
 #    include:
 #      - README.md
 
+environment:
+  CGO_ENABLED: 0
+
 steps:
 - name: run linter
   image: golangci/golangci-lint:v1.45-alpine
