@@ -19,28 +19,28 @@ const GasSafetyMargin int64 = 100
 
 var (
 	// for reveal
-	defaultRevealLimits = tezos.Limits{
+	DefaultRevealLimits = tezos.Limits{
 		Fee:      1000,
 		GasLimit: 1000,
 	}
 	// for transfers to tz1/2/3
-	defaultTransferLimitsEOA = tezos.Limits{
+	DefaultTransferLimitsEOA = tezos.Limits{
 		Fee:      1000,
 		GasLimit: 1420, // 1820 when source is emptied
 	}
 	// for transfers to manager.tz
-	defaultTransferLimitsKT1 = tezos.Limits{
+	DefaultTransferLimitsKT1 = tezos.Limits{
 		Fee:      1000,
 		GasLimit: 2078,
 	}
 	// for delegation
-	defaultDelegationLimitsEOA = tezos.Limits{
+	DefaultDelegationLimitsEOA = tezos.Limits{
 		Fee:      1000,
 		GasLimit: 1000,
 	}
 	// for simulating contract calls and other operations
 	// used when no explicit costs are set
-	defaultSimulationLimits = tezos.Limits{
+	DefaultSimulationLimits = tezos.Limits{
 		GasLimit:     tezos.DefaultParams.HardGasLimitPerOperation,
 		StorageLimit: tezos.DefaultParams.HardStorageLimitPerOperation,
 	}
@@ -141,7 +141,7 @@ func (c *Client) Complete(ctx context.Context, o *codec.Op, key tezos.Key) error
 				},
 				PublicKey: key,
 			}
-			reveal.WithLimits(defaultRevealLimits)
+			reveal.WithLimits(DefaultRevealLimits)
 			o.WithContentsFront(reveal)
 			needCounter = true
 		}
@@ -191,10 +191,10 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		for _, op := range o.Contents {
 			l := op.Limits()
 			if l.GasLimit == 0 {
-				l.GasLimit = defaultSimulationLimits.GasLimit / int64(len(o.Contents))
+				l.GasLimit = DefaultSimulationLimits.GasLimit / int64(len(o.Contents))
 			}
 			if l.StorageLimit == 0 {
-				l.StorageLimit = defaultSimulationLimits.StorageLimit / int64(len(o.Contents))
+				l.StorageLimit = DefaultSimulationLimits.StorageLimit / int64(len(o.Contents))
 			}
 			op.WithLimits(l)
 		}

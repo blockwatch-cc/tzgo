@@ -2,7 +2,6 @@
 // Author: alex@blockwatch.cc
 
 // RPC examples
-//
 package main
 
 import (

@@ -4,7 +4,7 @@
 package tezos
 
 import (
-    "encoding/hex"
+	"encoding/hex"
 )
 
 // HexBytes represents bytes as a JSON string of hexadecimal digits
@@ -14,40 +14,40 @@ type HexBytes []byte
 // encoding.TextUnmarshaler interface, so that HexBytes can be used in Go
 // structs in combination with the standard JSON library.
 func (h *HexBytes) UnmarshalText(data []byte) error {
-    dst := make([]byte, hex.DecodedLen(len(data)))
-    if _, err := hex.Decode(dst, data); err != nil {
-        return err
-    }
-    *h = dst
-    return nil
+	dst := make([]byte, hex.DecodedLen(len(data)))
+	if _, err := hex.Decode(dst, data); err != nil {
+		return err
+	}
+	*h = dst
+	return nil
 }
 
 // MarshalText converts a byte slice to a hex encoded string. It implements the
 // encoding.TextMarshaler interface, so that HexBytes can be used in Go
 // structs in combination with the standard JSON library.
 func (h HexBytes) MarshalText() ([]byte, error) {
-    return []byte(hex.EncodeToString(h)), nil
+	return []byte(hex.EncodeToString(h)), nil
 }
 
 // String converts a byte slice to a hex encoded string
 func (h HexBytes) String() string {
-    return hex.EncodeToString(h)
+	return hex.EncodeToString(h)
 }
 
 // Bytes type-casts HexBytes back to a byte slice
 func (h HexBytes) Bytes() []byte {
-    return []byte(h)
+	return []byte(h)
 }
 
 // Ratio represents a numeric ratio used in Ithaca constants
 type Ratio struct {
-    Num int `json:"numerator"`
-    Den int `json:"denominator"`
+	Num int `json:"numerator"`
+	Den int `json:"denominator"`
 }
 
 func (r Ratio) Float64() float64 {
-    if r.Den == 0 {
-        return 0
-    }
-    return float64(r.Num) / float64(r.Den)
+	if r.Den == 0 {
+		return 0
+	}
+	return float64(r.Num) / float64(r.Den)
 }

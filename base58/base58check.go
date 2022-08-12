@@ -34,12 +34,11 @@ func checksum(input []byte) (cksum [4]byte) {
 func CheckEncode(input []byte, version []byte) string {
 	bi := bufPool.Get()
 	b := bi.([]byte)[:0]
-	b = append(b, version[:]...)
-	b = append(b, input[:]...)
+	b = append(b, version...)
+	b = append(b, input...)
 	cksum := checksum(b)
 	b = append(b, cksum[:]...)
 	res := Encode(b)
-	b = b[:0]
 	bufPool.Put(bi)
 	return res
 }

@@ -17,7 +17,7 @@ type entryTest struct {
 
 var entryInfo = []entryTest{
 	// manager.tz
-	entryTest{
+	{
 		Name: "manager",
 		Spec: `{"args":[{"args":[{"annots":["%do"],"args":[{"prim":"unit"},{"args":[{"prim":"operation"}],"prim":"list"}],"prim":"lambda"},{"annots":["%default"],"prim":"unit"}],"prim":"or"}],"prim":"parameter"}`,
 		Want: `{
@@ -62,7 +62,7 @@ var entryInfo = []entryTest{
 	    }`,
 	},
 	// FA2 (hDAO)
-	entryTest{
+	{
 		Name: "FA2/HDAO",
 		Spec: `{"args":[{"args":[{"args":[{"args":[{"annots":["%balance_of"],"args":[{"annots":["%requests"],"args":[{"args":[{"annots":["%owner"],"prim":"address"},{"annots":["%token_id"],"prim":"nat"}],"prim":"pair"}],"prim":"list"},{"annots":["%callback"],"args":[{"args":[{"args":[{"annots":["%request"],"args":[{"annots":["%owner"],"prim":"address"},{"annots":["%token_id"],"prim":"nat"}],"prim":"pair"},{"annots":["%balance"],"prim":"nat"}],"prim":"pair"}],"prim":"list"}],"prim":"contract"}],"prim":"pair"},{"annots":["%hDAO_batch"],"args":[{"args":[{"annots":["%amount"],"prim":"nat"},{"annots":["%to_"],"prim":"address"}],"prim":"pair"}],"prim":"list"}],"prim":"or"},{"args":[{"annots":["%mint"],"args":[{"args":[{"annots":["%address"],"prim":"address"},{"annots":["%amount"],"prim":"nat"}],"prim":"pair"},{"args":[{"annots":["%token_id"],"prim":"nat"},{"annots":["%token_info"],"args":[{"prim":"string"},{"prim":"bytes"}],"prim":"map"}],"prim":"pair"}],"prim":"pair"},{"annots":["%set_administrator"],"prim":"address"}],"prim":"or"}],"prim":"or"},{"args":[{"args":[{"annots":["%set_pause"],"prim":"bool"},{"annots":["%token_metadata"],"args":[{"annots":["%token_ids"],"args":[{"prim":"nat"}],"prim":"list"},{"annots":["%handler"],"args":[{"args":[{"args":[{"annots":["%token_id"],"prim":"nat"},{"annots":["%token_info"],"args":[{"prim":"string"},{"prim":"bytes"}],"prim":"map"}],"prim":"pair"}],"prim":"list"},{"prim":"unit"}],"prim":"lambda"}],"prim":"pair"}],"prim":"or"},{"args":[{"annots":["%transfer"],"args":[{"args":[{"annots":["%from_"],"prim":"address"},{"annots":["%txs"],"args":[{"args":[{"annots":["%to_"],"prim":"address"},{"args":[{"annots":["%token_id"],"prim":"nat"},{"annots":["%amount"],"prim":"nat"}],"prim":"pair"}],"prim":"pair"}],"prim":"list"}],"prim":"pair"}],"prim":"list"},{"annots":["%update_operators"],"args":[{"args":[{"annots":["%add_operator"],"args":[{"annots":["%owner"],"prim":"address"},{"args":[{"annots":["%operator"],"prim":"address"},{"annots":["%token_id"],"prim":"nat"}],"prim":"pair"}],"prim":"pair"},{"annots":["%remove_operator"],"args":[{"annots":["%owner"],"prim":"address"},{"args":[{"annots":["%operator"],"prim":"address"},{"annots":["%token_id"],"prim":"nat"}],"prim":"pair"}],"prim":"pair"}],"prim":"or"}],"prim":"list"}],"prim":"or"}],"prim":"or"}],"prim":"or"}],"prim":"parameter"}`,
 		Want: `{
@@ -78,7 +78,7 @@ var entryInfo = []entryTest{
 	},
 
 	// single option, no T_OR
-	entryTest{
+	{
 		Name: "single option",
 		Spec: `{"prim":"parameter","args":[{"prim":"option","args":[{"prim":"address"}]}]}`,
 		Want: `{

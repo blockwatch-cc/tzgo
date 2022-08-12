@@ -40,7 +40,7 @@ func (o Origination) Costs() tezos.Costs {
 	}
 	var i int
 	for _, v := range res.BalanceUpdates {
-		if v.Kind != "contract" {
+		if v.Kind != CONTRACT {
 			continue
 		}
 		if res.PaidStorageSizeDiff > 0 && i == 0 {

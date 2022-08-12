@@ -137,7 +137,7 @@ func (c *Constants) UnmarshalJSON(buf []byte) error {
 	type X Constants
 	cc := X{}
 	if err := json.Unmarshal(buf, &cc); err != nil {
-		return fmt.Errorf("parsing constants: %w", err)
+		return fmt.Errorf("parsing constants: %v", err)
 	}
 	// try extra unmarshal
 	v1 := v1_const{}
@@ -149,14 +149,14 @@ func (c *Constants) UnmarshalJSON(buf []byte) error {
 		for i, v := range v6.BakingRewardPerEndorsement {
 			val, err := strconv.ParseInt(v, 10, 64)
 			if err != nil {
-				return fmt.Errorf("parsing v6 constant baking_reward.. '%s': %w", string(buf), err)
+				return fmt.Errorf("parsing v6 constant baking_reward.. '%s': %v", string(buf), err)
 			}
 			cc.BakingRewardPerEndorsement_v6[i] = val
 		}
 		for i, v := range v6.EndorsementReward {
 			val, err := strconv.ParseInt(v, 10, 64)
 			if err != nil {
-				return fmt.Errorf("parsing v6 constant endorsement_reward '%s': %w", string(buf), err)
+				return fmt.Errorf("parsing v6 constant endorsement_reward '%s': %v", string(buf), err)
 			}
 			cc.EndorsementReward_v6[i] = val
 		}
@@ -246,7 +246,7 @@ func (c Constants) MapToChainParams() *tezos.Params {
 		}
 		val, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			log.Errorf("parsing TimeBetweenBlocks: %w", err)
+			log.Errorf("parsing TimeBetweenBlocks: %v", err)
 		} else {
 			p.TimeBetweenBlocks[i] = time.Duration(val) * time.Second
 		}

@@ -476,7 +476,7 @@ func ParseKey(s string) (Key, error) {
 		}
 		return k, fmt.Errorf("tezos: unknown format for key %s: %w", s, err)
 	}
-	switch true {
+	switch {
 	case bytes.Equal(version, ED25519_PUBLIC_KEY_ID):
 		k.Type = KeyTypeEd25519
 	case bytes.Equal(version, SECP256K1_PUBLIC_KEY_ID):
@@ -596,7 +596,7 @@ func (k PrivateKey) Encrypt(fn PassphraseFunc) (string, error) {
 	var buf []byte
 	switch k.Type {
 	case KeyTypeEd25519:
-		buf = []byte(ed25519.PrivateKey(k.Data).Seed())
+		buf = ed25519.PrivateKey(k.Data).Seed()
 	case KeyTypeSecp256k1, KeyTypeP256:
 		buf = k.Data
 	case KeyTypeBls12_381:
@@ -669,7 +669,7 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 		if err != nil {
 			return
 		}
-		switch true {
+		switch {
 		case bytes.Equal(version, ED25519_ENCRYPTED_SEED_ID):
 			version = ED25519_SEED_ID
 		case bytes.Equal(version, SECP256K1_ENCRYPTED_SECRET_KEY_ID):
@@ -682,7 +682,7 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 	}
 
 	// detect type
-	switch true {
+	switch {
 	case bytes.Equal(version, ED25519_SEED_ID):
 		if l := len(decoded); l != ed25519.SeedSize {
 			return k, fmt.Errorf("tezos: invalid ed25519 seed length: %d", l)

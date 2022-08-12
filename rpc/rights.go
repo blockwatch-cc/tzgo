@@ -78,7 +78,7 @@ type SnapshotRoll struct {
 }
 
 func (r *SnapshotRoll) UnmarshalJSON(data []byte) error {
-	if len(data) == 0 || bytes.Compare(data, []byte("null")) == 0 {
+	if len(data) == 0 || bytes.Equal(data, null) {
 		return nil
 	}
 	if len(data) == 2 {
@@ -113,7 +113,7 @@ func (r *SnapshotRoll) decode(unpacked []interface{}) error {
 	}
 	id, err := strconv.ParseInt(unpacked[0].(json.Number).String(), 10, 64)
 	if err != nil {
-		return fmt.Errorf("SnapshotRoll: invalid roll id: %w", err)
+		return fmt.Errorf("SnapshotRoll: invalid roll id: %v", err)
 	}
 	if err = r.OwnerKey.UnmarshalText([]byte(unpacked[1].(string))); err != nil {
 		return err

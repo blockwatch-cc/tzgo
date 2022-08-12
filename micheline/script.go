@@ -30,9 +30,9 @@ type Code struct {
 func NewScript() *Script {
 	return &Script{
 		Code: Code{
-			Param:   Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_PARAMETER}}},
-			Storage: Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_STORAGE}}},
-			Code:    Prim{Type: PrimSequence, Args: []Prim{Prim{Type: PrimUnary, OpCode: K_CODE}}},
+			Param:   Prim{Type: PrimSequence, Args: []Prim{{Type: PrimUnary, OpCode: K_PARAMETER}}},
+			Storage: Prim{Type: PrimSequence, Args: []Prim{{Type: PrimUnary, OpCode: K_STORAGE}}},
+			Code:    Prim{Type: PrimSequence, Args: []Prim{{Type: PrimUnary, OpCode: K_CODE}}},
 			View:    Prim{Type: PrimSequence, Args: []Prim{}},
 		},
 		Storage: Prim{},
@@ -328,7 +328,7 @@ func (c Code) MarshalBinary() ([]byte, error) {
 
 	// patch code size
 	res := buf.Bytes()
-	binary.BigEndian.PutUint32(res[:], uint32(len(res)-4))
+	binary.BigEndian.PutUint32(res, uint32(len(res)-4))
 
 	return res, nil
 }
