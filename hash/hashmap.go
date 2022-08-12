@@ -1,6 +1,6 @@
 // Copyright (c) 2018 - 2021 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
-//
+
 package hash
 
 import (
@@ -26,7 +26,7 @@ func (m *HashMap) Add(buf []byte) int {
 func (m *HashMap) Remove(buf []byte) int {
 	h := fnv(buf)
 	if b, ok := (*m)[h]; ok {
-		if bytes.Compare(b, buf) == 0 {
+		if bytes.Equal(b, buf) {
 			delete((*m), h)
 		}
 	}
@@ -35,7 +35,7 @@ func (m *HashMap) Remove(buf []byte) int {
 
 func (m HashMap) Contains(buf []byte) bool {
 	b, ok := m[fnv(buf)]
-	return ok && bytes.Compare(b, buf) == 0
+	return ok && bytes.Equal(b, buf)
 }
 
 func fnv(buf []byte) uint64 {

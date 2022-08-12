@@ -21,9 +21,8 @@ const m_tz_script = "000000c602000000c105000764085e036c055f036d0000000325646f046
 const m_tz_store = "0000001a0a00000015000000000000000000000000000000000000000000"
 
 var (
-	manager_tz_code_len    int
-	manager_tz_storage_len int
-	manager_tz             []byte
+	manager_tz_code_len int
+	manager_tz          []byte
 )
 
 func init() {
@@ -34,7 +33,6 @@ func init() {
 	}
 	manager_tz = buf
 	manager_tz_code_len = len(m_tz_script) / 2
-	manager_tz_storage_len = len(m_tz_store) / 2
 }
 
 func MakeManagerScript(managerHash []byte) (*Script, error) {
@@ -50,7 +48,7 @@ func MakeManagerScript(managerHash []byte) (*Script, error) {
 }
 
 func IsManagerTz(buf []byte) bool {
-	return len(buf) >= manager_tz_code_len && bytes.Compare(buf[:manager_tz_code_len], manager_tz[:manager_tz_code_len]) == 0
+	return len(buf) >= manager_tz_code_len && bytes.Equal(buf[:manager_tz_code_len], manager_tz[:manager_tz_code_len])
 }
 
 func (p Prim) MigrateToBabylonStorage(managerHash []byte) Prim {

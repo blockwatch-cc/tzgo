@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -27,7 +26,6 @@ import (
 const testDataRootPathPrefix = "testdata"
 
 var (
-	testcats  = []string{"bigmap", "storage", "params"}
 	testfiles = make(map[string][]string)
 	testmask  string
 )
@@ -59,7 +57,7 @@ func scanTestFiles(t *testing.T, category string) {
 	testfiles[category] = make([]string, 0)
 	// find all test data directories
 	testPaths := make([]string, 0)
-	err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+	_ = filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -73,7 +71,7 @@ func scanTestFiles(t *testing.T, category string) {
 	})
 	// load tests from subdirs
 	for _, testPath := range testPaths {
-		err = filepath.WalkDir(
+		err := filepath.WalkDir(
 			filepath.Join(testPath, category),
 			func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
@@ -129,7 +127,7 @@ func loadNextTestFile(category string, offset int, val interface{}) (int, error)
 	if len(files) <= offset {
 		return offset, io.EOF
 	}
-	buf, err := ioutil.ReadFile(files[offset])
+	buf, err := os.ReadFile(files[offset])
 	if err != nil {
 		return offset + 1, err
 	}
@@ -137,82 +135,82 @@ func loadNextTestFile(category string, offset int, val interface{}) (int, error)
 	return offset + 1, err
 }
 
-func checkTypeEncoding(T *testing.T, test testcase) Type {
+func checkTypeEncoding(t *testing.T, test testcase) Type {
 	// decode type (hex & json and compare trees)
 	buf, err := hex.DecodeString(test.TypeHex)
 	if err != nil {
-		T.Errorf("invalid binary type: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary type: %v", err)
+		t.FailNow()
 	}
 	typ1 := Type{}
 	if err := typ1.UnmarshalBinary(buf); err != nil {
-		T.Errorf("invalid binary type: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary type: %v", err)
+		t.FailNow()
 	}
 	typ2 := Type{}
 	if err := typ2.UnmarshalJSON(test.Type); err != nil {
-		T.Errorf("invalid json type: %v", err)
-		T.FailNow()
+		t.Errorf("invalid json type: %v", err)
+		t.FailNow()
 	}
 	// compare prim trees
 	if !typ1.IsEqualWithAnno(typ2) {
 		b1, _ := typ1.MarshalBinary()
 		b2, _ := typ2.MarshalBinary()
-		T.Errorf("bigmap type decoding mismatch:\n  want=%s %x\n  have=%s %x",
+		t.Errorf("bigmap type decoding mismatch:\n  want=%s %x\n  have=%s %x",
 			typ1.Dump(), b1, typ2.Dump(), b2)
 	}
 	return typ1
 }
 
-func checkValueEncoding(T *testing.T, test testcase) Prim {
+func checkValueEncoding(t *testing.T, test testcase) Prim {
 	// decode value (hex & json and compare trees)
 	buf, err := hex.DecodeString(test.ValueHex)
 	if err != nil {
-		T.Errorf("invalid binary value: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary value: %v", err)
+		t.FailNow()
 	}
 	val1 := Prim{}
 	if err := val1.UnmarshalBinary(buf); err != nil {
-		T.Errorf("invalid binary value: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary value: %v", err)
+		t.FailNow()
 	}
 	val2 := Prim{}
 	if err := val2.UnmarshalJSON(test.Value); err != nil {
-		T.Errorf("invalid json value: %v", err)
-		T.FailNow()
+		t.Errorf("invalid json value: %v", err)
+		t.FailNow()
 	}
 	if !val1.IsEqualWithAnno(val2) {
 		b1, _ := val1.MarshalBinary()
 		b2, _ := val2.MarshalBinary()
-		T.Errorf("json/hex value mismatch:\n  A=%s %x\n  B=%s %x",
+		t.Errorf("json/hex value mismatch:\n  A=%s %x\n  B=%s %x",
 			val1.Dump(), b1, val2.Dump(), b2)
-		T.FailNow()
+		t.FailNow()
 	}
 	return val1
 }
 
-func checkKeyEncoding(T *testing.T, test testcase) Prim {
+func checkKeyEncoding(t *testing.T, test testcase) Prim {
 	// decode key (hex & json and compare trees)
 	buf, err := hex.DecodeString(test.KeyHex)
 	if err != nil {
-		T.Errorf("invalid binary key: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary key: %v", err)
+		t.FailNow()
 	}
 	key1 := Prim{}
 	if err := key1.UnmarshalBinary(buf); err != nil {
-		T.Errorf("invalid binary key: %v", err)
-		T.FailNow()
+		t.Errorf("invalid binary key: %v", err)
+		t.FailNow()
 	}
 	key2 := Prim{}
 	if err := key2.UnmarshalJSON(test.Key); err != nil {
-		T.Errorf("invalid json key: %v", err)
-		T.FailNow()
+		t.Errorf("invalid json key: %v", err)
+		t.FailNow()
 	}
 	// compare prim trees
 	if !key1.IsEqualWithAnno(key2) {
-		T.Errorf("json/hex key mismatch:\n  A=%s\n  B=%s\n  a=%#v\n  b=%#v",
+		t.Errorf("json/hex key mismatch:\n  A=%s\n  B=%s\n  a=%#v\n  b=%#v",
 			key1.Dump(), key2.Dump(), key1, key2)
-		T.FailNow()
+		t.FailNow()
 	}
 	return key1
 }
@@ -238,10 +236,10 @@ func TestBigmapValues(t *testing.T) {
 			continue
 		}
 		for _, test := range tests {
-			t.Run(test.Name, func(T *testing.T) {
-				typ1 := checkTypeEncoding(T, test)
-				key1 := checkKeyEncoding(T, test)
-				val1 := checkValueEncoding(T, test)
+			t.Run(test.Name, func(t *testing.T) {
+				typ1 := checkTypeEncoding(t, test)
+				key1 := checkKeyEncoding(t, test)
+				val1 := checkValueEncoding(t, test)
 
 				// test bigmap key
 				k, err := NewKey(
@@ -249,24 +247,24 @@ func TestBigmapValues(t *testing.T) {
 					key1,        // from binary
 				)
 				if err != nil {
-					T.Logf("typ: %s", typ1.Left().Dump())
-					T.Logf("key: %s", key1.Dump())
-					T.Errorf("key render error: %v", err)
+					t.Logf("typ: %s", typ1.Left().Dump())
+					t.Logf("key: %s", key1.Dump())
+					t.Errorf("key render error: %v", err)
 				}
 				// try unpack
 				if k.IsPacked() && !test.NoUnpack {
 					up, err := k.Unpack()
 					if err != nil {
-						T.Errorf("key unpack error: %v", err)
+						t.Errorf("key unpack error: %v", err)
 					}
 					k = up
 				}
 				buf, err := k.MarshalJSON()
 				if err != nil {
-					T.Errorf("value render error: %v", err)
+					t.Errorf("value render error: %v", err)
 				}
 				if !jsonDiff(t, buf, test.WantKey) {
-					T.Error("key render mismatch!")
+					t.Error("key render mismatch!")
 					t.FailNow()
 				}
 
@@ -279,17 +277,17 @@ func TestBigmapValues(t *testing.T) {
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
 					if err != nil {
-						T.Errorf("value unpack error: %v", err)
+						t.Errorf("value unpack error: %v", err)
 					}
 					v = up
 				}
 
 				buf, err = v.MarshalJSON()
 				if err != nil {
-					T.Errorf("value render error: %v", err)
+					t.Errorf("value render error: %v", err)
 				}
 				if !jsonDiff(t, buf, test.WantValue) {
-					T.Error("value render mismatch!")
+					t.Error("value render mismatch!")
 					t.FailNow()
 				}
 			})
@@ -318,9 +316,9 @@ func TestStorageValues(t *testing.T) {
 			continue
 		}
 		for _, test := range tests {
-			t.Run(test.Name, func(T *testing.T) {
-				typ1 := checkTypeEncoding(T, test)
-				val1 := checkValueEncoding(T, test)
+			t.Run(test.Name, func(t *testing.T) {
+				typ1 := checkTypeEncoding(t, test)
+				val1 := checkValueEncoding(t, test)
 
 				// test storage value
 				v := Value{
@@ -331,7 +329,7 @@ func TestStorageValues(t *testing.T) {
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
 					if err != nil {
-						T.Errorf("value unpack error: %v", err)
+						t.Errorf("value unpack error: %v", err)
 						t.FailNow()
 					}
 					v = up
@@ -339,11 +337,11 @@ func TestStorageValues(t *testing.T) {
 
 				buf, err := v.MarshalJSON()
 				if err != nil {
-					T.Errorf("value render error: %v", err)
+					t.Errorf("value render error: %v", err)
 					t.FailNow()
 				}
 				if !jsonDiff(t, buf, test.WantValue) {
-					T.Error("value render mismatch, see log for details")
+					t.Error("value render mismatch, see log for details")
 					t.FailNow()
 				}
 			})
@@ -372,9 +370,9 @@ func TestParamsValues(t *testing.T) {
 			continue
 		}
 		for _, test := range tests {
-			t.Run(test.Name, func(T *testing.T) {
-				typ1 := checkTypeEncoding(T, test)
-				val1 := checkValueEncoding(T, test)
+			t.Run(test.Name, func(t *testing.T) {
+				typ1 := checkTypeEncoding(t, test)
+				val1 := checkValueEncoding(t, test)
 
 				// test storage value
 				v := Value{
@@ -385,17 +383,17 @@ func TestParamsValues(t *testing.T) {
 				if v.IsPackedAny() && !test.NoUnpack {
 					up, err := v.UnpackAll()
 					if err != nil {
-						T.Errorf("value unpack error: %v", err)
+						t.Errorf("value unpack error: %v", err)
 					}
 					v = up
 				}
 
 				buf, err := v.MarshalJSON()
 				if err != nil {
-					T.Errorf("value render error: %v", err)
+					t.Errorf("value render error: %v", err)
 				}
 				if !jsonDiff(t, buf, test.WantValue) {
-					T.Error("value render mismatch, see log for details")
+					t.Error("value render mismatch, see log for details")
 					t.FailNow()
 				}
 			})

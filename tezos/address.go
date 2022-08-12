@@ -377,7 +377,7 @@ func (a Address) MarshalBinary() ([]byte, error) {
 // resilient to longer byte strings that contain extra padding or a suffix
 // (e.g. an entrypoint suffix as found in smart contract data).
 func (a *Address) UnmarshalBinary(b []byte) error {
-	switch true {
+	switch {
 	case len(b) >= 22 && (b[0] == 0 || b[0] == 1 || b[0] == 2):
 		switch b[0] {
 		case 0:
@@ -418,7 +418,7 @@ func IsAddressBytes(b []byte) bool {
 	if len(b) < 21 {
 		return false
 	}
-	switch true {
+	switch {
 	case len(b) == 22 && (b[0] == 0 || b[0] == 1 || b[0] == 2 || b[0] == 0xfe):
 		return true
 	case len(b) == 21:
@@ -477,7 +477,7 @@ func ParseAddress(addr string) (Address, error) {
 	if len(decoded) != 20 {
 		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
-	switch true {
+	switch {
 	case bytes.Equal(version, ED25519_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeEd25519, Hash: decoded}, nil
 	case bytes.Equal(version, SECP256K1_PUBLIC_KEY_HASH_ID):

@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -282,7 +281,7 @@ func (c *Contract) resolveStorageUri(ctx context.Context, uri string, result int
 	if l := len(prim.Bytes); l > 0 && prim.Bytes[0] == '{' && prim.Bytes[l-1] == '}' {
 		if checksum != nil {
 			hash := sha256.Sum256(prim.Bytes)
-			if bytes.Compare(hash[:], checksum) != 0 {
+			if !bytes.Equal(hash[:], checksum) {
 				return fmt.Errorf("checksum mismatch")
 			}
 		}
@@ -311,7 +310,7 @@ func (c *Contract) resolveHttpUri(ctx context.Context, uri string, result interf
 		return err
 	}
 	defer func() {
-		io.Copy(ioutil.Discard, resp.Body)
+		io.Copy(io.Discard, resp.Body)
 		resp.Body.Close()
 	}()
 	if resp.StatusCode/100 != 2 {
@@ -329,7 +328,7 @@ func (c *Contract) resolveHttpUri(ctx context.Context, uri string, result interf
 	if err != nil {
 		return err
 	}
-	if checksum != nil && bytes.Compare(h.Sum(nil), checksum) != 0 {
+	if checksum != nil && !bytes.Equal(h.Sum(nil), checksum) {
 		return fmt.Errorf("checksum mismatch")
 	}
 	return nil

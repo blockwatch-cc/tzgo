@@ -252,20 +252,20 @@ var (
 // known contracts.
 var InterfaceSpecs = map[Interface][]Prim{
 	// manager.tz
-	IManager: []Prim{
+	IManager: {
 		// 1 (lambda %do unit (list operation))
 		NewCodeAnno(T_LAMBDA, "%do", NewCode(T_UNIT), NewCode(T_LIST, NewCode(T_OPERATION))),
 		// 2 (unit %default)
 		NewCodeAnno(T_UNIT, "%default"),
 	},
 	// generic set delegate interface
-	ISetDelegate: []Prim{
+	ISetDelegate: {
 		// option %setDelegate key_hash
 		NewCodeAnno(T_OPTION, "%setDelegate", NewCode(T_KEY_HASH)),
 	},
 	// Tzip 5 a.k.a FA1
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-5/tzip-5.md
-	ITzip5: []Prim{
+	ITzip5: {
 		// (address :from, (address :to, nat :value)) %transfer
 		NewPairType(
 			NewCodeAnno(T_ADDRESS, ":from"),
@@ -290,7 +290,7 @@ var InterfaceSpecs = map[Interface][]Prim{
 	},
 	// Tzip 7 a.k.a FA1.2
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-7/tzip-7.md
-	ITzip7: []Prim{
+	ITzip7: {
 		// (address :from, (address :to, nat :value)) %transfer
 		NewPairType(
 			NewCodeAnno(T_ADDRESS, ":from"),
@@ -330,7 +330,7 @@ var InterfaceSpecs = map[Interface][]Prim{
 	},
 	// Tzip 12 a.k.a. FA2
 	// https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md
-	ITzip12: []Prim{
+	ITzip12: {
 		// (list %transfer
 		//   (pair
 		//     (address %from_)

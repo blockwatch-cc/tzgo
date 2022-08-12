@@ -18,7 +18,7 @@ type Parameters struct {
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {
-	if p.Entrypoint == "" || (p.Entrypoint == "default" && p.Value.OpCode == D_UNIT) {
+	if p.Entrypoint == "" || (p.Entrypoint == DEFAULT && p.Value.OpCode == D_UNIT) {
 		return json.Marshal(p.Value)
 	}
 	type alias Parameters
@@ -34,9 +34,9 @@ func (p Parameters) MapEntrypoint(typ Type) (Entrypoint, Prim, error) {
 	eps, _ := typ.Entrypoints(true)
 
 	switch p.Entrypoint {
-	case "default":
+	case DEFAULT:
 		// rebase branch by prepending the path to the named default entrypoint
-		prefix := typ.ResolveEntrypointPath("default")
+		prefix := typ.ResolveEntrypointPath(DEFAULT)
 		// can be [LR]+ or empty when entrypoint is used
 		branch := p.Branch(prefix, eps)
 		ep, ok = eps.FindBranch(branch)
@@ -47,7 +47,7 @@ func (p Parameters) MapEntrypoint(typ Type) (Entrypoint, Prim, error) {
 			prim = p.Unwrap(strings.TrimPrefix(ep.Branch, prefix))
 		}
 
-	case "root", "":
+	case ROOT, "":
 		// search unnamed naked entrypoint
 		branch := p.Branch("", eps)
 		ep, ok = eps.FindBranch(branch)
@@ -132,15 +132,15 @@ func (p Parameters) EncodeBuffer(buf *bytes.Buffer) error {
 	}
 
 	switch p.Entrypoint {
-	case "", "default":
+	case "", DEFAULT:
 		buf.WriteByte(0)
-	case "root":
+	case ROOT:
 		buf.WriteByte(1)
-	case "do":
+	case DO:
 		buf.WriteByte(2)
-	case "set_delegate":
+	case SET_DELEGATE:
 		buf.WriteByte(3)
-	case "remove_delegate":
+	case REMOVE_DELEGATE:
 		buf.WriteByte(4)
 	default:
 		buf.WriteByte(255)
@@ -175,7 +175,7 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 		// try legacy calling convention for single prim values
-		p.Entrypoint = "default"
+		p.Entrypoint = DEFAULT
 		return json.Unmarshal(data, &p.Value)
 	}
 }
@@ -190,15 +190,15 @@ func (p *Parameters) DecodeBuffer(buf *bytes.Buffer) error {
 	}
 	switch tag[0] {
 	case 0:
-		p.Entrypoint = "default"
+		p.Entrypoint = DEFAULT
 	case 1:
-		p.Entrypoint = "root"
+		p.Entrypoint = ROOT
 	case 2:
-		p.Entrypoint = "do"
+		p.Entrypoint = DO
 	case 3:
-		p.Entrypoint = "set_delegate"
+		p.Entrypoint = SET_DELEGATE
 	case 4:
-		p.Entrypoint = "remove_delegate"
+		p.Entrypoint = REMOVE_DELEGATE
 	default:
 		sz := buf.Next(1)
 		if len(sz) == 0 || buf.Len() < int(sz[0]) {

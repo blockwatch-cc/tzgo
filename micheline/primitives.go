@@ -67,11 +67,11 @@ func (t PrimType) IsValid() bool {
 
 func ParsePrimType(val string) (PrimType, error) {
 	switch val {
-	case "int":
+	case INT:
 		return PrimInt, nil
-	case "string":
+	case STRING:
 		return PrimString, nil
-	case "bytes":
+	case BYTES:
 		return PrimBytes, nil
 	default:
 		return 0, fmt.Errorf("micheline: invalid prim type '%s'", val)
@@ -82,9 +82,9 @@ func ParsePrimType(val string) (PrimType, error) {
 func (t PrimType) String() string {
 	switch t {
 	case PrimInt:
-		return "int"
+		return INT
 	case PrimString:
-		return "string"
+		return STRING
 	case PrimSequence:
 		return "sequence"
 	case PrimNullary:
@@ -102,7 +102,7 @@ func (t PrimType) String() string {
 	case PrimVariadicAnno:
 		return "variadic"
 	case PrimBytes:
-		return "bytes"
+		return BYTES
 	default:
 		return "invalid"
 	}
@@ -179,9 +179,7 @@ func (p Prim) Clone() Prim {
 	}
 	if p.Anno != nil {
 		clone.Anno = make([]string, len(p.Anno))
-		for i, anno := range p.Anno {
-			clone.Anno[i] = anno
-		}
+		copy(clone.Anno, p.Anno)
 	}
 	if p.Int != nil {
 		clone.Int = big.NewInt(0)
@@ -256,7 +254,7 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 		return false
 	}
 	if p1.Bytes != nil {
-		if bytes.Compare(p1.Bytes, p2.Bytes) != 0 {
+		if !bytes.Equal(p1.Bytes, p2.Bytes) {
 			return false
 		}
 	}
@@ -438,7 +436,6 @@ func (p Prim) IsContainerType() bool {
 
 // Detects whether a primitive contains a regular pair or any form
 // of container type. Pairs can be unfolded into flat sequences.
-//
 func (p Prim) CanUnfold(typ Type) bool {
 	// fix for pair(list, x)
 	if p.IsSequence() && typ.IsPair() && typ.Args[0].IsList() {
@@ -529,14 +526,13 @@ func (p Prim) HasSimilarChildTypes() bool {
 	if len(p.Args) == 0 {
 		return true
 	}
-	oc := p.Args[0].OpCode
-	typ := p.Args[0].Type
+	oc := p.Args[0].OpCode.TypeCode()
 	firstType := p.Args[0].BuildType()
 	for _, v := range p.Args[1:] {
-		isSame := v.OpCode == oc && v.Type == typ && !v.IsSequence()
+		var isSame bool
 		switch v.OpCode {
 		case D_SOME, D_NONE, D_FALSE, D_TRUE, D_LEFT, D_RIGHT:
-			isSame = oc.TypeCode() == v.OpCode.TypeCode()
+			isSame = oc == v.OpCode.TypeCode()
 		default:
 			isSame = firstType.IsEqual(v.BuildType())
 		}
@@ -597,7 +593,6 @@ func (p Prim) LooksLikeCode() bool {
 //
 // - Works both on value trees and type trees.
 // - When called on already converted comb sequences this function is a noop.
-//
 func (p Prim) UnfoldPair(typ Type) []Prim {
 	flat := make([]Prim, 0)
 	for i, v := range p.Args {
@@ -672,7 +667,7 @@ func (p Prim) Unpack() (pp Prim, err error) {
 		}
 	}()
 	pp = Prim{WasPacked: true}
-	switch true {
+	switch {
 	case isPackedBytes(p.Bytes):
 		if err := pp.UnmarshalBinary(p.Bytes[1:]); err != nil {
 			return p, err
@@ -1036,7 +1031,7 @@ func (p Prim) EncodeBuffer(buf *bytes.Buffer) error {
 			}
 		}
 		res := seq.Bytes()
-		binary.BigEndian.PutUint32(res[:], uint32(len(res)-4))
+		binary.BigEndian.PutUint32(res, uint32(len(res)-4))
 		buf.Write(res)
 
 	case PrimNullary:
@@ -1097,7 +1092,7 @@ func (p Prim) EncodeBuffer(buf *bytes.Buffer) error {
 			}
 		}
 		res := seq.Bytes()
-		binary.BigEndian.PutUint32(res[:], uint32(len(res)-4))
+		binary.BigEndian.PutUint32(res, uint32(len(res)-4))
 		buf.Write(res)
 
 		anno := strings.Join(p.Anno, " ")
@@ -1185,7 +1180,7 @@ func (p *Prim) UnpackSequence(val []interface{}) error {
 func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 	for n, v := range val {
 		switch n {
-		case "prim":
+		case PRIM:
 			str, ok := v.(string)
 			if !ok {
 				return fmt.Errorf("micheline: invalid prim value type %T %v", v, v)
@@ -1196,7 +1191,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 			}
 			p.OpCode = oc
 			p.Type = PrimNullary
-		case "int":
+		case INT:
 			str, ok := v.(string)
 			if !ok {
 				return fmt.Errorf("micheline: invalid int value type %T %v", v, v)
@@ -1205,14 +1200,14 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 			i.SetString(str, 0)
 			p.Int = i
 			p.Type = PrimInt
-		case "string":
+		case STRING:
 			str, ok := v.(string)
 			if !ok {
 				return fmt.Errorf("micheline: invalid string value type %T %v", v, v)
 			}
 			p.String = str
 			p.Type = PrimString
-		case "bytes":
+		case BYTES:
 			str, ok := v.(string)
 			if !ok {
 				return fmt.Errorf("micheline: invalid bytes value type %T %v", v, v)
@@ -1223,7 +1218,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 			}
 			p.Bytes = b
 			p.Type = PrimBytes
-		case "annots":
+		case ANNOTS:
 			slist, ok := v.([]interface{})
 			if !ok {
 				return fmt.Errorf("micheline: invalid annots value type %T %v", v, v)
@@ -1240,7 +1235,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 	}
 
 	// process args separately and detect type based on number of args
-	if a, ok := val["args"]; ok {
+	if a, ok := val[ARGS]; ok {
 		args, ok := a.([]interface{})
 		if !ok {
 			return fmt.Errorf("micheline: invalid args value type %T %v", a, a)

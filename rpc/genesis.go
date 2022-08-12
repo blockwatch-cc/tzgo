@@ -167,7 +167,7 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 
 		// skip when this does not look like a vesting contract
 		isVesting := true
-		switch true {
+		switch {
 		case !c[i].Script.Storage.IsValid():
 			isVesting = false
 		case len(c[i].Script.Storage.Args) == 0:
@@ -200,7 +200,7 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 			for _, vv := range v.Args[0].Args {
 				edpk, err := tezos.ParseHash(vv.String)
 				if err != nil {
-					return nil, fmt.Errorf("decoding signatory key %s: %w", vv.String, err)
+					return nil, fmt.Errorf("decoding signatory key %s: %v", vv.String, err)
 				}
 				vv.Type = micheline.PrimBytes
 				vv.Bytes = append([]byte{0}, edpk.Hash...)
@@ -214,7 +214,7 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 			pair := c[i].Script.Storage.Args[1].Args[1].Args[0].Args
 			dest, err := tezos.ParseAddress(pair[0].String)
 			if err != nil {
-				return nil, fmt.Errorf("decoding pour_dest %s: %w", pair[0].String, err)
+				return nil, fmt.Errorf("decoding pour_dest %s: %v", pair[0].String, err)
 			}
 			pair[0].Type = micheline.PrimBytes
 			pair[0].Bytes, _ = dest.MarshalBinary()
@@ -223,7 +223,7 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 			// pour_authorizer
 			edpk, err := tezos.ParseHash(pair[1].String)
 			if err != nil {
-				return nil, fmt.Errorf("decoding pour_authorizer key %s: %w", pair[1].String, err)
+				return nil, fmt.Errorf("decoding pour_authorizer key %s: %v", pair[1].String, err)
 			}
 			// replace with byte sequence
 			pair[1].Type = micheline.PrimBytes
@@ -239,7 +239,7 @@ func (b *bootstrap) DecodeAccounts() ([]*X0, error) {
 	for i, v := range b.Accounts {
 		acc[i] = &X0{}
 		pk := v[0]
-		switch true {
+		switch {
 		case tezos.HasKeyPrefix(pk):
 			key, err := tezos.ParseKey(pk)
 			if err != nil {

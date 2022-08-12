@@ -27,6 +27,14 @@ var VotingPeriods = []VotingPeriodKind{
 	VotingPeriodAdoption,
 }
 
+const (
+	YAY  = "yay"
+	NAY  = "nay"
+	PASS = "pass"
+	ON   = "on"
+	OFF  = "off"
+)
+
 func (v VotingPeriodKind) IsValid() bool {
 	return v != VotingPeriodInvalid
 }
@@ -151,11 +159,11 @@ func (v *BallotVote) UnmarshalBinary(data []byte) error {
 
 func ParseBallotVote(s string) BallotVote {
 	switch s {
-	case "yay":
+	case YAY:
 		return BallotVoteYay
-	case "nay":
+	case NAY:
 		return BallotVoteNay
-	case "pass":
+	case PASS:
 		return BallotVotePass
 	default:
 		return BallotVoteInvalid
@@ -165,11 +173,11 @@ func ParseBallotVote(s string) BallotVote {
 func (v BallotVote) String() string {
 	switch v {
 	case BallotVoteYay:
-		return "yay"
+		return YAY
 	case BallotVoteNay:
-		return "nay"
+		return NAY
 	case BallotVotePass:
-		return "pass"
+		return PASS
 	default:
 		return ""
 	}
@@ -218,11 +226,11 @@ func (v LbVote) IsValid() bool {
 func (v LbVote) String() string {
 	switch v {
 	case LbVoteOn:
-		return "on"
+		return ON
 	case LbVoteOff:
-		return "off"
+		return OFF
 	case LbVotePass:
-		return "pass"
+		return PASS
 	default:
 		return ""
 	}
@@ -261,11 +269,11 @@ func (v *LbVote) UnmarshalJSON(data []byte) error {
 	if data[0] == '"' {
 		val := string(data[1 : len(data)-1])
 		switch val {
-		case "on":
+		case ON:
 			vv = LbVoteOn
-		case "off":
+		case OFF:
 			vv = LbVoteOff
-		case "pass":
+		case PASS:
 			vv = LbVotePass
 		}
 	}

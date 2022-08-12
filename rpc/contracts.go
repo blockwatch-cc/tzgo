@@ -16,7 +16,6 @@ import (
 // Optimized encodings use integers for timestamps and bytes instead of base58 encoded
 // values. Legacy mode is supposed to output 2-ary pairs only, but is messed up on
 // certain endpoints (e.g. /script/normalized), so there's no guarantee.
-//
 type UnparsingMode string
 
 const (

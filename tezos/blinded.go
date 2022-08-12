@@ -68,7 +68,7 @@ func (a *Address) DecodeBlindedString(addr string) error {
 	if len(decoded) != 20 {
 		return fmt.Errorf("tezos: decoded address hash is of invalid length")
 	}
-	switch true {
+	switch {
 	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
 		a.Type = AddressTypeBlinded
 		a.Hash = decoded
@@ -90,7 +90,7 @@ func DecodeBlindedAddress(addr string) (Address, error) {
 	if len(decoded) != 20 {
 		return a, errors.New("tezos: decoded address hash is of invalid length")
 	}
-	switch true {
+	switch {
 	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeBlinded, Hash: decoded}, nil
 	default:

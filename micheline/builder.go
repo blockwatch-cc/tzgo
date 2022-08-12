@@ -10,7 +10,7 @@ import (
 )
 
 func NewCode(c OpCode, args ...Prim) Prim {
-	typ := PrimNullary
+	var typ PrimType
 	switch len(args) {
 	case 0:
 		typ = PrimNullary

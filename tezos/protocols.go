@@ -76,7 +76,7 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	pp := &Params{}
 	*pp = *p
 	pp.ChainId = net
-	switch true {
+	switch {
 	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
 		pp.SecurityDepositRampUpCycles = 64
@@ -98,7 +98,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	pp.Protocol = proto
 	pp.NumVotingPeriods = 4
 	pp.MaxOperationsTTL = 60
-	switch true {
+	switch {
 	case ProtoBootstrap.Equal(proto):
 		// retain version set in ForNetwork()
 		pp.StartHeight = 1
@@ -291,7 +291,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.OperationTagsVersion = 2
 		pp.NumVotingPeriods = 5
 		pp.MaxOperationsTTL = 120
-		if Mainnet.Equal(p.ChainId) {
+		switch {
+		case Mainnet.Equal(p.ChainId):
 			pp.StartBlockOffset = 2490368
 			pp.StartCycle = 498
 			pp.VoteBlockOffset = 0
@@ -303,12 +304,12 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2490369
 			pp.EndHeight = -1
-		} else if Jakartanet.Equal(p.ChainId) {
+		case Jakartanet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
 			pp.EndHeight = -1
-		} else if Ghostnet.Equal(p.ChainId) {
+		case Ghostnet.Equal(p.ChainId):
 			pp.StartBlockOffset = 765952
 			pp.StartCycle = 187
 			pp.StartHeight = 765953

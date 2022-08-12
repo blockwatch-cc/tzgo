@@ -179,11 +179,12 @@ func (h BlockHeader) ProtocolData() []byte {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	if h.LiquidityBakingToggleVote.IsValid() {
+	switch {
+	case h.LiquidityBakingToggleVote.IsValid():
 		buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
-	} else if h.LiquidityBakingEscapeVote {
+	case h.LiquidityBakingEscapeVote:
 		buf.WriteByte(0xff)
-	} else {
+	default:
 		buf.WriteByte(0x0)
 	}
 	if h.Signature.IsValid() {
@@ -214,7 +215,7 @@ type LevelInfo struct {
 	CyclePosition      int64 `json:"cycle_position"`
 	ExpectedCommitment bool  `json:"expected_commitment"`
 
-	// deprecated in v008
+	// <v008
 	VotingPeriod         int64 `json:"voting_period"`
 	VotingPeriodPosition int64 `json:"voting_period_position"`
 }
@@ -246,15 +247,15 @@ type BlockMetadata struct {
 	Deactivated            []tezos.Address        `json:"deactivated"`
 	BalanceUpdates         BalanceUpdates         `json:"balance_updates"`
 
-	// deprecated in v008
+	// <v008
 	Level            *LevelInfo              `json:"level"`
 	VotingPeriodKind *tezos.VotingPeriodKind `json:"voting_period_kind"`
 
-	// v008
+	// v008+
 	LevelInfo        *LevelInfo        `json:"level_info"`
 	VotingPeriodInfo *VotingPeriodInfo `json:"voting_period_info"`
 
-	// v010
+	// v010+
 	ImplicitOperationsResults []ImplicitResult `json:"implicit_operations_results"`
 	LiquidityBakingEscapeEma  int64            `json:"liquidity_baking_escape_ema"`
 }
@@ -319,7 +320,7 @@ func (c *Client) GetGenesisBlock(ctx context.Context) (*Block, error) {
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetTipHeader(ctx context.Context) (*BlockHeader, error) {
 	var head BlockHeader
-	u := fmt.Sprintf("chains/main/blocks/head/header")
+	u := "chains/main/blocks/head/header"
 	if err := c.Get(ctx, u, &head); err != nil {
 		return nil, err
 	}

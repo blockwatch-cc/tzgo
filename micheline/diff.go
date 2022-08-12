@@ -54,6 +54,6 @@ func ParseDiffAction(data string) (DiffAction, error) {
 	case "alloc":
 		return DiffActionAlloc, nil
 	default:
-		return DiffActionUpdate, fmt.Errorf("micheline: invalid big_map_diff action '%s'", string(data))
+		return DiffActionUpdate, fmt.Errorf("micheline: invalid big_map_diff action %q", data)
 	}
 }

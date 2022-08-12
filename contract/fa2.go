@@ -52,7 +52,7 @@ type FA2BalanceResponse struct {
 }
 
 func (t FA2Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z, error) {
-	resp, err := t.GetBalances(ctx, []FA2BalanceRequest{FA2BalanceRequest{Owner: owner, TokenId: t.TokenId}})
+	resp, err := t.GetBalances(ctx, []FA2BalanceRequest{{Owner: owner, TokenId: t.TokenId}})
 	if err != nil {
 		return tezos.Z{}, err
 	}

@@ -104,8 +104,8 @@ func resolveEntrypointPath(name, branch string, node Prim) string {
 // This is necessary to resolve ambiguities in contract designs that
 // use T_OR as call parameter.
 
-// - to handle conflicts between T_OR used for call params vs used for marking entrypoint
-//   skip annotated T_OR branches (exclude the root T_OR and any branch called 'default')
+//   - to handle conflicts between T_OR used for call params vs used for marking entrypoint
+//     skip annotated T_OR branches (exclude the root T_OR and any branch called 'default')
 var knownEntrypointPrefixes = []string{"_Liq_entry_"}
 
 func isKnownEntrypointPrefix(s string) bool {
@@ -143,7 +143,7 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 	// need unique entrypoint name
 	if name == "" {
 		if len(e) == 0 {
-			name = "default"
+			name = DEFAULT
 		} else {
 			name = fmt.Sprintf("%s_%d", CONST_ENTRYPOINT, len(e))
 		}

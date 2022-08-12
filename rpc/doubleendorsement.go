@@ -24,7 +24,7 @@ func (d DoubleEndorsement) Costs() tezos.Costs {
 	// last item is accuser reward, rest is burned
 	for i, v := range upd {
 		if i == len(upd)-1 {
-			burn += v.Amount()
+			burn -= v.Amount()
 		} else {
 			burn += v.Amount()
 		}
