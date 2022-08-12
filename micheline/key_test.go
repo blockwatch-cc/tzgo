@@ -26,7 +26,7 @@ type keyTest struct {
 var keyInfo = []keyTest{
 	// scalars
 	//   int
-	keyTest{
+	{
 		Name:   "int",
 		Type:   "int",
 		Hash:   tezos.MustParseExprHash("exprv6n4YrvfCD2N6JmSF9aZxtcrcDCDV5YAFpaJDhJU6bhmNHz3YK"),
@@ -36,7 +36,7 @@ var keyInfo = []keyTest{
 		Prim:   NewInt64(352),
 	},
 	//   nat
-	keyTest{
+	{
 		Name:   "nat",
 		Type:   "nat",
 		Hash:   tezos.MustParseExprHash("expruE5MGe6oKRLTiog6iBZzpztj5kCGzMEYBfWzsVebPnhn43ndYa"),
@@ -46,7 +46,7 @@ var keyInfo = []keyTest{
 		Prim:   NewInt64(200206),
 	},
 	//   mutez
-	keyTest{
+	{
 		Name:   "mutez",
 		Type:   "mutez",
 		Hash:   tezos.MustParseExprHash("expruE5MGe6oKRLTiog6iBZzpztj5kCGzMEYBfWzsVebPnhn43ndYa"),
@@ -56,7 +56,7 @@ var keyInfo = []keyTest{
 		Prim:   NewInt64(200206),
 	},
 	//   unit
-	keyTest{
+	{
 		Name:   "unit",
 		Type:   "unit",
 		Hash:   tezos.MustParseExprHash("expruaDPoTWXcTR6fiQPy4KZSW72U6Swc1rVmMiP1KdwmCceeEpVjd"),
@@ -66,7 +66,7 @@ var keyInfo = []keyTest{
 		Prim:   NewCode(D_UNIT),
 	},
 	//   string
-	keyTest{
+	{
 		Name:   "string",
 		Type:   "string",
 		Hash:   tezos.MustParseExprHash("exprtiRSZkLKYRess9GZ3ryb4cVQD36WLo2oysZBFxKTZ2jXqcHWGj"),
@@ -76,7 +76,7 @@ var keyInfo = []keyTest{
 		Prim:   NewString("Game one!"),
 	},
 	//   bytes
-	keyTest{
+	{
 		Name:   "bytes",
 		Type:   "bytes",
 		Hash:   tezos.MustParseExprHash("expruLUtQBGu3aw4onM4nA9A8UM7PrDh3pbcrqnrFpzAAuTd12Ggdv"),
@@ -86,7 +86,7 @@ var keyInfo = []keyTest{
 		Prim:   NewBytes([]byte{0x9e, 0x2d, 0xce, 0x28, 0xb8, 0x61, 0x64, 0x6c, 0x13, 0xc2, 0xb9, 0xcf, 0x42, 0x45, 0xe4, 0x83, 0xa8, 0x37, 0x52, 0x5f, 0x2d, 0x15, 0x47, 0xa4, 0x10, 0x29, 0x3e, 0x29, 0xc3, 0x73, 0x4d, 0x6e}),
 	},
 	//   key_hash
-	keyTest{
+	{
 		Name:   "tz1 key_hash",
 		Type:   "key_hash",
 		Hash:   tezos.MustParseExprHash("exprtc5kFMbFCzkSq1hZkDrLWqQBUdpPx3URB7KvEu72XBFBqv7k72"),
@@ -96,7 +96,7 @@ var keyInfo = []keyTest{
 		Prim:   NewBytes(tezos.MustParseAddress("tz1S5WxdZR5f9NzsPXhr7L9L1vrEb5spZFur").Bytes22()),
 	},
 	//   address
-	keyTest{
+	{
 		Name:   "tz1 address",
 		Type:   "address",
 		Hash:   tezos.MustParseExprHash("expruQacisQeiLaWSgSHFeLA4BdLfS6yswqYQ8gjYSmJABQ9Sf53Y4"),
@@ -105,7 +105,7 @@ var keyInfo = []keyTest{
 		String: "tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH",
 		Prim:   NewBytes(tezos.MustParseAddress("tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH").Bytes22()),
 	},
-	keyTest{
+	{
 		Name:   "KT1 address",
 		Type:   "address",
 		Hash:   tezos.MustParseExprHash("exprvAHu1SyoiSzyh9w7GPfifvyrNiMb442y7Q2MA8tcPCGPajxRH6"),
@@ -119,7 +119,7 @@ var keyInfo = []keyTest{
 	//   timestamp as unix seconds
 	//   timestamp with out-of-range year
 	//   key
-	keyTest{
+	{
 		Name:   "key",
 		Type:   "key",
 		Hash:   tezos.MustParseExprHash("exprv1Vjr2jWEzSALFrHaoubi3jELpXvnMtGNG4ZJPDMRHxrQtyBDW"),
@@ -133,7 +133,7 @@ var keyInfo = []keyTest{
 
 	// composites
 	//   pair
-	keyTest{
+	{
 		Name:   "Pair(address,nat)",
 		Type:   "pair",
 		Hash:   tezos.MustParseExprHash("exprvD1v8DxXvrsCqbx7BA2ZqxYuUk9jXE1QrXuL46i3MWG6o1szUq"),
@@ -145,7 +145,7 @@ var keyInfo = []keyTest{
 			NewInt64(153),
 		),
 	},
-	keyTest{
+	{
 		Name:   "Pair(address,string)",
 		Type:   "pair",
 		Hash:   tezos.MustParseExprHash("exprtdyqcWJgj564TtpwqXkkHQu728pP4hVM7vdc16RVXaSbWoJttS"),
@@ -157,7 +157,7 @@ var keyInfo = []keyTest{
 			NewString("DICRERJ28"),
 		),
 	},
-	keyTest{
+	{
 		Name:   "Pair(address,address,nat)",
 		Type:   "pair",
 		Hash:   tezos.MustParseExprHash("exprtXiCYp3hWQMDQNszcmsigcU13M32bzQYLDaQp35t2F1Nqj6tiW"),
@@ -197,7 +197,7 @@ func TestKeyParser(t *testing.T) {
 			// encode and check against bytes
 			buf := key.Bytes()
 			hx, _ := hex.DecodeString(test.Hex)
-			if bytes.Compare(buf, hx) != 0 {
+			if !bytes.Equal(buf, hx) {
 				T.Errorf("binary encoding mismatch:\n    want: %x\n    got:  %x", hx, buf)
 			}
 
@@ -238,7 +238,7 @@ func TestKeyRendering(t *testing.T) {
 			// encode and check against bytes
 			buf := key.Bytes()
 			hx, _ := hex.DecodeString(test.Hex)
-			if bytes.Compare(buf, hx) != 0 {
+			if !bytes.Equal(buf, hx) {
 				T.Errorf("binary encoding mismatch:\n    want: %x\n    got:  %x", hx, buf)
 			}
 

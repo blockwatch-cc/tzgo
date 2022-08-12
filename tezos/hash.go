@@ -101,7 +101,7 @@ func ParseHashType(s string) HashType {
 			return HashTypeId
 		}
 	case 36:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, ED25519_PUBLIC_KEY_HASH_PREFIX):
 			return HashTypePkhEd25519
 		case strings.HasPrefix(s, SECP256K1_PUBLIC_KEY_HASH_PREFIX):
@@ -118,17 +118,15 @@ func ParseHashType(s string) HashType {
 			return HashTypeDekuContract
 		}
 	case 37:
-		switch true {
-		case strings.HasPrefix(s, TORU_ADDRESS_PREFIX):
+		if strings.HasPrefix(s, TORU_ADDRESS_PREFIX) {
 			return HashTypeToruAddress
 		}
 	case 43:
-		switch true {
-		case strings.HasPrefix(s, SAPLING_ADDRESS_PREFIX):
+		if strings.HasPrefix(s, SAPLING_ADDRESS_PREFIX) {
 			return HashTypeSaplingAddress
 		}
 	case 51:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, BLOCK_HASH_PREFIX):
 			return HashTypeBlock
 		case strings.HasPrefix(s, OPERATION_HASH_PREFIX):
@@ -139,7 +137,7 @@ func ParseHashType(s string) HashType {
 			return HashTypeOperationMetadata
 		}
 	case 52:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, OPERATION_LIST_HASH_PREFIX):
 			return HashTypeOperationList
 		case strings.HasPrefix(s, CONTEXT_HASH_PREFIX):
@@ -152,7 +150,7 @@ func ParseHashType(s string) HashType {
 			return HashTypeOperationMetadataList
 		}
 	case 53:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, OPERATION_LIST_LIST_HASH_PREFIX):
 			return HashTypeOperationListList
 		case strings.HasPrefix(s, SECP256K1_SCALAR_PREFIX):
@@ -173,7 +171,7 @@ func ParseHashType(s string) HashType {
 			return HashTypeToruWithdrawList
 		}
 	case 54:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, ED25519_SEED_PREFIX):
 			return HashTypeSeedEd25519
 		case strings.HasPrefix(s, ED25519_PUBLIC_KEY_PREFIX):
@@ -192,19 +190,18 @@ func ParseHashType(s string) HashType {
 			return HashTypeToruMessageResult
 		}
 	case 55:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, SECP256K1_PUBLIC_KEY_PREFIX):
 			return HashTypePkSecp256k1
 		case strings.HasPrefix(s, P256_PUBLIC_KEY_PREFIX):
 			return HashTypePkP256
 		}
 	case 76:
-		switch true {
-		case strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_PREFIX):
+		if strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_PREFIX) {
 			return HashTypePkBls12_381
 		}
 	case 88:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, ED25519_ENCRYPTED_SEED_PREFIX):
 			return HashTypeEncryptedSeedEd25519
 		case strings.HasPrefix(s, SECP256K1_ENCRYPTED_SECRET_KEY_PREFIX):
@@ -215,8 +212,7 @@ func ParseHashType(s string) HashType {
 			return HashTypeEncryptedSkBls12_381
 		}
 	case 93:
-		switch true {
-		case strings.HasPrefix(s, SECP256K1_ENCRYPTED_SCALAR_PREFIX):
+		if strings.HasPrefix(s, SECP256K1_ENCRYPTED_SCALAR_PREFIX) {
 			return HashTypeEncryptedSecp256k1Scalar
 		}
 	case 96:
@@ -224,32 +220,29 @@ func ParseHashType(s string) HashType {
 			return HashTypeSigGeneric
 		}
 	case 98:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, ED25519_SECRET_KEY_PREFIX):
 			return HashTypeSkEd25519
 		case strings.HasPrefix(s, P256_SIGNATURE_PREFIX):
 			return HashTypeSigP256
 		}
 	case 99:
-		switch true {
+		switch {
 		case strings.HasPrefix(s, ED25519_SIGNATURE_PREFIX):
 			return HashTypeSigEd25519
 		case strings.HasPrefix(s, SECP256K1_SIGNATURE_PREFIX):
 			return HashTypeSigSecp256k1
 		}
 	case 141:
-		switch true {
-		case strings.HasPrefix(s, GENERIC_AGGREGATE_SIGNATURE_PREFIX):
+		if strings.HasPrefix(s, GENERIC_AGGREGATE_SIGNATURE_PREFIX) {
 			return HashTypeSigGenericAggregate
 		}
 	case 142:
-		switch true {
-		case strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX):
+		if strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX) {
 			return HashTypeSigBls12_381
 		}
 	case 169:
-		switch true {
-		case strings.HasPrefix(s, SAPLING_SPENDING_KEY_PREFIX):
+		if strings.HasPrefix(s, SAPLING_SPENDING_KEY_PREFIX) {
 			return HashTypeSaplingSpendingKey
 		}
 	}
@@ -785,7 +778,7 @@ func (h *ChainIdHash) UnmarshalBinary(data []byte) error {
 }
 
 func (h ChainIdHash) Uint32() uint32 {
-	return binary.BigEndian.Uint32(h.Hash.Hash[:])
+	return binary.BigEndian.Uint32(h.Hash.Hash)
 }
 
 func MustParseChainIdHash(s string) ChainIdHash {

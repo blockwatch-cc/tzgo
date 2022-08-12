@@ -45,7 +45,7 @@ type Proposal struct {
 }
 
 func (p *Proposal) UnmarshalJSON(data []byte) error {
-	if len(data) == 0 || bytes.Compare(data, []byte("null")) == 0 || len(data) == 2 {
+	if len(data) == 0 || bytes.Equal(data, null) || len(data) == 2 {
 		return nil
 	}
 	if data[0] != '[' {
@@ -56,17 +56,17 @@ func (p *Proposal) UnmarshalJSON(data []byte) error {
 	unpacked := make([]interface{}, 0)
 	err := dec.Decode(&unpacked)
 	if err != nil {
-		return fmt.Errorf("rpc: proposal: %w", err)
+		return fmt.Errorf("rpc: proposal: %v", err)
 	}
 	if len(unpacked) != 2 {
 		return fmt.Errorf("rpc: proposal: invalid JSON array")
 	}
 	if err := p.Proposal.UnmarshalText([]byte(unpacked[0].(string))); err != nil {
-		return fmt.Errorf("rpc: proposal: %w", err)
+		return fmt.Errorf("rpc: proposal: %v", err)
 	}
 	p.Upvotes, err = strconv.ParseInt(unpacked[1].(json.Number).String(), 10, 64)
 	if err != nil {
-		return fmt.Errorf("rpc: proposal: %w", err)
+		return fmt.Errorf("rpc: proposal: %v", err)
 	}
 	return nil
 }

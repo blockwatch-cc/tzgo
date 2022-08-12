@@ -9,7 +9,20 @@ import (
 	"unicode"
 )
 
-const PATH_SEPARATOR = "."
+const (
+	PATH_SEPARATOR  = "."
+	DEFAULT         = "default"
+	PRIM            = "prim"
+	INT             = "int"
+	BYTES           = "bytes"
+	STRING          = "string"
+	ROOT            = "root"
+	ANNOTS          = "annots"
+	ARGS            = "args"
+	DO              = "do"
+	SET_DELEGATE    = "set_delegate"
+	REMOVE_DELEGATE = "remove_delegate"
+)
 
 func isASCII(s string) bool {
 	for i := 0; i < len(s); i++ {

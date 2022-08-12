@@ -19,6 +19,7 @@ const (
 	RENDER_TYPE_PRIM  = 0      // silently output primitive tree instead if human-readable
 	RENDER_TYPE_FAIL  = 1      // return error if human-readable formatting fails
 	RENDER_TYPE_PANIC = 2      // panic with error if human-readable formatting fails
+	RENDER_TYPE_DEBUG = 3      // return error and primitives
 )
 
 type Value struct {
@@ -117,37 +118,39 @@ func (e *Value) Map() (interface{}, error) {
 func (e Value) MarshalJSON() ([]byte, error) {
 	m, err := e.Map()
 	if err != nil {
-		type xErrorMessage struct {
-			Message string `json:"message"`
-			Type    Prim   `json:"type"`
-			Value   Prim   `json:"value"`
-		}
-		resp := struct {
-			Error xErrorMessage `json:"error"`
-		}{
-			Error: xErrorMessage{
-				Message: err.Error(),
-				Type:    e.Type.Prim,
-				Value:   e.Value,
-			},
-		}
-		// FIXME: this is a good place to plug in an error reporting facility
-		buf, _ := json.Marshal(resp)
-
 		switch e.Render {
-		default:
+		case RENDER_TYPE_PRIM:
 			// render the plain prim tree
 			return json.Marshal(e.Value)
 		case RENDER_TYPE_FAIL:
 			// render the plain prim tree, but fail with render error
-			buf, _ = json.Marshal(e.Value)
+			buf, _ := json.Marshal(e.Value)
 			return buf, err
 		case RENDER_TYPE_PANIC:
 			// panic with render error
 			panic(err)
+		case RENDER_TYPE_DEBUG:
+			// wrap type and value with error
+			type ErrorMessage struct {
+				Message string `json:"message"`
+				Type    Prim   `json:"type"`
+				Value   Prim   `json:"value"`
+			}
+			resp := struct {
+				Error ErrorMessage `json:"error"`
+			}{
+				Error: ErrorMessage{
+					Message: err.Error(),
+					Type:    e.Type.Prim,
+					Value:   e.Value,
+				},
+			}
+			// FIXME: this is a good place to plug in an error reporting facility
+			return json.Marshal(resp)
+		default:
+			return nil, nil
 		}
 	}
-
 	return json.Marshal(m)
 }
 

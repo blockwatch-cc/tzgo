@@ -10,6 +10,13 @@ import (
 	"strconv"
 )
 
+// private constants strings
+var (
+	null = []byte(`null`)
+)
+
+const CONTRACT = "contract"
+
 // BlockID is an interface to abstract different kinds of block addressing modes
 type BlockID interface {
 	fmt.Stringer

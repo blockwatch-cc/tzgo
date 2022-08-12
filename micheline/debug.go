@@ -24,7 +24,7 @@ func (p Prim) DumpLimit(n int) string {
 func (e Value) Dump() string {
 	buf := bytes.NewBuffer(nil)
 	e.DumpTo(buf)
-	return string(buf.Bytes())
+	return buf.String()
 }
 
 func (e Value) DumpLimit(n int) string {

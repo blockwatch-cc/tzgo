@@ -281,7 +281,7 @@ func ParseSignature(s string) (Signature, error) {
 		typ      SignatureType
 		err      error
 	)
-	switch true {
+	switch {
 	case strings.HasPrefix(s, ED25519_SIGNATURE_PREFIX):
 		dec, ver, err = base58.CheckDecode(s, 5, nil)
 		typ = SignatureTypeEd25519

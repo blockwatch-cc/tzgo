@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
@@ -51,24 +52,67 @@ func (k TokenKind) IsValid() bool {
 const TOKEN_METADATA = "token_metadata"
 
 // Represents Tzip12 token metadata used by FA1 and FA2 tokens
+// mixed with TZip21 metadata for NFTs
 type TokenMetadata struct {
-	// normative (only decimals is required)
+	// TZip12 normative (only decimals is required)
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals int    `json:"decimals"`
 
-	// non-standard (people mix this in from Tzip21)
-	Description        string `json:"description,omitempty"`
-	ShouldPreferSymbol bool   `json:"shouldPreferSymbol,omitempty"`
-	IsBooleanAmount    bool   `json:"isBooleanAmount,omitempty"`
-	IsTransferable     bool   `json:"isTransferable,omitempty"`
-	ArtifactUri        string `json:"artifactUri,omitempty"`
-	DisplayUri         string `json:"displayUri,omitempty"`
-	ThumbnailUri       string `json:"thumbnailUri,omitempty"`
+	// Tzip21
+	Description        string          `json:"description,omitempty"`
+	ShouldPreferSymbol bool            `json:"shouldPreferSymbol,omitempty"`
+	IsBooleanAmount    bool            `json:"isBooleanAmount,omitempty"`
+	IsTransferable     bool            `json:"isTransferable,omitempty"`
+	ArtifactUri        string          `json:"artifactUri,omitempty"`
+	DisplayUri         string          `json:"displayUri,omitempty"`
+	ThumbnailUri       string          `json:"thumbnailUri,omitempty"`
+	Minter             string          `json:"minter,omitempty"`
+	Creators           []string        `json:"creators,omitempty"`
+	Contributors       []string        `json:"contributors,omitempty"`
+	Publishers         []string        `json:"publishers,omitempty"`
+	Date               time.Time       `json:"date,omitempty"`
+	Type               string          `json:"type,omitempty"`
+	Tags               []string        `json:"tags,omitempty"`
+	Genres             []string        `json:"genres,omitempty"`
+	Language           string          `json:"language,omitempty"`
+	Identifier         string          `json:"identifier,omitempty"`
+	Rights             string          `json:"rights,omitempty"`
+	RightUri           string          `json:"rightUri,omitempty"`
+	ExternalUri        string          `json:"externalUri,omitempty"`
+	Formats            []Tz21Format    `json:"formats,omitempty"`
+	Attributes         []Tz21Attribute `json:"attributes,omitempty"`
 
 	// internal
 	uri string          `json:"-"`
 	raw json.RawMessage `json:"-"`
+}
+
+type Tz21Format struct {
+	Uri        string        `json:"uri"`
+	Hash       string        `json:"hash"`
+	MimeType   string        `json:"mimeType"`
+	FileSize   int64         `json:"fileSize"`
+	FileName   string        `json:"fileName"`
+	Duration   string        `json:"duration"`
+	Dimensions Tz21Dimension `json:"dimensions"`
+	DataRate   Tz21DataRate  `json:"dataRate"`
+}
+
+type Tz21Attribute struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+	Type  string `json:"type,omitempty"`
+}
+
+type Tz21Dimension struct {
+	Value string `json:"value"`
+	Unit  string `json:"unit"`
+}
+
+type Tz21DataRate struct {
+	Value string `json:"value"`
+	Unit  string `json:"unit"`
 }
 
 // (pair (nat %token_id) (map %token_info string bytes))

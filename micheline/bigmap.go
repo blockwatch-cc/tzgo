@@ -161,7 +161,7 @@ func (b BigmapEvents) MarshalBinary() ([]byte, error) {
 				OpCode: T_PAIR,
 				Args: []Prim{
 					v.Key,
-					Prim{
+					{
 						Type:  PrimBytes,
 						Bytes: v.KeyHash.Hash.Hash,
 					},
@@ -201,11 +201,11 @@ func (b BigmapEvents) MarshalBinary() ([]byte, error) {
 				Type:   PrimBinary,
 				OpCode: T_PAIR,
 				Args: []Prim{
-					Prim{
+					{
 						Type: PrimInt,
 						Int:  big.NewInt(v.SourceId),
 					},
-					Prim{
+					{
 						Type: PrimInt,
 						Int:  big.NewInt(v.DestId),
 					},
