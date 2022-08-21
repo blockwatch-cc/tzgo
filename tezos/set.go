@@ -122,3 +122,51 @@ func (s AddressSet) Slice() []Address {
 	a = append(a, s.coll...)
 	return a
 }
+
+func (s AddressSet) HasIntersect(t *AddressSet) bool {
+	for k, v := range s.set {
+		a, ok := t.set[k]
+		if !ok {
+			continue
+		}
+		if v.Equal(a) {
+			return true
+		}
+		for _, v := range t.coll {
+			if v.Equal(a) {
+				return true
+			}
+		}
+	}
+	for _, v := range s.coll {
+		if t.Contains(v) {
+			return true
+		}
+	}
+	return false
+}
+
+func (s AddressSet) Intersect(t *AddressSet) *AddressSet {
+	i := NewAddressSet()
+	for k, v := range s.set {
+		a, ok := t.set[k]
+		if !ok {
+			continue
+		}
+		if v.Equal(a) {
+			i.AddUnique(a)
+		} else {
+			for _, a := range t.coll {
+				if v.Equal(a) {
+					i.AddUnique(a)
+				}
+			}
+		}
+	}
+	for _, v := range s.coll {
+		if t.Contains(v) {
+			i.AddUnique(v)
+		}
+	}
+	return i
+}

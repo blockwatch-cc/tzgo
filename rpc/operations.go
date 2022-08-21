@@ -375,7 +375,7 @@ func (c *Client) GetBlockOperationListHashes(ctx context.Context, id BlockID, l 
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations-list-offset-operation-offset
 func (c *Client) GetBlockOperation(ctx context.Context, id BlockID, l, n int) (*Operation, error) {
 	var op Operation
-	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d/%d", id, l, n)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d/%d?metadata=always", id, l, n)
 	if err := c.Get(ctx, u, &op); err != nil {
 		return nil, err
 	}
@@ -387,7 +387,7 @@ func (c *Client) GetBlockOperation(ctx context.Context, id BlockID, l, n int) (*
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations-list-offset
 func (c *Client) GetBlockOperationList(ctx context.Context, id BlockID, l int) ([]Operation, error) {
 	ops := make([]Operation, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d", id, l)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d?metadata=always", id, l)
 	if err := c.Get(ctx, u, &ops); err != nil {
 		return nil, err
 	}
@@ -399,7 +399,7 @@ func (c *Client) GetBlockOperationList(ctx context.Context, id BlockID, l int) (
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations
 func (c *Client) GetBlockOperations(ctx context.Context, id BlockID) ([][]Operation, error) {
 	ops := make([][]Operation, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/operations", id)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations?metadata=always", id)
 	if err := c.Get(ctx, u, &ops); err != nil {
 		return nil, err
 	}

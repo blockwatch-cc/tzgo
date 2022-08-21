@@ -271,7 +271,7 @@ func (m *BlockMetadata) GetLevel() int64 {
 // https://tezos.gitlab.io/mainnet/api/rpc.html#get-block-id
 func (c *Client) GetBlock(ctx context.Context, id BlockID) (*Block, error) {
 	var block Block
-	u := fmt.Sprintf("chains/main/blocks/%s", id)
+	u := fmt.Sprintf("chains/main/blocks/%s?metadata=always", id)
 	if err := c.Get(ctx, u, &block); err != nil {
 		return nil, err
 	}
@@ -342,7 +342,7 @@ func (c *Client) GetBlockHeader(ctx context.Context, id BlockID) (*BlockHeader, 
 // https://tezos.gitlab.io/mainnet/api/rpc.html#chains-chain-id-blocks
 func (c *Client) GetBlockMetadata(ctx context.Context, id BlockID) (*BlockMetadata, error) {
 	var meta BlockMetadata
-	u := fmt.Sprintf("chains/main/blocks/%s/metadata", id)
+	u := fmt.Sprintf("chains/main/blocks/%s/metadata?metadata=always", id)
 	if err := c.Get(ctx, u, &meta); err != nil {
 		return nil, err
 	}
