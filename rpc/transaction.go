@@ -32,7 +32,7 @@ func (t Transaction) Costs() tezos.Costs {
 	}
 	var i int
 	for _, v := range res.BalanceUpdates {
-		if v.Kind != "contract" {
+		if v.Kind != CONTRACT {
 			continue
 		}
 		if t.Amount > 0 && v.AmountAbs() == t.Amount {
@@ -53,30 +53,7 @@ func (t Transaction) Costs() tezos.Costs {
 		}
 	}
 	for _, in := range t.Metadata.InternalResults {
-		cost.GasUsed += in.Result.Gas()
-		cost.StorageUsed += in.Result.PaidStorageSizeDiff
-		var i int
-		for _, v := range in.Result.BalanceUpdates {
-			if v.Kind != "contract" {
-				continue
-			}
-			if in.Amount > 0 && v.AmountAbs() == in.Amount {
-				continue
-			}
-			burn := v.Amount()
-			if burn >= 0 {
-				continue
-			}
-			if in.Result.PaidStorageSizeDiff > 0 && i == 0 {
-				cost.StorageBurn += -burn
-				cost.Burn += -burn
-				i++
-			} else if in.Result.Allocated {
-				cost.AllocationBurn += -burn
-				cost.Burn += -burn
-				i++
-			}
-		}
+		cost.Add(in.Costs())
 	}
 	return cost
 }
@@ -92,6 +69,36 @@ type InternalResult struct {
 	Amount      int64                 `json:"amount,string"`         // transaction
 	Balance     int64                 `json:"balance,string"`        // origination
 	Script      *micheline.Script     `json:"script,omitempty"`      // origination
+}
+
+func (r InternalResult) Costs() tezos.Costs {
+	cost := tezos.Costs{
+		GasUsed:     r.Result.Gas(),
+		StorageUsed: r.Result.PaidStorageSizeDiff,
+	}
+	var i int
+	for _, v := range r.Result.BalanceUpdates {
+		if v.Kind != CONTRACT {
+			continue
+		}
+		if r.Amount > 0 && v.AmountAbs() == r.Amount {
+			continue
+		}
+		burn := v.Amount()
+		if burn >= 0 {
+			continue
+		}
+		if r.Result.PaidStorageSizeDiff > 0 && i == 0 {
+			cost.StorageBurn += -burn
+			cost.Burn += -burn
+			i++
+		} else if r.Result.Allocated {
+			cost.AllocationBurn += -burn
+			cost.Burn += -burn
+			i++
+		}
+	}
+	return cost
 }
 
 // found in block metadata from v010+
