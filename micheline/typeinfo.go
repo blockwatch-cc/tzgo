@@ -58,7 +58,18 @@ func getTypeInfo(typ reflect.Type) (*typeInfo, error) {
 	}
 	tinfo = &typeInfo{}
 	if typ.Kind() != reflect.Struct {
-		return nil, fmt.Errorf("micheline: type %s (%s) is not a struct", typ.String(), typ.Kind())
+		primType, err := mapGoTypeToPrimType(typ)
+		if err != nil {
+			return nil, fmt.Errorf("micheline: %v", err)
+		}
+		tinfo.fields = []fieldInfo{
+			fieldInfo{
+				typ: primType,
+			},
+		}
+		return tinfo, nil
+
+		// return nil, fmt.Errorf("micheline: type %s (%s) is not a struct", typ.String(), typ.Kind())
 	}
 	n := typ.NumField()
 	for i := 0; i < n; i++ {
@@ -111,8 +122,6 @@ func structFieldInfo(f *reflect.StructField) (*fieldInfo, error) {
 		name: f.Name,
 	}
 	tag := f.Tag.Get(tagName)
-	kind := f.Type.Kind()
-	typname := f.Type.String()
 
 	// Parse struct tag
 	tokens := strings.Split(tag, ",")
@@ -134,57 +143,65 @@ func structFieldInfo(f *reflect.StructField) (*fieldInfo, error) {
 			}
 		}
 	}
-	switch kind {
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		finfo.typ = T_NAT
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		finfo.typ = T_INT
-	case reflect.Slice:
-		switch {
-		case f.Type.Implements(binaryUnmarshalerType):
-			finfo.typ = T_BYTES
-		case f.Type.Implements(textUnmarshalerType):
-			finfo.typ = T_STRING
-		case f.Type == byteSliceType:
-			finfo.typ = T_BYTES
-		default:
-			finfo.typ = T_LIST
-		}
-	case reflect.Map:
-		finfo.typ = T_MAP
-	case reflect.String:
-		finfo.typ = T_STRING
-	case reflect.Bool:
-		finfo.typ = T_BOOL
-	case reflect.Struct:
-		switch typname {
-		case "time.Time":
-			finfo.typ = T_TIMESTAMP
-		case "tezos.Address":
-			finfo.typ = T_ADDRESS
-		case "tezos.Z":
-			finfo.typ = T_NAT
-		case "tezos.N":
-			finfo.typ = T_NAT
-		case "tezos.Key":
-			finfo.typ = T_KEY
-		case "tezos.Signature":
-			finfo.typ = T_SIGNATURE
-		case "tezos.ChainIdHash":
-			finfo.typ = T_CHAIN_ID
-		default:
-			if f.Type.Implements(binaryUnmarshalerType) {
-				finfo.typ = T_BYTES
-			} else {
-				return nil, fmt.Errorf("micheline: unsupported embedded struct type %s", f.Type)
-			}
-		}
-	default:
-		return nil, fmt.Errorf("micheline: unsupported type %s (%v) for field %s",
-			f.Type, f.Type.Kind(), finfo.name)
+	if typ, err := mapGoTypeToPrimType(f.Type); err != nil {
+		return nil, fmt.Errorf("micheline: field %s: %v", finfo.name, err)
+	} else {
+		finfo.typ = typ
 	}
 
 	return finfo, nil
+}
+
+func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
+	switch typ.Kind() {
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		oc = T_NAT
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		oc = T_INT
+	case reflect.Slice:
+		switch {
+		case typ.Implements(binaryUnmarshalerType):
+			oc = T_BYTES
+		case typ.Implements(textUnmarshalerType):
+			oc = T_STRING
+		case typ == byteSliceType:
+			oc = T_BYTES
+		default:
+			oc = T_LIST
+		}
+	case reflect.Map:
+		oc = T_MAP
+	case reflect.String:
+		oc = T_STRING
+	case reflect.Bool:
+		oc = T_BOOL
+	case reflect.Struct:
+		switch typ.String() {
+		case "time.Time":
+			oc = T_TIMESTAMP
+		case "tezos.Address":
+			oc = T_ADDRESS
+		case "tezos.Z":
+			oc = T_NAT
+		case "tezos.N":
+			oc = T_NAT
+		case "tezos.Key":
+			oc = T_KEY
+		case "tezos.Signature":
+			oc = T_SIGNATURE
+		case "tezos.ChainIdHash":
+			oc = T_CHAIN_ID
+		default:
+			if typ.Implements(binaryUnmarshalerType) {
+				oc = T_BYTES
+			} else {
+				err = fmt.Errorf("unsupported embedded struct type %s", typ.String())
+			}
+		}
+	default:
+		err = fmt.Errorf("unsupported type %s (%v)", typ.String(), typ.Kind())
+	}
+	return
 }
 
 func addFieldInfo(typ reflect.Type, tinfo *typeInfo, newf *fieldInfo) error {

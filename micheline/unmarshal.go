@@ -103,6 +103,17 @@ func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
 	return prim, nil
 }
 
+func (p Prim) HasIndex(index []int) bool {
+	prim := p
+	for _, v := range index {
+		if v < 0 || len(prim.Args) <= v {
+			return false
+		}
+		prim = prim.Args[v]
+	}
+	return true
+}
+
 func (p Prim) GetIndex(index []int) (Prim, error) {
 	prim := p
 	for _, v := range index {
@@ -372,7 +383,7 @@ func (p Prim) unmarshal(val reflect.Value) error {
 				}
 
 				// assign to map
-				dst.SetMapIndex(reflect.ValueOf(name), reflect.ValueOf(mval))
+				dst.SetMapIndex(reflect.ValueOf(name), mval)
 			}
 		default:
 			return fmt.Errorf("micheline: unsupported prim %#v for struct field %s", pp, finfo.name)
