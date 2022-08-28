@@ -165,6 +165,9 @@ func (s Script) BigmapsById() []int64 {
 			ids = append(ids, val.Int.Int64())
 			return PrimSkip
 		}
+		if val.LooksLikeCode() {
+			return PrimSkip
+		}
 		switch p.OpCode {
 		case T_OR, T_PAIR, T_OPTION, K_STORAGE:
 			// recurse
@@ -175,8 +178,13 @@ func (s Script) BigmapsById() []int64 {
 			}
 			return nil
 		default:
-			// ignore
-			return PrimSkip
+			if val.IsList() {
+				stack.Push(val.Args...)
+				return nil
+			} else {
+				// ignore
+				return PrimSkip
+			}
 		}
 	})
 	return ids
@@ -192,7 +200,7 @@ func (s Script) BigmapsByName() map[string]int64 {
 	for i := 0; i < min(len(ids), len(bigmaps)); i++ {
 		n := bigmaps[i].GetVarAnnoAny()
 		if n == "" {
-			n = strconv.Itoa(i)
+			n = "bigmap_" + strconv.Itoa(i)
 		}
 		if _, ok := named[n]; ok {
 			n += "_" + strconv.Itoa(i)
@@ -211,7 +219,7 @@ func (s Script) BigmapTypesByName() map[string]Type {
 	for i := range bigmaps {
 		n := bigmaps[i].GetVarAnnoAny()
 		if n == "" {
-			n = strconv.Itoa(i)
+			n = "bigmap_" + strconv.Itoa(i)
 		}
 		if _, ok := named[n]; ok {
 			n += "_" + strconv.Itoa(i)
