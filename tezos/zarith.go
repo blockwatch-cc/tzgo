@@ -55,6 +55,12 @@ func NewZ(i int64) Z {
 	return z
 }
 
+func NewBigZ(b *big.Int) Z {
+	var z Z
+	z.Set(b)
+	return z
+}
+
 func (z Z) Big() *big.Int {
 	return (*big.Int)(&z)
 }
@@ -180,6 +186,11 @@ func (z Z) String() string {
 	return (*big.Int)(&z).Text(10)
 }
 
+func (z Z) Bytes() []byte {
+	buf, _ := z.MarshalBinary()
+	return buf
+}
+
 func (z Z) Decimals(d int) string {
 	s := z.String()
 	if d <= 0 {
@@ -203,6 +214,10 @@ func (z Z) Add(y Z) Z {
 	var x Z
 	x.Set(new(big.Int).Add(z.Big(), y.Big()))
 	return x
+}
+
+func (z Z) IsNeg() bool {
+	return z.Big().Sign() < 0
 }
 
 var (
