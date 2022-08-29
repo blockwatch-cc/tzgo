@@ -62,14 +62,8 @@ func getTypeInfo(typ reflect.Type) (*typeInfo, error) {
 		if err != nil {
 			return nil, fmt.Errorf("micheline: %v", err)
 		}
-		tinfo.fields = []fieldInfo{
-			fieldInfo{
-				typ: primType,
-			},
-		}
+		tinfo.fields = []fieldInfo{{typ: primType}}
 		return tinfo, nil
-
-		// return nil, fmt.Errorf("micheline: type %s (%s) is not a struct", typ.String(), typ.Kind())
 	}
 	n := typ.NumField()
 	for i := 0; i < n; i++ {
