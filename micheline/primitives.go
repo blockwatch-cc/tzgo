@@ -32,6 +32,9 @@ import (
 var (
 	InvalidPrim = Prim{}
 	EmptyPrim   = Prim{Type: PrimNullary, OpCode: 255}
+
+	PrimSkip        = errors.New("skip branch")
+	ErrTypeMismatch = errors.New("type mismatch")
 )
 
 type PrimType byte
@@ -271,8 +274,6 @@ func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 // PrimWalkerFunc is the callback function signature used while
 // traversing a prim tree in read-only mode.
 type PrimWalkerFunc func(p Prim) error
-
-var PrimSkip = errors.New("skip branch")
 
 // Walk traverses the prim tree in pre-order in read-only mode, forwarding
 // value copies to the callback.

@@ -204,3 +204,79 @@ func TestTypeRendering(t *testing.T) {
 		})
 	}
 }
+
+type interfaceTest struct {
+	Name   string
+	Type   string
+	Value  string
+	Expect bool
+}
+
+const (
+	fa1TransferType = `{"prim":"pair","args":[{"prim":"address","annots":[":from"]},{"prim":"pair","args":[{"prim":"address","annots":[":to"]},{"prim":"nat","annots":[":value"]}]}]}`
+	fa2TransferType = `{"prim":"list","annots":["%transfer"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%from_"]},{"prim":"list","annots":["%txs"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%to_"]},{"prim":"pair","args":[{"prim":"nat","annots":["%token_id"]},{"prim":"nat","annots":["%amount"]}]}]}]}]}]}`
+)
+
+var interfaceInfo = []interfaceTest{
+	// FA1
+	{
+		Name:   "fa1",
+		Type:   fa1TransferType,
+		Value:  `{"prim":"Pair","args":[{"bytes":"019c0931f0ebac06db1063abe651e773db6c353ce900"},{"prim":"Pair","args":[{"bytes": "0000c2bb77ac9a2c86ca05fdaea1888408471b9c1468"},{"int":"740596954"}]}]}`,
+		Expect: true,
+	},
+	{
+		Name:   "fa1_wrong_value",
+		Type:   fa1TransferType,
+		Value:  `[{"prim":"Pair","args":[{"string":"tz1bq5QazD43hBGxYxX8mv4sa1r1kz5sRGWz"},{"string":"tz1QgLtW1kJehxYhtypPyWJcutUTY6xZfDQf"},{"int":"21367500000"}]},{"prim":"Pair","args":[{"string":"tz1bq5QazD43hBGxYxX8mv4sa1r1kz5sRGWz"},{"string":"tz1QgLtW1kJehxYhtypPyWJcutUTY6xZfDQf"},{"int":"21367500000"}]}]`,
+		Expect: false,
+	},
+	// FA2 single (nocomb)
+	{
+		Name:   "fa2_single_recv",
+		Type:   fa2TransferType,
+		Value:  `[{"prim":"Pair","args":[{"bytes":"01b39686f116bb35115559f7e781200850e02854c400"},[{"prim":"Pair","args":[{"bytes":"0000f0ddca1cdfa0c48c92d162f3f72b8144ee2045ba"},{"prim":"Pair","args":[{"int":"0"},{"int":"1027681"}]}]}]]}]`,
+		Expect: true,
+	},
+	// FA2 multi (nocomb)
+	{
+		Name:   "fa2_multi_recv",
+		Type:   fa2TransferType,
+		Value:  `[{"prim":"Pair","args":[{"bytes":"01b39686f116bb35115559f7e781200850e02854c400"},[{"prim":"Pair","args":[{"bytes":"0000f0ddca1cdfa0c48c92d162f3f72b8144ee2045ba"},{"prim":"Pair","args":[{"int":"0"},{"int":"1027681"}]}]},{"prim":"Pair","args":[{"bytes":"0000f0ddca1cdfa0c48c92d162f3f72b8144ee2045ba"},{"prim":"Pair","args":[{"int":"0"},{"int":"1027681"}]}]}]]}]`,
+		Expect: true,
+	},
+	// FA2 single (comb)
+	{
+		Name:   "fa2_multi_recv_comb",
+		Type:   fa2TransferType,
+		Value:  `[{"prim":"Pair","args":[{"bytes":"01b39686f116bb35115559f7e781200850e02854c400"},[{"prim":"Pair","args":[{"bytes":"0000f0ddca1cdfa0c48c92d162f3f72b8144ee2045ba"},{"int":"0"},{"int":"1027681"}]}]]}]`,
+		Expect: true,
+	},
+	// TODO
+	// union type
+	// optional flag
+	// set
+	// map
+	// bigmap
+	// lambda
+	// ticket
+	// sapling
+}
+
+func TestInterfaceCheck(t *testing.T) {
+	for _, test := range interfaceInfo {
+		t.Run(test.Name, func(T *testing.T) {
+			var typ Type
+			if err := typ.Prim.UnmarshalJSON([]byte(test.Type)); err != nil {
+				T.Fatalf("unmarshal type: %v", err)
+			}
+			var val Prim
+			if err := val.UnmarshalJSON([]byte(test.Value)); err != nil {
+				T.Fatalf("unmarshal value: %v", err)
+			}
+			if have, want := val.Implements(typ), test.Expect; have != want {
+				T.Errorf("mismatch want=%t have=%t", want, have)
+			}
+		})
+	}
+}

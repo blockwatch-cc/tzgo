@@ -72,7 +72,7 @@ func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]F
 		return nil, err
 	}
 	val := micheline.NewValue(
-		micheline.NewType(micheline.ITzip12.FuncPrim("balance_of").Args[1].Args[0]),
+		micheline.NewType(micheline.ITzip12.PrimOf("balance_of").Args[1].Args[0]),
 		prim,
 	)
 	resp := make([]FA2BalanceResponse, 0)
@@ -340,7 +340,7 @@ func (r FA2TransferReceipt) IsSuccess() bool {
 }
 
 func (r FA2TransferReceipt) Request() FA2TransferList {
-	typ := micheline.ITzip12.FuncType("transfer")
+	typ := micheline.ITzip12.TypeOf("transfer")
 	val := micheline.NewValue(typ, r.tx.Parameters.Value)
 	xfer := make(FA2TransferList, 0)
 	// FIXME: works only for strictly compliant contracts (i.e. type + annots)

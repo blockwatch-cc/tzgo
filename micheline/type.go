@@ -215,6 +215,145 @@ func (t Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(buildTypedef("", t.Prim))
 }
 
+func (p Prim) Implements(t Type) bool {
+	td := buildTypedef("", t.Prim)
+	return p.implements(td)
+}
+
+func (p Prim) implements(t Typedef) bool {
+	err := p.Walk(func(p Prim) error {
+		// fmt.Printf("CMP typ=%#v val=%s\n", t, p.Dump())
+		switch p.OpCode {
+		case D_PAIR:
+			if t.Type == TypeStruct {
+				// fmt.Println("> handle struct")
+				for i, v := range p.UnfoldPair(Type{}) {
+					if i >= len(t.Args) || !v.implements(t.Args[i]) {
+						// fmt.Println("> BAD struct elem")
+						return ErrTypeMismatch
+					}
+				}
+				return PrimSkip
+			}
+		case D_SOME, D_NONE:
+			if t.Optional {
+				// fmt.Println("> OK optional")
+				return PrimSkip
+			}
+		case D_TRUE, D_FALSE:
+			if t.Type == T_BOOL.String() {
+				// fmt.Println("> OK bool")
+				return PrimSkip
+			}
+		case D_UNIT:
+			if t.Type == T_UNIT.String() {
+				// fmt.Println("> OK unit")
+				return PrimSkip
+			}
+		case D_ELT:
+			if len(t.Args) == 2 && p.Args[0].implements(t.Args[0]) && p.Args[1].implements(t.Args[1]) {
+				// fmt.Println("> OK map")
+				return PrimSkip
+			}
+		case D_LEFT:
+			// walk left tree by clipping off right handled types
+			if t.Type == TypeUnion {
+				// fmt.Println("> UNION left")
+				if len(t.Args) == 1 {
+					t = t.Args[0]
+				} else {
+					t.Args = t.Args[:len(t.Args)-1]
+				}
+				if p.Args[0].implements(t) {
+					// fmt.Println("> OK union left")
+					return PrimSkip
+				}
+			}
+		case D_RIGHT:
+			if t.Type == TypeUnion && p.Args[0].implements(t.Args[len(t.Args)-1]) {
+				// fmt.Println("> OK union right")
+				return PrimSkip
+			}
+		default:
+			oc, err := ParseOpCode(t.Type)
+			if err != nil {
+				return err
+			}
+			// fmt.Printf("> handle %s in %s prim\n", oc, p.Type)
+			switch p.Type {
+			case PrimSequence:
+				switch oc {
+				case T_MAP:
+					for _, v := range p.Args {
+						if !v.implements(t.Args[0]) {
+							// fmt.Println("> BAD map elem")
+							return ErrTypeMismatch
+						}
+					}
+					return PrimSkip
+				case T_SET:
+					for _, v := range p.Args {
+						if !v.implements(t.Args[0]) {
+							// fmt.Println("> BAD set elem")
+							return ErrTypeMismatch
+						}
+					}
+					return PrimSkip
+				case T_LIST:
+					for _, v := range p.Args {
+						if !v.implements(t.Args[0]) {
+							// fmt.Println("> BAD list elem")
+							return ErrTypeMismatch
+						}
+					}
+					return PrimSkip
+				case T_LAMBDA:
+					if len(p.Args) > 0 && p.Args[0].IsInstruction() {
+						// fmt.Println("> OK lambda")
+						return PrimSkip
+					}
+				}
+
+			case PrimInt:
+				switch oc {
+				case T_INT, T_NAT, T_MUTEZ, T_TIMESTAMP, T_BIG_MAP:
+					// fmt.Println("> OK int")
+					return PrimSkip
+				}
+
+			case PrimString:
+				// sometimes timestamps and addresses can be strings
+				switch oc {
+				case T_STRING, T_ADDRESS, T_CONTRACT, T_KEY_HASH, T_KEY,
+					T_SIGNATURE, T_TIMESTAMP, T_CHAIN_ID, T_TX_ROLLUP_L2_ADDRESS:
+					// fmt.Println("> OK string")
+					return PrimSkip
+				}
+
+			case PrimBytes:
+				switch oc {
+				case T_BYTES, T_ADDRESS, T_KEY_HASH, T_KEY,
+					T_CONTRACT, T_SIGNATURE, T_CHAIN_ID,
+					T_BLS12_381_G1, T_BLS12_381_G2, T_BLS12_381_FR,
+					T_CHEST, T_CHEST_KEY,
+					T_TX_ROLLUP_L2_ADDRESS:
+					// fmt.Println("> OK bytes")
+					return PrimSkip
+				}
+			default:
+				// FIXME
+				// T_SAPLING_STATE, T_SAPLING_TRANSACTION,
+				// T_TICKET
+				return PrimSkip
+
+			}
+		}
+		// fmt.Printf("> no case matched\n")
+		return ErrTypeMismatch
+	})
+	return err == nil
+}
+
 func buildTypedef(name string, typ Prim) Typedef {
 	if typ.HasAnno() {
 		n := typ.GetVarAnnoAny()

@@ -158,7 +158,7 @@ func (m Interface) ContainsStrict(e Entrypoint) bool {
 	return false
 }
 
-func (m Interface) FuncType(name string) Type {
+func (m Interface) TypeOf(name string) Type {
 	for _, v := range InterfaceSpecs[m] {
 		if v.GetVarAnnoAny() == name {
 			return NewType(v)
@@ -167,7 +167,7 @@ func (m Interface) FuncType(name string) Type {
 	return Type{}
 }
 
-func (m Interface) FuncPrim(name string) Prim {
+func (m Interface) PrimOf(name string) Prim {
 	for _, v := range InterfaceSpecs[m] {
 		if v.GetVarAnnoAny() == name {
 			return v

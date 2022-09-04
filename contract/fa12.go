@@ -201,7 +201,7 @@ func (r FA1TransferReceipt) IsSuccess() bool {
 }
 
 func (r FA1TransferReceipt) Request() FA1Transfer {
-	typ := micheline.ITzip7.FuncType("transfer")
+	typ := micheline.ITzip7.TypeOf("transfer")
 	val := micheline.NewValue(typ, r.tx.Parameters.Value)
 	xfer := FA1Transfer{}
 	_ = val.Unmarshal(&xfer)
