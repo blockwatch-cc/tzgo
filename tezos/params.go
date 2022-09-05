@@ -58,6 +58,22 @@ var (
 			HardStorageLimitPerOperation: 60000,
 			MinimalBlockDelay:            15 * time.Second,
 		})
+
+	// KathmanduParams defines the blockchain configuration for Kathmandu testnet.
+	// To produce compliant transactions, use these defaults in op.WithParams().
+	KathmandunetParams = NewParams().
+				ForNetwork(Kathmandunet).
+				ForProtocol(ProtoV014).
+				Mixin(&Params{
+			OperationTagsVersion:         2,
+			MaxOperationsTTL:             120,
+			HardGasLimitPerOperation:     1040000,
+			HardGasLimitPerBlock:         5200000,
+			OriginationSize:              257,
+			CostPerByte:                  250,
+			HardStorageLimitPerOperation: 60000,
+			MinimalBlockDelay:            15 * time.Second,
+		})
 )
 
 type Params struct {
@@ -74,77 +90,57 @@ type Params struct {
 	Decimals    int          `json:"decimals"`
 	Token       int64        `json:"units"` // atomic units per token
 
-	// Per-protocol configs
-	NoRewardCycles               int64            `json:"no_reward_cycles"`
-	SecurityDepositRampUpCycles  int64            `json:"security_deposit_ramp_up_cycles"`
-	PreservedCycles              int64            `json:"preserved_cycles"`
-	BlocksPerCycle               int64            `json:"blocks_per_cycle"`
-	BlocksPerCommitment          int64            `json:"blocks_per_commitment"`
-	BlocksPerRollSnapshot        int64            `json:"blocks_per_roll_snapshot"`
-	BlocksPerVotingPeriod        int64            `json:"blocks_per_voting_period"`
-	TimeBetweenBlocks            [2]time.Duration `json:"time_between_blocks"`
-	EndorsersPerBlock            int              `json:"endorsers_per_block"`
-	HardGasLimitPerOperation     int64            `json:"hard_gas_limit_per_operation"`
-	HardGasLimitPerBlock         int64            `json:"hard_gas_limit_per_block"`
-	ProofOfWorkThreshold         int64            `json:"proof_of_work_threshold"`
-	ProofOfWorkNonceSize         int              `json:"proof_of_work_nonce_size"`
-	TokensPerRoll                int64            `json:"tokens_per_roll"`
-	MichelsonMaximumTypeSize     int              `json:"michelson_maximum_type_size"`
-	SeedNonceRevelationTip       int64            `json:"seed_nonce_revelation_tip"`
-	OriginationSize              int64            `json:"origination_size"`
-	OriginationBurn              int64            `json:"origination_burn"`
-	BlockSecurityDeposit         int64            `json:"block_security_deposit"`
-	EndorsementSecurityDeposit   int64            `json:"endorsement_security_deposit"`
-	BlockReward                  int64            `json:"block_reward"`
-	EndorsementReward            int64            `json:"endorsement_reward"`
-	CostPerByte                  int64            `json:"cost_per_byte"`
-	HardStorageLimitPerOperation int64            `json:"hard_storage_limit_per_operation"`
-	TestChainDuration            int64            `json:"test_chain_duration"`
-	MaxOperationDataLength       int              `json:"max_operation_data_length"`
-	MaxProposalsPerDelegate      int              `json:"max_proposals_per_delegate"`
-	MaxRevelationsPerBlock       int              `json:"max_revelations_per_block"`
-	NonceLength                  int              `json:"nonce_length"`
+	// Subset of protocol config options used by TzGo and Indexers
+	// for full data, call rpc.GetCustomConstants()
+	TokensPerRoll          int64 `json:"tokens_per_roll"`
+	PreservedCycles        int64 `json:"preserved_cycles"`
+	BlocksPerCycle         int64 `json:"blocks_per_cycle"`
+	BlocksPerCommitment    int64 `json:"blocks_per_commitment"`
+	BlocksPerRollSnapshot  int64 `json:"blocks_per_roll_snapshot"`
+	BlocksPerStakeSnapshot int64 `json:"blocks_per_stake_snapshot"`
 
-	// New in Bablyon v005
-	MinProposalQuorum int64 `json:"min_proposal_quorum"`
-	QuorumMin         int64 `json:"quorum_min"`
-	QuorumMax         int64 `json:"quorum_max"`
+	// timing
+	TimeBetweenBlocks      [2]time.Duration `json:"time_between_blocks"`
+	MinimalBlockDelay      time.Duration    `json:"minimal_block_delay"`
+	DelayIncrementPerRound time.Duration    `json:"delay_increment_per_round"`
 
-	// New in Carthage v006
-	BlockRewardV6       [2]int64 `json:"block_rewards_v6"`
-	EndorsementRewardV6 [2]int64 `json:"endorsement_rewards_v6"`
+	// rewards
+	SeedNonceRevelationTip   int64    `json:"seed_nonce_revelation_tip"`
+	BlockReward              int64    `json:"block_reward"`
+	EndorsementReward        int64    `json:"endorsement_reward"`
+	BlockRewardV6            [2]int64 `json:"block_rewards_v6"`
+	EndorsementRewardV6      [2]int64 `json:"endorsement_rewards_v6"`
+	BakingRewardFixedPortion int64    `json:"baking_reward_fixed_portion"`
+	BakingRewardBonusPerSlot int64    `json:"baking_reward_bonus_per_slot"`
+	EndorsingRewardPerSlot   int64    `json:"endorsing_reward_per_slot"`
 
-	// New in Delphi v007
-	MaxAnonOpsPerBlock int `json:"max_anon_ops_per_block"` // was max_revelations_per_block
+	// costs
+	CostPerByte                int64 `json:"cost_per_byte"`
+	OriginationSize            int64 `json:"origination_size"`
+	OriginationBurn            int64 `json:"origination_burn"`
+	BlockSecurityDeposit       int64 `json:"block_security_deposit"`
+	EndorsementSecurityDeposit int64 `json:"endorsement_security_deposit"`
+	FrozenDepositsPercentage   int   `json:"frozen_deposits_percentage"`
 
-	// New in Granada v010
-	LiquidityBakingEscapeEmaThreshold int64         `json:"liquidity_baking_escape_ema_threshold"`
-	LiquidityBakingSubsidy            int64         `json:"liquidity_baking_subsidy"`
-	LiquidityBakingSunsetLevel        int64         `json:"liquidity_baking_sunset_level"`
-	MinimalBlockDelay                 time.Duration `json:"minimal_block_delay"`
+	// limits
+	MichelsonMaximumTypeSize     int   `json:"michelson_maximum_type_size"`
+	EndorsersPerBlock            int   `json:"endorsers_per_block"`
+	HardGasLimitPerOperation     int64 `json:"hard_gas_limit_per_operation"`
+	HardGasLimitPerBlock         int64 `json:"hard_gas_limit_per_block"`
+	HardStorageLimitPerOperation int64 `json:"hard_storage_limit_per_operation"`
+	MaxOperationDataLength       int   `json:"max_operation_data_length"`
+	MaxOperationsTTL             int64 `json:"max_operations_ttl"`
+	ConsensusCommitteeSize       int   `json:"consensus_committee_size"`
+	ConsensusThreshold           int   `json:"consensus_threshold"`
 
-	// New in Hangzhou v011
-	MaxMichelineNodeCount          int      `json:"max_micheline_node_count"`
-	MaxMichelineBytesLimit         int      `json:"max_micheline_bytes_limit"`
-	MaxAllowedGlobalConstantsDepth int      `json:"max_allowed_global_constants_depth"`
-	CacheLayout                    []string `json:"cache_layout"`
-
-	// New in Ithaca v012
-	BlocksPerStakeSnapshot                           int64         `json:"blocks_per_stake_snapshot"`
-	BakingRewardFixedPortion                         int64         `json:"baking_reward_fixed_portion,string"`
-	BakingRewardBonusPerSlot                         int64         `json:"baking_reward_bonus_per_slot,string"`
-	EndorsingRewardPerSlot                           int64         `json:"endorsing_reward_per_slot,string"`
-	DelayIncrementPerRound                           time.Duration `json:"delay_increment_per_round,string"`
-	ConsensusCommitteeSize                           int           `json:"consensus_committee_size"`
-	ConsensusThreshold                               int           `json:"consensus_threshold"`
-	MinimalParticipationRatio                        Ratio         `json:"minimal_participation_ratio"`
-	MaxSlashingPeriod                                int64         `json:"max_slashing_period"`
-	FrozenDepositsPercentage                         int           `json:"frozen_deposits_percentage"`
-	DoubleBakingPunishment                           int64         `json:"double_baking_punishment,string"`
-	RatioOfFrozenDepositsSlashedPerDoubleEndorsement Ratio         `json:"ratio_of_frozen_deposits_slashed_per_double_endorsement"`
+	// voting
+	BlocksPerVotingPeriod int64 `json:"blocks_per_voting_period"`
+	CyclesPerVotingPeriod int64 `json:"cycles_per_voting_period"`
+	MinProposalQuorum     int64 `json:"min_proposal_quorum"`
+	QuorumMin             int64 `json:"quorum_min"`
+	QuorumMax             int64 `json:"quorum_max"`
 
 	// extra features to follow protocol upgrades
-	MaxOperationsTTL     int64 `json:"max_operations_ttl"`               // in block meta until v011, explicit from v012+
 	OperationTagsVersion int   `json:"operation_tags_version,omitempty"` // 1 after v005
 	NumVotingPeriods     int   `json:"num_voting_periods,omitempty"`     // 5 after v008, 4 before
 	StartBlockOffset     int64 `json:"start_block_offset,omitempty"`     // correct start/end cycle since Granada
