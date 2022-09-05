@@ -99,10 +99,10 @@ const (
 	OpTypeToruRejection                       // 24 v013
 	OpTypeToruDispatchTickets                 // 25 v013
 	OpTypeTransferTicket                      // 26 v013
-	OpTypeScruOriginate                       // 27 v013
-	OpTypeScruAddMessages                     // 28 v013
-	OpTypeScruCement                          // 29 v013
-	OpTypeScruPublish                         // 30 v013
+	OpTypeScRollupOriginate                   // 27 v013
+	OpTypeScRollupAddMessages                 // 28 v013
+	OpTypeScRollupCement                      // 29 v013
+	OpTypeScRollupPublish                     // 30 v013
 	OpTypeVdfRevelation                       // 31 v014
 	OpTypeIncreasePaidStorage                 // 32 v014
 	OpTypeScRollupRefute                      // 33 v014
@@ -144,10 +144,10 @@ var (
 		OpTypeToruRejection:                "tx_rollup_rejection",
 		OpTypeToruDispatchTickets:          "tx_rollup_dispatch_tickets",
 		OpTypeTransferTicket:               "transfer_ticket",
-		OpTypeScruOriginate:                "sc_rollup_originate",
-		OpTypeScruAddMessages:              "sc_rollup_add_messages",
-		OpTypeScruCement:                   "sc_rollup_cement",
-		OpTypeScruPublish:                  "sc_rollup_publish",
+		OpTypeScRollupOriginate:            "sc_rollup_originate",
+		OpTypeScRollupAddMessages:          "sc_rollup_add_messages",
+		OpTypeScRollupCement:               "sc_rollup_cement",
+		OpTypeScRollupPublish:              "sc_rollup_publish",
 		OpTypeVdfRevelation:                "vdf_revelation",
 		OpTypeIncreasePaidStorage:          "increase_paid_storage",
 		OpTypeScRollupRefute:               "sc_rollup_refute",
@@ -256,10 +256,10 @@ var (
 		OpTypeToruRejection:                156, // v013
 		OpTypeToruDispatchTickets:          157, // v013
 		OpTypeTransferTicket:               158, // v013
-		OpTypeScruOriginate:                200, // v013
-		OpTypeScruAddMessages:              201, // v013
-		OpTypeScruCement:                   202, // v013
-		OpTypeScruPublish:                  203, // v013
+		OpTypeScRollupOriginate:            200, // v013
+		OpTypeScRollupAddMessages:          201, // v013
+		OpTypeScRollupCement:               202, // v013
+		OpTypeScRollupPublish:              203, // v013
 		OpTypeVdfRevelation:                8,   // v014
 		OpTypeDalSlotAvailability:          22,  // v014
 		OpTypeScRollupRefute:               204, // v014
@@ -394,10 +394,10 @@ func (t OpType) ListId() int {
 		OpTypeToruRejection,
 		OpTypeToruDispatchTickets,
 		OpTypeTransferTicket,
-		OpTypeScruOriginate,
-		OpTypeScruAddMessages,
-		OpTypeScruCement,
-		OpTypeScruPublish,
+		OpTypeScRollupOriginate,
+		OpTypeScRollupAddMessages,
+		OpTypeScRollupCement,
+		OpTypeScRollupPublish,
 		OpTypeDalSlotAvailability,
 		OpTypeScRollupRefute,
 		OpTypeScRollupTimeout,
@@ -468,13 +468,13 @@ func ParseOpTag(t byte) OpType {
 	case 158:
 		return OpTypeTransferTicket
 	case 200:
-		return OpTypeScruOriginate
+		return OpTypeScRollupOriginate
 	case 201:
-		return OpTypeScruAddMessages
+		return OpTypeScRollupAddMessages
 	case 202:
-		return OpTypeScruCement
+		return OpTypeScRollupCement
 	case 203:
-		return OpTypeScruPublish
+		return OpTypeScRollupPublish
 	case 8:
 		return OpTypeVdfRevelation
 	case 22:
