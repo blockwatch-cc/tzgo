@@ -58,6 +58,7 @@ var (
 			ProtoV011_2,    // 11
 			ProtoV012_2,    // 12
 			ProtoV013_2,    // 13
+			ProtoV014,      // 14
 		},
 		Jakartanet.Uint32(): {
 			ProtoGenesis,   // -1
@@ -77,6 +78,7 @@ var (
 			ProtoV011_2,    // 1
 			ProtoV012_2,    // 2
 			ProtoV013_2,    // 3
+			ProtoV014,      // 4
 		},
 	}
 )
@@ -94,6 +96,9 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	case Jakartanet.Equal(net):
 		pp.Network = "Jakartanet"
 		pp.Version = 12 // starts at Ithaca
+	case Kathmandunet.Equal(net):
+		pp.Network = "Kathmandunet"
+		pp.Version = 13 // starts at Jakarta
 	default:
 		pp.Network = "Sandbox"
 	}
