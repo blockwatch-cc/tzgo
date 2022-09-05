@@ -308,6 +308,10 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &ConstantRegistration{}
 		case tezos.OpTypeSetDepositsLimit:
 			op = &SetDepositsLimit{}
+		case tezos.OpTypeIncreasePaidStorage:
+			op = &IncreasePaidStorage{}
+		case tezos.OpTypeVdfRevelation:
+			op = &VdfRevelation{}
 
 			// rollup operations
 		case tezos.OpTypeTransferTicket,
@@ -322,7 +326,14 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			tezos.OpTypeScruOriginate,
 			tezos.OpTypeScruAddMessages,
 			tezos.OpTypeScruCement,
-			tezos.OpTypeScruPublish:
+			tezos.OpTypeScruPublish,
+			tezos.OpTypeScRollupRefute,
+			tezos.OpTypeScRollupTimeout,
+			tezos.OpTypeScRollupExecuteOutboxMessage,
+			tezos.OpTypeScRollupRecoverBond,
+			tezos.OpTypeScRollupDalSlotSubscribe,
+			tezos.OpTypeDalSlotAvailability,
+			tezos.OpTypeDalPublishSlotHeader:
 			op = &Rollup{}
 
 		default:

@@ -19,6 +19,7 @@ var (
 	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
 	ProtoV012_2    = ParseProtocolHashSafe("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
 	ProtoV013_2    = ParseProtocolHashSafe("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
+	ProtoV014      = ParseProtocolHashSafe("PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg")
 
 	// aliases
 	PtAthens = ProtoV004
@@ -31,10 +32,12 @@ var (
 	PtHangz2 = ProtoV011_2
 	Psithaca = ProtoV012_2
 	PtJakart = ProtoV013_2
+	PtKathma = ProtoV014
 
-	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Jakartanet = MustParseChainIdHash("NetXLH1uAxK7CCh")
-	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
+	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
+	Jakartanet   = MustParseChainIdHash("NetXLH1uAxK7CCh")
+	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
+	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
 
 	// Order of deployed protocols on different networks
 	// required to lookup correct block/vote/cycle offsets
@@ -62,6 +65,12 @@ var (
 			ProtoV012_2,    // 1
 			ProtoV013_2,    // 2
 		},
+		Kathmandunet.Uint32(): {
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV013_2,    // 1
+			ProtoV014,      // 2
+		},
 		Ghostnet.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
@@ -79,7 +88,6 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	switch {
 	case Mainnet.Equal(net):
 		pp.Network = "Mainnet"
-		pp.SecurityDepositRampUpCycles = 64
 	case Ghostnet.Equal(net):
 		pp.Network = "Ghostnet"
 		pp.Version = 11 // starts at Hangzhou
@@ -303,8 +311,37 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2490369
-			pp.EndHeight = -1
+			pp.EndHeight = 2736128
 		case Jakartanet.Equal(p.ChainId):
+			pp.StartBlockOffset = 8192
+			pp.StartCycle = 2
+			pp.StartHeight = 8193
+			pp.EndHeight = -1
+		case Ghostnet.Equal(p.ChainId):
+			pp.StartBlockOffset = 765952
+			pp.StartCycle = 187
+			pp.StartHeight = 765953
+			pp.EndHeight = -1
+		}
+	case PtKathma.Equal(proto): // Kathmandu
+		pp.Version = 14
+		pp.OperationTagsVersion = 2
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		switch {
+		case Mainnet.Equal(p.ChainId):
+			pp.StartBlockOffset = 2736128
+			pp.StartCycle = 528
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 0
+			pp.StartHeight = 2736129
+			pp.EndHeight = -1
+		case Kathmandunet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193

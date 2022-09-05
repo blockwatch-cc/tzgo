@@ -186,6 +186,9 @@ const (
 	T_TX_ROLLUP_L2_ADDRESS // 94
 	I_MIN_BLOCK_TIME       // 95
 	T_SAPLING_TRANSACTION  // 96
+
+	// v014 additions
+	I_EMIT // 97
 )
 
 func (op OpCode) IsValid() bool {
@@ -345,6 +348,7 @@ var (
 		T_TX_ROLLUP_L2_ADDRESS:  "tx_rollup_l2_address",
 		I_MIN_BLOCK_TIME:        "MIN_BLOCK_TIME",
 		T_SAPLING_TRANSACTION:   "sapling_transaction",
+		I_EMIT:                  "EMIT",
 	}
 	stringToOp map[string]OpCode
 )

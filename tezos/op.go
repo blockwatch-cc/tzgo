@@ -103,6 +103,16 @@ const (
 	OpTypeScruAddMessages                     // 28 v013
 	OpTypeScruCement                          // 29 v013
 	OpTypeScruPublish                         // 30 v013
+	OpTypeVdfRevelation                       // 31 v014
+	OpTypeIncreasePaidStorage                 // 32 v014
+	OpTypeScRollupRefute                      // 33 v014
+	OpTypeScRollupTimeout                     // 34 v014
+	OpTypeScRollupExecuteOutboxMessage        // 35 v014
+	OpTypeScRollupRecoverBond                 // 36 v014
+	OpTypeScRollupDalSlotSubscribe            // 37 v014
+	OpTypeDalSlotAvailability                 // 38 v014
+	OpTypeDalPublishSlotHeader                // 39 v014
+	OpTypeEvent                               // 40 v014 (only in internal_operation_results)
 )
 
 var (
@@ -138,6 +148,16 @@ var (
 		OpTypeScruAddMessages:              "sc_rollup_add_messages",
 		OpTypeScruCement:                   "sc_rollup_cement",
 		OpTypeScruPublish:                  "sc_rollup_publish",
+		OpTypeVdfRevelation:                "vdf_revelation",
+		OpTypeIncreasePaidStorage:          "increase_paid_storage",
+		OpTypeScRollupRefute:               "sc_rollup_refute",
+		OpTypeScRollupTimeout:              "sc_rollup_timeout",
+		OpTypeScRollupExecuteOutboxMessage: "sc_rollup_execute_outbox_message",
+		OpTypeScRollupRecoverBond:          "sc_rollup_recover_bond",
+		OpTypeScRollupDalSlotSubscribe:     "sc_rollup_dal_slot_subscribe",
+		OpTypeDalSlotAvailability:          "dal_slot_availability",
+		OpTypeDalPublishSlotHeader:         "dal_publish_slot_header",
+		OpTypeEvent:                        "event",
 	}
 	opTypeReverseStrings = make(map[string]OpType)
 )
@@ -240,6 +260,14 @@ var (
 		OpTypeScruAddMessages:              201, // v013
 		OpTypeScruCement:                   202, // v013
 		OpTypeScruPublish:                  203, // v013
+		OpTypeVdfRevelation:                8,   // v014
+		OpTypeDalSlotAvailability:          22,  // v014
+		OpTypeScRollupRefute:               204, // v014
+		OpTypeScRollupTimeout:              205, // v014
+		OpTypeScRollupExecuteOutboxMessage: 206, // v014
+		OpTypeScRollupRecoverBond:          207, // v014
+		OpTypeScRollupDalSlotSubscribe:     208, // v014
+		OpTypeDalPublishSlotHeader:         230, // v014
 	}
 )
 
@@ -348,7 +376,8 @@ func (t OpType) ListId() int {
 		OpTypeDoubleBakingEvidence,
 		OpTypeDoubleEndorsementEvidence,
 		OpTypeSeedNonceRevelation,
-		OpTypeDoublePreendorsementEvidence:
+		OpTypeDoublePreendorsementEvidence,
+		OpTypeVdfRevelation:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
@@ -368,7 +397,14 @@ func (t OpType) ListId() int {
 		OpTypeScruOriginate,
 		OpTypeScruAddMessages,
 		OpTypeScruCement,
-		OpTypeScruPublish:
+		OpTypeScruPublish,
+		OpTypeDalSlotAvailability,
+		OpTypeScRollupRefute,
+		OpTypeScRollupTimeout,
+		OpTypeScRollupExecuteOutboxMessage,
+		OpTypeScRollupRecoverBond,
+		OpTypeScRollupDalSlotSubscribe,
+		OpTypeDalPublishSlotHeader:
 		return 3
 	default:
 		return -1 // invalid
@@ -413,6 +449,48 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeDoublePreendorsementEvidence
 	case 112:
 		return OpTypeSetDepositsLimit
+	case 150:
+		return OpTypeToruOrigination
+	case 151:
+		return OpTypeToruSubmitBatch
+	case 152:
+		return OpTypeToruCommit
+	case 153:
+		return OpTypeToruReturnBond
+	case 154:
+		return OpTypeToruFinalizeCommitment
+	case 155:
+		return OpTypeToruRemoveCommitment
+	case 156:
+		return OpTypeToruRejection
+	case 157:
+		return OpTypeToruDispatchTickets
+	case 158:
+		return OpTypeTransferTicket
+	case 200:
+		return OpTypeScruOriginate
+	case 201:
+		return OpTypeScruAddMessages
+	case 202:
+		return OpTypeScruCement
+	case 203:
+		return OpTypeScruPublish
+	case 8:
+		return OpTypeVdfRevelation
+	case 22:
+		return OpTypeDalSlotAvailability
+	case 204:
+		return OpTypeScRollupRefute
+	case 205:
+		return OpTypeScRollupTimeout
+	case 206:
+		return OpTypeScRollupExecuteOutboxMessage
+	case 207:
+		return OpTypeScRollupRecoverBond
+	case 208:
+		return OpTypeScRollupDalSlotSubscribe
+	case 230:
+		return OpTypeDalPublishSlotHeader
 	default:
 		return OpTypeInvalid
 	}
