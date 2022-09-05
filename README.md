@@ -6,8 +6,9 @@ TzGo is the officially supported Tezos Go client library by [Blockwatch](https:/
 
 Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encodings for all Tezos types including the Micheline smart contract data and all transaction formats so it's perfectly suited for high-performance applications that read and write to the Tezos blockchain.
 
-Current TzGo protocol support
+Current Tezos protocol support in TzGo
 
+- Kathmandu v014
 - Jakarta v013
 - Ithaca v012
 - Hangzhou v011

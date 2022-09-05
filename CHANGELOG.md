@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.14.0
+
+* Simplify protocol constants (drop constants not required for indexing or to send txs)
+* Add Kathmandu EMIT opcode
+* Add parsing for Kathmandu events
+* Add parsing for Kathmandu ops `vdf_revelation` and `increase_paid_storage`
+* Add op type enums and tags for Kathmandu TORU, SCORU and DAL ops
+* Fix block offset calculations (regression from 1.13.2)
+* Improve Micheline type handling (nested lists)
+* Fix fee estimation
+* Add Zarith helpers
+* Improve bigmap detection from Micheline value
+* Add simple Micheline type checker
+
 ## v1.13.2
 
 * Don't use zero address for contract deployments
