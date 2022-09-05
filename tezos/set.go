@@ -62,6 +62,13 @@ func (s *AddressSet) Remove(addr Address) {
 	}
 }
 
+func (s *AddressSet) Clear() {
+	for n := range s.set {
+		delete(s.set, n)
+	}
+	s.coll = s.coll[:0]
+}
+
 func (s AddressSet) Contains(addr Address) bool {
 	a, ok := s.set[s.hash(addr)]
 	if !ok {
