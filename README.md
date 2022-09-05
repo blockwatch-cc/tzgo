@@ -1,7 +1,5 @@
 ## TzGo – Go SDK for Tezos by Blockwatch Data
 
-[![Build Status](https://drone.bwd.cx/api/badges/blockwatch-cc/poly/status.svg?ref=refs/heads/kuba/droneCI)](https://drone.bwd.cx/blockwatch-cc/poly)
-
 TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
 Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encodings for all Tezos types including the Micheline smart contract data and all transaction formats so it's perfectly suited for high-performance applications that read and write to the Tezos blockchain.
