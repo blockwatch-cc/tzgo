@@ -81,6 +81,7 @@ const (
 	TORU_MESSAGE_RESULT_HASH_PREFIX       = "txmr"
 	TORU_MESSAGE_RESULT_LIST_HASH_PREFIX  = "txM"
 	TORU_WITHDRAW_LIST_HASH_PREFIX        = "txw"
+	SCRU_ADDRESS_PREFIX                   = "scr1"
 
 	// sidechains
 	DEKU_CONTRACT_HASH_PREFIX = "DK1"
@@ -162,6 +163,7 @@ var (
 	TORU_MESSAGE_RESULT_HASH_ID       = []byte{18, 7, 206, 87}    // "\018\007\206\087" txmr(54) 32
 	TORU_MESSAGE_RESULT_LIST_HASH_ID  = []byte{79, 146, 82}       // "\079\146\082" txM(53) 32
 	TORU_WITHDRAW_LIST_HASH_ID        = []byte{79, 150, 72}       // "\079\150\072" txw(53) 32
+	SCRU_ADDRESS_ID                   = []byte{1, 118, 131, 217}  // "\001\118\132\217" scr1(37) 20
 
 	// Sidechains
 	DEKU_CONTRACT_HASH_ID = []byte{1, 146, 6} // "\001\146\006" (* DK1(36) *)
