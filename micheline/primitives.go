@@ -195,6 +195,30 @@ func (p Prim) Clone() Prim {
 	return clone
 }
 
+func (p Prim) CloneNoAnnots() Prim {
+	clone := Prim{
+		Type:      p.Type,
+		OpCode:    p.OpCode,
+		String:    p.String,
+		WasPacked: p.WasPacked,
+	}
+	if p.Args != nil {
+		clone.Args = make([]Prim, len(p.Args))
+		for i, arg := range p.Args {
+			clone.Args[i] = arg.Clone()
+		}
+	}
+	if p.Int != nil {
+		clone.Int = big.NewInt(0)
+		clone.Int.Set(p.Int)
+	}
+	if p.Bytes != nil {
+		clone.Bytes = make([]byte, len(p.Bytes))
+		copy(clone.Bytes, p.Bytes)
+	}
+	return clone
+}
+
 func (p Prim) IsEqual(p2 Prim) bool {
 	return IsEqualPrim(p, p2, false)
 }
