@@ -196,8 +196,13 @@ func (p Prim) Clone() Prim {
 }
 
 func (p Prim) CloneNoAnnots() Prim {
+	typ := p.Type
+	switch typ {
+	case PrimNullaryAnno, PrimUnaryAnno, PrimBinaryAnno:
+		typ--
+	}
 	clone := Prim{
-		Type:      p.Type,
+		Type:      typ,
 		OpCode:    p.OpCode,
 		String:    p.String,
 		WasPacked: p.WasPacked,
