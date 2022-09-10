@@ -112,6 +112,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 	pp.NumVotingPeriods = 4
 	pp.MaxOperationsTTL = 60
 	switch {
+	case ProtoGenesis.Equal(proto):
+		// retain version set in ForNetwork()
+		pp.StartHeight = 0
+		pp.EndHeight = 0
+
 	case ProtoBootstrap.Equal(proto):
 		// retain version set in ForNetwork()
 		pp.StartHeight = 1
@@ -281,7 +286,8 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.OperationTagsVersion = 2
 		pp.NumVotingPeriods = 5
 		pp.MaxOperationsTTL = 120
-		if Mainnet.Equal(p.ChainId) {
+		switch {
+		case Mainnet.Equal(p.ChainId):
 			pp.StartBlockOffset = 2244608
 			pp.StartCycle = 468
 			pp.VoteBlockOffset = 0
@@ -293,7 +299,12 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
 			pp.EndHeight = -1
-		} else if Ghostnet.Equal(p.ChainId) {
+		case Jakartanet.Equal(p.ChainId):
+			pp.StartBlockOffset = 0
+			pp.StartCycle = 0
+			pp.StartHeight = 2
+			pp.EndHeight = 8192
+		case Ghostnet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2     // block 8192 is not in c2, but whatever
 			pp.StartHeight = 8192 // off by one due to Tezos testnet fuckup !!
@@ -317,6 +328,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2490369
 			pp.EndHeight = 2736128
+		case Kathmandunet.Equal(p.ChainId):
+			pp.StartBlockOffset = 0
+			pp.StartCycle = 0
+			pp.StartHeight = 2
+			pp.EndHeight = 8192
 		case Jakartanet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
