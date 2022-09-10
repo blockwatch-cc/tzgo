@@ -205,7 +205,7 @@ func (p Prim) CloneNoAnnots() Prim {
 	if p.Args != nil {
 		clone.Args = make([]Prim, len(p.Args))
 		for i, arg := range p.Args {
-			clone.Args[i] = arg.Clone()
+			clone.Args[i] = arg.CloneNoAnnots()
 		}
 	}
 	if p.Int != nil {
