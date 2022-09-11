@@ -78,7 +78,7 @@ var (
 			ProtoV011_2,    // 1
 			ProtoV012_2,    // 2
 			ProtoV013_2,    // 3
-			ProtoV014,      // 4
+			// ProtoV014,      // 4
 		},
 	}
 )
@@ -342,7 +342,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartBlockOffset = 765952
 			pp.StartCycle = 187
 			pp.StartHeight = 765953
-			pp.EndHeight = -1
+			pp.EndHeight = -1 // TODO
 		}
 	case PtKathma.Equal(proto): // Kathmandu
 		pp.Version = 14
@@ -367,11 +367,11 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
 			pp.EndHeight = -1
-		case Ghostnet.Equal(p.ChainId):
-			pp.StartBlockOffset = 765952
-			pp.StartCycle = 187
-			pp.StartHeight = 765953
-			pp.EndHeight = -1
+			// case Ghostnet.Equal(p.ChainId):
+			// 	pp.StartBlockOffset = TODO
+			// 	pp.StartCycle = TODO
+			// 	pp.StartHeight = TODO
+			// 	pp.EndHeight = -1
 		}
 	}
 	return pp
