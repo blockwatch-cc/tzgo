@@ -315,6 +315,10 @@ func (a Address) Short() string {
 }
 
 func (a *Address) UnmarshalText(data []byte) error {
+	max := HashTypeScruAddress.Base58Len()
+	if len(data) > max {
+		data = data[:max]
+	}
 	astr := strings.Split(string(data), "%")[0]
 	addr, err := ParseAddress(astr)
 	if err != nil {
@@ -479,13 +483,14 @@ func MustParseAddress(addr string) Address {
 }
 
 func ParseAddress(addr string) (Address, error) {
-	if len(addr) == 0 {
+	if len(addr) == 0 || len(addr) > HashTypeScruAddress.Base58Len() || !HasAddressPrefix(addr) {
 		return InvalidAddress, nil
 	}
 	a := Address{}
 	sz := 3
 	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) ||
-		strings.HasPrefix(addr, TORU_ADDRESS_PREFIX) {
+		strings.HasPrefix(addr, TORU_ADDRESS_PREFIX) ||
+		strings.HasPrefix(addr, SCRU_ADDRESS_PREFIX) {
 		sz = 4
 	}
 	decoded, version, err := base58.CheckDecode(addr, sz, nil)
