@@ -53,7 +53,7 @@ func (t Transaction) Costs() tezos.Costs {
 		}
 	}
 	for _, in := range t.Metadata.InternalResults {
-		cost.Add(in.Costs())
+		cost = cost.Add(in.Costs())
 	}
 	return cost
 }
