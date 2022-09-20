@@ -483,10 +483,13 @@ func MustParseAddress(addr string) Address {
 }
 
 func ParseAddress(addr string) (Address, error) {
-	if len(addr) == 0 || len(addr) > HashTypeScruAddress.Base58Len() || !HasAddressPrefix(addr) {
+	a := Address{}
+	if len(addr) == 0 {
 		return InvalidAddress, nil
 	}
-	a := Address{}
+	if len(addr) > HashTypeScruAddress.Base58Len() || !HasAddressPrefix(addr) {
+		return a, fmt.Errorf("tezos: invalid address")
+	}
 	sz := 3
 	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) ||
 		strings.HasPrefix(addr, TORU_ADDRESS_PREFIX) ||
@@ -498,10 +501,10 @@ func ParseAddress(addr string) (Address, error) {
 		if err == base58.ErrChecksum {
 			return a, ErrChecksumMismatch
 		}
-		return a, fmt.Errorf("tezos: decoded address is of unknown format: %w", err)
+		return a, fmt.Errorf("tezos: invalid address: %w", err)
 	}
 	if len(decoded) != 20 {
-		return a, errors.New("tezos: decoded address hash is of invalid length")
+		return a, fmt.Errorf("tezos: invalid address length %d", len(decoded))
 	}
 	switch {
 	case bytes.Equal(version, ED25519_PUBLIC_KEY_HASH_ID):
@@ -525,7 +528,7 @@ func ParseAddress(addr string) (Address, error) {
 	case bytes.Equal(version, DEKU_CONTRACT_HASH_ID):
 		return Address{Type: AddressTypeDekuContract, Hash: decoded}, nil
 	default:
-		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
+		return a, fmt.Errorf("tezos: unknown address type %x", version)
 	}
 }
 
