@@ -68,32 +68,24 @@ func (t FA1Token) GetAllowance(ctx context.Context, owner, spender tezos.Address
 	return allowance, err
 }
 
-func (t FA1Token) Approve(spender tezos.Address, amount tezos.Z) *FA1ApprovalArgs {
-	return &FA1ApprovalArgs{
-		Approval: FA1Approval{
-			Spender: spender,
-			Value:   amount,
-		},
-	}
+func (t FA1Token) Approve(spender tezos.Address, amount tezos.Z) CallArguments {
+	return NewFA1ApprovalArgs().
+		Approve(spender, amount).
+		WithSource(spender).
+		WithDestination(t.Address)
 }
 
-func (t FA1Token) Revoke(spender tezos.Address) *FA1ApprovalArgs {
-	return &FA1ApprovalArgs{
-		Approval: FA1Approval{
-			Spender: spender,
-			Value:   tezos.NewZ(0),
-		},
-	}
+func (t FA1Token) Revoke(spender tezos.Address) CallArguments {
+	return NewFA1ApprovalArgs().
+		Revoke(spender).
+		WithSource(spender).
+		WithDestination(t.Address)
 }
 
-func (t FA1Token) Transfer(from, to tezos.Address, amount tezos.Z) *FA1TransferArgs {
-	return &FA1TransferArgs{
-		Transfer: FA1Transfer{
-			From:   from,
-			To:     to,
-			Amount: amount,
-		},
-	}
+func (t FA1Token) Transfer(from, to tezos.Address, amount tezos.Z) CallArguments {
+	return NewFA1TransferArgs().WithTransfer(from, to, amount).
+		WithSource(from).
+		WithDestination(t.Address)
 }
 
 type FA1Approval struct {
@@ -107,6 +99,32 @@ type FA1ApprovalArgs struct {
 }
 
 var _ CallArguments = (*FA1ApprovalArgs)(nil)
+
+func NewFA1ApprovalArgs() *FA1ApprovalArgs {
+	return &FA1ApprovalArgs{}
+}
+
+func (a *FA1ApprovalArgs) WithSource(addr tezos.Address) CallArguments {
+	a.Source = addr.Clone()
+	return a
+}
+
+func (a *FA1ApprovalArgs) WithDestination(addr tezos.Address) CallArguments {
+	a.Destination = addr.Clone()
+	return a
+}
+
+func (p *FA1ApprovalArgs) Approve(spender tezos.Address, amount tezos.Z) *FA1ApprovalArgs {
+	p.Approval.Spender = spender.Clone()
+	p.Approval.Value = amount.Clone()
+	return p
+}
+
+func (p *FA1ApprovalArgs) Revoke(spender tezos.Address) *FA1ApprovalArgs {
+	p.Approval.Spender = spender.Clone()
+	p.Approval.Value = tezos.NewZ(0)
+	return p
+}
 
 func (a FA1ApprovalArgs) Parameters() *micheline.Parameters {
 	return &micheline.Parameters{
@@ -158,6 +176,27 @@ type FA1TransferArgs struct {
 }
 
 var _ CallArguments = (*FA1TransferArgs)(nil)
+
+func NewFA1TransferArgs() *FA1TransferArgs {
+	return &FA1TransferArgs{}
+}
+
+func (a *FA1TransferArgs) WithSource(addr tezos.Address) CallArguments {
+	a.Source = addr.Clone()
+	return a
+}
+
+func (a *FA1TransferArgs) WithDestination(addr tezos.Address) CallArguments {
+	a.Destination = addr.Clone()
+	return a
+}
+
+func (p *FA1TransferArgs) WithTransfer(from, to tezos.Address, amount tezos.Z) *FA1TransferArgs {
+	p.Transfer.From = from.Clone()
+	p.Transfer.To = to.Clone()
+	p.Transfer.Amount = amount.Clone()
+	return p
+}
 
 func (t FA1TransferArgs) Parameters() *micheline.Parameters {
 	return &micheline.Parameters{

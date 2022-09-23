@@ -80,16 +80,25 @@ func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]F
 	return resp, err
 }
 
-func (t FA2Token) AddOperator(owner, operator tezos.Address) *FA2ApprovalArgs {
-	return NewFA2ApprovalArgs().AddOperator(owner, operator, t.TokenId)
+func (t FA2Token) AddOperator(owner, operator tezos.Address) CallArguments {
+	return NewFA2ApprovalArgs().
+		AddOperator(owner, operator, t.TokenId).
+		WithSource(owner).
+		WithDestination(t.Address)
 }
 
-func (t FA2Token) RemoveOperator(owner, operator tezos.Address) *FA2ApprovalArgs {
-	return NewFA2ApprovalArgs().RemoveOperator(owner, operator, t.TokenId)
+func (t FA2Token) RemoveOperator(owner, operator tezos.Address) CallArguments {
+	return NewFA2ApprovalArgs().
+		RemoveOperator(owner, operator, t.TokenId).
+		WithSource(owner).
+		WithDestination(t.Address)
 }
 
-func (t FA2Token) Transfer(from, to tezos.Address, amount tezos.Z) *FA2TransferArgs {
-	return NewFA2TransferArgs().WithTransfer(from, to, t.TokenId, amount)
+func (t FA2Token) Transfer(from, to tezos.Address, amount tezos.Z) CallArguments {
+	return NewFA2TransferArgs().
+		WithTransfer(from, to, t.TokenId, amount).
+		WithSource(from).
+		WithDestination(t.Address)
 }
 
 type FA2Approval struct {
@@ -160,6 +169,16 @@ func NewFA2ApprovalArgs() *FA2ApprovalArgs {
 	return &FA2ApprovalArgs{
 		Approvals: make([]FA2Approval, 0),
 	}
+}
+
+func (a *FA2ApprovalArgs) WithSource(addr tezos.Address) CallArguments {
+	a.Source = addr.Clone()
+	return a
+}
+
+func (a *FA2ApprovalArgs) WithDestination(addr tezos.Address) CallArguments {
+	a.Destination = addr.Clone()
+	return a
 }
 
 func (p *FA2ApprovalArgs) AddOperator(owner, operator tezos.Address, id tezos.Z) *FA2ApprovalArgs {
@@ -267,6 +286,16 @@ func NewFA2TransferArgs() *FA2TransferArgs {
 	return &FA2TransferArgs{
 		Transfers: make(FA2TransferList, 0),
 	}
+}
+
+func (a *FA2TransferArgs) WithSource(addr tezos.Address) CallArguments {
+	a.Source = addr.Clone()
+	return a
+}
+
+func (a *FA2TransferArgs) WithDestination(addr tezos.Address) CallArguments {
+	a.Destination = addr.Clone()
+	return a
 }
 
 func (p *FA2TransferArgs) WithTransfer(from, to tezos.Address, id, amount tezos.Z) *FA2TransferArgs {
