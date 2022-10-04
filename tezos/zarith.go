@@ -216,6 +216,24 @@ func (z Z) Add(y Z) Z {
 	return x
 }
 
+func (z Z) Sub(y Z) Z {
+	var x Z
+	x.Set(new(big.Int).Sub(z.Big(), y.Big()))
+	return x
+}
+
+func (z Z) Mul(y Z) Z {
+	var x Z
+	x.Set(new(big.Int).Mul(z.Big(), y.Big()))
+	return x
+}
+
+func (z Z) Div(y Z) Z {
+	var x Z
+	x.Set(new(big.Int).Div(z.Big(), y.Big()))
+	return x
+}
+
 func (z Z) IsNeg() bool {
 	return z.Big().Sign() < 0
 }
