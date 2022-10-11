@@ -49,6 +49,8 @@ func (b *Bool) DecodeBuffer(buf *bytes.Buffer) error {
 // of the absolute value of the number in little endian order.
 type Z big.Int
 
+var Zero = NewZ(0)
+
 func NewZ(i int64) Z {
 	var z Z
 	z.SetInt64(i)
