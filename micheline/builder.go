@@ -77,6 +77,14 @@ func NewMapType(k, v Prim, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: T_MAP, Args: []Prim{k, v}, Anno: anno}
 }
 
+func NewMap(elts ...Prim) Prim {
+	return Prim{Type: PrimSequence, Args: elts}
+}
+
+func NewMapElem(k, v Prim) Prim {
+	return Prim{Type: PrimBinary, OpCode: D_ELT, Args: []Prim{k, v}}
+}
+
 func NewSetType(e Prim, anno ...string) Prim {
 	typ := PrimUnary
 	if len(anno) > 0 {
