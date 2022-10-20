@@ -236,6 +236,30 @@ func (z Z) Div(y Z) Z {
 	return x
 }
 
+func (z Z) Add64(y int64) Z {
+	var x Z
+	x.Set(new(big.Int).Add(z.Big(), big.NewInt(y)))
+	return x
+}
+
+func (z Z) Sub64(y int64) Z {
+	var x Z
+	x.Set(new(big.Int).Sub(z.Big(), big.NewInt(y)))
+	return x
+}
+
+func (z Z) Mul64(y int64) Z {
+	var x Z
+	x.Set(new(big.Int).Mul(z.Big(), big.NewInt(y)))
+	return x
+}
+
+func (z Z) Div64(y int64) Z {
+	var x Z
+	x.Set(new(big.Int).Div(z.Big(), big.NewInt(y)))
+	return x
+}
+
 func (z Z) IsNeg() bool {
 	return z.Big().Sign() < 0
 }
