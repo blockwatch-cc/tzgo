@@ -238,12 +238,12 @@ func (m *Observer) listenBlocks() {
 				// match op hash against registry
 				hashval.Write(h.Hash.Hash)
 				id, ok := m.hashmap[hashval.Sum64()]
+				hashval.Reset()
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
 				}
 				match, ok := m.registry[id]
-				hashval.Reset()
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
