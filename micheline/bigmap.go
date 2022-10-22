@@ -38,6 +38,16 @@ func NewBigmapRef(id int64) Prim {
 
 type BigmapEvents []BigmapEvent
 
+func (l BigmapEvents) Filter(id int64) BigmapEvents {
+	var res BigmapEvents
+	for _, v := range l {
+		if v.Id == id {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
 type BigmapEvent struct {
 	Action    DiffAction     `json:"action"`
 	Id        int64          `json:"big_map,string"`
