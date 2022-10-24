@@ -27,7 +27,8 @@ var (
 	InvalidAddress = Address{Type: AddressTypeInvalid, Hash: nil}
 
 	// ZeroAddress is a tz1 address with all bytes zero
-	ZeroAddress = Address{Type: AddressTypeEd25519, Hash: make([]byte, HashTypePkhEd25519.Len())}
+	ZeroAddress  = Address{Type: AddressTypeEd25519, Hash: make([]byte, HashTypePkhEd25519.Len())}
+	ZeroContract = Address{Type: AddressTypeContract, Hash: make([]byte, HashTypePkhNocurve.Len())}
 
 	// Burn Address
 	BurnAddress = MustParseAddress("tz1burnburnburnburnburnburnburjAYjjX")
