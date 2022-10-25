@@ -232,7 +232,9 @@ func (z Z) Mul(y Z) Z {
 
 func (z Z) Div(y Z) Z {
 	var x Z
-	x.Set(new(big.Int).Div(z.Big(), y.Big()))
+	if !y.IsZero() {
+		x.Set(new(big.Int).Div(z.Big(), y.Big()))
+	}
 	return x
 }
 
@@ -256,7 +258,9 @@ func (z Z) Mul64(y int64) Z {
 
 func (z Z) Div64(y int64) Z {
 	var x Z
-	x.Set(new(big.Int).Div(z.Big(), big.NewInt(y)))
+	if y != 0 {
+		x.Set(new(big.Int).Div(z.Big(), big.NewInt(y)))
+	}
 	return x
 }
 
