@@ -47,6 +47,10 @@ type Client struct {
 	MempoolObserver *Observer
 	// A default signer used for transaction sending
 	Signer signer.Signer
+	// MetadataMode defines the metadata reconstruction mode used for fetching
+	// block and operation receipts. Set this mode to `always` if an RPC node prunes
+	// metadata (i.e. you see metadata too large in certain operations)
+	MetadataMode MetadataMode
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -76,6 +80,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 		ApiKey:          key,
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
+		MetadataMode:    MetadataModeUnset,
 	}
 	return c, nil
 }

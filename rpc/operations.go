@@ -14,6 +14,14 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
+type MetadataMode string
+
+const (
+	MetadataModeUnset  MetadataMode = ""
+	MetadataModeNever  MetadataMode = "never"
+	MetadataModeAlways MetadataMode = "always"
+)
+
 // Operation represents a single operation or batch of operations included in a block
 type Operation struct {
 	Protocol  tezos.ProtocolHash `json:"protocol"`
@@ -22,7 +30,8 @@ type Operation struct {
 	Branch    tezos.BlockHash    `json:"branch"`
 	Contents  OperationList      `json:"contents"`
 	Signature tezos.Signature    `json:"signature"`
-	Errors    []OperationError   `json:"error,omitempty"` // mempool only
+	Errors    []OperationError   `json:"error,omitempty"`    // mempool only
+	Metadata  string             `json:"metadata,omitempty"` // contains `too large` when stripped, this is BAD!!
 }
 
 // TotalCosts returns the sum of costs across all batched and internal operations.
@@ -386,7 +395,10 @@ func (c *Client) GetBlockOperationListHashes(ctx context.Context, id BlockID, l 
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations-list-offset-operation-offset
 func (c *Client) GetBlockOperation(ctx context.Context, id BlockID, l, n int) (*Operation, error) {
 	var op Operation
-	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d/%d?metadata=always", id, l, n)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d/%d", id, l, n)
+	if c.MetadataMode != "" {
+		u += "?metadata=" + string(c.MetadataMode)
+	}
 	if err := c.Get(ctx, u, &op); err != nil {
 		return nil, err
 	}
@@ -398,7 +410,10 @@ func (c *Client) GetBlockOperation(ctx context.Context, id BlockID, l, n int) (*
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations-list-offset
 func (c *Client) GetBlockOperationList(ctx context.Context, id BlockID, l int) ([]Operation, error) {
 	ops := make([]Operation, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d?metadata=always", id, l)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations/%d", id, l)
+	if c.MetadataMode != "" {
+		u += "?metadata=" + string(c.MetadataMode)
+	}
 	if err := c.Get(ctx, u, &ops); err != nil {
 		return nil, err
 	}
@@ -410,7 +425,10 @@ func (c *Client) GetBlockOperationList(ctx context.Context, id BlockID, l int) (
 // https://tezos.gitlab.io/active/rpc.html#get-block-id-operations
 func (c *Client) GetBlockOperations(ctx context.Context, id BlockID) ([][]Operation, error) {
 	ops := make([][]Operation, 0)
-	u := fmt.Sprintf("chains/main/blocks/%s/operations?metadata=always", id)
+	u := fmt.Sprintf("chains/main/blocks/%s/operations", id)
+	if c.MetadataMode != "" {
+		u += "?metadata=" + string(c.MetadataMode)
+	}
 	if err := c.Get(ctx, u, &ops); err != nil {
 		return nil, err
 	}
