@@ -80,7 +80,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 		ApiKey:          key,
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
-		MetadataMode:    MetadataModeUnset,
+		MetadataMode:    MetadataModeAlways,
 	}
 	return c, nil
 }
