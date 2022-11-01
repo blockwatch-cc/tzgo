@@ -364,6 +364,14 @@ func (c *Contract) DeployExt(ctx context.Context, delegate tezos.Address, balanc
 	if !rcpt.IsSuccess() {
 		return nil, rcpt.Error()
 	}
-	c.addr = rcpt.Op.Contents[0].Result().OriginatedContracts[0]
+	for _, contents := range rcpt.Op.Contents {
+		if contents.Kind() == tezos.OpTypeOrigination {
+			result := contents.Result()
+			if len(result.OriginatedContracts) > 0 {
+				c.addr = result.OriginatedContracts[0]
+				break
+			}
+		}
+	}
 	return rcpt, nil
 }
