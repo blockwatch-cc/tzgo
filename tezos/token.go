@@ -16,7 +16,7 @@ var (
     // ZeroToken is a placeholder token with zero hash and zero id that may be
     // used by applications to represent tez or another default option where
     // a token address is expected.
-    ZeroToken = NewToken(ZeroAddress, Zero)
+    ZeroToken = NewToken(ZeroContract, Zero)
 )
 
 // Token represents a specialzied Tezos token address that consists of
