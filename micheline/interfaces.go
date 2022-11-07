@@ -378,27 +378,28 @@ var InterfaceSpecs = map[Interface][]Prim{
 		//     )
 		//   )
 		// )
-		NewPairType(
-			NewCodeAnno(T_LIST, "%requests",
-				NewPairType(
-					NewCodeAnno(T_ADDRESS, "%owner"),
-					NewCodeAnno(T_NAT, "%token_id"),
-				),
-			),
-			NewCodeAnno(T_CONTRACT, "%callback",
-				NewCode(T_LIST,
-					NewPairType(
-						NewPairType(
-							NewCodeAnno(T_ADDRESS, "%owner"),
-							NewCodeAnno(T_NAT, "%token_id"),
-							"%request",
-						),
-						NewCodeAnno(T_NAT, "%balance"),
-					),
-				),
-			),
-			"%balance_of",
-		),
+		// DISABLED because of some broken tokens which get mis-classified
+		// NewPairType(
+		// 	NewCodeAnno(T_LIST, "%requests",
+		// 		NewPairType(
+		// 			NewCodeAnno(T_ADDRESS, "%owner"),
+		// 			NewCodeAnno(T_NAT, "%token_id"),
+		// 		),
+		// 	),
+		// 	NewCodeAnno(T_CONTRACT, "%callback",
+		// 		NewCode(T_LIST,
+		// 			NewPairType(
+		// 				NewPairType(
+		// 					NewCodeAnno(T_ADDRESS, "%owner"),
+		// 					NewCodeAnno(T_NAT, "%token_id"),
+		// 					"%request",
+		// 				),
+		// 				NewCodeAnno(T_NAT, "%balance"),
+		// 			),
+		// 		),
+		// 	),
+		// 	"%balance_of",
+		// ),
 		// (list %update_operators
 		//   (or
 		//     (pair %add_operator
