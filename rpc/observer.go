@@ -38,7 +38,6 @@ type Observer struct {
 	seq        int
 	once       sync.Once
 	mu         sync.Mutex
-	done       chan struct{}
 	ctx        context.Context
 	cancel     context.CancelFunc
 	c          *Client
@@ -68,7 +67,6 @@ func (m *Observer) Close() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.cancel()
-	close(m.done)
 	m.registry = make(map[int]*observerSubscription)
 	m.hashmap = make(map[uint64]int)
 }
