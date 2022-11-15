@@ -6,11 +6,10 @@
 package base58_test
 
 import (
+	"blockwatch.cc/tzgo/base58"
 	"bytes"
 	"encoding/hex"
 	"testing"
-
-	"blockwatch.cc/tzgo/base58"
 )
 
 var stringTests = []struct {

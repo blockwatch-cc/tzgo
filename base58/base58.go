@@ -102,14 +102,18 @@ func Decode(b string, buf []byte) []byte {
 
 // Encode encodes a byte slice to a modified base58 string.
 func Encode(b []byte) string {
-	x := bigIntPool.Get().(*big.Int).SetBytes(b)
-	// x := new(big.Int)
-	// x.SetBytes(b)
+	xi := bigIntPool.Get()
+	x := xi.(*big.Int).SetBytes(b)
 
 	// maximum length of output is log58(2^(8*len(b))) == len(b) * 8 / log(58)
 	maxlen := int(float64(len(b))*1.365658237309761) + 1
-	answer := make([]byte, 0, maxlen)
-	mod := new(big.Int)
+	bufi := bufPool.Get()
+	answer := bufi.([]byte)
+	if cap(answer) < maxlen {
+		answer = make([]byte, 0, maxlen)
+	}
+	modi := bigIntPool.Get()
+	mod := modi.(*big.Int).SetInt64(0)
 	for x.Sign() > 0 {
 		// Calculating with big.Int is slow for each iteration.
 		//    x, mod = x / 58, x % 58
@@ -136,7 +140,8 @@ func Encode(b []byte) string {
 			}
 		}
 	}
-	bigIntPool.Put(x)
+	bigIntPool.Put(xi)
+	bigIntPool.Put(modi)
 
 	// leading zero bytes
 	for _, i := range b {
@@ -152,5 +157,7 @@ func Encode(b []byte) string {
 		answer[i], answer[alen-1-i] = answer[alen-1-i], answer[i]
 	}
 
-	return string(answer)
+	res := string(answer)
+	bufPool.Put(bufi)
+	return res
 }

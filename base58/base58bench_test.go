@@ -7,42 +7,39 @@ package base58_test
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"blockwatch.cc/tzgo/base58"
 )
 
 var (
-	raw5k       = bytes.Repeat([]byte{0xff}, 5000)
-	raw100k     = bytes.Repeat([]byte{0xff}, 100*1000)
-	encoded5k   = base58.Encode(raw5k)
-	encoded100k = base58.Encode(raw100k)
+	sizes = []int{20, 32, 50, 100}
 )
 
-func BenchmarkBase58Encode_5K(b *testing.B) {
-	b.SetBytes(int64(len(raw5k)))
-	for i := 0; i < b.N; i++ {
-		base58.Encode(raw5k)
+func BenchmarkEncodeBigInt(b *testing.B) {
+	for _, sz := range sizes {
+		b.Run(fmt.Sprintf("size_%d", sz), func(b *testing.B) {
+			data := bytes.Repeat([]byte{0xff}, sz)
+			b.SetBytes(int64(sz))
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				base58.Encode(data)
+			}
+		})
 	}
 }
 
-func BenchmarkBase58Encode_100K(b *testing.B) {
-	b.SetBytes(int64(len(raw100k)))
-	for i := 0; i < b.N; i++ {
-		base58.Encode(raw100k)
-	}
-}
-
-func BenchmarkBase58Decode_5K(b *testing.B) {
-	b.SetBytes(int64(len(encoded5k)))
-	for i := 0; i < b.N; i++ {
-		base58.Decode(encoded5k, nil)
-	}
-}
-
-func BenchmarkBase58Decode_100K(b *testing.B) {
-	b.SetBytes(int64(len(encoded100k)))
-	for i := 0; i < b.N; i++ {
-		base58.Decode(encoded100k, nil)
+func BenchmarkDecodeBigInt(b *testing.B) {
+	for _, sz := range sizes {
+		b.Run(fmt.Sprintf("size_%d", sz), func(b *testing.B) {
+			data := bytes.Repeat([]byte{0xff}, sz)
+			enc := base58.Encode(data)
+			b.SetBytes(int64(len(enc)))
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				base58.Decode(enc, nil)
+			}
+		})
 	}
 }
