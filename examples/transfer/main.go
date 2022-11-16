@@ -2,7 +2,6 @@
 // Author: alex@blockwatch.cc
 
 // Transfer examples
-//
 package main
 
 import (

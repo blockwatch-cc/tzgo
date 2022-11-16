@@ -8,19 +8,16 @@ import (
 	"sync"
 	"time"
 
-	"blockwatch.cc/tzgo/hash"
 	"blockwatch.cc/tzgo/tezos"
 )
 
 // WIP: interface may change
 //
 // TODO:
-// - support op hashes in the past (i.e. in head block)
 // - support multiple subscriptions (funcs) for the same op hash
 // - support block subscriptions (to connect a BlockObserver for full blocks + reorgs)
 // - support AdressObserver with address subscription filter
 // - disable events/polling when no subscriber exists
-// - cache head block op hashes to avoid race conditions with late subsribers
 // - handle reorgs (inclusion may switch to a different block hash)
 
 type ObserverCallback func(tezos.BlockHash, int, int, bool) bool
@@ -33,12 +30,12 @@ type observerSubscription struct {
 }
 
 type Observer struct {
-	registry   map[int]*observerSubscription
-	hashmap    map[uint64]int
+	subs       map[int]*observerSubscription
+	watched    map[[32]byte]int
+	recent     map[[32]byte][2]int
 	seq        int
 	once       sync.Once
 	mu         sync.Mutex
-	done       chan struct{}
 	ctx        context.Context
 	cancel     context.CancelFunc
 	c          *Client
@@ -50,8 +47,9 @@ type Observer struct {
 func NewObserver() *Observer {
 	ctx, cancel := context.WithCancel(context.Background())
 	m := &Observer{
-		registry: make(map[int]*observerSubscription),
-		hashmap:  make(map[uint64]int),
+		subs:     make(map[int]*observerSubscription),
+		watched:  make(map[[32]byte]int),
+		recent:   make(map[[32]byte][2]int),
 		minDelay: tezos.DefaultParams.MinimalBlockDelay,
 		ctx:      ctx,
 		cancel:   cancel,
@@ -68,9 +66,9 @@ func (m *Observer) Close() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.cancel()
-	close(m.done)
-	m.registry = make(map[int]*observerSubscription)
-	m.hashmap = make(map[uint64]int)
+	m.subs = make(map[int]*observerSubscription)
+	m.watched = make(map[[32]byte]int)
+	m.recent = make(map[[32]byte][2]int)
 }
 
 func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
@@ -78,27 +76,30 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 	defer m.mu.Unlock()
 	m.seq++
 	seq := m.seq
-	m.registry[seq] = &observerSubscription{
+	m.subs[seq] = &observerSubscription{
 		id: seq,
 		cb: cb,
 		oh: oh,
 	}
-	hashval := hash.NewInlineFNV64a()
-	hashval.Write(oh.Hash.Hash)
-	m.hashmap[hashval.Sum64()] = seq
+	hv := hashval(oh)
+	m.watched[hv] = seq
 	log.Debugf("monitor: %03d subscribed %s", seq, oh)
+	if pos, ok := m.recent[hv]; ok {
+		match := m.subs[seq]
+		if remove := match.cb(m.bestHash, pos[0], pos[1], false); remove {
+			delete(m.subs, match.id)
+		}
+	}
 	return seq
 }
 
 func (m *Observer) Unsubscribe(id int) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	req, ok := m.registry[id]
+	req, ok := m.subs[id]
 	if ok {
-		hashval := hash.NewInlineFNV64a()
-		hashval.Write(req.oh.Hash.Hash)
-		delete(m.hashmap, hashval.Sum64())
-		delete(m.registry, id)
+		delete(m.watched, hashval(req.oh))
+		delete(m.subs, id)
 		log.Debugf("monitor: %03d unsubscribed %s", id, req.oh)
 	}
 }
@@ -128,8 +129,12 @@ func (m *Observer) listenMempool() {
 }
 
 func (m *Observer) listenBlocks() {
-	var mon *BlockHeaderMonitor
-	useEvents := true
+	var (
+		mon *BlockHeaderMonitor
+		// lastBlock int64
+		useEvents bool = true
+		firstLoop bool = true
+	)
 	defer func() {
 		if mon != nil {
 			mon.Close()
@@ -150,7 +155,7 @@ func (m *Observer) listenBlocks() {
 			if err := m.c.MonitorBlockHeader(m.ctx, mon); err != nil {
 				mon.Close()
 				mon = nil
-				if e, ok := err.(HTTPStatus); ok && e.StatusCode() == 404 {
+				if ErrorStatus(err) == 404 {
 					log.Debug("monitor: event mode unsupported, falling back to poll mode.")
 					useEvents = false
 				} else {
@@ -169,7 +174,7 @@ func (m *Observer) listenBlocks() {
 			headBlock  tezos.BlockHash
 			headHeight int64
 		)
-		if mon != nil && useEvents {
+		if mon != nil && useEvents && !firstLoop {
 			// event mode: wait for next block message
 			head, err := mon.Recv(m.ctx)
 			// reconnect on error unless context was cancelled
@@ -179,7 +184,7 @@ func (m *Observer) listenBlocks() {
 				continue
 			}
 			log.Debugf("monitor: new head %s", head.Hash)
-			headBlock = head.Hash
+			headBlock = head.Hash.Clone()
 			headHeight = head.Level
 		} else {
 			// poll mode: check every 30sec
@@ -193,9 +198,14 @@ func (m *Observer) listenBlocks() {
 				}
 				continue
 			}
-			headBlock = head.Hash.Clone()
 			headHeight = head.Level
+			headBlock, err = m.c.GetBlockHash(m.ctx, BlockLevel(head.Level))
+			if err != nil {
+				log.Debugf("monitor: cannot fetch block hash at height %d: %v", head.Level, err)
+				continue
+			}
 		}
+		firstLoop = false
 
 		// skip already processed blocks
 		if headBlock.Equal(m.bestHash) && !useEvents {
@@ -215,11 +225,11 @@ func (m *Observer) listenBlocks() {
 
 		// callback for all previous matches
 		m.mu.Lock()
-		for _, v := range m.registry {
+		for _, v := range m.subs {
 			if v.matched {
 				log.Debugf("monitor: signal n-th match for %d %s", v.id, v.oh)
 				if remove := v.cb(headBlock, -1, -1, false); remove {
-					delete(m.registry, v.id)
+					delete(m.subs, v.id)
 				}
 			}
 		}
@@ -231,19 +241,24 @@ func (m *Observer) listenBlocks() {
 			log.Warnf("monitor: cannot fetch block ops: %v", err)
 			continue
 		}
-		hashval := hash.NewInlineFNV64a()
+		// clear recent op hashes
+		for n := range m.recent {
+			delete(m.recent, n)
+		}
 		m.mu.Lock()
 		for l, list := range ohs {
 			for n, h := range list {
-				// match op hash against registry
-				hashval.Write(h.Hash.Hash)
-				id, ok := m.hashmap[hashval.Sum64()]
-				hashval.Reset()
+				// keep as recent
+				hv := hashval(h)
+				m.recent[hv] = [2]int{l, n}
+
+				// match op hash against subs
+				id, ok := m.watched[hv]
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
 				}
-				match, ok := m.registry[id]
+				match, ok := m.subs[id]
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
@@ -259,7 +274,7 @@ func (m *Observer) listenBlocks() {
 
 				// callback
 				if remove := match.cb(headBlock, l, n, false); remove {
-					delete(m.registry, match.id)
+					delete(m.subs, match.id)
 				} else {
 					match.matched = true
 				}
@@ -280,4 +295,9 @@ func (m *Observer) listenBlocks() {
 			}
 		}
 	}
+}
+
+func hashval(oh tezos.OpHash) (val [32]byte) {
+	copy(val[:], oh.Hash.Hash)
+	return
 }
