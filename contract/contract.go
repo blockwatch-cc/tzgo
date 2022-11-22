@@ -60,6 +60,7 @@ func (a *TxArgs) Encode() *codec.Transaction {
 		Manager: codec.Manager{
 			Source: a.Source,
 		},
+		Amount:      a.Amount,
 		Destination: a.Destination,
 		Parameters:  &a.Params,
 	}
