@@ -176,6 +176,20 @@ func (z *Z) EncodeBuffer(buf *bytes.Buffer) error {
 	return nil
 }
 
+func ParseZ(s string) (Z, error) {
+	var z Z
+	err := (*big.Int)(&z).UnmarshalText([]byte(s))
+	return z, err
+}
+
+func MustParseZ(s string) Z {
+	z, err := ParseZ(s)
+	if err != nil {
+		panic(err)
+	}
+	return z
+}
+
 func (z Z) MarshalText() ([]byte, error) {
 	return (*big.Int)(&z).MarshalText()
 }
