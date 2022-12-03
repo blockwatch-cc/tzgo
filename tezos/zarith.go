@@ -75,6 +75,10 @@ func (z Z) IsZero() bool {
 	return (*big.Int)(&z).IsInt64() && (*big.Int)(&z).Int64() == 0
 }
 
+func (z Z) Cmp(b Z) int {
+	return (*big.Int)(&z).Cmp((*big.Int)(&b))
+}
+
 func (z Z) Int64() int64 {
 	return (*big.Int)(&z).Int64()
 }

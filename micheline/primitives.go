@@ -1534,3 +1534,15 @@ func (p Prim) FindLabels(label string) ([]Prim, bool) {
 	}
 	return found, len(found) > 0
 }
+
+func (p Prim) FindBigmapByName(name string) (Prim, bool) {
+	if p.OpCode == T_BIG_MAP && p.MatchesAnno(name) {
+		return p, true
+	}
+	for i := range p.Args {
+		if pp, found := p.Args[i].FindBigmapByName(name); found {
+			return pp, found
+		}
+	}
+	return Prim{}, false
+}
