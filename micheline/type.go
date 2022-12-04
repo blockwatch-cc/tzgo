@@ -217,10 +217,10 @@ func (t Type) MarshalJSON() ([]byte, error) {
 
 func (p Prim) Implements(t Type) bool {
 	td := buildTypedef("", t.Prim)
-	return p.implements(td)
+	return p.ImplementsType(td)
 }
 
-func (p Prim) implements(t Typedef) bool {
+func (p Prim) ImplementsType(t Typedef) bool {
 	err := p.Walk(func(p Prim) error {
 		// fmt.Printf("CMP typ=%#v val=%s\n", t, p.Dump())
 		switch p.OpCode {
@@ -228,7 +228,7 @@ func (p Prim) implements(t Typedef) bool {
 			if t.Type == TypeStruct {
 				// fmt.Println("> handle struct")
 				for i, v := range p.UnfoldPair(Type{}) {
-					if i >= len(t.Args) || !v.implements(t.Args[i]) {
+					if i >= len(t.Args) || !v.ImplementsType(t.Args[i]) {
 						// fmt.Println("> BAD struct elem")
 						return ErrTypeMismatch
 					}
@@ -251,7 +251,7 @@ func (p Prim) implements(t Typedef) bool {
 				return PrimSkip
 			}
 		case D_ELT:
-			if len(t.Args) == 2 && p.Args[0].implements(t.Args[0]) && p.Args[1].implements(t.Args[1]) {
+			if len(t.Args) == 2 && p.Args[0].ImplementsType(t.Args[0]) && p.Args[1].ImplementsType(t.Args[1]) {
 				// fmt.Println("> OK map")
 				return PrimSkip
 			}
@@ -264,13 +264,13 @@ func (p Prim) implements(t Typedef) bool {
 				} else {
 					t.Args = t.Args[:len(t.Args)-1]
 				}
-				if p.Args[0].implements(t) {
+				if p.Args[0].ImplementsType(t) {
 					// fmt.Println("> OK union left")
 					return PrimSkip
 				}
 			}
 		case D_RIGHT:
-			if t.Type == TypeUnion && p.Args[0].implements(t.Args[len(t.Args)-1]) {
+			if t.Type == TypeUnion && p.Args[0].ImplementsType(t.Args[len(t.Args)-1]) {
 				// fmt.Println("> OK union right")
 				return PrimSkip
 			}
@@ -285,7 +285,7 @@ func (p Prim) implements(t Typedef) bool {
 				switch oc {
 				case T_MAP:
 					for _, v := range p.Args {
-						if !v.implements(t.Args[0]) {
+						if !v.ImplementsType(t) {
 							// fmt.Println("> BAD map elem")
 							return ErrTypeMismatch
 						}
@@ -293,7 +293,7 @@ func (p Prim) implements(t Typedef) bool {
 					return PrimSkip
 				case T_SET:
 					for _, v := range p.Args {
-						if !v.implements(t.Args[0]) {
+						if !v.ImplementsType(t) {
 							// fmt.Println("> BAD set elem")
 							return ErrTypeMismatch
 						}
@@ -301,7 +301,7 @@ func (p Prim) implements(t Typedef) bool {
 					return PrimSkip
 				case T_LIST:
 					for _, v := range p.Args {
-						if !v.implements(t.Args[0]) {
+						if !v.ImplementsType(t) {
 							// fmt.Println("> BAD list elem")
 							return ErrTypeMismatch
 						}
