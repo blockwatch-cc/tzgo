@@ -31,8 +31,8 @@ type Value struct {
 
 func NewValue(typ Type, val Prim) Value {
 	return Value{
-		Type:   typ.Clone(),
-		Value:  val.Clone(),
+		Type:   typ,
+		Value:  val,
 		Render: RENDER_TYPE_PRIM,
 	}
 }
