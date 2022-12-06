@@ -145,7 +145,7 @@ func (h BlockHeader) LbVote() tezos.LbVote {
 // ProtocolData exports protocol-specific extra header fields as binary encoded data.
 // Used to produce compliant block monitor data streams.
 //
-// tezos-codec describe 012-Psithaca.block_header.protocol_data binary schema
+// tezos-codec describe 015-PtLimaPt.block_header.protocol_data binary schema
 // +---------------------------------------+----------+-------------------------------------+
 // | Name                                  | Size     | Contents                            |
 // +=======================================+==========+=====================================+
@@ -159,13 +159,9 @@ func (h BlockHeader) LbVote() tezos.LbVote {
 // +---------------------------------------+----------+-------------------------------------+
 // | seed_nonce_hash                       | 32 bytes | bytes                               |
 // +---------------------------------------+----------+-------------------------------------+
-// | liquidity_baking_escape_vote          | 1 byte   | boolean (0 for false, 255 for true) |
+// | liquidity_baking_toggle_vote          | 1 byte   | signed 8-bit integer                |
 // +---------------------------------------+----------+-------------------------------------+
 // | signature                             | 64 bytes | bytes                               |
-// +---------------------------------------+----------+-------------------------------------+
-// Jakarta
-// +---------------------------------------+----------+-------------------------------------+
-// | liquidity_baking_toggle_vote          | 1 byte   | signed 8-bit integer                |
 // +---------------------------------------+----------+-------------------------------------+
 
 func (h BlockHeader) ProtocolData() []byte {
@@ -179,14 +175,7 @@ func (h BlockHeader) ProtocolData() []byte {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	switch {
-	case h.LiquidityBakingToggleVote.IsValid():
-		buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
-	case h.LiquidityBakingEscapeVote:
-		buf.WriteByte(0xff)
-	default:
-		buf.WriteByte(0x0)
-	}
+	buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
 	if h.Signature.IsValid() {
 		buf.Write(h.Signature.Data) // raw, no tag!
 	}

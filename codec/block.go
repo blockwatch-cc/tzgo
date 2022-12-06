@@ -26,7 +26,7 @@ type BlockHeader struct {
 	PayloadRound     int                  `json:"payload_round"`
 	ProofOfWorkNonce tezos.HexBytes       `json:"proof_of_work_nonce"`
 	SeedNonceHash    tezos.NonceHash      `json:"seed_nonce_hash"`
-	LbEscapeVote     bool                 `json:"liquidity_baking_escape_vote"`
+	LbToggleVote     tezos.LbVote         `json:"liquidity_baking_toggle_vote"`
 	Signature        tezos.Signature      `json:"signature"`
 	ChainId          *tezos.ChainIdHash   `json:"-"` // remote signer use only
 }
@@ -123,8 +123,8 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 		buf.WriteString(`,"seed_nonce_hash":`)
 		buf.WriteString(strconv.Quote(h.SeedNonceHash.String()))
 	}
-	buf.WriteString(`,"liquidity_baking_escape_vote":`)
-	buf.WriteString(strconv.FormatBool(h.LbEscapeVote))
+	buf.WriteString(`,"liquidity_baking_toggle_vote":`)
+	buf.WriteString(strconv.Quote(h.LbToggleVote.String()))
 	if h.Signature.IsValid() {
 		buf.WriteString(`,"signature":`)
 		buf.WriteString(strconv.Quote(h.Signature.String()))
@@ -162,11 +162,7 @@ func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	if h.LbEscapeVote {
-		buf.WriteByte(0xff)
-	} else {
-		buf.WriteByte(0x0)
-	}
+	buf.WriteByte(h.LbToggleVote.Tag())
 	if h.Signature.IsValid() {
 		buf.Write(h.Signature.Data) // raw, no tag!
 	}
@@ -238,8 +234,7 @@ func (h *BlockHeader) DecodeBuffer(buf *bytes.Buffer) (err error) {
 			return
 		}
 	}
-	h.LbEscapeVote, err = readBool(buf.Next(1))
-	if err != nil {
+	if err = h.LbToggleVote.UnmarshalBinary(buf.Next(1)); err != nil {
 		return
 	}
 	// conditionally read signature
