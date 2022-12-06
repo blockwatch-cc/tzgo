@@ -247,6 +247,10 @@ type BlockMetadata struct {
 	// v010+
 	ImplicitOperationsResults []ImplicitResult `json:"implicit_operations_results"`
 	LiquidityBakingEscapeEma  int64            `json:"liquidity_baking_escape_ema"`
+
+	// v015+
+	ProposerConsensusKey tezos.Address `json:"proposer_consensus_key"`
+	BakerConsensusKey    tezos.Address `json:"baker_consensus_key"`
 }
 
 func (m *BlockMetadata) GetLevel() int64 {
