@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.15.0
+
+Lima support
+
+* Separate transfer_ticket op from rollup
+* Add new delegate fields
+* Add new block metadata fields
+* Add ticket receipts
+* Add Lima opcodes
+* Add deposit entrypoint
+* Add Lima constants and update params
+* Update block header to Lima convention
+* Add Lima op types, tags and op handlers for `drain_delegate` and `update_consensus_key`
+
+Other changes
+
+* Don't clone primitive trees when used in Micheline Value
+* Export Micheline typdef match
+* Fix setting amount in TxArgs.Encode
+* Cache head block ops in observer to avoid race conditions
+* improve base58 performance
+* Disable balance_of type check for tz12
+* Allow setting metadata mode as client config
+* Add token address type
+* Add bigmap event filter
+* Fix observer hashval reset
+
+## v1.14.2
+
+* Add Micheline map builder helpers
+* Add Zarith number arithmetics functions
+* Improve FA1 and FA2 token helpers
+
+## v1.14.1
+
+* Fix costs calculation for internal gas
+
 ## v1.14.0
 
 * Simplify protocol constants (drop constants not required for indexing or to send txs)
