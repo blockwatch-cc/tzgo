@@ -59,19 +59,20 @@ func (t Transaction) Costs() tezos.Costs {
 }
 
 type InternalResult struct {
-	Kind        tezos.OpType          `json:"kind"`
-	Source      tezos.Address         `json:"source"`
-	Nonce       int64                 `json:"nonce"`
-	Result      OperationResult       `json:"result"`
-	Destination *tezos.Address        `json:"destination,omitempty"` // transaction
-	Delegate    *tezos.Address        `json:"delegate,omitempty"`    // delegation
-	Parameters  *micheline.Parameters `json:"parameters,omitempty"`  // transaction
-	Amount      int64                 `json:"amount,string"`         // transaction
-	Balance     int64                 `json:"balance,string"`        // origination
-	Script      *micheline.Script     `json:"script,omitempty"`      // origination
-	Type        micheline.Prim        `json:"type"`                  // event
-	Payload     micheline.Prim        `json:"payload"`               // event
-	Tag         string                `json:"tag"`                   // event
+	Kind          tezos.OpType          `json:"kind"`
+	Source        tezos.Address         `json:"source"`
+	Nonce         int64                 `json:"nonce"`
+	Result        OperationResult       `json:"result"`
+	Destination   *tezos.Address        `json:"destination,omitempty"` // transaction
+	Delegate      *tezos.Address        `json:"delegate,omitempty"`    // delegation
+	Parameters    *micheline.Parameters `json:"parameters,omitempty"`  // transaction
+	Amount        int64                 `json:"amount,string"`         // transaction
+	Balance       int64                 `json:"balance,string"`        // origination
+	Script        *micheline.Script     `json:"script,omitempty"`      // origination
+	Type          micheline.Prim        `json:"type"`                  // event
+	Payload       micheline.Prim        `json:"payload"`               // event
+	Tag           string                `json:"tag"`                   // event
+	TicketUpdates []TicketUpdate        `json:"ticket_receipt"`        // v015
 }
 
 func (r InternalResult) Costs() tezos.Costs {

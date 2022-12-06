@@ -111,6 +111,7 @@ type OperationResult struct {
 	LazyStorageDiff     json.RawMessage  `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
 	GlobalAddress       tezos.ExprHash   `json:"global_address"`                 // const
 	OriginatedRollup    tezos.Address    `json:"originated_rollup"`              // v013
+	TicketUpdates       []TicketUpdate   `json:"ticket_updates"`                 // v015
 }
 
 func (r OperationResult) BigmapEvents() micheline.BigmapEvents {
