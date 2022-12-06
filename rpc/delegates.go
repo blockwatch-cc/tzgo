@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2022 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -34,6 +34,15 @@ type Delegate struct {
 	FrozenDeposits        int64 `json:"frozen_deposits,string"`
 	CurrentFrozenDeposits int64 `json:"current_frozen_deposits,string"`
 	FrozenDepositsLimit   int64 `json:"frozen_deposits_limit,string"`
+
+	// v015+
+	ActiveConsensusKey   tezos.Address `json:"active_consensus_key"`
+	PendingConsensusKeys []CycleKey    `json:"pending_consensus_keys"`
+}
+
+type CycleKey struct {
+	Cycle int64         `json:"cycle"`
+	Pkh   tezos.Address `json:"pkh"`
 }
 
 type CycleBalance struct {
