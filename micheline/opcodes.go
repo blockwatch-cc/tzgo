@@ -165,7 +165,7 @@ const (
 	I_SAPLING_EMPTY_STATE   // 85
 	I_SAPLING_VERIFY_UPDATE // 86
 	T_TICKET                // 87
-	I_TICKET                // 88
+	_I_TICKET               // 88, deprecated in v015
 	I_READ_TICKET           // 89
 	I_SPLIT_TICKET          // 8A
 	I_JOIN_TICKETS          // 8B
@@ -189,6 +189,11 @@ const (
 
 	// v014 additions
 	I_EMIT // 97
+
+	// v015 additions
+	D_LAMBDA_REC // 98
+	I_LAMBDA_REC // 99
+	I_TICKET     // 9A
 )
 
 func (op OpCode) IsValid() bool {
@@ -333,7 +338,7 @@ var (
 		I_SAPLING_EMPTY_STATE:   "SAPLING_EMPTY_STATE",
 		I_SAPLING_VERIFY_UPDATE: "SAPLING_VERIFY_UPDATE",
 		T_TICKET:                "ticket",
-		I_TICKET:                "TICKET",
+		_I_TICKET:               "TICKET_DEPRECATED",
 		I_READ_TICKET:           "READ_TICKET",
 		I_SPLIT_TICKET:          "SPLIT_TICKET",
 		I_JOIN_TICKETS:          "JOIN_TICKETS",
@@ -349,6 +354,9 @@ var (
 		I_MIN_BLOCK_TIME:        "MIN_BLOCK_TIME",
 		T_SAPLING_TRANSACTION:   "sapling_transaction",
 		I_EMIT:                  "EMIT",
+		D_LAMBDA_REC:            "Lambda_rec",
+		I_LAMBDA_REC:            "LAMBDA_REC",
+		I_TICKET:                "TICKET",
 	}
 	stringToOp map[string]OpCode
 )
@@ -447,6 +455,8 @@ func (op OpCode) TypeCode() OpCode {
 		return T_PAIR
 	case D_ELT:
 		return T_MAP // may also be T_BIG_MAP
+	case D_LAMBDA_REC:
+		return T_LAMBDA
 	default:
 		return T_LAMBDA
 	}
