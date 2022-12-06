@@ -12,7 +12,7 @@ var _ TypedOperation = (*DrainDelegate)(nil)
 
 // DrainDelegate represents a transaction operation
 type DrainDelegate struct {
-    Manager
+    Generic
     ConsensusKey tezos.Address `json:"consensus_key"`
     Delegate     tezos.Address `json:"delegate"`
     Destination  tezos.Address `json:"destination"`
