@@ -291,6 +291,8 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
 			op = &SeedNonce{}
+		case tezos.OpTypeDrainDelegate:
+			op = &DrainDelegate{}
 
 		// consensus operations
 		case tezos.OpTypeEndorsement,
@@ -321,6 +323,8 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &IncreasePaidStorage{}
 		case tezos.OpTypeVdfRevelation:
 			op = &VdfRevelation{}
+		case tezos.OpTypeUpdateConsensusKey:
+			op = &UpdateConsensusKey{}
 
 			// rollup operations
 		case tezos.OpTypeTransferTicket,
