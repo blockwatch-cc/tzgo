@@ -4,22 +4,23 @@
 package tezos
 
 var (
-	ProtoGenesis   = ParseProtocolHashSafe("PrihK96nBAFSxVL1GLJTVhu9YnzkMFiBeuJRPA8NwuZVZCE1L6i")
-	ProtoBootstrap = ParseProtocolHashSafe("Ps9mPmXaRzmzk35gbAYNCAw6UXdE2qoABTHbN2oEEc1qM7CwT9P")
-	ProtoV001      = ParseProtocolHashSafe("PtCJ7pwoxe8JasnHY8YonnLYjcVHmhiARPJvqcC6VfHT5s8k8sY")
-	ProtoV002      = ParseProtocolHashSafe("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")
-	ProtoV003      = ParseProtocolHashSafe("PsddFKi32cMJ2qPjf43Qv5GDWLDPZb3T3bF6fLKiF5HtvHNU7aP")
-	ProtoV004      = ParseProtocolHashSafe("Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd")
-	ProtoV005_2    = ParseProtocolHashSafe("PsBabyM1eUXZseaJdmXFApDSBqj8YBfwELoxZHHW77EMcAbbwAS")
-	ProtoV006_2    = ParseProtocolHashSafe("PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb")
-	ProtoV007      = ParseProtocolHashSafe("PsDELPH1Kxsxt8f9eWbxQeRxkjfbxoqM52jvs5Y5fBxWWh4ifpo")
-	ProtoV008_2    = ParseProtocolHashSafe("PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA")
-	ProtoV009      = ParseProtocolHashSafe("PsFLorenaUUuikDWvMDr6fGBRG8kt3e3D3fHoXK1j1BFRxeSH4i")
-	ProtoV010      = ParseProtocolHashSafe("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
-	ProtoV011_2    = ParseProtocolHashSafe("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
-	ProtoV012_2    = ParseProtocolHashSafe("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
-	ProtoV013_2    = ParseProtocolHashSafe("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
-	ProtoV014      = ParseProtocolHashSafe("PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg")
+	ProtoGenesis   = MustParseProtocolHash("PrihK96nBAFSxVL1GLJTVhu9YnzkMFiBeuJRPA8NwuZVZCE1L6i")
+	ProtoBootstrap = MustParseProtocolHash("Ps9mPmXaRzmzk35gbAYNCAw6UXdE2qoABTHbN2oEEc1qM7CwT9P")
+	ProtoV001      = MustParseProtocolHash("PtCJ7pwoxe8JasnHY8YonnLYjcVHmhiARPJvqcC6VfHT5s8k8sY")
+	ProtoV002      = MustParseProtocolHash("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")
+	ProtoV003      = MustParseProtocolHash("PsddFKi32cMJ2qPjf43Qv5GDWLDPZb3T3bF6fLKiF5HtvHNU7aP")
+	ProtoV004      = MustParseProtocolHash("Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd")
+	ProtoV005_2    = MustParseProtocolHash("PsBabyM1eUXZseaJdmXFApDSBqj8YBfwELoxZHHW77EMcAbbwAS")
+	ProtoV006_2    = MustParseProtocolHash("PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb")
+	ProtoV007      = MustParseProtocolHash("PsDELPH1Kxsxt8f9eWbxQeRxkjfbxoqM52jvs5Y5fBxWWh4ifpo")
+	ProtoV008_2    = MustParseProtocolHash("PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA")
+	ProtoV009      = MustParseProtocolHash("PsFLorenaUUuikDWvMDr6fGBRG8kt3e3D3fHoXK1j1BFRxeSH4i")
+	ProtoV010      = MustParseProtocolHash("PtGRANADsDU8R9daYKAgWnQYAJ64omN1o3KMGVCykShA97vQbvV")
+	ProtoV011_2    = MustParseProtocolHash("PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9i1qx")
+	ProtoV012_2    = MustParseProtocolHash("Psithaca2MLRFYargivpo7YvUr7wUDqyxrdhC5CQq78mRvimz6A")
+	ProtoV013_2    = MustParseProtocolHash("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
+	ProtoV014      = MustParseProtocolHash("PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg")
+	ProtoV015      = MustParseProtocolHash("PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW")
 
 	// aliases
 	PtAthens = ProtoV004
@@ -33,10 +34,12 @@ var (
 	Psithaca = ProtoV012_2
 	PtJakart = ProtoV013_2
 	PtKathma = ProtoV014
+	PtLimaPt = ProtoV015
 
 	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Jakartanet   = MustParseChainIdHash("NetXLH1uAxK7CCh")
 	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
+	Limanet      = MustParseChainIdHash("NetXizpkH94bocH")
 	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
 
 	// Order of deployed protocols on different networks
@@ -59,6 +62,7 @@ var (
 			ProtoV012_2,    // 12
 			ProtoV013_2,    // 13
 			ProtoV014,      // 14
+			ProtoV015,      // 15
 		},
 		Jakartanet.Uint32(): {
 			ProtoGenesis,   // -1
@@ -72,6 +76,12 @@ var (
 			ProtoV013_2,    // 1
 			ProtoV014,      // 2
 		},
+		Limanet.Uint32(): {
+			ProtoGenesis,   // -1
+			ProtoBootstrap, // 0
+			ProtoV014,      // 1
+			ProtoV015,      // 2
+		},
 		Ghostnet.Uint32(): {
 			ProtoGenesis,   // -1
 			ProtoBootstrap, // 0
@@ -79,6 +89,7 @@ var (
 			ProtoV012_2,    // 2
 			ProtoV013_2,    // 3
 			ProtoV014,      // 4
+			ProtoV015,      // 5
 		},
 	}
 )
@@ -99,6 +110,9 @@ func (p *Params) ForNetwork(net ChainIdHash) *Params {
 	case Kathmandunet.Equal(net):
 		pp.Network = "Kathmandunet"
 		pp.Version = 13 // starts at Jakarta
+	case Limanet.Equal(net):
+		pp.Network = "Limanet"
+		pp.Version = 14 // starts at Katmandu
 	default:
 		pp.Network = "Sandbox"
 	}
@@ -162,7 +176,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		pp.StartCycle = 0
 		pp.BlocksPerCycle = 4096
 		pp.BlocksPerCommitment = 32
-		pp.BlocksPerRollSnapshot = 256
+		pp.BlocksPerSnapshot = 256
 		pp.BlocksPerVotingPeriod = 32768
 		pp.EndorsersPerBlock = 32
 		pp.StartHeight = 1212417
@@ -193,7 +207,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		// this is extremely hacky!
 		pp.BlocksPerCycle = 4096
 		pp.BlocksPerCommitment = 32
-		pp.BlocksPerRollSnapshot = 256
+		pp.BlocksPerSnapshot = 256
 		pp.BlocksPerVotingPeriod = 20480
 		pp.EndorsersPerBlock = 32
 		pp.StartHeight = 1343489
@@ -209,7 +223,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		// FIXME: this is extremely hacky!
 		pp.BlocksPerCycle = 4096
 		pp.BlocksPerCommitment = 32
-		pp.BlocksPerRollSnapshot = 256
+		pp.BlocksPerSnapshot = 256
 		pp.BlocksPerVotingPeriod = 20480
 		pp.StartHeight = 1466368
 		pp.EndHeight = 1589247
@@ -257,7 +271,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 		// FIXME: this is extremely hacky!
 		pp.BlocksPerCycle = 8192
 		pp.BlocksPerCommitment = 64
-		pp.BlocksPerRollSnapshot = 512
+		pp.BlocksPerSnapshot = 512
 		pp.BlocksPerVotingPeriod = 40960
 		pp.EndorsersPerBlock = 256
 		pp.StartHeight = 1589248
@@ -275,7 +289,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 8192
 			pp.BlocksPerCommitment = 64
-			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 256
 			pp.StartHeight = 1916929
@@ -294,7 +308,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 8192
 			pp.BlocksPerCommitment = 64
-			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2244609
@@ -323,7 +337,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 8192
 			pp.BlocksPerCommitment = 64
-			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2490369
@@ -357,20 +371,54 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			// FIXME: this is extremely hacky!
 			pp.BlocksPerCycle = 8192
 			pp.BlocksPerCommitment = 64
-			pp.BlocksPerRollSnapshot = 512
+			pp.BlocksPerSnapshot = 512
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2736129
-			pp.EndHeight = -1
+			pp.EndHeight = 2981888
 		case Kathmandunet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
 			pp.StartHeight = 8193
 			pp.EndHeight = -1
+		case Limanet.Equal(p.ChainId):
+			pp.StartBlockOffset = 0
+			pp.StartCycle = 0
+			pp.StartHeight = 2
+			pp.EndHeight = 8192
 		case Ghostnet.Equal(p.ChainId):
 			pp.StartBlockOffset = 1191936
 			pp.StartCycle = 291
 			pp.StartHeight = 1191937
+			pp.EndHeight = 1654784
+		}
+	case PtLimaPt.Equal(proto): // Lima
+		pp.Version = 15
+		pp.OperationTagsVersion = 2
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		switch {
+		case Mainnet.Equal(p.ChainId):
+			pp.StartBlockOffset = 2981888
+			pp.StartCycle = 558
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			pp.BlocksPerCycle = 8192
+			pp.BlocksPerCommitment = 64
+			pp.BlocksPerSnapshot = 512
+			pp.BlocksPerVotingPeriod = 40960
+			pp.EndorsersPerBlock = 0
+			pp.StartHeight = 2981889
+			pp.EndHeight = -1
+		case Limanet.Equal(p.ChainId):
+			pp.StartBlockOffset = 8192
+			pp.StartCycle = 2
+			pp.StartHeight = 8193
+			pp.EndHeight = -1
+		case Ghostnet.Equal(p.ChainId):
+			pp.StartBlockOffset = 1654784
+			pp.StartCycle = 404
+			pp.StartHeight = 1654785
 			pp.EndHeight = -1
 		}
 	}
