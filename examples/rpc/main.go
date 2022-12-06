@@ -320,6 +320,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 	height := start
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
+	opcount := make(map[tezos.OpType]int)
 	for {
 		b, err := c.GetBlockHeight(ctx, height)
 		if err != nil {
@@ -330,14 +331,16 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 			fmt.Printf("Scanning blockchain at level %d\n", b.GetLevel())
 		}
 
+		// clear map
+		for n := range opcount {
+			delete(opcount, n)
+		}
+
 		// count operations and details
-		opcount := make(map[tezos.OpType]int)
-		var count int
 		for _, v := range b.Operations {
 			for _, vv := range v {
 				for _, op := range vv.Contents {
 					kind := op.Kind()
-					count++
 					if c, ok := opcount[kind]; ok {
 						opcount[kind] = c + 1
 					} else {
@@ -347,12 +350,7 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 						top := op.(*rpc.Transaction)
 						for _, vvv := range top.Metadata.InternalResults {
 							kind = vvv.Kind
-							count++
-							if c, ok := opcount[kind]; ok {
-								opcount[kind] = c + 1
-							} else {
-								opcount[kind] = 1
-							}
+							opcount[kind] = opcount[kind] + 1
 						}
 					}
 				}
