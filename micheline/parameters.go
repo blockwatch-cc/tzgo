@@ -142,6 +142,8 @@ func (p Parameters) EncodeBuffer(buf *bytes.Buffer) error {
 		buf.WriteByte(3)
 	case REMOVE_DELEGATE:
 		buf.WriteByte(4)
+	case DEPOSIT:
+		buf.WriteByte(5)
 	default:
 		buf.WriteByte(255)
 		buf.WriteByte(byte(len(p.Entrypoint)))
@@ -199,6 +201,8 @@ func (p *Parameters) DecodeBuffer(buf *bytes.Buffer) error {
 		p.Entrypoint = SET_DELEGATE
 	case 4:
 		p.Entrypoint = REMOVE_DELEGATE
+	case 5:
+		p.Entrypoint = DEPOSIT
 	default:
 		sz := buf.Next(1)
 		if len(sz) == 0 || buf.Len() < int(sz[0]) {
