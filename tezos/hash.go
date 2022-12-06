@@ -935,12 +935,6 @@ func MustParseProtocolHash(s string) ProtocolHash {
 	return b
 }
 
-func ParseProtocolHashSafe(s string) ProtocolHash {
-	var h ProtocolHash
-	h.UnmarshalText([]byte(s))
-	return h
-}
-
 // OpHash
 type OpHash struct {
 	Hash
