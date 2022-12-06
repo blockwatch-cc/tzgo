@@ -324,12 +324,13 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &IncreasePaidStorage{}
 		case tezos.OpTypeVdfRevelation:
 			op = &VdfRevelation{}
+		case tezos.OpTypeTransferTicket:
+			op = &TransferTicket{}
 		case tezos.OpTypeUpdateConsensusKey:
 			op = &UpdateConsensusKey{}
 
 			// rollup operations
-		case tezos.OpTypeTransferTicket,
-			tezos.OpTypeToruOrigination,
+		case tezos.OpTypeToruOrigination,
 			tezos.OpTypeToruSubmitBatch,
 			tezos.OpTypeToruCommit,
 			tezos.OpTypeToruReturnBond,
