@@ -301,7 +301,7 @@ func (p Prim) ImplementsType(t Typedef) bool {
 					return PrimSkip
 				case T_LIST:
 					for _, v := range p.Args {
-						if !v.ImplementsType(t) {
+						if !v.ImplementsType(t.Args[0]) {
 							// fmt.Println("> BAD list elem")
 							return ErrTypeMismatch
 						}
