@@ -174,7 +174,9 @@ func (s Script) BigmapsById() []int64 {
 			return nil
 		case T_OR, T_PAIR, T_OPTION:
 			// recurse
-			if val.IsScalar() || val.LooksLikeContainer() {
+			if val.IsNil() {
+				return PrimSkip
+			} else if val.IsScalar() || val.LooksLikeContainer() {
 				stack.Push(val)
 			} else {
 				stack.Push(val.Args...)
