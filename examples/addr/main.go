@@ -6,7 +6,6 @@
 // tz1KzpjBnunNJVABHBnzfG4iuLmphitExW2p
 // tz3gN8NTLNLJg5KRsUU47NHNVHbdhcFXjjaB
 // KT1GyeRktoGPEKsWpchWguyy8FAf3aNHkw2T
-//
 package main
 
 import (
@@ -64,14 +63,16 @@ func run() error {
 		// try decoding an address
 		if addr, err = tezos.ParseAddress(flags.Arg(0)); err != nil {
 			// try decoding as hex
-			hv, err := hex.DecodeString(flags.Arg(0))
+			buf, err := hex.DecodeString(flags.Arg(0))
 			if err != nil {
 				return err
 			}
-			addr.Hash = hv
-			addr.Type = 1
-			key.Data = hv
-			key.Type = 0
+			err = addr.UnmarshalBinary(buf)
+			if err != nil {
+				if err = key.UnmarshalBinary(buf); err != nil {
+					return fmt.Errorf("Not a valid key or address")
+				}
+			}
 		}
 	} else {
 		addr = key.Address()
