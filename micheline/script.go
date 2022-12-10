@@ -168,6 +168,9 @@ func (s Script) BigmapsById() []int64 {
 		if val.LooksLikeCode() {
 			return PrimSkip
 		}
+		if p.OpCode == T_OPTION && val.IsNil() {
+			return PrimSkip
+		}
 		switch p.OpCode {
 		case K_STORAGE:
 			stack.Push(val)
@@ -175,8 +178,6 @@ func (s Script) BigmapsById() []int64 {
 		case T_OR, T_PAIR, T_OPTION:
 			// recurse
 			switch {
-			case val.IsNil():
-				return PrimSkip
 			case val.IsScalar() || val.LooksLikeContainer():
 				stack.Push(val)
 			default:
