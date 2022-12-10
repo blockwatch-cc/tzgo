@@ -168,7 +168,7 @@ func TestOp(t *testing.T) {
 							PayloadHash:      tezos.MustParsePayloadHash("vh2nZrxixzv4ZjAJn7PRj79GumUMAJzxuEYMjo496TYSaWhXYjZM"),
 							PayloadRound:     1,
 							ProofOfWorkNonce: asHex("df2ea592260c0100"),
-							LbEscapeVote:     false,
+							LbToggleVote:     tezos.LbVoteOn,
 							Signature:        tezos.MustParseSignature("sigYec9pbutMj4sxHxGhmQeoU62K96Xbdr8MZJE4XG7PkcKmUGsQMKwpegwdubccUXshdCHukUxDodvaCjpQQaDjagW43YeW"),
 						},
 						Bh2: BlockHeader{
@@ -189,7 +189,7 @@ func TestOp(t *testing.T) {
 							PayloadHash:      tezos.MustParsePayloadHash("vh2nZrxixzv4ZjAJn7PRj79GumUMAJzxuEYMjo496TYSaWhXYjZM"),
 							PayloadRound:     1,
 							ProofOfWorkNonce: asHex("df2ea592260c0100"),
-							LbEscapeVote:     false,
+							LbToggleVote:     tezos.LbVoteOn,
 							Signature:        tezos.MustParseSignature("sigotZGfNkiFwpditQfPjQ6DpN5QnAo6gjFjAMTdU9ATCcoUyugBtw2p6dqJmvNSETzqN2hTaKJytZJh2abMJ7S49AhX8n13"),
 						},
 					},

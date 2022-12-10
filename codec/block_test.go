@@ -38,7 +38,7 @@ func TestBlock(t *testing.T) {
 				PayloadHash:      tezos.MustParsePayloadHash("vh2nZrxixzv4ZjAJn7PRj79GumUMAJzxuEYMjo496TYSaWhXYjZM"),
 				PayloadRound:     1,
 				ProofOfWorkNonce: asHex("df2ea592260c0100"),
-				LbEscapeVote:     false,
+				LbToggleVote:     tezos.LbVoteOn,
 			},
 		},
 		{
@@ -59,7 +59,7 @@ func TestBlock(t *testing.T) {
 				PayloadRound:     0,
 				ProofOfWorkNonce: asHex("101895ca00000000"),
 				SeedNonceHash:    tezos.MustParseNonceHash("nceUFoeQDgkJCmzdMWh19ZjBYqQD3N9fe6bXQ1ZsUKKvMn7iun5Z3"),
-				LbEscapeVote:     false,
+				LbToggleVote:     tezos.LbVoteOn,
 			},
 		},
 		{
@@ -82,6 +82,7 @@ func TestBlock(t *testing.T) {
 				PayloadHash:      tezos.MustParsePayloadHash("vh2UJ9qvkLHcFbiotR462Ni84QU7xJ83fNwspoo9kq7spoNeSMkH"),
 				PayloadRound:     0,
 				ProofOfWorkNonce: asHex("a8e1dd3c00000000"),
+				LbToggleVote:     tezos.LbVoteOn,
 			},
 		},
 	}

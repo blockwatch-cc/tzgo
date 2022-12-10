@@ -113,6 +113,8 @@ const (
 	OpTypeDalSlotAvailability                 // 38 v014
 	OpTypeDalPublishSlotHeader                // 39 v014
 	OpTypeEvent                               // 40 v014 (only in internal_operation_results)
+	OpTypeDrainDelegate                       // 41 v015
+	OpTypeUpdateConsensusKey                  // 42 v015
 )
 
 var (
@@ -158,6 +160,8 @@ var (
 		OpTypeDalSlotAvailability:          "dal_slot_availability",
 		OpTypeDalPublishSlotHeader:         "dal_publish_slot_header",
 		OpTypeEvent:                        "event",
+		OpTypeDrainDelegate:                "drain_delegate",
+		OpTypeUpdateConsensusKey:           "update_consensus_key",
 	}
 	opTypeReverseStrings = make(map[string]OpType)
 )
@@ -268,6 +272,8 @@ var (
 		OpTypeScRollupRecoverBond:          207, // v014
 		OpTypeScRollupDalSlotSubscribe:     208, // v014
 		OpTypeDalPublishSlotHeader:         230, // v014
+		OpTypeDrainDelegate:                9,   // v015
+		OpTypeUpdateConsensusKey:           114, // v015
 	}
 )
 
@@ -348,6 +354,8 @@ var (
 		20:  43,               // OpTypePreendorsement // v012
 		21:  43,               // OpTypeEndorsement // v012
 		112: 27,               // OpTypeSetDepositsLimit // v012
+		9:   1 + 3*21,         // OpTypeDrainDelegate // v015
+		114: 26 + 32,          // OpTypeUpdateConsensusKey // v015
 	}
 )
 
@@ -377,7 +385,8 @@ func (t OpType) ListId() int {
 		OpTypeDoubleEndorsementEvidence,
 		OpTypeSeedNonceRevelation,
 		OpTypeDoublePreendorsementEvidence,
-		OpTypeVdfRevelation:
+		OpTypeVdfRevelation,
+		OpTypeDrainDelegate:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
@@ -404,7 +413,8 @@ func (t OpType) ListId() int {
 		OpTypeScRollupExecuteOutboxMessage,
 		OpTypeScRollupRecoverBond,
 		OpTypeScRollupDalSlotSubscribe,
-		OpTypeDalPublishSlotHeader:
+		OpTypeDalPublishSlotHeader,
+		OpTypeUpdateConsensusKey:
 		return 3
 	default:
 		return -1 // invalid
@@ -491,6 +501,10 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeScRollupDalSlotSubscribe
 	case 230:
 		return OpTypeDalPublishSlotHeader
+	case 9:
+		return OpTypeDrainDelegate
+	case 114:
+		return OpTypeUpdateConsensusKey
 	default:
 		return OpTypeInvalid
 	}

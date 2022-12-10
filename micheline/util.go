@@ -22,6 +22,7 @@ const (
 	DO              = "do"
 	SET_DELEGATE    = "set_delegate"
 	REMOVE_DELEGATE = "remove_delegate"
+	DEPOSIT         = "deposit"
 )
 
 func isASCII(s string) bool {

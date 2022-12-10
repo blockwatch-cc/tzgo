@@ -111,6 +111,7 @@ type OperationResult struct {
 	LazyStorageDiff     json.RawMessage  `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
 	GlobalAddress       tezos.ExprHash   `json:"global_address"`                 // const
 	OriginatedRollup    tezos.Address    `json:"originated_rollup"`              // v013
+	TicketUpdates       []TicketUpdate   `json:"ticket_updates"`                 // v015
 }
 
 func (r OperationResult) BigmapEvents() micheline.BigmapEvents {
@@ -291,6 +292,8 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
 			op = &SeedNonce{}
+		case tezos.OpTypeDrainDelegate:
+			op = &DrainDelegate{}
 
 		// consensus operations
 		case tezos.OpTypeEndorsement,
@@ -321,10 +324,13 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &IncreasePaidStorage{}
 		case tezos.OpTypeVdfRevelation:
 			op = &VdfRevelation{}
+		case tezos.OpTypeTransferTicket:
+			op = &TransferTicket{}
+		case tezos.OpTypeUpdateConsensusKey:
+			op = &UpdateConsensusKey{}
 
 			// rollup operations
-		case tezos.OpTypeTransferTicket,
-			tezos.OpTypeToruOrigination,
+		case tezos.OpTypeToruOrigination,
 			tezos.OpTypeToruSubmitBatch,
 			tezos.OpTypeToruCommit,
 			tezos.OpTypeToruReturnBond,

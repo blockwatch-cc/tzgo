@@ -27,7 +27,7 @@ var (
 			MinimalBlockDelay:            30 * time.Second,
 		})
 
-	// GhostnetParams defines the blockchain configuration for Ithaca testnet.
+	// GhostnetParams defines the blockchain configuration for Ghostnet testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
 	GhostnetParams = NewParams().
 			ForNetwork(Ghostnet).
@@ -59,7 +59,7 @@ var (
 			MinimalBlockDelay:            15 * time.Second,
 		})
 
-	// KathmanduParams defines the blockchain configuration for Kathmandu testnet.
+	// KathmandunetParams defines the blockchain configuration for Kathmandu testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
 	KathmandunetParams = NewParams().
 				ForNetwork(Kathmandunet).
@@ -74,8 +74,27 @@ var (
 			HardStorageLimitPerOperation: 60000,
 			MinimalBlockDelay:            15 * time.Second,
 		})
+
+	// LimanetParams defines the blockchain configuration for Kathmandu testnet.
+	// To produce compliant transactions, use these defaults in op.WithParams().
+	LimanetParams = NewParams().
+			ForNetwork(Limanet).
+			ForProtocol(ProtoV015).
+			Mixin(&Params{
+			OperationTagsVersion:         2,
+			MaxOperationsTTL:             120,
+			HardGasLimitPerOperation:     1040000,
+			HardGasLimitPerBlock:         5200000,
+			OriginationSize:              257,
+			CostPerByte:                  250,
+			HardStorageLimitPerOperation: 60000,
+			MinimalBlockDelay:            15 * time.Second,
+		})
 )
 
+// Params contains a subset of protocol configuration settings that are relevant
+// for dapps and most indexers. For additional protocol data, call rpc.GetCustomConstants()
+// with a custom data struct.
 type Params struct {
 	// chain identity, not part of RPC
 	Name        string       `json:"name"`
@@ -90,19 +109,16 @@ type Params struct {
 	Decimals    int          `json:"decimals"`
 	Token       int64        `json:"units"` // atomic units per token
 
-	// Subset of protocol config options used by TzGo and Indexers
-	// for full data, call rpc.GetCustomConstants()
-	TokensPerRoll          int64 `json:"tokens_per_roll"`
-	PreservedCycles        int64 `json:"preserved_cycles"`
-	BlocksPerCycle         int64 `json:"blocks_per_cycle"`
-	BlocksPerCommitment    int64 `json:"blocks_per_commitment"`
-	BlocksPerRollSnapshot  int64 `json:"blocks_per_roll_snapshot"`
-	BlocksPerStakeSnapshot int64 `json:"blocks_per_stake_snapshot"`
+	// sizes
+	MinimalStake        int64 `json:"minimal_stake"`
+	PreservedCycles     int64 `json:"preserved_cycles"`
+	BlocksPerCycle      int64 `json:"blocks_per_cycle"`
+	BlocksPerCommitment int64 `json:"blocks_per_commitment"`
+	BlocksPerSnapshot   int64 `json:"blocks_per_snapshot"`
 
 	// timing
-	TimeBetweenBlocks      [2]time.Duration `json:"time_between_blocks"`
-	MinimalBlockDelay      time.Duration    `json:"minimal_block_delay"`
-	DelayIncrementPerRound time.Duration    `json:"delay_increment_per_round"`
+	MinimalBlockDelay      time.Duration `json:"minimal_block_delay"`
+	DelayIncrementPerRound time.Duration `json:"delay_increment_per_round"`
 
 	// rewards
 	SeedNonceRevelationTip   int64    `json:"seed_nonce_revelation_tip"`
@@ -293,10 +309,7 @@ func (p *Params) SnapshotIndex(height int64) int {
 }
 
 func (p *Params) SnapshotBlocks() int64 {
-	if p.BlocksPerRollSnapshot > 0 {
-		return p.BlocksPerRollSnapshot
-	}
-	return p.BlocksPerStakeSnapshot
+	return p.BlocksPerSnapshot
 }
 
 func (p *Params) MaxSnapshotIndex() int64 {
@@ -391,10 +404,7 @@ func (p *Params) IsPreBabylonHeight(height int64) bool {
 }
 
 func (p *Params) BlockTime() time.Duration {
-	if p.MinimalBlockDelay > 0 {
-		return p.MinimalBlockDelay
-	}
-	return p.TimeBetweenBlocks[0]
+	return p.MinimalBlockDelay
 }
 
 func (p *Params) NumEndorsers() int {

@@ -6,7 +6,6 @@ package rpc
 import (
 	"encoding/json"
 
-	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
 )
 
@@ -22,9 +21,6 @@ type Rollup struct {
 	Rollup tezos.Address `json:"rollup"`
 
 	// tx_rollup_origination has no data
-
-	// transfer_ticket contents
-	Transfer TransferTicket `json:"-"`
 
 	// tx_rollup_submit_batch
 	Batch RollupBatch `json:"-"`
@@ -49,8 +45,6 @@ func (r *Rollup) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch r.Kind() {
-	case tezos.OpTypeTransferTicket:
-		return json.Unmarshal(data, &r.Transfer)
 	case tezos.OpTypeToruSubmitBatch:
 		return json.Unmarshal(data, &r.Batch)
 	case tezos.OpTypeToruRejection:
@@ -62,9 +56,6 @@ func (r *Rollup) UnmarshalJSON(data []byte) error {
 }
 
 func (r *Rollup) Target() tezos.Address {
-	if r.Transfer.Destination.IsValid() {
-		return r.Transfer.Destination
-	}
 	if r.Dispatch.TxRollup.IsValid() {
 		return r.Dispatch.TxRollup
 	}
@@ -74,15 +65,6 @@ func (r *Rollup) Target() tezos.Address {
 type RollupBatch struct {
 	Content tezos.HexBytes `json:"content"`
 	// BurnLimit int64          `json:"burn_limit,string,omitempty"`
-}
-
-type TransferTicket struct {
-	Destination tezos.Address  `json:"destination"`
-	Entrypoint  string         `json:"entrypoint"`
-	Type        micheline.Prim `json:"ticket_ty"`
-	Contents    micheline.Prim `json:"ticket_contents"`
-	Ticketer    tezos.Address  `json:"ticket_ticketer"`
-	Amount      tezos.Z        `json:"ticket_amount"`
 }
 
 type RollupCommit struct {

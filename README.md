@@ -6,6 +6,7 @@ Our main focus is on **correctness**, **stability**, and **compliance** with the
 
 Current Tezos protocol support in TzGo
 
+- Lima v015
 - Kathmandu v014
 - Jakarta v013
 - Ithaca v012

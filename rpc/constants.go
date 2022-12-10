@@ -63,6 +63,9 @@ type Constants struct {
 
 	// New in v13
 	CyclesPerVotingPeriod int64 `json:"cycles_per_voting_period"`
+
+	// New in v15
+	MinimalStake int64 `json:"minimal_stake,string"` // replaces tokens_per_roll
 }
 
 func (c Constants) HaveV6Rewards() bool {
@@ -179,27 +182,27 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 
 func (c Constants) MapToChainParams() *tezos.Params {
 	p := tezos.NewParams()
-	p.TokensPerRoll = c.TokensPerRoll
+	p.MinimalStake = c.TokensPerRoll + c.MinimalStake // either/or
 
 	p.PreservedCycles = c.PreservedCycles
 	p.BlocksPerCycle = c.BlocksPerCycle
 	p.BlocksPerCommitment = c.BlocksPerCommitment
-	p.BlocksPerRollSnapshot = c.BlocksPerRollSnapshot
-	p.BlocksPerStakeSnapshot = c.BlocksPerStakeSnapshot
+	p.BlocksPerSnapshot = c.BlocksPerRollSnapshot + c.BlocksPerStakeSnapshot // either/or
 
 	// timing
 	for i, v := range c.TimeBetweenBlocks {
-		if i > 1 {
+		// TimeBetweenBlocks was only used before Ithaca
+		if i > 0 {
 			break
 		}
 		val, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
 			log.Errorf("parsing TimeBetweenBlocks: %v", err)
 		} else {
-			p.TimeBetweenBlocks[i] = time.Duration(val) * time.Second
+			p.MinimalBlockDelay = time.Duration(val) * time.Second
 		}
 	}
-	p.MinimalBlockDelay = time.Duration(c.MinimalBlockDelay) * time.Second
+	p.MinimalBlockDelay += time.Duration(c.MinimalBlockDelay) * time.Second // either/or
 	p.DelayIncrementPerRound = time.Duration(c.DelayIncrementPerRound) * time.Second
 
 	// rewards
