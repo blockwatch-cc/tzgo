@@ -241,7 +241,7 @@ func ResolveTokenMetadata(ctx context.Context, contract *Contract, tokenid tezos
 		}
 	} else {
 		// read token_metadata bigmap
-		bigmaps := contract.script.BigmapsByName()
+		bigmaps := contract.script.Bigmaps()
 		id, ok := bigmaps[TOKEN_METADATA]
 		if !ok {
 			return nil, fmt.Errorf("%s/%d: missing token metadata, have %v", contract.addr, tokenid.Int64(), bigmaps)

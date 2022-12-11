@@ -152,31 +152,88 @@ func (s Script) CodeHash() uint64 {
 	return s.Code.Code.Hash64()
 }
 
-// Returns a list of bigmaps referenced by a contracts current storage. Note that
-// in rare cases when storage type uses a T_OR branch above its bigmap type definitions
-// and the relevant branch is inactive/hidden the storage value lacks bigmap
-// references and this function will return an empty list, even though bigmaps exist.
-func (s Script) BigmapsById() []int64 {
-	ids := make([]int64, 0)
-	stack := NewStack(s.Storage)
-	_ = s.Code.Storage.Walk(func(p Prim) error {
+// Returns named bigmap ids from the script's storage type and current value.
+func (s Script) Bigmaps() map[string]int64 {
+	return DetectBigmaps(s.Code.Storage, s.Storage)
+}
+
+// Returns a map of named bigmap ids obtained from a storage type and a storage value.
+// In the edge case where a T_OR branch hides an exsting bigmap behind a None value,
+// the hidden bigmap is not detected.
+func DetectBigmaps(typ, storage Prim) map[string]int64 {
+	named := make(map[string]int64)
+	uniqueName := func(n string) string {
+		if n == "" {
+			n = "bigmap"
+		}
+		if _, ok := named[n]; !ok {
+			return n
+		}
+		for i := 0; ; i++ {
+			name := n + "_" + strconv.Itoa(i)
+			if _, ok := named[name]; ok {
+				continue
+			}
+			return name
+		}
+	}
+	stack := NewStack(storage)
+	_ = typ.Walk(func(p Prim) error {
 		val := stack.Pop()
 		if p.OpCode == T_BIG_MAP && val.IsValid() && val.Type == PrimInt {
-			ids = append(ids, val.Int.Int64())
+			named[uniqueName(p.GetVarAnnoAny())] = val.Int.Int64()
 			return PrimSkip
 		}
+
 		if val.LooksLikeCode() {
 			return PrimSkip
 		}
-		if p.OpCode == T_OPTION && val.IsNil() {
-			return PrimSkip
-		}
+
 		switch p.OpCode {
 		case K_STORAGE:
 			stack.Push(val)
 			return nil
-		case T_OR, T_PAIR, T_OPTION:
-			// recurse
+
+		case T_OR:
+			// edge case: unsupported, needs different type walk algo
+			return PrimSkip
+
+		case T_OPTION:
+			if val.OpCode == D_SOME {
+				stack.Push(val.Args...)
+				return nil
+			}
+			return PrimSkip
+		case T_MAP:
+			if p.Args[1].OpCode != T_BIG_MAP {
+				return PrimSkip
+			}
+			for i, v := range val.Args {
+				if v.OpCode != D_ELT || v.Args[1].Type != PrimInt {
+					break
+				}
+				var name string
+				switch v.Args[0].Type {
+				case PrimString:
+					name = v.Args[0].String
+				case PrimBytes:
+					buf := v.Args[0].Bytes
+					if isASCIIBytes(buf) {
+						name = string(buf)
+					} else if tezos.IsAddressBytes(buf) {
+						a := tezos.Address{}
+						_ = a.UnmarshalBinary(buf)
+						name = a.String()
+					}
+				}
+				if name == "" {
+					name = p.GetVarAnnoAny() + "_" + strconv.Itoa(i)
+				}
+				named[uniqueName(name)] = v.Args[1].Int.Int64()
+			}
+			return PrimSkip
+
+		case T_PAIR, T_LIST:
 			switch {
 			case val.IsScalar() || val.LooksLikeContainer():
 				stack.Push(val)
@@ -184,49 +241,77 @@ func (s Script) BigmapsById() []int64 {
 				stack.Push(val.Args...)
 			}
 			return nil
+
 		default:
 			return PrimSkip
 		}
 	})
-	return ids
-}
-
-// Returns a named map containing all bigmaps currently referenced by a contracts
-// storage value. Names are derived from Michelson type annotations and if missing,
-// a sequence number. Optionally appends a sequence number to prevent duplicate names.
-func (s Script) BigmapsByName() map[string]int64 {
-	ids := s.BigmapsById()
-	named := make(map[string]int64)
-	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
-	for i := 0; i < min(len(ids), len(bigmaps)); i++ {
-		n := bigmaps[i].GetVarAnnoAny()
-		if n == "" {
-			n = "bigmap_" + strconv.Itoa(i)
-		}
-		if _, ok := named[n]; ok {
-			n += "_" + strconv.Itoa(i)
-		}
-		named[n] = ids[i]
-	}
 	return named
 }
 
-// Returns a named map containing all bigmaps defined in contracts storage spec.
-// Names are derived from Michelson type annotations and if missing,
-// a sequence number. Optionally appends a sequence number to prevent duplicate names.
-func (s Script) BigmapTypesByName() map[string]Type {
+// Returns a map of all known bigmap type definitions inside the scripts storage type.
+// Unlabeled bigmaps are prefixed `bigmap_` followed by a unique sequence number.
+// Duplicate names are prevented by adding by a unique sequence number as well.
+func (s Script) BigmapTypes() map[string]Type {
+	return DetectBigmapTypes(s.Code.Storage)
+}
+
+// Returns a map of all known bigmap type definitions inside a given prim. Keys are
+// derived from type annotations. Unlabeled bigmaps are prefixed `bigmap_` followed
+// by a unique sequence number. Duplicate names are prevented by adding by
+// a unique sequence number as well.
+func DetectBigmapTypes(typ Prim) map[string]Type {
 	named := make(map[string]Type)
-	bigmaps, _ := s.Code.Storage.FindOpCodes(T_BIG_MAP)
-	for i := range bigmaps {
-		n := bigmaps[i].GetVarAnnoAny()
+	uniqueName := func(n string) string {
 		if n == "" {
-			n = "bigmap_" + strconv.Itoa(i)
+			n = "bigmap"
 		}
-		if _, ok := named[n]; ok {
-			n += "_" + strconv.Itoa(i)
+		if _, ok := named[n]; !ok {
+			return n
 		}
-		named[n] = NewType(bigmaps[i])
+		for i := 0; ; i++ {
+			name := n + "_" + strconv.Itoa(i)
+			if _, ok := named[name]; ok {
+				continue
+			}
+			return name
+		}
 	}
+	_ = typ.Walk(func(p Prim) error {
+		switch p.OpCode {
+		case T_BIG_MAP:
+			named[uniqueName(p.GetVarAnnoAny())] = NewType(p)
+			return PrimSkip
+		case T_MAP:
+			if p.Args[1].OpCode != T_BIG_MAP {
+				return PrimSkip
+			}
+			name := p.GetVarAnnoAny()
+			if n := p.Args[1].GetVarAnnoAny(); n != "" {
+				name = n
+			}
+			named[uniqueName(name)] = NewType(p.Args[1])
+			return PrimSkip
+		case T_LIST:
+			if p.Args[0].OpCode != T_BIG_MAP {
+				return PrimSkip
+			}
+			name := p.GetVarAnnoAny()
+			if n := p.Args[0].GetVarAnnoAny(); n != "" {
+				name = n
+			}
+			named[uniqueName(name)] = NewType(p.Args[0])
+			return PrimSkip
+
+		case T_LAMBDA:
+			return PrimSkip
+
+		default:
+			// return PrimSkip
+			return nil
+		}
+	})
+
 	return named
 }
 

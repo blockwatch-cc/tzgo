@@ -237,7 +237,7 @@ func (c *Contract) resolveStorageUri(ctx context.Context, uri string, result int
 	if len(parts) == 1 {
 		// same contract
 		con = c
-		id, ok = c.script.BigmapsByName()["metadata"]
+		id, ok = c.script.Bigmaps()["metadata"]
 		if !ok {
 			return fmt.Errorf("%s: missing metadata bigmap", c.addr)
 		}
@@ -252,7 +252,7 @@ func (c *Contract) resolveStorageUri(ctx context.Context, uri string, result int
 		if err := con.Resolve(ctx); err != nil {
 			return fmt.Errorf("cannot resolve %s: %v", addr, err)
 		}
-		id, ok = con.script.BigmapsByName()["metadata"]
+		id, ok = con.script.Bigmaps()["metadata"]
 		if !ok {
 			return fmt.Errorf("%s: missing metadata bigmap", addr)
 		}
