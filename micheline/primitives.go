@@ -1027,6 +1027,11 @@ func (p Prim) EncodeJSON(buf *bytes.Buffer) {
 	}
 }
 
+func (p Prim) ToBytes() []byte {
+	buf, _ := p.MarshalBinary()
+	return buf
+}
+
 func (p Prim) MarshalBinary() ([]byte, error) {
 	if !p.IsValid() {
 		return nil, nil
