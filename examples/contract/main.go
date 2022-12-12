@@ -9,7 +9,6 @@
 //   - transfer
 //   - approve
 //   - updateOperator
-//
 package main
 
 import (
@@ -50,7 +49,8 @@ func main() {
 			fmt.Println("\nFlags")
 			flags.PrintDefaults()
 			fmt.Println("\nQuery Commands")
-			fmt.Printf("  run_view       <contract> <name> <data>     run view entrypoint `name` with JSON-encoded micheline input `data`\n")
+			fmt.Printf("  run_view       <contract> <name> <data>     run on-chain view `name` with JSON-encoded micheline input `data`\n")
+			fmt.Printf("  run_callback   <contract> <name> <data>     run tzip4 view/callback entrypoint `name` with JSON-encoded micheline input `data`\n")
 			fmt.Printf("  info           <contract>                   load contract, print entrypoints and views\n")
 			fmt.Printf("  metadata       <contract>                   fetch contract metadata\n")
 			fmt.Printf("  token_metadata <contract> <token_id>        fetch token metadata\n")
@@ -108,6 +108,11 @@ func run() error {
 			return fmt.Errorf("Missing arguments")
 		}
 		return run_view(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
+	case "run_callback":
+		if n < 4 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return run_callback(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
 	case "info":
 		if n < 2 {
 			return fmt.Errorf("Missing contract address")
@@ -190,8 +195,8 @@ func loadContract(ctx context.Context, c *rpc.Client, addr string, resolve bool)
 	return con, nil
 }
 
-// go run ./examples/contract/ -node https://rpc.tzstats.com run_view KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd balance_of '[{"prim":"Pair","args":[{"string":"tz1UbRzhYjQKTtWYvGUWcRtVT4fN3NESDVYT"},{"int":"0"}]}]'
-func run_view(ctx context.Context, c *rpc.Client, addr, name, in string) error {
+// go run ./examples/contract/ -node https://rpc.tzstats.com run_callback KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd balance_of '[{"prim":"Pair","args":[{"string":"tz1UbRzhYjQKTtWYvGUWcRtVT4fN3NESDVYT"},{"int":"0"}]}]'
+func run_callback(ctx context.Context, c *rpc.Client, addr, name, in string) error {
 	var prim micheline.Prim
 	if err := prim.UnmarshalJSON([]byte(in)); err != nil {
 		return err
@@ -206,6 +211,29 @@ func run_view(ctx context.Context, c *rpc.Client, addr, name, in string) error {
 	}
 	if !ep.IsCallback() {
 		return fmt.Errorf("Entrypoint is not a callback")
+	}
+	res, err := con.RunCallback(ctx, name, prim)
+	if err != nil {
+		return err
+	}
+	buf, _ := json.MarshalIndent(res, "  ", "  ")
+	fmt.Printf("Result:  \n%s\n", string(buf))
+	return nil
+}
+
+// go run ./examples/contract/ -node https://rpc.tzstats.com run_view KT1LjmAdYQCLBjwv4S2oFkEzyHVkomAf5MrW royalty '{"int":"31212"}'
+func run_view(ctx context.Context, c *rpc.Client, addr, name, in string) error {
+	var prim micheline.Prim
+	if err := prim.UnmarshalJSON([]byte(in)); err != nil {
+		return err
+	}
+	con, err := loadContract(ctx, c, addr, true)
+	if err != nil {
+		return err
+	}
+	_, ok := con.View(name)
+	if !ok {
+		return fmt.Errorf("No such view")
 	}
 	res, err := con.RunView(ctx, name, prim)
 	if err != nil {

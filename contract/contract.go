@@ -278,8 +278,44 @@ func (c *Contract) GetBigmapValue(ctx context.Context, path string, args micheli
 	return &val, nil
 }
 
-// Executes TZIP-4 fake views from callback entrypoints
+// Executes on-chain views from callback entrypoints
 func (c *Contract) RunView(ctx context.Context, name string, args micheline.Prim) (micheline.Prim, error) {
+	req := rpc.RunViewRequest{
+		Contract:     c.addr,
+		View:         name,
+		Input:        args,
+		ChainId:      c.rpc.ChainId,
+		Source:       tezos.ZeroAddress,
+		Payer:        tezos.ZeroAddress,
+		UnlimitedGas: true,
+		Mode:         "Readable",
+	}
+	var res rpc.RunViewResponse
+	err := c.rpc.RunView(ctx, rpc.Head, &req, &res)
+	return res.Data, err
+}
+
+func (c *Contract) RunViewExt(ctx context.Context, name string, args micheline.Prim, source, payer tezos.Address, gas int64) (micheline.Prim, error) {
+	req := rpc.RunViewRequest{
+		Contract: c.addr,
+		View:     name,
+		Input:    args,
+		ChainId:  c.rpc.ChainId,
+		Source:   source,
+		Payer:    payer,
+		Gas:      tezos.N(gas),
+		Mode:     "Readable",
+	}
+	if gas == 0 {
+		req.UnlimitedGas = true
+	}
+	var res rpc.RunViewResponse
+	err := c.rpc.RunView(ctx, rpc.Head, &req, &res)
+	return res.Data, err
+}
+
+// Executes TZIP-4 callback-based views from callback entrypoints
+func (c *Contract) RunCallback(ctx context.Context, name string, args micheline.Prim) (micheline.Prim, error) {
 	req := rpc.RunViewRequest{
 		Contract:   c.addr,
 		Entrypoint: name,
@@ -291,11 +327,11 @@ func (c *Contract) RunView(ctx context.Context, name string, args micheline.Prim
 		Mode:       "Readable",
 	}
 	var res rpc.RunViewResponse
-	err := c.rpc.RunView(ctx, rpc.Head, &req, &res)
+	err := c.rpc.RunCallback(ctx, rpc.Head, &req, &res)
 	return res.Data, err
 }
 
-func (c *Contract) RunViewExt(ctx context.Context, name string, args micheline.Prim, source, payer tezos.Address, gas int64) (micheline.Prim, error) {
+func (c *Contract) RunCallbackExt(ctx context.Context, name string, args micheline.Prim, source, payer tezos.Address, gas int64) (micheline.Prim, error) {
 	req := rpc.RunViewRequest{
 		Contract:   c.addr,
 		Entrypoint: name,
@@ -307,7 +343,7 @@ func (c *Contract) RunViewExt(ctx context.Context, name string, args micheline.P
 		Mode:       "Readable",
 	}
 	var res rpc.RunViewResponse
-	err := c.rpc.RunView(ctx, rpc.Head, &req, &res)
+	err := c.rpc.RunCallback(ctx, rpc.Head, &req, &res)
 	return res.Data, err
 }
 

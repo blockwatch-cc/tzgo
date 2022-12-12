@@ -67,7 +67,7 @@ func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]F
 			micheline.NewNat(r.TokenId.Big()),
 		))
 	}
-	prim, err := t.contract.RunView(ctx, "balance_of", args)
+	prim, err := t.contract.RunCallback(ctx, "balance_of", args)
 	if err != nil {
 		return nil, err
 	}

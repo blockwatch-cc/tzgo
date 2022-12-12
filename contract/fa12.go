@@ -38,7 +38,7 @@ func (t FA1Token) ResolveMetadata(ctx context.Context) (*TokenMetadata, error) {
 
 func (t FA1Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z, error) {
 	var balance tezos.Z
-	prim, err := t.contract.RunView(ctx, "getBalance", micheline.NewBytes(owner.Bytes22()))
+	prim, err := t.contract.RunCallback(ctx, "getBalance", micheline.NewBytes(owner.Bytes22()))
 	if err == nil {
 		balance.Set(prim.Int)
 	}
@@ -47,7 +47,7 @@ func (t FA1Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z,
 
 func (t FA1Token) GetTotalSupply(ctx context.Context) (tezos.Z, error) {
 	var supply tezos.Z
-	prim, err := t.contract.RunView(ctx, "getTotalSupply", micheline.NewPrim(micheline.D_UNIT))
+	prim, err := t.contract.RunCallback(ctx, "getTotalSupply", micheline.NewPrim(micheline.D_UNIT))
 	if err == nil {
 		supply.Set(prim.Int)
 	}
@@ -56,7 +56,7 @@ func (t FA1Token) GetTotalSupply(ctx context.Context) (tezos.Z, error) {
 
 func (t FA1Token) GetAllowance(ctx context.Context, owner, spender tezos.Address) (tezos.Z, error) {
 	var allowance tezos.Z
-	prim, err := t.contract.RunView(ctx, "getAllowance",
+	prim, err := t.contract.RunCallback(ctx, "getAllowance",
 		micheline.NewPair(
 			micheline.NewBytes(owner.Bytes22()),
 			micheline.NewBytes(spender.Bytes22()),

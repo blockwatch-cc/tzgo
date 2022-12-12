@@ -69,14 +69,17 @@ type RunOperationRequest struct {
 }
 
 type RunViewRequest struct {
-	Contract   tezos.Address     `json:"contract"`
-	Entrypoint string            `json:"entrypoint"`
-	Input      micheline.Prim    `json:"input"`
-	ChainId    tezos.ChainIdHash `json:"chain_id"`
-	Source     tezos.Address     `json:"source"`
-	Payer      tezos.Address     `json:"payer"`
-	Gas        tezos.N           `json:"gas"`
-	Mode       string            `json:"unparsing_mode"` // "Readable" | "Optimized"
+	Contract     tezos.Address     `json:"contract"`
+	Entrypoint   string            `json:"entrypoint,omitempty"`
+	View         string            `json:"view,omitempty"`
+	Input        micheline.Prim    `json:"input"`
+	ChainId      tezos.ChainIdHash `json:"chain_id"`
+	Source       tezos.Address     `json:"source"`
+	Payer        tezos.Address     `json:"payer"`
+	Gas          tezos.N           `json:"gas"`
+	Mode         string            `json:"unparsing_mode"`          // "Readable" | "Optimized"
+	UnlimitedGas bool              `json:"unlimited_gas,omitempty"` // view
+	Now          string            `json:"now,omitempty"`           // view
 }
 
 type RunViewResponse struct {
@@ -367,9 +370,15 @@ func (c *Client) RunCode(ctx context.Context, id BlockID, body, resp interface{}
 	return c.Post(ctx, u, body, resp)
 }
 
+// RunCallback simulates executing of TZip4 view on the context of a contract at selected block.
+func (c *Client) RunCallback(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_view", id)
+	return c.Post(ctx, u, body, resp)
+}
+
 // RunView simulates executing of on on-chain view on the context of a contract at selected block.
 func (c *Client) RunView(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_view", id)
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_script_view", id)
 	return c.Post(ctx, u, body, resp)
 }
 
