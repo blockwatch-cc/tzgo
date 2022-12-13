@@ -327,12 +327,12 @@ func (v *Value) GetZ(label string) (*tezos.Z, bool) {
 			}
 			switch t := vv.(type) {
 			case *big.Int:
-				return z.Set(t), true
+				return z.SetBig(t), true
 			case tezos.Z:
 				return &t, true
 			case string:
 				b, ok := big.NewInt(0).SetString(t, 10)
-				return z.Set(b), ok
+				return z.SetBig(b), ok
 			}
 		}
 	}

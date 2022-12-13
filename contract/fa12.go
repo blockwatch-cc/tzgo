@@ -40,7 +40,7 @@ func (t FA1Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z,
 	var balance tezos.Z
 	prim, err := t.contract.RunCallback(ctx, "getBalance", micheline.NewBytes(owner.Bytes22()))
 	if err == nil {
-		balance.Set(prim.Int)
+		balance.SetBig(prim.Int)
 	}
 	return balance, err
 }
@@ -49,7 +49,7 @@ func (t FA1Token) GetTotalSupply(ctx context.Context) (tezos.Z, error) {
 	var supply tezos.Z
 	prim, err := t.contract.RunCallback(ctx, "getTotalSupply", micheline.NewPrim(micheline.D_UNIT))
 	if err == nil {
-		supply.Set(prim.Int)
+		supply.SetBig(prim.Int)
 	}
 	return supply, err
 }
@@ -63,7 +63,7 @@ func (t FA1Token) GetAllowance(ctx context.Context, owner, spender tezos.Address
 		),
 	)
 	if err == nil {
-		allowance.Set(prim.Int)
+		allowance.SetBig(prim.Int)
 	}
 	return allowance, err
 }

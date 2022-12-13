@@ -770,7 +770,7 @@ func (p Prim) Value(as OpCode) interface{} {
 			return tm
 		default:
 			var z tezos.Z
-			z.Set(p.Int)
+			z.SetBig(p.Int)
 			return z
 		}
 
@@ -1048,7 +1048,7 @@ func (p Prim) EncodeBuffer(buf *bytes.Buffer) error {
 	switch p.Type {
 	case PrimInt:
 		var z tezos.Z
-		z.Set(p.Int)
+		z.SetBig(p.Int)
 		if err := z.EncodeBuffer(buf); err != nil {
 			return err
 		}

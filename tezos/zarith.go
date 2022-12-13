@@ -59,7 +59,7 @@ func NewZ(i int64) Z {
 
 func NewBigZ(b *big.Int) Z {
 	var z Z
-	z.Set(b)
+	z.SetBig(b)
 	return z
 }
 
@@ -83,7 +83,7 @@ func (z Z) Int64() int64 {
 	return (*big.Int)(&z).Int64()
 }
 
-func (z *Z) Set(b *big.Int) *Z {
+func (z *Z) SetBig(b *big.Int) *Z {
 	(*big.Int)(z).Set(b)
 	return z
 }
@@ -95,7 +95,7 @@ func (z *Z) SetInt64(i int64) *Z {
 
 func (z Z) Clone() Z {
 	var x Z
-	x.Set(z.Big())
+	x.SetBig(z.Big())
 	return x
 }
 
@@ -194,6 +194,12 @@ func MustParseZ(s string) Z {
 	return z
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (z *Z) Set(val string) (err error) {
+	*z, err = ParseZ(val)
+	return
+}
+
 func (z Z) MarshalText() ([]byte, error) {
 	return (*big.Int)(&z).MarshalText()
 }
@@ -226,58 +232,58 @@ func (z Z) Decimals(d int) string {
 
 func (z Z) Neg() Z {
 	var n Z
-	n.Set(new(big.Int).Neg(z.Big()))
+	n.SetBig(new(big.Int).Neg(z.Big()))
 	return n
 }
 
 func (z Z) Add(y Z) Z {
 	var x Z
-	x.Set(new(big.Int).Add(z.Big(), y.Big()))
+	x.SetBig(new(big.Int).Add(z.Big(), y.Big()))
 	return x
 }
 
 func (z Z) Sub(y Z) Z {
 	var x Z
-	x.Set(new(big.Int).Sub(z.Big(), y.Big()))
+	x.SetBig(new(big.Int).Sub(z.Big(), y.Big()))
 	return x
 }
 
 func (z Z) Mul(y Z) Z {
 	var x Z
-	x.Set(new(big.Int).Mul(z.Big(), y.Big()))
+	x.SetBig(new(big.Int).Mul(z.Big(), y.Big()))
 	return x
 }
 
 func (z Z) Div(y Z) Z {
 	var x Z
 	if !y.IsZero() {
-		x.Set(new(big.Int).Div(z.Big(), y.Big()))
+		x.SetBig(new(big.Int).Div(z.Big(), y.Big()))
 	}
 	return x
 }
 
 func (z Z) Add64(y int64) Z {
 	var x Z
-	x.Set(new(big.Int).Add(z.Big(), big.NewInt(y)))
+	x.SetBig(new(big.Int).Add(z.Big(), big.NewInt(y)))
 	return x
 }
 
 func (z Z) Sub64(y int64) Z {
 	var x Z
-	x.Set(new(big.Int).Sub(z.Big(), big.NewInt(y)))
+	x.SetBig(new(big.Int).Sub(z.Big(), big.NewInt(y)))
 	return x
 }
 
 func (z Z) Mul64(y int64) Z {
 	var x Z
-	x.Set(new(big.Int).Mul(z.Big(), big.NewInt(y)))
+	x.SetBig(new(big.Int).Mul(z.Big(), big.NewInt(y)))
 	return x
 }
 
 func (z Z) Div64(y int64) Z {
 	var x Z
 	if y != 0 {
-		x.Set(new(big.Int).Div(z.Big(), big.NewInt(y)))
+		x.SetBig(new(big.Int).Div(z.Big(), big.NewInt(y)))
 	}
 	return x
 }
@@ -401,4 +407,18 @@ func (n N) Decimals(d int) string {
 	}
 	l = len(s)
 	return s[:l-d] + "." + s[l-d:]
+}
+
+func ParseN(s string) (N, error) {
+	i, err := strconv.ParseInt(string(s), 10, 64)
+	if err != nil {
+		return N(0), err
+	}
+	return N(i), nil
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (n *N) Set(val string) (err error) {
+	*n, err = ParseN(val)
+	return
 }
