@@ -60,11 +60,34 @@ func (a Typedef) Equal(b Typedef) bool {
 	return true
 }
 
-func (a Typedef) StrictEqual(b Typedef) bool {
-	if a.Name != b.Name {
+func (t Typedef) Unfold() Typedef {
+	b := Typedef{
+		Name:     t.Name,
+		Type:     t.Type,
+		Optional: t.Optional,
+	}
+	for _, v := range t.Args {
+		b.Args = append(b.Args, v.unfold()...)
+	}
+	return b
+}
+
+func (t Typedef) unfold() []Typedef {
+	if t.Type == TypeStruct && !t.Optional && t.Name != CONST_PARAM && t.Name != CONST_RETURN {
+		args := make([]Typedef, 0, len(t.Args))
+		for _, v := range t.Args {
+			args = append(args, v.unfold()...)
+		}
+		return args
+	}
+	return []Typedef{t}
+}
+
+func (t Typedef) StrictEqual(v Typedef) bool {
+	if t.Name != v.Name {
 		return false
 	}
-	return a.Equal(b)
+	return t.Equal(v)
 }
 
 func (t Typedef) Left() Typedef {
@@ -145,6 +168,16 @@ func (t Typedef) String() string {
 		b.WriteByte(')')
 	default:
 		b.WriteString(t.Type)
+		if len(t.Args) > 0 {
+			b.WriteByte('(')
+			for i, v := range t.Args {
+				if i > 0 {
+					b.WriteString(", ")
+				}
+				b.WriteString(v.String())
+			}
+			b.WriteByte(')')
+		}
 	}
 	return b.String()
 }
