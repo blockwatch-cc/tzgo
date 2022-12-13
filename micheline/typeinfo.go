@@ -28,6 +28,11 @@ type fieldInfo struct {
 	nofail bool
 }
 
+type fieldNameAndTag struct {
+	Name string
+	Tag  string
+}
+
 func (f fieldInfo) String() string {
 	return fmt.Sprintf("FieldInfo: name=%s typ=%s goloc=%v primloc=%v", f.name, f.typ, f.idx, f.path)
 }
@@ -211,9 +216,10 @@ func addFieldInfo(typ reflect.Type, tinfo *typeInfo, newf *fieldInfo) error {
 	// Return the first error.
 	for _, i := range conflicts {
 		oldf := &tinfo.fields[i]
-		f1 := typ.FieldByIndex(oldf.idx)
-		f2 := typ.FieldByIndex(newf.idx)
-		return fmt.Errorf("micheline: %s field %q with tag %q conflicts with field %q with tag %q", typ, f1.Name, f1.Tag.Get(tagName), f2.Name, f2.Tag.Get(tagName))
+
+		f1 := GetFieldNameAndTag(typ, oldf.idx)
+		f2 := GetFieldNameAndTag(typ, newf.idx)
+		return fmt.Errorf("micheline: %s field %q with tag %q conflicts with field %q with tag %q", typ, f1.Name, f1.Tag, f2.Name, f2.Tag)
 	}
 
 	// Without conflicts, add the new field and return.

@@ -20,7 +20,7 @@ type Block struct {
 	Hash       tezos.BlockHash    `json:"hash"`
 	Header     BlockHeader        `json:"header"`
 	Metadata   BlockMetadata      `json:"metadata"`
-	Operations [][]*Operation     `json:"operations"`
+	Operations [][]Operation      `json:"operations"`
 }
 
 func (b Block) GetLevel() int64 {

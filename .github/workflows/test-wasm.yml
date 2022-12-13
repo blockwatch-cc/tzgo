@@ -1,0 +1,29 @@
+name: test wasm
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+
+jobs:
+  test_wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.3'
+      - uses: acifani/setup-tinygo@v1
+        with:
+          tinygo-version: 0.26.0
+
+      - name: setup tinygo & build sample project
+        run: |
+          cd examples/wasm
+          tinygo build -target=wasm -p 1
+      
+      # - name: Test
+      #   run: tinygo test -target=wasm -v ./...
