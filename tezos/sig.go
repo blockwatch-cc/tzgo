@@ -330,3 +330,10 @@ func MustParseSignature(s string) Signature {
 	}
 	return sig
 }
+
+// Set implements the flags.Value interface for use in command line
+// argument parsing.
+func (s *Signature) Set(sig string) (err error) {
+	*s, err = ParseSignature(sig)
+	return
+}

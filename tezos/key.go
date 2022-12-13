@@ -503,6 +503,12 @@ func MustParseKey(key string) Key {
 	return k
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (k *Key) Set(key string) (err error) {
+	*k, err = ParseKey(key)
+	return
+}
+
 // PrivateKey represents a typed private key used for signing messages.
 type PrivateKey struct {
 	Type KeyType
@@ -719,4 +725,10 @@ func MustParsePrivateKey(key string) PrivateKey {
 		panic(err)
 	}
 	return k
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (k *PrivateKey) Set(key string) (err error) {
+	*k, err = ParsePrivateKey(key)
+	return
 }

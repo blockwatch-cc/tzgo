@@ -475,6 +475,12 @@ func (a Address) DekuAddress() string {
 	return s
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (a *Address) Set(addr string) (err error) {
+	*a, err = ParseAddress(addr)
+	return
+}
+
 func MustParseAddress(addr string) Address {
 	a, err := ParseAddress(addr)
 	if err != nil {

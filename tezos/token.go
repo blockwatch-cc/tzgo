@@ -154,3 +154,9 @@ func ParseToken(addr string) (Token, error) {
 	err := t.UnmarshalText([]byte(addr))
 	return t, err
 }
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (t *Token) Set(key string) (err error) {
+	*t, err = ParseToken(key)
+	return
+}

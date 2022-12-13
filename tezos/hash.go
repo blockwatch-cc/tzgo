@@ -807,6 +807,12 @@ func ParseChainIdHash(s string) (ChainIdHash, error) {
 	return h, nil
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *ChainIdHash) Set(hash string) (err error) {
+	*h, err = ParseChainIdHash(hash)
+	return
+}
+
 // BlockHash
 type BlockHash struct {
 	Hash
@@ -869,6 +875,12 @@ func ParseBlockHash(s string) (BlockHash, error) {
 		return h, err
 	}
 	return h, nil
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *BlockHash) Set(hash string) (err error) {
+	*h, err = ParseBlockHash(hash)
+	return
 }
 
 // ProtocolHash
@@ -935,6 +947,12 @@ func MustParseProtocolHash(s string) ProtocolHash {
 	return b
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *ProtocolHash) Set(hash string) (err error) {
+	*h, err = ParseProtocolHash(hash)
+	return
+}
+
 // OpHash
 type OpHash struct {
 	Hash
@@ -997,6 +1015,12 @@ func ParseOpHash(s string) (OpHash, error) {
 		return h, err
 	}
 	return h, nil
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *OpHash) Set(hash string) (err error) {
+	*h, err = ParseOpHash(hash)
+	return
 }
 
 // OpListListHash
@@ -1063,6 +1087,12 @@ func ParseOpListListHash(s string) (OpListListHash, error) {
 	return h, nil
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *OpListListHash) Set(hash string) (err error) {
+	*h, err = ParseOpListListHash(hash)
+	return
+}
+
 // PayloadHash
 type PayloadHash struct {
 	Hash
@@ -1127,6 +1157,12 @@ func ParsePayloadHash(s string) (PayloadHash, error) {
 	return h, nil
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *PayloadHash) Set(hash string) (err error) {
+	*h, err = ParsePayloadHash(hash)
+	return
+}
+
 // ExprHash
 type ExprHash struct {
 	Hash
@@ -1189,6 +1225,12 @@ func ParseExprHash(s string) (ExprHash, error) {
 		return h, err
 	}
 	return h, nil
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *ExprHash) Set(hash string) (err error) {
+	*h, err = ParseExprHash(hash)
+	return
 }
 
 // NonceHash
@@ -1261,6 +1303,12 @@ func ParseNonceHashSafe(s string) NonceHash {
 	return h
 }
 
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *NonceHash) Set(hash string) (err error) {
+	*h, err = ParseNonceHash(hash)
+	return
+}
+
 // ContextHash
 type ContextHash struct {
 	Hash
@@ -1323,6 +1371,12 @@ func ParseContextHash(s string) (ContextHash, error) {
 		return h, err
 	}
 	return h, nil
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *ContextHash) Set(hash string) (err error) {
+	*h, err = ParseContextHash(hash)
+	return
 }
 
 // internal decoders
