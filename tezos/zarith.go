@@ -142,6 +142,75 @@ func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
 	return nil
 }
 
+func (z *Z) DecodeBufferNew(buf *bytes.Buffer) error {
+	var s uint = 62
+	tmp := make([]byte, 9)
+	b := buf.Next(1)
+	if len(b) == 0 {
+		return io.ErrShortBuffer
+	}
+	t := b[0]
+	sign := t&0x40 > 0
+	tmp[0] = t & 0x3f
+	for i := 1; i < 9; i++ {
+		if t < 0x80 {
+			break
+		}
+		b = buf.Next(1)
+		if len(b) == 0 {
+			return io.ErrShortBuffer
+		}
+		t = b[0]
+		tmp[i] = t & 0x7f
+	}
+
+	w := int64(tmp[0]) | int64(tmp[1])<<6 | int64(tmp[2])<<13 | int64(tmp[3])<<20 | int64(tmp[4])<<27 |
+		int64(tmp[5])<<34 | int64(tmp[6])<<41 | int64(tmp[7])<<48 | int64(tmp[8])<<55
+
+	x := (*big.Int)(z.SetInt64(w))
+
+	if t < 0x80 {
+		if sign {
+			x.Neg(x)
+		}
+		return nil
+	}
+
+	y := bigIntPool.Get().(*big.Int)
+
+	for t >= 0x80 {
+		for i := range tmp {
+			tmp[i] = 0
+		}
+		for i := 0; i < 9; i++ {
+			if t < 0x80 {
+				break
+			}
+			b = buf.Next(1)
+			if len(b) == 0 {
+				bigIntPool.Put(y)
+				return io.ErrShortBuffer
+			}
+			t = b[0]
+			tmp[i] = t & 0x7f
+		}
+
+		w := int64(tmp[0]) | int64(tmp[1])<<7 | int64(tmp[2])<<14 | int64(tmp[3])<<21 | int64(tmp[4])<<28 |
+			int64(tmp[5])<<35 | int64(tmp[6])<<42 | int64(tmp[7])<<49 | int64(tmp[8])<<56
+
+		y.SetInt64(w)
+
+		x = x.Or(x, y.Lsh(y, s))
+		s += 63
+	}
+	bigIntPool.Put(y)
+
+	if sign {
+		x.Neg(x)
+	}
+	return nil
+}
+
 func (z Z) MarshalBinary() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	if err := z.EncodeBuffer(buf); err != nil {
