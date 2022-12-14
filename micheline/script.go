@@ -180,21 +180,18 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 	stack := NewStack(storage)
 	_ = typ.Walk(func(p Prim) error {
 		val := stack.Pop()
-		if p.OpCode == T_BIG_MAP && val.IsValid() && val.Type == PrimInt {
-			named[uniqueName(p.GetVarAnnoAny())] = val.Int.Int64()
-			return PrimSkip
-		}
-
-		if val.LooksLikeCode() {
-			return PrimSkip
-		}
-
 		switch p.OpCode {
+		case T_BIG_MAP:
+			if val.IsValid() && val.Type == PrimInt {
+				named[uniqueName(p.GetVarAnnoAny())] = val.Int.Int64()
+			}
+			return PrimSkip
+
 		case K_STORAGE:
 			stack.Push(val)
 			return nil
 
-		case T_OR:
+		case T_OR, T_LIST, T_SET, T_LAMBDA:
 			// edge case: unsupported, needs different type walk algo
 			return PrimSkip
 
@@ -204,6 +201,7 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 				return nil
 			}
 			return PrimSkip
+
 		case T_MAP:
 			if p.Args[1].OpCode != T_BIG_MAP {
 				return PrimSkip
@@ -233,7 +231,7 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 			}
 			return PrimSkip
 
-		case T_PAIR, T_LIST:
+		case T_PAIR:
 			switch {
 			case val.IsScalar() || val.LooksLikeContainer():
 				stack.Push(val)
