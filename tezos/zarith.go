@@ -8,6 +8,7 @@ package tezos
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"math/big"
@@ -104,41 +105,100 @@ func (z *Z) UnmarshalBinary(data []byte) error {
 }
 
 func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
-	var s uint = 6
-	b := buf.Next(1)
-	if len(b) == 0 {
+	tmp := make([]byte, 16)
+	var (
+		b   byte
+		err error
+	)
+	// read bits [0,6)
+	if b, err = buf.ReadByte(); err != nil {
 		return io.ErrShortBuffer
 	}
-	xi := bigIntPool.Get()
-	x := xi.(*big.Int).SetInt64(int64(b[0] & 0x3f)) // clip two bits
-	yi := bigIntPool.Get()
-	y := yi.(*big.Int).SetInt64(0)
-	sign := b[0]&0x40 > 0
-	if b[0] >= 0x80 {
-		for i := 1; ; i++ {
-			b = buf.Next(1)
-			if len(b) == 0 {
-				bigIntPool.Put(xi)
-				bigIntPool.Put(yi)
-				return io.ErrShortBuffer
-			}
-			if b[0] < 0x80 {
-				y.SetInt64(int64(b[0]))
-				x = x.Or(x, y.Lsh(y, s))
+	sign := b&0x40 > 0
+	tmp[0] = b & 0x3f
+	// read bits [6,62)
+	for i := 1; i < 9; i++ {
+		if b < 0x80 {
+			break
+		}
+		if b, err = buf.ReadByte(); err != nil {
+			return io.ErrShortBuffer
+		}
+		tmp[i] = b & 0x7f
+	}
+
+	w := int64(tmp[0]) | int64(tmp[1])<<6 | int64(tmp[2])<<13 | int64(tmp[3])<<20 | int64(tmp[4])<<27 |
+		int64(tmp[5])<<34 | int64(tmp[6])<<41 | int64(tmp[7])<<48 | int64(tmp[8])<<55
+
+	if b < 0x80 {
+		z.SetInt64(w)
+		if sign {
+			(*big.Int)(z).Neg((*big.Int)(z))
+		}
+		return nil
+	}
+
+	binary.BigEndian.PutUint64(tmp[0:8], 0)
+	tmp[8] = 0
+
+	// read bits [62,125)
+	for i := 0; i < 9; i++ {
+		if b < 0x80 {
+			break
+		}
+		if b, err = buf.ReadByte(); err != nil {
+			return io.ErrShortBuffer
+		}
+		tmp[i] = b & 0x7f
+	}
+
+	w |= int64(tmp[0]) << 62
+	w2 := int64(tmp[0])>>2 | int64(tmp[1])<<5 | int64(tmp[2])<<12 | int64(tmp[3])<<19 | int64(tmp[4])<<26 |
+		int64(tmp[5])<<33 | int64(tmp[6])<<40 | int64(tmp[7])<<47 | int64(tmp[8])<<54
+
+	binary.BigEndian.PutUint64(tmp[0:8], uint64(w2))
+	binary.BigEndian.PutUint64(tmp[8:16], uint64(w))
+	x := (*big.Int)(z).SetBytes(tmp[0:16])
+
+	if b < 0x80 {
+		if sign {
+			x.Neg(x)
+		}
+		return nil
+	}
+
+	var s uint = 125
+	y := bigIntPool.Get().(*big.Int)
+
+	// read bits >=125
+	for b >= 0x80 {
+		binary.BigEndian.PutUint64(tmp[0:8], 0)
+		tmp[8] = 0
+		for i := 0; i < 9; i++ {
+			if b < 0x80 {
 				break
 			}
-			y.SetInt64(int64(b[0] & 0x7f))
-			x = x.Or(x, y.Lsh(y, s))
-			s += 7
+			if b, err = buf.ReadByte(); err != nil {
+				bigIntPool.Put(y)
+				return io.ErrShortBuffer
+			}
+			tmp[i] = b & 0x7f
 		}
+
+		w := int64(tmp[0]) | int64(tmp[1])<<7 | int64(tmp[2])<<14 | int64(tmp[3])<<21 | int64(tmp[4])<<28 |
+			int64(tmp[5])<<35 | int64(tmp[6])<<42 | int64(tmp[7])<<49 | int64(tmp[8])<<56
+
+		y.SetInt64(w)
+
+		x = x.Or(x, y.Lsh(y, s))
+		s += 63
 	}
+
+	bigIntPool.Put(y)
+
 	if sign {
-		(*big.Int)(z).Set(x.Neg(x))
-	} else {
-		(*big.Int)(z).Set(x)
+		x.Neg(x)
 	}
-	bigIntPool.Put(xi)
-	bigIntPool.Put(yi)
 	return nil
 }
 
@@ -437,7 +497,7 @@ func (n N) Decimals(d int) string {
 }
 
 func ParseN(s string) (N, error) {
-	i, err := strconv.ParseInt(string(s), 10, 64)
+	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		return N(0), err
 	}
