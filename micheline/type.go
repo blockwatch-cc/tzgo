@@ -66,7 +66,7 @@ func (t Typedef) Unfold() Typedef {
 		Type:     t.Type,
 		Optional: t.Optional,
 	}
-	for i, v := range t.Args {
+	for _, v := range t.Args {
 		b.Args = append(b.Args, v.unfold()...)
 	}
 	return b
