@@ -122,7 +122,7 @@ func (r OperationResult) TicketUpdates() []TicketUpdate {
 	if len(r.TicketUpdatesCorrect) > 0 {
 		return r.TicketUpdatesCorrect
 	}
-	return TicketReceipts
+	return r.TicketReceipts
 }
 
 func (r OperationResult) BigmapEvents() micheline.BigmapEvents {
