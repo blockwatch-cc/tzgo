@@ -470,7 +470,7 @@ func (n N) Decimals(d int) string {
 }
 
 func ParseN(s string) (N, error) {
-	i, err := strconv.ParseInt(string(s), 10, 64)
+	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		return N(0), err
 	}

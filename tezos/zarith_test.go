@@ -92,12 +92,12 @@ var zarithDecodeCases = []ZarithDecodeTest{
 	},
 }
 
-func TestDecodeBuffer(T *testing.T) {
+func TestDecodeBuffer(t *testing.T) {
 	for _, c := range zarithDecodeCases {
 		var z Z
 		err := z.DecodeBuffer(bytes.NewBuffer(c.buf))
 		if got, want := err, c.err; got != want {
-			T.Errorf("%s: unexpected error %v, expected %v", c.name, got, want)
+			t.Errorf("%s: unexpected error %v, expected %v", c.name, got, want)
 		}
 		if err != nil {
 			continue
@@ -112,7 +112,7 @@ func TestDecodeBuffer(T *testing.T) {
 			res.Neg(res)
 		}
 		if got, want := z, (Z)(*res); got.Cmp(want) != 0 {
-			T.Errorf("%s: unexpected result %v, expected %v", c.name, got, want)
+			t.Errorf("%s: unexpected result %v, expected %v", c.name, got, want)
 		}
 	}
 }
