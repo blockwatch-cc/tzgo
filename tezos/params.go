@@ -16,7 +16,7 @@ var (
 	DefaultParams = NewParams().
 			ForNetwork(Mainnet).
 			ForProtocol(ProtoV012_2).
-			Mixin(&Params{
+			SetBaseParams(BaseParams{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
@@ -32,7 +32,7 @@ var (
 	GhostnetParams = NewParams().
 			ForNetwork(Ghostnet).
 			ForProtocol(ProtoV013_2).
-			Mixin(&Params{
+			SetBaseParams(BaseParams{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
@@ -48,7 +48,7 @@ var (
 	JakartanetParams = NewParams().
 				ForNetwork(Jakartanet).
 				ForProtocol(ProtoV013_2).
-				Mixin(&Params{
+				SetBaseParams(BaseParams{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
@@ -64,7 +64,7 @@ var (
 	KathmandunetParams = NewParams().
 				ForNetwork(Kathmandunet).
 				ForProtocol(ProtoV014).
-				Mixin(&Params{
+				SetBaseParams(BaseParams{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
@@ -80,7 +80,7 @@ var (
 	LimanetParams = NewParams().
 			ForNetwork(Limanet).
 			ForProtocol(ProtoV015).
-			Mixin(&Params{
+			SetBaseParams(BaseParams{
 			OperationTagsVersion:         2,
 			MaxOperationsTTL:             120,
 			HardGasLimitPerOperation:     1040000,
@@ -92,10 +92,29 @@ var (
 		})
 )
 
+type BaseParams struct {
+	// timing
+	MinimalBlockDelay time.Duration `json:"minimal_block_delay"`
+
+	// costs
+	CostPerByte     int64 `json:"cost_per_byte"`
+	OriginationSize int64 `json:"origination_size"`
+
+	// limits
+	HardGasLimitPerOperation     int64 `json:"hard_gas_limit_per_operation"`
+	HardGasLimitPerBlock         int64 `json:"hard_gas_limit_per_block"`
+	HardStorageLimitPerOperation int64 `json:"hard_storage_limit_per_operation"`
+	MaxOperationsTTL             int64 `json:"max_operations_ttl"`
+	// extra features to follow protocol upgrades
+	OperationTagsVersion int `json:"operation_tags_version,omitempty"` // 1 after v005
+}
+
 // Params contains a subset of protocol configuration settings that are relevant
 // for dapps and most indexers. For additional protocol data, call rpc.GetCustomConstants()
 // with a custom data struct.
 type Params struct {
+	BaseParams
+
 	// chain identity, not part of RPC
 	Name        string       `json:"name"`
 	Network     string       `json:"network,omitempty"`
@@ -117,7 +136,6 @@ type Params struct {
 	BlocksPerSnapshot   int64 `json:"blocks_per_snapshot"`
 
 	// timing
-	MinimalBlockDelay      time.Duration `json:"minimal_block_delay"`
 	DelayIncrementPerRound time.Duration `json:"delay_increment_per_round"`
 
 	// rewards
@@ -131,23 +149,17 @@ type Params struct {
 	EndorsingRewardPerSlot   int64    `json:"endorsing_reward_per_slot"`
 
 	// costs
-	CostPerByte                int64 `json:"cost_per_byte"`
-	OriginationSize            int64 `json:"origination_size"`
 	OriginationBurn            int64 `json:"origination_burn"`
 	BlockSecurityDeposit       int64 `json:"block_security_deposit"`
 	EndorsementSecurityDeposit int64 `json:"endorsement_security_deposit"`
 	FrozenDepositsPercentage   int   `json:"frozen_deposits_percentage"`
 
 	// limits
-	MichelsonMaximumTypeSize     int   `json:"michelson_maximum_type_size"`
-	EndorsersPerBlock            int   `json:"endorsers_per_block"`
-	HardGasLimitPerOperation     int64 `json:"hard_gas_limit_per_operation"`
-	HardGasLimitPerBlock         int64 `json:"hard_gas_limit_per_block"`
-	HardStorageLimitPerOperation int64 `json:"hard_storage_limit_per_operation"`
-	MaxOperationDataLength       int   `json:"max_operation_data_length"`
-	MaxOperationsTTL             int64 `json:"max_operations_ttl"`
-	ConsensusCommitteeSize       int   `json:"consensus_committee_size"`
-	ConsensusThreshold           int   `json:"consensus_threshold"`
+	MichelsonMaximumTypeSize int `json:"michelson_maximum_type_size"`
+	EndorsersPerBlock        int `json:"endorsers_per_block"`
+	MaxOperationDataLength   int `json:"max_operation_data_length"`
+	ConsensusCommitteeSize   int `json:"consensus_committee_size"`
+	ConsensusThreshold       int `json:"consensus_threshold"`
 
 	// voting
 	BlocksPerVotingPeriod int64 `json:"blocks_per_voting_period"`
@@ -157,11 +169,10 @@ type Params struct {
 	QuorumMax             int64 `json:"quorum_max"`
 
 	// extra features to follow protocol upgrades
-	OperationTagsVersion int   `json:"operation_tags_version,omitempty"` // 1 after v005
-	NumVotingPeriods     int   `json:"num_voting_periods,omitempty"`     // 5 after v008, 4 before
-	StartBlockOffset     int64 `json:"start_block_offset,omitempty"`     // correct start/end cycle since Granada
-	StartCycle           int64 `json:"start_cycle,omitempty"`            // correction since Granada v10
-	VoteBlockOffset      int64 `json:"vote_block_offset,omitempty"`      // correction for Edo + Florence Mainnet-only +1 bug
+	NumVotingPeriods int   `json:"num_voting_periods,omitempty"` // 5 after v008, 4 before
+	StartBlockOffset int64 `json:"start_block_offset,omitempty"` // correct start/end cycle since Granada
+	StartCycle       int64 `json:"start_cycle,omitempty"`        // correction since Granada v10
+	VoteBlockOffset  int64 `json:"vote_block_offset,omitempty"`  // correction for Edo + Florence Mainnet-only +1 bug
 }
 
 func NewParams() *Params {
@@ -174,13 +185,20 @@ func NewParams() *Params {
 		Decimals:         6,
 		Token:            1000000, // initial, changed several times later
 		NumVotingPeriods: 4,       // initial, changed once in v008
-		MaxOperationsTTL: 60,      // initial, changed once in v011
+		BaseParams: BaseParams{
+			MaxOperationsTTL: 60, // initial, changed once in v011
+		},
 	}
 }
 
 func (p *Params) Mixin(src *Params) *Params {
 	buf, _ := json.Marshal(src)
 	_ = json.Unmarshal(buf, p)
+	return p
+}
+
+func (p *Params) SetBaseParams(src BaseParams) *Params {
+	p.BaseParams = src
 	return p
 }
 
