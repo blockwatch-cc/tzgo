@@ -292,6 +292,33 @@ func (z Z) IsNeg() bool {
 	return z.Big().Sign() < 0
 }
 
+func MaxZ(args ...Z) Z {
+	var m Z
+	for _, z := range args {
+		if m.Cmp(z) < 0 {
+			m = z
+		}
+	}
+	return m
+}
+
+func MinZ(args ...Z) Z {
+	switch len(args) {
+	case 0:
+		return Z{}
+	case 1:
+		return args[0]
+	default:
+		m := args[0]
+		for _, z := range args[1:] {
+			if m.Cmp(z) > 0 {
+				m = z
+			}
+		}
+		return m
+	}
+}
+
 var (
 	mask3f     = big.NewInt(0x3f)
 	mask7f     = big.NewInt(0x7f)

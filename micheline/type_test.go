@@ -15,7 +15,7 @@ type typedefTest struct {
 	Want string
 }
 
-var typedefInfo = []typedefTest{
+var typedefTests = []typedefTest{
 	// scalars
 	//   int
 	{
@@ -187,7 +187,7 @@ var typedefInfo = []typedefTest{
 }
 
 func TestTypeRendering(t *testing.T) {
-	for _, test := range typedefInfo {
+	for _, test := range typedefTests {
 		t.Run(test.Name, func(T *testing.T) {
 			prim := Prim{}
 			err := prim.UnmarshalJSON([]byte(test.Spec))
@@ -218,7 +218,7 @@ const (
 	fa2TransferType = `{"prim":"list","annots":["%transfer"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%from_"]},{"prim":"list","annots":["%txs"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%to_"]},{"prim":"pair","args":[{"prim":"nat","annots":["%token_id"]},{"prim":"nat","annots":["%amount"]}]}]}]}]}]}`
 )
 
-var interfaceInfo = []interfaceTest{
+var interfaceTests = []interfaceTest{
 	// FA1
 	{
 		Name:   "fa1",
@@ -265,7 +265,7 @@ var interfaceInfo = []interfaceTest{
 }
 
 func TestInterfaceCheck(t *testing.T) {
-	for _, test := range interfaceInfo {
+	for _, test := range interfaceTests {
 		t.Run(test.Name, func(T *testing.T) {
 			var typ Type
 			if err := typ.Prim.UnmarshalJSON([]byte(test.Type)); err != nil {
@@ -283,13 +283,14 @@ func TestInterfaceCheck(t *testing.T) {
 }
 
 type bigmapDetectTest struct {
-	Name   string
-	Type   string
-	Value  string
-	Expect map[string]int64
+	Name         string
+	Type         string
+	Value        string
+	Expect       map[string]int64
+	SkipTypetest bool
 }
 
-var bigmapInfo = []bigmapDetectTest{
+var bigmapDetectTests = []bigmapDetectTest{
 	{
 		Name:   "HEN",
 		Type:   `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%administrator"]},{"prim":"pair","args":[{"prim":"nat","annots":["%all_tokens"]},{"prim":"big_map","annots":["%ledger"],"args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"big_map","annots":["%operators"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%owner"]},{"prim":"pair","args":[{"prim":"address","annots":["%operator"]},{"prim":"nat","annots":["%token_id"]}]}]},{"prim":"unit"}]}]},{"prim":"pair","args":[{"prim":"bool","annots":["%paused"]},{"prim":"big_map","annots":["%token_metadata"],"args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"nat","annots":["%token_id"]},{"prim":"map","annots":["%token_info"],"args":[{"prim":"string"},{"prim":"bytes"}]}]}]}]}]}]}`,
@@ -339,10 +340,11 @@ var bigmapInfo = []bigmapDetectTest{
 		Expect: map[string]int64{"account_info": 12043, "metadata": 12045, "permits": 12047, "token_info": 12044, "token_metadata": 12046},
 	},
 	{
-		Name:   "AKA-Royalties",
-		Type:   `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%akaMinter"]},{"prim":"address","annots":["%akaNFTContract"]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%constant_royalties"],"args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"address","annots":["%creator"]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%total_royalties"]}]}]}]},{"prim":"big_map","annots":["%get_royalty_list"],"args":[{"prim":"address"},{"prim":"unit"}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%manager"]},{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"address","annots":["%creator"]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%total_royalties"]}]}]}]}]},{"prim":"big_map","annots":["%royalties_updater"],"args":[{"prim":"address"},{"prim":"unit"}]}]}]}]}`,
-		Value:  `{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"string":"KT1ULea6kxqiYe1A7CZVfMuGmTx7NmDGAph1"},{"string":"KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"}]},{"int":"55654"},{"int":"55655"}]},{"prim":"Pair","args":[{"string":"tz1WCYsbPyHTBcnj4saWG6SRFHECCj2TTzC6"},{"int":"55656"}]},[{"prim":"Elt","args":[{"string":"KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"},{"int":"55678"}]},{"prim":"Elt","args":[{"string":"KT1DEwdmXvjbdCz3HcehrYGiV46rVAwDiYVk"},{"int":"292144"}]},{"prim":"Elt","args":[{"string":"KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"},{"int":"259052"}]},{"prim":"Elt","args":[{"string":"KT1MYSapB87YGSm1zxN3pbBGWDxea9YCkPH8"},{"int":"300594"}]},{"prim":"Elt","args":[{"string":"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"},{"int":"55710"}]},{"prim":"Elt","args":[{"string":"KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"},{"int":"259051"}]}],{"int":"55657"}]}`,
-		Expect: map[string]int64{"royalties_updater": 55657, "constant_royalties": 55654, "get_royalty_list": 55655, "metadata": 55656, "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj": 55678, "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton": 55710, "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi": 259051, "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE": 259052, "KT1DEwdmXvjbdCz3HcehrYGiV46rVAwDiYVk": 292144, "KT1MYSapB87YGSm1zxN3pbBGWDxea9YCkPH8": 300594},
+		Name:         "AKA-Royalties",
+		SkipTypetest: true,
+		Type:         `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%akaMinter"]},{"prim":"address","annots":["%akaNFTContract"]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%constant_royalties"],"args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"address","annots":["%creator"]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%total_royalties"]}]}]}]},{"prim":"big_map","annots":["%get_royalty_list"],"args":[{"prim":"address"},{"prim":"unit"}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%manager"]},{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"address","annots":["%creator"]},{"prim":"pair","args":[{"prim":"map","annots":["%royalties"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%total_royalties"]}]}]}]}]},{"prim":"big_map","annots":["%royalties_updater"],"args":[{"prim":"address"},{"prim":"unit"}]}]}]}]}`,
+		Value:        `{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"string":"KT1ULea6kxqiYe1A7CZVfMuGmTx7NmDGAph1"},{"string":"KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"}]},{"int":"55654"},{"int":"55655"}]},{"prim":"Pair","args":[{"string":"tz1WCYsbPyHTBcnj4saWG6SRFHECCj2TTzC6"},{"int":"55656"}]},[{"prim":"Elt","args":[{"string":"KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj"},{"int":"55678"}]},{"prim":"Elt","args":[{"string":"KT1DEwdmXvjbdCz3HcehrYGiV46rVAwDiYVk"},{"int":"292144"}]},{"prim":"Elt","args":[{"string":"KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE"},{"int":"259052"}]},{"prim":"Elt","args":[{"string":"KT1MYSapB87YGSm1zxN3pbBGWDxea9YCkPH8"},{"int":"300594"}]},{"prim":"Elt","args":[{"string":"KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"},{"int":"55710"}]},{"prim":"Elt","args":[{"string":"KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"},{"int":"259051"}]}],{"int":"55657"}]}`,
+		Expect:       map[string]int64{"royalties_updater": 55657, "constant_royalties": 55654, "get_royalty_list": 55655, "metadata": 55656, "KT1AFq5XorPduoYyWxs5gEyrFK6fVjJVbtCj": 55678, "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton": 55710, "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi": 259051, "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE": 259052, "KT1DEwdmXvjbdCz3HcehrYGiV46rVAwDiYVk": 292144, "KT1MYSapB87YGSm1zxN3pbBGWDxea9YCkPH8": 300594},
 	},
 	{
 		Name:   "QuipuLP",
@@ -386,10 +388,22 @@ var bigmapInfo = []bigmapDetectTest{
 		Value:  `{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"string":"tz1YEF3iQydxFfcuGVnzUbt9N7ike6Yzvph8"},{"prim":"False"}]},{"prim":"None"}]},{"prim":"Pair","args":[{"prim":"Pair","args":[{"int":"8215"},{"int":"8216"}]},{"prim":"Pair","args":[{"prim":"Right","args":[{"prim":"Right","args":[{"prim":"Unit"}]}]},{"prim":"Right","args":[{"prim":"Left","args":[{"prim":"Unit"}]}]},{"prim":"Left","args":[{"prim":"Unit"}]},{"prim":"None"}]},{"int":"8217"}]},{"int":"8218"}]},{"int":"8219"}]}`,
 		Expect: map[string]int64{"ledger": 8215, "metadata": 8219, "operators": 8216, "token_metadata": 8217, "token_total_supply": 8218},
 	},
+	{
+		Name:   "KT1E9vnFywiWig3xpp9NDj1k7U6UFMFGqhrT",
+		Type:   `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%administrator"]},{"prim":"pair","args":[{"prim":"nat","annots":["%all_tokens"]},{"prim":"address","annots":["%ballondor"]}]}]},{"prim":"pair","args":[{"prim":"list","annots":["%default_royalties"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%partAccount"]},{"prim":"nat","annots":["%partValue"]}]}]},{"prim":"pair","args":[{"prim":"bytes","annots":["%default_token_metadata"]},{"prim":"big_map","annots":["%ledger"],"args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%limit_supply"]},{"prim":"pair","args":[{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"set","annots":["%operator_for_all"],"args":[{"prim":"address"}]}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%operators"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%owner"]},{"prim":"pair","args":[{"prim":"address","annots":["%operator"]},{"prim":"nat","annots":["%token_id"]}]}]},{"prim":"unit"}]},{"prim":"pair","args":[{"prim":"bool","annots":["%paused"]},{"prim":"timestamp","annots":["%presale_end_time"]}]}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%presale_price"]},{"prim":"pair","args":[{"prim":"timestamp","annots":["%presale_start_time"]},{"prim":"nat","annots":["%presale_supply"]}]}]},{"prim":"pair","args":[{"prim":"address","annots":["%revealer"]},{"prim":"pair","args":[{"prim":"big_map","annots":["%royalties"],"args":[{"prim":"nat"},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"address","annots":["%partAccount"]},{"prim":"nat","annots":["%partValue"]}]}]}]},{"prim":"nat","annots":["%sale_limit"]}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%sale_price"]},{"prim":"pair","args":[{"prim":"timestamp","annots":["%sale_start_time"]},{"prim":"list","annots":["%shares"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%partAccount"]},{"prim":"nat","annots":["%partValue"]}]}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","annots":["%token_metadata"],"args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"nat","annots":["%token_id"]},{"prim":"map","annots":["%token_info"],"args":[{"prim":"string"},{"prim":"bytes"}]}]}]},{"prim":"big_map","annots":["%total_supply"],"args":[{"prim":"nat"},{"prim":"nat"}]}]},{"prim":"pair","args":[{"prim":"address","annots":["%whitelist"]},{"prim":"nat","annots":["%whitelist_token_id"]}]}]}]}]}]}`,
+		Value:  `{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"prim":"Pair","args":[{"string":"tz1Z9bSe4rCT6uTseBu7FjvY2RJAkcK2Ux6a"},{"int":"2022"},{"string":"tz1hCKMo9r9sb2epHzUBZgQKCX1uNAY32vM7"}]},[{"prim":"Pair","args":[{"string":"tz1hCKMo9r9sb2epHzUBZgQKCX1uNAY32vM7"},{"int":"50"}]},{"prim":"Pair","args":[{"string":"tz1WyZ4mwysxkgiMbRQn5DXzwxw9c6eVdc42"},{"int":"500"}]},{"prim":"Pair","args":[{"string":"tz1Xur15cBJSsKU3iDfnWg7sQmk5cjkhashP"},{"int":"200"}]}],{"bytes":"697066733a2f2f516d577833705056374a3371624551763853546d693551764d716a5837756d41506a44654d6f5935337275714476"},{"int":"315235"}]},{"prim":"Pair","args":[{"int":"2022"},{"int":"315236"},[]]},{"int":"315237"},{"prim":"False"},{"string":"2022-10-25T16:00:00Z"}]},{"prim":"Pair","args":[{"prim":"Pair","args":[{"int":"145000000"},{"string":"2022-10-23T16:00:00Z"},{"int":"1772"}]},{"string":"tz1h7T8bTvzjVNCJFycXyYu5gX4oi56HrkNz"},{"int":"315238"},{"int":"10"}]},{"prim":"Pair","args":[{"int":"180000000"},{"string":"2022-10-25T16:00:00Z"},[{"prim":"Pair","args":[{"string":"tz1WyZ4mwysxkgiMbRQn5DXzwxw9c6eVdc42"},{"int":"500"}]},{"prim":"Pair","args":[{"string":"tz1Xur15cBJSsKU3iDfnWg7sQmk5cjkhashP"},{"int":"300"}]}]]},{"prim":"Pair","args":[{"int":"315239"},{"int":"315240"}]},{"string":"KT1PAZMHzFtZPGHxXBnfZpYiNzb3XqfnCKdR"},{"int":"0"}]}`,
+		Expect: map[string]int64{"ledger": 315235, "metadata": 315236, "operators": 315237, "royalties": 315238, "token_metadata": 315239, "total_supply": 315240},
+	},
+	// {
+	// 	Name:   "",
+	// 	Type:   ``,
+	// 	Value:  ``,
+	// 	Expect: map[string]int64{},
+	// },
 }
 
 func TestBigmapDetect(t *testing.T) {
-	for _, test := range bigmapInfo {
+	for _, test := range bigmapDetectTests {
 		t.Run(test.Name, func(T *testing.T) {
 			var typ Prim
 			if err := typ.UnmarshalJSON([]byte(test.Type)); err != nil {
@@ -422,11 +436,9 @@ func TestBigmapDetect(t *testing.T) {
 }
 
 func TestBigmapTypeDetect(t *testing.T) {
-	for _, test := range bigmapInfo {
+	for _, test := range bigmapDetectTests {
 		t.Run(test.Name, func(T *testing.T) {
-			// skip AKA-Royalties testcase because proper bigmap names can only be
-			// detected with the new algo
-			if test.Name == "AKA-Royalties" {
+			if test.SkipTypetest {
 				return
 			}
 			var typ Prim
@@ -476,4 +488,140 @@ func detectBigmapTypes(p Prim) map[string]Type {
 		named[n] = NewType(bigmaps[i])
 	}
 	return named
+}
+
+// Test comparison between annotated and non-annotated bigmaps, must be resilient to
+// format differences introduced by comb pairs
+type bigmapTypeCompareTest struct {
+	Name         string
+	SrcKeyType   string
+	SrcValueType string
+	DstKeyType   string
+	DstValueType string
+	Expect       bool
+}
+
+var bigmapCompareTests = []bigmapTypeCompareTest{
+	{
+		Name:         "KT1UKKJeQ7wbppyzyLWMoCSKVhFpMVPHgoPm_204645",
+		SrcKeyType:   `{"prim":"address"}`,
+		SrcValueType: `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"map","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]}`,
+		DstKeyType:   `{"prim":"address"}`,
+		DstValueType: `{"prim":"pair","args":[{"prim":"pair","annots":["%accountBorrows"],"args":[{"prim":"nat","annots":["%interestIndex"]},{"prim":"nat","annots":["%principal"]}]},{"prim":"pair","args":[{"prim":"map","annots":["%approvals"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%balance"]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1VPz82qKWshaAAxDURmZfYQRmUY9WQRjLu_203763",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"pair","args":[{"prim":"bool"},{"prim":"pair","args":[{"prim":"address"},{"prim":"mutez"},{"prim":"mutez"},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"},{"prim":"nat"}]}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"},{"prim":"nat"}]}]}]},{"prim":"bool"}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"pair","args":[{"prim":"bool","annots":["%executed"]},{"prim":"pair","args":[{"prim":"pair","annots":["%proposal"],"args":[{"prim":"address","annots":["%user1"]},{"prim":"pair","args":[{"prim":"mutez","annots":["%mutez_amount1"]},{"prim":"pair","args":[{"prim":"mutez","annots":["%mutez_amount2"]},{"prim":"pair","args":[{"prim":"list","annots":["%tokens1"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%fa2"]},{"prim":"pair","args":[{"prim":"nat","annots":["%id"]},{"prim":"nat","annots":["%amount"]}]}]}]},{"prim":"list","annots":["%tokens2"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%fa2"]},{"prim":"pair","args":[{"prim":"nat","annots":["%id"]},{"prim":"nat","annots":["%amount"]}]}]}]}]}]}]}]},{"prim":"bool","annots":["%user1_accepted"]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1MWV1oaRAZaQvXcnJWf3tA8B52sb9cEv5i_6232",
+		SrcKeyType:   `{"prim":"string"}`,
+		SrcValueType: `{"prim":"lambda","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"bytes"},{"prim":"address"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"bytes"}]},{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"timestamp"}]}]},{"prim":"big_map","args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"address"},{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","args":[{"prim":"address"}]},{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"option","args":[{"prim":"bytes"}]},{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"nat"},{"prim":"address"}]},{"prim":"option","args":[{"prim":"nat"}]}]}]}]},{"prim":"big_map","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"option","args":[{"prim":"bytes"}]}]},{"prim":"address"}]}]},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"list","args":[{"prim":"operation"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"bytes"}]},{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"timestamp"}]}]},{"prim":"big_map","args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"address"},{"prim":"big_map","args":[{"prim":"bytes"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","args":[{"prim":"address"}]},{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"option","args":[{"prim":"bytes"}]},{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"nat"},{"prim":"address"}]},{"prim":"option","args":[{"prim":"nat"}]}]}]}]},{"prim":"big_map","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"map","args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"option","args":[{"prim":"bytes"}]}]},{"prim":"address"}]}]},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"bytes"}]}]}]}`,
+		DstKeyType:   `{"prim":"string"}`,
+		DstValueType: `{"prim":"lambda","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"bytes"},{"prim":"address"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","annots":["%data"],"args":[{"prim":"bytes"},{"prim":"bytes"}]},{"prim":"big_map","annots":["%expiry_map"],"args":[{"prim":"bytes"},{"prim":"timestamp"}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"nat","annots":["%next_tzip12_token_id"]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%owner"]},{"prim":"big_map","annots":["%records"],"args":[{"prim":"bytes"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","annots":["%address"],"args":[{"prim":"address"}]},{"prim":"map","annots":["%data"],"args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"option","annots":["%expiry_key"],"args":[{"prim":"bytes"}]},{"prim":"map","annots":["%internal_data"],"args":[{"prim":"string"},{"prim":"bytes"}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%level"]},{"prim":"address","annots":["%owner"]}]},{"prim":"option","annots":["%tzip12_token_id"],"args":[{"prim":"nat"}]}]}]}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%reverse_records"],"args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"map","annots":["%internal_data"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"option","annots":["%name"],"args":[{"prim":"bytes"}]}]},{"prim":"address","annots":["%owner"]}]}]},{"prim":"big_map","annots":["%tzip12_tokens"],"args":[{"prim":"nat"},{"prim":"bytes"}]}]}]}]}]},{"prim":"pair","args":[{"prim":"list","args":[{"prim":"operation"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"big_map","annots":["%data"],"args":[{"prim":"bytes"},{"prim":"bytes"}]},{"prim":"big_map","annots":["%expiry_map"],"args":[{"prim":"bytes"},{"prim":"timestamp"}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%metadata"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"nat","annots":["%next_tzip12_token_id"]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%owner"]},{"prim":"big_map","annots":["%records"],"args":[{"prim":"bytes"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","annots":["%address"],"args":[{"prim":"address"}]},{"prim":"map","annots":["%data"],"args":[{"prim":"string"},{"prim":"bytes"}]}]},{"prim":"pair","args":[{"prim":"option","annots":["%expiry_key"],"args":[{"prim":"bytes"}]},{"prim":"map","annots":["%internal_data"],"args":[{"prim":"string"},{"prim":"bytes"}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%level"]},{"prim":"address","annots":["%owner"]}]},{"prim":"option","annots":["%tzip12_token_id"],"args":[{"prim":"nat"}]}]}]}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%reverse_records"],"args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"map","annots":["%internal_data"],"args":[{"prim":"string"},{"prim":"bytes"}]},{"prim":"option","annots":["%name"],"args":[{"prim":"bytes"}]}]},{"prim":"address","annots":["%owner"]}]}]},{"prim":"big_map","annots":["%tzip12_tokens"],"args":[{"prim":"nat"},{"prim":"bytes"}]}]}]}]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1LDM81PK3gg5QZ4wt6m5tHUC3PrdrXmYPf_238400 ",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"pair","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"mutez"},{"prim":"nat"}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"pair","args":[{"prim":"address","annots":["%seller"]},{"prim":"pair","annots":["%sale_data"],"args":[{"prim":"pair","annots":["%sale_token"],"args":[{"prim":"address","annots":["%fa2_address"]},{"prim":"nat","annots":["%token_id"]}]},{"prim":"pair","args":[{"prim":"mutez","annots":["%price"]},{"prim":"nat","annots":["%amount"]}]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1LxPGwkrvj8gG8k8CkpyKQaWyQAsnLfHLg_256783",
+		SrcKeyType:   `{"prim":"address"}`,
+		SrcValueType: `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"map","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]}`,
+		DstKeyType:   `{"prim":"address"}`,
+		DstValueType: `{"prim":"pair","args":[{"prim":"pair","annots":["%accountBorrows"],"args":[{"prim":"nat","annots":["%interestIndex"]},{"prim":"nat","annots":["%principal"]}]},{"prim":"pair","args":[{"prim":"map","annots":["%approvals"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%balance"]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1VH3JQSZaSq3qeUTBmeJjiqSfP4nTkMo9X_311744",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"list","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"list","args":[{"prim":"pair","args":[{"prim":"address","annots":["%partAccount"]},{"prim":"nat","annots":["%partValue"]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1M8tp17Y2GWsYrZDBRXqdRNawgwyFDzmp4_306129",
+		SrcKeyType:   `{"prim":"or","args":[{"prim":"or","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]},{"prim":"unit"}]}`,
+		SrcValueType: `{"prim":"nat"}`,
+		DstKeyType:   `{"prim":"or","args":[{"prim":"or","args":[{"prim":"address","annots":["%fa12"]},{"prim":"pair","annots":["%fa2"],"args":[{"prim":"address","annots":["%token"]},{"prim":"nat","annots":["%id"]}]}]},{"prim":"unit","annots":["%tez"]}]}`,
+		DstValueType: `{"prim":"nat"}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1QH9RJYFdopvxzo7Z8TzpU7hQsvfcAqz5L_301197",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"map","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"timestamp"},{"prim":"nat"}]}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"map","args":[{"prim":"address"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%rate"]},{"prim":"nat","annots":["%reward"]}]},{"prim":"pair","args":[{"prim":"timestamp","annots":["%timestamp"]},{"prim":"nat","annots":["%value"]}]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1NRLjyE7wxeSZ6La6DfuhSKCAAnc9Lnvdg_209035",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"or","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"nat"},{"prim":"nat"}]}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"or","args":[{"prim":"pair","annots":["%mission"],"args":[{"prim":"nat","annots":["%mission_id"]},{"prim":"nat","annots":["%start_block"]}]},{"prim":"or","args":[{"prim":"nat","annots":["%rest"]},{"prim":"nat","annots":["%train"]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1Nr4CLi7hY7QrZe8D4ar6uihpnr7nRtGJH_256939",
+		SrcKeyType:   `{"prim":"string"}`,
+		SrcValueType: `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"string"},{"prim":"timestamp"}]},{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"nat"},{"prim":"option","args":[{"prim":"timestamp"}]},{"prim":"bool"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]},{"prim":"mutez"}]},{"prim":"string"},{"prim":"bool"}]},{"prim":"pair","args":[{"prim":"option","args":[{"prim":"timestamp"}]},{"prim":"bool"}]},{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"option","args":[{"prim":"timestamp"}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"timestamp"}]}]}]},{"prim":"option","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]}]}`,
+		DstKeyType:   `{"prim":"string"}`,
+		DstValueType: `{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"string","annots":["%bid"]},{"prim":"timestamp","annots":["%challenge_time"]}]},{"prim":"pair","args":[{"prim":"pair","annots":["%challenged"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%challenged_damage"]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","annots":["%challenger"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat","annots":["%challenger_damage"]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%experience_gained"]},{"prim":"pair","args":[{"prim":"option","annots":["%finish_time"],"args":[{"prim":"timestamp"}]},{"prim":"bool","annots":["%finished"]}]}]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","annots":["%looser"],"args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]},{"prim":"mutez","annots":["%loot"]}]},{"prim":"pair","args":[{"prim":"string","annots":["%mode"]},{"prim":"bool","annots":["%resolved"]}]}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"option","annots":["%start_time"],"args":[{"prim":"timestamp"}]},{"prim":"bool","annots":["%started"]}]},{"prim":"pair","args":[{"prim":"pair","annots":["%turn"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"pair","annots":["%turns"],"args":[{"prim":"option","annots":["%latest"],"args":[{"prim":"timestamp"}]},{"prim":"list","annots":["%turns"],"args":[{"prim":"pair","args":[{"prim":"nat","annots":["%damage"]},{"prim":"pair","args":[{"prim":"pair","annots":["%hero"],"args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"timestamp","annots":["%timestamp"]}]}]}]}]},{"prim":"option","annots":["%victor"],"args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]}]}]}]}]}]}]}`,
+		Expect:       true,
+	},
+	{
+		Name:         "KT1RwwjAS89iotPSKGWmabcPaUSZ1fdGjS2Z_328858",
+		SrcKeyType:   `{"prim":"nat"}`,
+		SrcValueType: `{"prim":"lambda","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"unit"}]},{"prim":"nat"}]}]}]}]},{"prim":"address"}]}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"unit"}]},{"prim":"nat"}]}]}]}]},{"prim":"address"}]}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"unit"}]},{"prim":"nat"}]}]}]}]},{"prim":"address"}]}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"},{"prim":"nat"}]}]}]},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"nat"}]},{"prim":"nat"}]}]},{"prim":"nat"}]}]},{"prim":"big_map","args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"nat"}]},{"prim":"or","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"}]},{"prim":"list","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"unit"},{"prim":"unit"}]},{"prim":"nat"}]}]}]}]},{"prim":"address"}]}]},{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"},{"prim":"nat"}]}]},{"prim":"option","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]},{"prim":"nat"},{"prim":"nat"}]}]},{"prim":"address"},{"prim":"address"}]},{"prim":"or","args":[{"prim":"operation"},{"prim":"pair","args":[{"prim":"option","args":[{"prim":"operation"}]},{"prim":"option","args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]}]}]}]}]}`,
+		DstKeyType:   `{"prim":"nat"}`,
+		DstValueType: `{"prim":"lambda","args":[{"prim":"pair","args":[{"prim":"or","args":[{"prim":"pair","annots":["%sell"],"args":[{"prim":"pair","args":[{"prim":"pair","annots":["%dex"],"args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%contract_address"]},{"prim":"or","annots":["%ext_type"],"args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit","annots":["%defaultCP"]},{"prim":"nat","annots":["%quipuDex2"]}]},{"prim":"or","args":[{"prim":"pair","annots":["%quipuStableSwap"],"args":[{"prim":"pair","args":[{"prim":"nat","annots":["%pool_id"]},{"prim":"nat","annots":["%pool_token1_id"]}]},{"prim":"nat","annots":["%pool_token2_id"]}]},{"prim":"list","annots":["%quipuTokenToToken"],"args":[{"prim":"pair","args":[{"prim":"or","annots":["%operation"],"args":[{"prim":"unit","annots":["%a_to_b"]},{"prim":"unit","annots":["%b_to_a"]}]},{"prim":"nat","annots":["%pair_id"]}]}]}]}]},{"prim":"address","annots":["%siriusLB"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%fee"]},{"prim":"nat","annots":["%provider"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%token1_id"]},{"prim":"nat","annots":["%token2_id"]}]}]},{"prim":"nat","annots":["%min_out"]}]},{"prim":"nat","annots":["%x_amount"]}]},{"prim":"or","args":[{"prim":"pair","annots":["%buy"],"args":[{"prim":"pair","args":[{"prim":"pair","annots":["%dex"],"args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%contract_address"]},{"prim":"or","annots":["%ext_type"],"args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit","annots":["%defaultCP"]},{"prim":"nat","annots":["%quipuDex2"]}]},{"prim":"or","args":[{"prim":"pair","annots":["%quipuStableSwap"],"args":[{"prim":"pair","args":[{"prim":"nat","annots":["%pool_id"]},{"prim":"nat","annots":["%pool_token1_id"]}]},{"prim":"nat","annots":["%pool_token2_id"]}]},{"prim":"list","annots":["%quipuTokenToToken"],"args":[{"prim":"pair","args":[{"prim":"or","annots":["%operation"],"args":[{"prim":"unit","annots":["%a_to_b"]},{"prim":"unit","annots":["%b_to_a"]}]},{"prim":"nat","annots":["%pair_id"]}]}]}]}]},{"prim":"address","annots":["%siriusLB"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%fee"]},{"prim":"nat","annots":["%provider"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%token1_id"]},{"prim":"nat","annots":["%token2_id"]}]}]},{"prim":"nat","annots":["%min_out"]}]},{"prim":"nat","annots":["%y_amount"]}]},{"prim":"pair","annots":["%getReserves"],"args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%contract_address"]},{"prim":"or","annots":["%ext_type"],"args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit","annots":["%defaultCP"]},{"prim":"nat","annots":["%quipuDex2"]}]},{"prim":"or","args":[{"prim":"pair","annots":["%quipuStableSwap"],"args":[{"prim":"pair","args":[{"prim":"nat","annots":["%pool_id"]},{"prim":"nat","annots":["%pool_token1_id"]}]},{"prim":"nat","annots":["%pool_token2_id"]}]},{"prim":"list","annots":["%quipuTokenToToken"],"args":[{"prim":"pair","args":[{"prim":"or","annots":["%operation"],"args":[{"prim":"unit","annots":["%a_to_b"]},{"prim":"unit","annots":["%b_to_a"]}]},{"prim":"nat","annots":["%pair_id"]}]}]}]}]},{"prim":"address","annots":["%siriusLB"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%fee"]},{"prim":"nat","annots":["%provider"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%token1_id"]},{"prim":"nat","annots":["%token2_id"]}]}]}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%tokens"],"args":[{"prim":"nat"},{"prim":"or","args":[{"prim":"or","args":[{"prim":"pair","annots":["%fa12"],"args":[{"prim":"address","annots":["%contract_address"]},{"prim":"nat","annots":["%decimals"]}]},{"prim":"pair","annots":["%fa2"],"args":[{"prim":"pair","args":[{"prim":"address","annots":["%contract_address"]},{"prim":"nat","annots":["%decimals"]}]},{"prim":"nat","annots":["%fa2_id"]}]}]},{"prim":"nat","annots":["%xtz"]}]}]},{"prim":"pair","args":[{"prim":"big_map","annots":["%dexes"],"args":[{"prim":"nat"},{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"address","annots":["%contract_address"]},{"prim":"or","annots":["%ext_type"],"args":[{"prim":"or","args":[{"prim":"or","args":[{"prim":"unit","annots":["%defaultCP"]},{"prim":"nat","annots":["%quipuDex2"]}]},{"prim":"or","args":[{"prim":"pair","annots":["%quipuStableSwap"],"args":[{"prim":"pair","args":[{"prim":"nat","annots":["%pool_id"]},{"prim":"nat","annots":["%pool_token1_id"]}]},{"prim":"nat","annots":["%pool_token2_id"]}]},{"prim":"list","annots":["%quipuTokenToToken"],"args":[{"prim":"pair","args":[{"prim":"or","annots":["%operation"],"args":[{"prim":"unit","annots":["%a_to_b"]},{"prim":"unit","annots":["%b_to_a"]}]},{"prim":"nat","annots":["%pair_id"]}]}]}]}]},{"prim":"address","annots":["%siriusLB"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%fee"]},{"prim":"nat","annots":["%provider"]}]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%token1_id"]},{"prim":"nat","annots":["%token2_id"]}]}]}]},{"prim":"pair","args":[{"prim":"option","annots":["%sirius_estimates"],"args":[{"prim":"pair","args":[{"prim":"pair","args":[{"prim":"nat","annots":["%level"]},{"prim":"nat","annots":["%lqt"]}]},{"prim":"pair","args":[{"prim":"nat","annots":["%token"]},{"prim":"nat","annots":["%xtz"]}]}]}]},{"prim":"pair","args":[{"prim":"address","annots":["%ctez_admin"]},{"prim":"address","annots":["%dex_referral"]}]}]}]}]}]},{"prim":"or","args":[{"prim":"operation","annots":["%swap"]},{"prim":"pair","annots":["%getReserves"],"args":[{"prim":"option","annots":["%operation"],"args":[{"prim":"operation"}]},{"prim":"option","annots":["%reserves"],"args":[{"prim":"pair","args":[{"prim":"nat"},{"prim":"nat"}]}]}]}]}]}`,
+		Expect:       true,
+	},
+	// {
+	// Name: "",
+	// SrcKeyType: ``,
+	// SrcValueType: ``,
+	// DstKeyType: ``,
+	// DstValueType: ``,
+	// Expect: true,
+	// },
+}
+
+func TestBigmapTypeCompare(t *testing.T) {
+	for _, test := range bigmapCompareTests {
+		t.Run(test.Name, func(T *testing.T) {
+			var sk, sv, dk, dv Prim
+			if err := sk.UnmarshalJSON([]byte(test.SrcKeyType)); err != nil {
+				T.Fatalf("unmarshal type: %v", err)
+			}
+			if err := sv.UnmarshalJSON([]byte(test.SrcValueType)); err != nil {
+				T.Fatalf("unmarshal value: %v", err)
+			}
+			if err := dk.UnmarshalJSON([]byte(test.DstKeyType)); err != nil {
+				T.Fatalf("unmarshal type: %v", err)
+			}
+			if err := dv.UnmarshalJSON([]byte(test.DstValueType)); err != nil {
+				T.Fatalf("unmarshal value: %v", err)
+			}
+			if want, have := test.Expect, NewType(sk).Typedef("").Unfold().Equal(NewType(dk).Typedef("").Unfold()); want != have {
+				T.Errorf("key type want=%t have=%t\nsrc=%s\ndst=%s", want, have, sk.Dump(), dk.Dump())
+			}
+			if want, have := test.Expect, NewType(sv).Typedef("").Unfold().Equal(NewType(dv).Typedef("").Unfold()); want != have {
+				T.Errorf("value type want=%t have=%t\nsrc=%s\ndst=%s", want, have, sv.Dump(), dv.Dump())
+			}
+		})
+	}
 }

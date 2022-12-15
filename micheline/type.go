@@ -73,12 +73,48 @@ func (t Typedef) Unfold() Typedef {
 }
 
 func (t Typedef) unfold() []Typedef {
-	if t.Type == TypeStruct && !t.Optional && t.Name != CONST_PARAM && t.Name != CONST_RETURN {
+	switch t.Type {
+	case TypeStruct:
+		// unfold nested structs unless they are optional
+		if !t.Optional {
+			args := make([]Typedef, 0, len(t.Args))
+			for _, v := range t.Args {
+				args = append(args, v.unfold()...)
+			}
+			return args
+		}
+	case TypeUnion:
+		// unfold each arg independently
+		for i, v := range t.Args {
+			args := make([]Typedef, 0, len(v.Args))
+			for _, vv := range v.Args {
+				args = append(args, vv.unfold()...)
+			}
+			t.Args[i].Args = args
+		}
+	case "list", "set":
+		// unfold nested structs inside list
 		args := make([]Typedef, 0, len(t.Args))
 		for _, v := range t.Args {
 			args = append(args, v.unfold()...)
 		}
-		return args
+		t.Args = args
+	case "map":
+		// unfold nested structs inside map key and map value independently
+		if t.Args[0].Name == CONST_KEY && t.Args[0].Type == TypeStruct {
+			t.Args[0].Args = t.Args[0].unfold()
+		}
+		if t.Args[1].Name == CONST_VALUE && t.Args[1].Type == TypeStruct {
+			t.Args[1].Args = t.Args[1].unfold()
+		}
+	case "lambda":
+		// unfold arg and result structs inside independently
+		if t.Args[0].Name == CONST_PARAM && t.Args[0].Type == TypeStruct {
+			t.Args[0].Args = t.Args[0].unfold()
+		}
+		if t.Args[1].Name == CONST_RETURN && t.Args[1].Type == TypeStruct {
+			t.Args[1].Args = t.Args[1].unfold()
+		}
 	}
 	return []Typedef{t}
 }
