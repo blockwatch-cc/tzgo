@@ -105,45 +105,6 @@ func (z *Z) UnmarshalBinary(data []byte) error {
 }
 
 func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
-	var s uint = 6
-	b := buf.Next(1)
-	if len(b) == 0 {
-		return io.ErrShortBuffer
-	}
-	xi := bigIntPool.Get()
-	x := xi.(*big.Int).SetInt64(int64(b[0] & 0x3f)) // clip two bits
-	yi := bigIntPool.Get()
-	y := yi.(*big.Int).SetInt64(0)
-	sign := b[0]&0x40 > 0
-	if b[0] >= 0x80 {
-		for i := 1; ; i++ {
-			b = buf.Next(1)
-			if len(b) == 0 {
-				bigIntPool.Put(xi)
-				bigIntPool.Put(yi)
-				return io.ErrShortBuffer
-			}
-			if b[0] < 0x80 {
-				y.SetInt64(int64(b[0]))
-				x = x.Or(x, y.Lsh(y, s))
-				break
-			}
-			y.SetInt64(int64(b[0] & 0x7f))
-			x = x.Or(x, y.Lsh(y, s))
-			s += 7
-		}
-	}
-	if sign {
-		(*big.Int)(z).Set(x.Neg(x))
-	} else {
-		(*big.Int)(z).Set(x)
-	}
-	bigIntPool.Put(xi)
-	bigIntPool.Put(yi)
-	return nil
-}
-
-func (z *Z) DecodeBufferNew(buf *bytes.Buffer) error {
 	tmp := make([]byte, 16)
 	var (
 		b   byte

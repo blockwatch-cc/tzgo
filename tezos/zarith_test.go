@@ -117,31 +117,6 @@ func TestDecodeBuffer(T *testing.T) {
 	}
 }
 
-func TestDecodeBufferNew(T *testing.T) {
-	for _, c := range zarithDecodeCases {
-		var z Z
-		err := z.DecodeBufferNew(bytes.NewBuffer(c.buf))
-		if got, want := err, c.err; got != want {
-			T.Errorf("%s: unexpected error %v, expected %v", c.name, got, want)
-		}
-		if err != nil {
-			continue
-		}
-		res := big.NewInt(0)
-		n := new(big.Int)
-		for _, v := range c.res {
-			n.SetUint64(v)
-			res.Or(res.Lsh(res, 64), n)
-		}
-		if c.sign != 0 {
-			res.Neg(res)
-		}
-		if got, want := z, (Z)(*res); got.Cmp(want) != 0 {
-			T.Errorf("%s: unexpected result %v, expected %v", c.name, got, want)
-		}
-	}
-}
-
 type benchmarkSize struct {
 	name string
 	l    int
@@ -178,19 +153,6 @@ func BenchmarkDecodeBuffer(b *testing.B) {
 			b.SetBytes(int64(bm.l))
 			for i := 0; i < b.N; i++ {
 				z.DecodeBuffer(bytes.NewBuffer(buf))
-			}
-		})
-	}
-}
-
-func BenchmarkDecodeBufferNew(b *testing.B) {
-	for _, bm := range benchmarkSizes {
-		buf := randZarithSlice(bm.l)
-		var z Z
-		b.Run(bm.name, func(b *testing.B) {
-			b.SetBytes(int64(bm.l))
-			for i := 0; i < b.N; i++ {
-				z.DecodeBufferNew(bytes.NewBuffer(buf))
 			}
 		})
 	}
