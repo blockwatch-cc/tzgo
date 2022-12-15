@@ -8,6 +8,7 @@ package tezos
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"math/big"
@@ -143,18 +144,18 @@ func (z *Z) DecodeBuffer(buf *bytes.Buffer) error {
 }
 
 func (z *Z) DecodeBufferNew(buf *bytes.Buffer) error {
-	var s uint = 62
-	tmp := make([]byte, 9)
+	tmp := make([]byte, 16)
 	var (
 		b   byte
 		err error
 	)
-
+	// read bits [0,6)
 	if b, err = buf.ReadByte(); err != nil {
 		return io.ErrShortBuffer
 	}
 	sign := b&0x40 > 0
 	tmp[0] = b & 0x3f
+	// read bits [6,62)
 	for i := 1; i < 9; i++ {
 		if b < 0x80 {
 			break
@@ -168,7 +169,35 @@ func (z *Z) DecodeBufferNew(buf *bytes.Buffer) error {
 	w := int64(tmp[0]) | int64(tmp[1])<<6 | int64(tmp[2])<<13 | int64(tmp[3])<<20 | int64(tmp[4])<<27 |
 		int64(tmp[5])<<34 | int64(tmp[6])<<41 | int64(tmp[7])<<48 | int64(tmp[8])<<55
 
-	x := (*big.Int)(z.SetInt64(w))
+	if b < 0x80 {
+		z.SetInt64(w)
+		if sign {
+			(*big.Int)(z).Neg((*big.Int)(z))
+		}
+		return nil
+	}
+
+	binary.BigEndian.PutUint64(tmp[0:8], 0)
+	tmp[8] = 0
+
+	// read bits [62,125)
+	for i := 0; i < 9; i++ {
+		if b < 0x80 {
+			break
+		}
+		if b, err = buf.ReadByte(); err != nil {
+			return io.ErrShortBuffer
+		}
+		tmp[i] = b & 0x7f
+	}
+
+	w |= int64(tmp[0]) << 62
+	w2 := int64(tmp[0])>>2 | int64(tmp[1])<<5 | int64(tmp[2])<<12 | int64(tmp[3])<<19 | int64(tmp[4])<<26 |
+		int64(tmp[5])<<33 | int64(tmp[6])<<40 | int64(tmp[7])<<47 | int64(tmp[8])<<54
+
+	binary.BigEndian.PutUint64(tmp[0:8], uint64(w2))
+	binary.BigEndian.PutUint64(tmp[8:16], uint64(w))
+	x := (*big.Int)(z).SetBytes(tmp[0:16])
 
 	if b < 0x80 {
 		if sign {
@@ -177,12 +206,13 @@ func (z *Z) DecodeBufferNew(buf *bytes.Buffer) error {
 		return nil
 	}
 
+	var s uint = 125
 	y := bigIntPool.Get().(*big.Int)
 
+	// read bits >=125
 	for b >= 0x80 {
-		for i := range tmp {
-			tmp[i] = 0
-		}
+		binary.BigEndian.PutUint64(tmp[0:8], 0)
+		tmp[8] = 0
 		for i := 0; i < 9; i++ {
 			if b < 0x80 {
 				break
