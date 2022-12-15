@@ -67,7 +67,6 @@ func (t Typedef) Unfold() Typedef {
 		Optional: t.Optional,
 	}
 	for i, v := range t.Args {
-		fmt.Printf("%d %s %s\n", i, v.Name, v.Type)
 		b.Args = append(b.Args, v.unfold()...)
 	}
 	return b
