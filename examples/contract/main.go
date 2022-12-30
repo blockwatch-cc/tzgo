@@ -51,6 +51,7 @@ func main() {
 			fmt.Println("\nQuery Commands")
 			fmt.Printf("  run_view       <contract> <name> <data>     run on-chain view `name` with JSON-encoded micheline input `data`\n")
 			fmt.Printf("  run_callback   <contract> <name> <data>     run tzip4 view/callback entrypoint `name` with JSON-encoded micheline input `data`\n")
+			fmt.Printf("  run_tz16       <contract> <name> <data>     run tzip16 view code `name` with JSON-encoded micheline input `data`\n")
 			fmt.Printf("  info           <contract>                   load contract, print entrypoints and views\n")
 			fmt.Printf("  metadata       <contract>                   fetch contract metadata\n")
 			fmt.Printf("  token_metadata <contract> <token_id>        fetch token metadata\n")
@@ -113,6 +114,11 @@ func run() error {
 			return fmt.Errorf("Missing arguments")
 		}
 		return run_callback(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
+	case "run_tz16":
+		if n < 4 {
+			return fmt.Errorf("Missing arguments")
+		}
+		return run_tz16(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
 	case "info":
 		if n < 2 {
 			return fmt.Errorf("Missing contract address")
@@ -193,6 +199,33 @@ func loadContract(ctx context.Context, c *rpc.Client, addr string, resolve bool)
 		}
 	}
 	return con, nil
+}
+
+// go run ./examples/contract/ -node https://rpc.tzstats.com run_callback KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd balance_of '[{"prim":"Pair","args":[{"string":"tz1UbRzhYjQKTtWYvGUWcRtVT4fN3NESDVYT"},{"int":"0"}]}]'
+func run_tz16(ctx context.Context, c *rpc.Client, addr, name, in string) error {
+	var prim micheline.Prim
+	if err := prim.UnmarshalJSON([]byte(in)); err != nil {
+		return err
+	}
+	con, err := loadContract(ctx, c, addr, true)
+	if err != nil {
+		return err
+	}
+	meta, err := con.ResolveMetadata(ctx)
+	if err != nil {
+		return fmt.Errorf("No tz16 metadata: %v", err)
+	}
+	view := meta.GetView(name)
+	if view.Name != name {
+		return fmt.Errorf("No such tz16 view")
+	}
+	res, err := view.Run(ctx, con, prim)
+	if err != nil {
+		return err
+	}
+	buf, _ := json.MarshalIndent(res, "  ", "  ")
+	fmt.Printf("Result:  \n%s\n", string(buf))
+	return nil
 }
 
 // go run ./examples/contract/ -node https://rpc.tzstats.com run_callback KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd balance_of '[{"prim":"Pair","args":[{"string":"tz1UbRzhYjQKTtWYvGUWcRtVT4fN3NESDVYT"},{"int":"0"}]}]'

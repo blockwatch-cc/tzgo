@@ -86,13 +86,11 @@ func resolveEntrypointPath(name, branch string, node Prim) string {
 	if node.GetVarAnnoAny() == name {
 		return branch
 	}
-	if node.OpCode == T_OR && (len(branch) == 0 || !node.HasAnno()) {
-		b := resolveEntrypointPath(name, branch+"/L", node.Args[0])
-		if b != "" {
+	if node.OpCode == T_OR {
+		if b := resolveEntrypointPath(name, branch+"/L", node.Args[0]); b != "" {
 			return b
 		}
-		b = resolveEntrypointPath(name, branch+"/R", node.Args[1])
-		if b != "" {
+		if b := resolveEntrypointPath(name, branch+"/R", node.Args[1]); b != "" {
 			return b
 		}
 	}

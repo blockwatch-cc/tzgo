@@ -115,9 +115,7 @@ func (p Parameters) Unwrap(branch string) Prim {
 			break
 		}
 		switch v {
-		case "L":
-			node = node.Args[0]
-		case "R":
+		case "L", "R":
 			node = node.Args[0]
 		}
 	}
