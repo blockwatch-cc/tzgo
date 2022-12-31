@@ -163,11 +163,11 @@ func (s Script) Bigmaps() map[string]int64 {
 func DetectBigmaps(typ, storage Prim) map[string]int64 {
 	named := make(map[string]int64)
 	uniqueName := func(n string) string {
+		if _, ok := named[n]; !ok && n != "" {
+			return n
+		}
 		if n == "" {
 			n = "bigmap"
-		}
-		if _, ok := named[n]; !ok {
-			return n
 		}
 		for i := 0; ; i++ {
 			name := n + "_" + strconv.Itoa(i)
@@ -261,11 +261,11 @@ func (s Script) BigmapTypes() map[string]Type {
 func DetectBigmapTypes(typ Prim) map[string]Type {
 	named := make(map[string]Type)
 	uniqueName := func(n string) string {
+		if _, ok := named[n]; !ok && n != "" {
+			return n
+		}
 		if n == "" {
 			n = "bigmap"
-		}
-		if _, ok := named[n]; !ok {
-			return n
 		}
 		for i := 0; ; i++ {
 			name := n + "_" + strconv.Itoa(i)
