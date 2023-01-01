@@ -25,6 +25,26 @@ func NewAddressSet(addrs ...Address) *AddressSet {
 	return set
 }
 
+func BuildAddressSet(s ...string) (*AddressSet, error) {
+	set := NewAddressSet()
+	for _, v := range s {
+		addr, err := ParseAddress(v)
+		if err != nil {
+			return nil, err
+		}
+		set.AddUnique(addr)
+	}
+	return set, nil
+}
+
+func MustBuildAddressSet(s ...string) *AddressSet {
+	set, err := BuildAddressSet(s...)
+	if err != nil {
+		panic(err)
+	}
+	return set
+}
+
 func (s AddressSet) hash(addr Address) uint64 {
 	h := hash.NewInlineFNV64a()
 	h.Write([]byte{byte(addr.Type)})
@@ -69,7 +89,10 @@ func (s *AddressSet) Clear() {
 	s.coll = s.coll[:0]
 }
 
-func (s AddressSet) Contains(addr Address) bool {
+func (s *AddressSet) Contains(addr Address) bool {
+	if s == nil {
+		return false
+	}
 	a, ok := s.set[s.hash(addr)]
 	if !ok {
 		return false
