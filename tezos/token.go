@@ -61,6 +61,9 @@ func (t Token) Clone() Token {
 }
 
 func (t Token) String() string {
+	if len(t.Hash) == 0 {
+		return ""
+	}
 	addr := base58.CheckEncode(t.Hash, NOCURVE_PUBLIC_KEY_HASH_ID)
 	return addr + "_" + t.Id.String()
 }
