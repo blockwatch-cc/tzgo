@@ -73,11 +73,19 @@ func (z Z) Equal(x Z) bool {
 }
 
 func (z Z) IsZero() bool {
-	return (*big.Int)(&z).IsInt64() && (*big.Int)(&z).Int64() == 0
+	return len((*big.Int)(&z).Bits()) == 0
 }
 
 func (z Z) Cmp(b Z) int {
 	return (*big.Int)(&z).Cmp((*big.Int)(&b))
+}
+
+func (z Z) IsLess(b Z) bool {
+	return z.Cmp(b) < 0
+}
+
+func (z Z) IsLessEqual(b Z) bool {
+	return z.Cmp(b) <= 0
 }
 
 func (z Z) Int64() int64 {
