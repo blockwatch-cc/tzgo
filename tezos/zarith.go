@@ -11,6 +11,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 	"math/big"
 	"strconv"
 	"strings"
@@ -358,6 +359,35 @@ func (z Z) Div64(y int64) Z {
 
 func (z Z) IsNeg() bool {
 	return z.Big().Sign() < 0
+}
+
+func (z Z) Scale(n int) Z {
+	var x Z
+	if n == 0 {
+		x.SetBig(z.Big())
+	} else {
+		if n < 0 {
+			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(-n)), nil)
+			x.SetBig(factor.Div(z.Big(), factor))
+		} else {
+			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(n)), nil)
+			x.SetBig(factor.Mul(z.Big(), factor))
+		}
+	}
+	return x
+}
+
+func (z Z) Float64(dec int) float64 {
+	f64, _ := new(big.Float).SetInt(z.Big()).Float64()
+	if dec == 0 {
+		return f64
+	} else if dec < 0 {
+		factor := math.Pow10(-dec)
+		return f64 / factor
+	} else {
+		factor := math.Pow10(dec)
+		return f64 * factor
+	}
 }
 
 func MaxZ(args ...Z) Z {
