@@ -291,12 +291,17 @@ func (z Z) Decimals(d int) string {
 	if d <= 0 {
 		return s
 	}
+	var sig string
+	if z.IsNeg() {
+		sig = "-"
+		s = s[1:]
+	}
 	l := len(s)
 	if l <= d {
 		s = strings.Repeat("0", d-l+1) + s
 	}
 	l = len(s)
-	return s[:l-d] + "." + s[l-d:]
+	return sig + s[:l-d] + "." + s[l-d:]
 }
 
 func (z Z) Neg() Z {
