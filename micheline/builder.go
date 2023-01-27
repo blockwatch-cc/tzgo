@@ -41,6 +41,10 @@ func NewInt64(i int64) Prim {
 	return NewBig(big.NewInt(i))
 }
 
+func NewZ(z tezos.Z) Prim {
+	return NewBig(new(big.Int).Set(z.Big()))
+}
+
 func NewMutez(n tezos.N) Prim {
 	return NewBig(big.NewInt(int64(n)))
 }
@@ -53,12 +57,23 @@ func NewNat(i *big.Int) Prim {
 	return Prim{Type: PrimInt, Int: i}
 }
 
+func NewAddress(a tezos.Address) Prim {
+	return NewBytes(a.Bytes22())
+}
+
 func NewBytes(b []byte) Prim {
 	return Prim{Type: PrimBytes, Bytes: b}
 }
 
 func NewString(s string) Prim {
 	return Prim{Type: PrimString, String: s}
+}
+
+func NewOption(p ...Prim) Prim {
+	if len(p) == 0 {
+		return Prim{Type: PrimNullary, OpCode: D_NONE}
+	}
+	return Prim{Type: PrimUnary, OpCode: D_SOME, Args: []Prim{p[0]}}
 }
 
 func NewPairType(l, r Prim, anno ...string) Prim {

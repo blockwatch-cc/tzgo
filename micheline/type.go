@@ -226,6 +226,18 @@ func NewTypePtr(p Prim) *Type {
 	return &Type{p.Clone()}
 }
 
+func ParseType(s string) (t Type, err error) {
+	err = t.UnmarshalJSON([]byte(s))
+	return
+}
+
+func MustParseType(s string) (t Type) {
+	if err := t.UnmarshalJSON([]byte(s)); err != nil {
+		panic(err)
+	}
+	return
+}
+
 func (t *Type) UnmarshalJSON(buf []byte) error {
 	return t.Prim.UnmarshalJSON(buf)
 }
