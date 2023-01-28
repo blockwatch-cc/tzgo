@@ -1,4 +1,4 @@
-## Working wth baking rights
+## Working with baking rights
 
 Use TzGo to fetch baking rights and related data from the Tezos RPC. This example covers a few basic cases.
 
