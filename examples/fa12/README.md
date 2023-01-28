@@ -23,7 +23,7 @@ go run . BKuRFhvhsc3Bwdxedu6t25RmrkqpERVqEk867GAQu43muvi7j4d 17
 
 ### Implementation details
 
-There are different ways to accomplish this for your own contracts. Here we just use the FA1.2 spec to illustrate how the proces works.
+There are different ways to accomplish this for your own contracts. Here we just use the FA1.2 spec to illustrate how the process works.
 
 ```go
   // you need the contract's script for type info
