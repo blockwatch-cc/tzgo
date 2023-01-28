@@ -1,6 +1,6 @@
 ## Work with smart contract and tokens
 
-Use TzGo to work with smart contracts and tokens. This examples shows you how to
+Use TzGo to work with smart contracts and tokens. This example shows you how to
 
 - get contract entrypoints
 - execute on-chain views to read data
@@ -37,7 +37,7 @@ Query Commands
   getTotalSupply <contract>                   FA1: fetch total token supply
   getAllowance   <contract> <owner> <spender> FA1: fetch spender permit
 
-Transaction Commands (require private key
+Transaction Commands (require private key)
   transfer       <contract> <token_id> <amount> <receiver> <privkey> FA1+2: transfer tokens to receiver
   approve        <contract> <spender> <amount> <privkey>     FA1: grant spending right
   revoke         <contract> <spender> <amount> <privkey>     FA1: revoke spending right
