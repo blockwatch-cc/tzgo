@@ -353,6 +353,9 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 		mon = opts.Observer
 	}
 
+	// ensure block observer is running
+	mon.Listen(c)
+
 	// wait for confirmations
 	res.Listen(mon)
 	res.WaitContext(ctx)
