@@ -384,12 +384,13 @@ func (z Z) Scale(n int) Z {
 
 func (z Z) Float64(dec int) float64 {
 	f64, _ := new(big.Float).SetInt(z.Big()).Float64()
-	if dec == 0 {
+	switch {
+	case dec == 0:
 		return f64
-	} else if dec < 0 {
+	case dec < 0:
 		factor := math.Pow10(-dec)
 		return f64 / factor
-	} else {
+	default:
 		factor := math.Pow10(dec)
 		return f64 * factor
 	}
