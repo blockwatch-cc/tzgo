@@ -34,6 +34,7 @@ const (
 	SignatureTypeEd25519 SignatureType = iota
 	SignatureTypeSecp256k1
 	SignatureTypeP256
+	// SignatureTypeBls12_381
 	SignatureTypeGeneric
 	SignatureTypeInvalid
 )
@@ -50,6 +51,8 @@ func (t SignatureType) HashType() HashType {
 		return HashTypeSigSecp256k1
 	case SignatureTypeP256:
 		return HashTypeSigP256
+	// case SignatureTypeBls12_381:
+	// 	return HashTypeSigBls12_381
 	case SignatureTypeGeneric:
 		return HashTypeSigGeneric
 	default:
@@ -65,6 +68,8 @@ func (t SignatureType) PrefixBytes() []byte {
 		return SECP256K1_SIGNATURE_ID
 	case SignatureTypeP256:
 		return P256_SIGNATURE_ID
+	// case SignatureTypeBls12_381:
+	// 	return BLS12_381_SIGNATURE_ID
 	case SignatureTypeGeneric:
 		return GENERIC_SIGNATURE_ID
 	default:
@@ -80,6 +85,8 @@ func (t SignatureType) Prefix() string {
 		return SECP256K1_SIGNATURE_PREFIX
 	case SignatureTypeP256:
 		return P256_SIGNATURE_PREFIX
+	// case SignatureTypeBls12_381:
+	// 	return BLS12_381_SIGNATURE_PREFIX
 	case SignatureTypeGeneric:
 		return GENERIC_SIGNATURE_PREFIX
 	default:
@@ -101,6 +108,8 @@ func (t SignatureType) Tag() byte {
 		return 2
 	case SignatureTypeGeneric:
 		return 3
+	// case SignatureTypeBls12_381:
+	// 	return 3 // ?? operation_repr.ml:1949
 	default:
 		return 255
 	}
@@ -116,6 +125,8 @@ func ParseSignatureTag(b byte) SignatureType {
 		return SignatureTypeP256
 	case 3:
 		return SignatureTypeGeneric
+	// case 3: // ??
+	// 	return SignatureTypeBls12_381
 	default:
 		return SignatureTypeInvalid
 	}
@@ -126,6 +137,7 @@ func HasSignaturePrefix(s string) bool {
 		ED25519_SIGNATURE_PREFIX,
 		SECP256K1_SIGNATURE_PREFIX,
 		P256_SIGNATURE_PREFIX,
+		// BLS12_381_SIGNATURE_PREFIX,
 		GENERIC_SIGNATURE_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
@@ -147,6 +159,7 @@ func IsSignature(s string) bool {
 		ED25519_SIGNATURE_PREFIX,
 		SECP256K1_SIGNATURE_PREFIX,
 		P256_SIGNATURE_PREFIX,
+		// BLS12_381_SIGNATURE_PREFIX,
 		GENERIC_SIGNATURE_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
@@ -293,6 +306,10 @@ func ParseSignature(s string) (Signature, error) {
 	case strings.HasPrefix(s, P256_SIGNATURE_PREFIX):
 		dec, ver, err = base58.CheckDecode(s, 4, nil)
 		typ = SignatureTypeP256
+
+	// case strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX):
+	// 	dec, ver, err = base58.CheckDecode(s, 4, nil)
+	// 	typ = SignatureTypeBls12_381
 
 	case strings.HasPrefix(s, GENERIC_SIGNATURE_PREFIX):
 		dec, ver, err = base58.CheckDecode(s, 3, nil)

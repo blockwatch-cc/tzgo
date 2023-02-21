@@ -45,11 +45,11 @@ func (r *Rollup) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch r.Kind() {
-	case tezos.OpTypeToruSubmitBatch:
+	case tezos.OpTypeTxRollupSubmitBatch:
 		return json.Unmarshal(data, &r.Batch)
-	case tezos.OpTypeToruRejection:
+	case tezos.OpTypeTxRollupRejection:
 		return json.Unmarshal(data, &r.Reject)
-	case tezos.OpTypeToruDispatchTickets:
+	case tezos.OpTypeTxRollupDispatchTickets:
 		return json.Unmarshal(data, &r.Dispatch)
 	}
 	return nil

@@ -46,8 +46,8 @@ const (
 	AddressTypeBlinded
 	AddressTypeSapling
 	AddressTypeBls12_381
-	AddressTypeToru
-	AddressTypeScru
+	AddressTypeTxRollup
+	AddressTypeSmartRollup
 )
 
 func ParseAddressType(s string) AddressType {
@@ -66,10 +66,10 @@ func ParseAddressType(s string) AddressType {
 		return AddressTypeSapling
 	case "bls12_381", BLS12_381_PUBLIC_KEY_HASH_PREFIX:
 		return AddressTypeBls12_381
-	case "txrollup", "toru", TORU_ADDRESS_PREFIX:
-		return AddressTypeToru
-	case "scrollup", "scru", SCRU_ADDRESS_PREFIX:
-		return AddressTypeScru
+	case "tx_rollup", TX_ROLLUP_ADDRESS_PREFIX:
+		return AddressTypeTxRollup
+	case "smart_rollup", SMART_ROLLUP_ADDRESS_PREFIX:
+		return AddressTypeSmartRollup
 	default:
 		return AddressTypeInvalid
 	}
@@ -95,10 +95,10 @@ func (t AddressType) String() string {
 		return "sapling"
 	case AddressTypeBls12_381:
 		return "bls12_381"
-	case AddressTypeToru:
-		return "txrollup"
-	case AddressTypeScru:
-		return "scrollup"
+	case AddressTypeTxRollup:
+		return "tx_rollup"
+	case AddressTypeSmartRollup:
+		return "smart_rollup"
 	default:
 		return "invalid"
 	}
@@ -120,10 +120,10 @@ func (t AddressType) Prefix() string {
 		return SAPLING_ADDRESS_PREFIX
 	case AddressTypeBls12_381:
 		return BLS12_381_PUBLIC_KEY_HASH_PREFIX
-	case AddressTypeToru:
-		return TORU_ADDRESS_PREFIX
-	case AddressTypeScru:
-		return SCRU_ADDRESS_PREFIX
+	case AddressTypeTxRollup:
+		return TX_ROLLUP_ADDRESS_PREFIX
+	case AddressTypeSmartRollup:
+		return SMART_ROLLUP_ADDRESS_PREFIX
 	default:
 		return ""
 	}
@@ -185,8 +185,8 @@ func HasAddressPrefix(s string) bool {
 		BLINDED_PUBLIC_KEY_HASH_PREFIX,
 		SAPLING_ADDRESS_PREFIX,
 		BLS12_381_PUBLIC_KEY_HASH_PREFIX,
-		TORU_ADDRESS_PREFIX,
-		SCRU_ADDRESS_PREFIX,
+		TX_ROLLUP_ADDRESS_PREFIX,
+		SMART_ROLLUP_ADDRESS_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -211,10 +211,10 @@ func (t AddressType) HashType() HashType {
 		return HashTypeSaplingAddress
 	case AddressTypeBls12_381:
 		return HashTypePkhBls12_381
-	case AddressTypeToru:
-		return HashTypeToruAddress
-	case AddressTypeScru:
-		return HashTypeScruAddress
+	case AddressTypeTxRollup:
+		return HashTypeTxRollupAddress
+	case AddressTypeSmartRollup:
+		return HashTypeSmartRollupAddress
 	default:
 		return HashTypeInvalid
 	}
@@ -267,7 +267,7 @@ func (a Address) IsContract() bool {
 }
 
 func (a Address) IsRollup() bool {
-	return a.Type == AddressTypeToru || a.Type == AddressTypeScru
+	return a.Type == AddressTypeTxRollup || a.Type == AddressTypeSmartRollup
 }
 
 func (a Address) Equal(b Address) bool {
@@ -298,11 +298,11 @@ func (a Address) Short() string {
 }
 
 func (a *Address) UnmarshalText(data []byte) error {
-	max := HashTypeScruAddress.Base58Len()
+	max := HashTypeTxRollupAddress.Base58Len()
 	if len(data) > max {
 		data = data[:max]
 	}
-	astr := strings.Split(string(data), "%")[0]
+	astr, _, _ := strings.Cut(string(data), "%")
 	addr, err := ParseAddress(astr)
 	if err != nil {
 		return err
@@ -325,11 +325,11 @@ func (a Address) Bytes() []byte {
 		buf := append([]byte{01}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
-	case AddressTypeToru:
+	case AddressTypeTxRollup:
 		buf := append([]byte{02}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
-	case AddressTypeScru:
+	case AddressTypeSmartRollup:
 		buf := append([]byte{03}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
@@ -349,11 +349,11 @@ func (a Address) Bytes22() []byte {
 		buf := append([]byte{01}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
-	case AddressTypeToru:
+	case AddressTypeTxRollup:
 		buf := append([]byte{02}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
-	case AddressTypeScru:
+	case AddressTypeSmartRollup:
 		buf := append([]byte{03}, a.Hash...)
 		buf = append(buf, byte(0)) // padding
 		return buf
@@ -375,7 +375,7 @@ func (a Address) MarshalBinary() ([]byte, error) {
 // (e.g. an entrypoint suffix as found in smart contract data).
 func (a *Address) UnmarshalBinary(b []byte) error {
 	switch {
-	case len(b) >= 22 && (b[0] == 0 || b[0] == 1 || b[0] == 2):
+	case len(b) >= 22 && b[0] <= 3:
 		switch b[0] {
 		case 0:
 			a.Type = ParseAddressTag(b[1])
@@ -384,10 +384,10 @@ func (a *Address) UnmarshalBinary(b []byte) error {
 			a.Type = AddressTypeContract
 			b = b[1:21]
 		case 2:
-			a.Type = AddressTypeToru
+			a.Type = AddressTypeTxRollup
 			b = b[1:21]
 		case 3:
-			a.Type = AddressTypeScru
+			a.Type = AddressTypeSmartRollup
 			b = b[1:21]
 		default:
 			return fmt.Errorf("tezos: invalid binary address prefix %x", b[0])
@@ -416,7 +416,7 @@ func IsAddressBytes(b []byte) bool {
 		return false
 	}
 	switch {
-	case len(b) == 22 && (b[0] <= 3 || b[0] == 0xfe):
+	case len(b) == 22 && (b[0] <= 3):
 		return true
 	case len(b) == 21:
 		return ParseAddressTag(b[0]) != AddressTypeInvalid
@@ -432,10 +432,17 @@ func (a Address) ContractAddress() string {
 	return s
 }
 
-// ToruAddress returns the string encoding of the address when used
+// TxRollupAddress returns the string encoding of the address when used
 // as rollup contract.
-func (a Address) ToruAddress() string {
-	s, _ := EncodeAddress(AddressTypeToru, a.Hash)
+func (a Address) TxRollupAddress() string {
+	s, _ := EncodeAddress(AddressTypeTxRollup, a.Hash)
+	return s
+}
+
+// SmartRollupAddress returns the string encoding of the address when used
+// as smart rollup contract.
+func (a Address) SmartRollupAddress() string {
+	s, _ := EncodeAddress(AddressTypeSmartRollup, a.Hash)
 	return s
 }
 
@@ -458,13 +465,12 @@ func ParseAddress(addr string) (Address, error) {
 	if len(addr) == 0 {
 		return InvalidAddress, nil
 	}
-	if len(addr) > HashTypeScruAddress.Base58Len() || !HasAddressPrefix(addr) {
+	if len(addr) > HashTypeTxRollupAddress.Base58Len() || !HasAddressPrefix(addr) {
 		return a, fmt.Errorf("tezos: invalid address")
 	}
 	sz := 3
 	if strings.HasPrefix(addr, BLINDED_PUBLIC_KEY_HASH_PREFIX) ||
-		strings.HasPrefix(addr, TORU_ADDRESS_PREFIX) ||
-		strings.HasPrefix(addr, SCRU_ADDRESS_PREFIX) {
+		strings.HasPrefix(addr, TX_ROLLUP_ADDRESS_PREFIX) {
 		sz = 4
 	}
 	decoded, version, err := base58.CheckDecode(addr, sz, nil)
@@ -492,10 +498,10 @@ func ParseAddress(addr string) (Address, error) {
 		return Address{Type: AddressTypeSapling, Hash: decoded}, nil
 	case bytes.Equal(version, BLS12_381_PUBLIC_KEY_HASH_ID):
 		return Address{Type: AddressTypeBls12_381, Hash: decoded}, nil
-	case bytes.Equal(version, TORU_ADDRESS_ID):
-		return Address{Type: AddressTypeToru, Hash: decoded}, nil
-	case bytes.Equal(version, SCRU_ADDRESS_ID):
-		return Address{Type: AddressTypeScru, Hash: decoded}, nil
+	case bytes.Equal(version, TX_ROLLUP_ADDRESS_ID):
+		return Address{Type: AddressTypeTxRollup, Hash: decoded}, nil
+	case bytes.Equal(version, SMART_ROLLUP_ADDRESS_ID):
+		return Address{Type: AddressTypeSmartRollup, Hash: decoded}, nil
 	default:
 		return a, fmt.Errorf("tezos: unknown address type %x", version)
 	}
@@ -520,10 +526,10 @@ func EncodeAddress(typ AddressType, addrhash []byte) (string, error) {
 		return base58.CheckEncode(addrhash, SAPLING_ADDRESS_ID), nil
 	case AddressTypeBls12_381:
 		return base58.CheckEncode(addrhash, BLS12_381_PUBLIC_KEY_HASH_ID), nil
-	case AddressTypeToru:
-		return base58.CheckEncode(addrhash, TORU_ADDRESS_ID), nil
-	case AddressTypeScru:
-		return base58.CheckEncode(addrhash, SCRU_ADDRESS_ID), nil
+	case AddressTypeTxRollup:
+		return base58.CheckEncode(addrhash, TX_ROLLUP_ADDRESS_ID), nil
+	case AddressTypeSmartRollup:
+		return base58.CheckEncode(addrhash, SMART_ROLLUP_ADDRESS_ID), nil
 	default:
 		return "", fmt.Errorf("tezos: unknown address type %s for hash=%x", typ, addrhash)
 	}

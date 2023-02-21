@@ -79,14 +79,16 @@ const (
 	HashTypePkBls12_381
 	HashTypeSkBls12_381
 	HashTypeEncryptedSkBls12_381
-	HashTypeToruAddress
-	HashTypeToruInbox
-	HashTypeToruMessage
-	HashTypeToruCommitment
-	HashTypeToruMessageResult
-	HashTypeToruMessageResultList
-	HashTypeToruWithdrawList
-	HashTypeScruAddress
+	HashTypeTxRollupAddress
+	HashTypeTxRollupInbox
+	HashTypeTxRollupMessage
+	HashTypeTxRollupCommitment
+	HashTypeTxRollupMessageResult
+	HashTypeTxRollupMessageResultList
+	HashTypeTxRollupWithdrawList
+	HashTypeSmartRollupAddress
+	HashTypeSmartRollupStateHash
+	HashTypeSmartRollupRevealHash
 )
 
 func ParseHashType(s string) HashType {
@@ -113,13 +115,13 @@ func ParseHashType(s string) HashType {
 			return HashTypePkhBlinded
 		case strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_HASH_PREFIX):
 			return HashTypePkhBls12_381
+		case strings.HasPrefix(s, SMART_ROLLUP_ADDRESS_PREFIX):
+			return HashTypeSmartRollupAddress
 		}
 	case 37:
 		switch {
-		case strings.HasPrefix(s, TORU_ADDRESS_PREFIX):
-			return HashTypeToruAddress
-		case strings.HasPrefix(s, SCRU_ADDRESS_PREFIX):
-			return HashTypeScruAddress
+		case strings.HasPrefix(s, TX_ROLLUP_ADDRESS_PREFIX):
+			return HashTypeTxRollupAddress
 		}
 	case 43:
 		if strings.HasPrefix(s, SAPLING_ADDRESS_PREFIX) {
@@ -159,16 +161,16 @@ func ParseHashType(s string) HashType {
 			return HashTypeNonce
 		case strings.HasPrefix(s, OPERATION_METADATA_LIST_LIST_HASH_PREFIX):
 			return HashTypeOperationMetadataListList
-		case strings.HasPrefix(s, TORU_INBOX_HASH_PREFIX):
-			return HashTypeToruInbox
-		case strings.HasPrefix(s, TORU_MESSAGE_HASH_PREFIX):
-			return HashTypeToruMessage
-		case strings.HasPrefix(s, TORU_COMMITMENT_HASH_PREFIX):
-			return HashTypeToruCommitment
-		case strings.HasPrefix(s, TORU_MESSAGE_RESULT_LIST_HASH_PREFIX):
-			return HashTypeToruMessageResultList
-		case strings.HasPrefix(s, TORU_WITHDRAW_LIST_HASH_PREFIX):
-			return HashTypeToruWithdrawList
+		case strings.HasPrefix(s, TX_ROLLUP_INBOX_HASH_PREFIX):
+			return HashTypeTxRollupInbox
+		case strings.HasPrefix(s, TX_ROLLUP_MESSAGE_HASH_PREFIX):
+			return HashTypeTxRollupMessage
+		case strings.HasPrefix(s, TX_ROLLUP_COMMITMENT_HASH_PREFIX):
+			return HashTypeTxRollupCommitment
+		case strings.HasPrefix(s, TX_ROLLUP_MESSAGE_RESULT_LIST_HASH_PREFIX):
+			return HashTypeTxRollupMessageResultList
+		case strings.HasPrefix(s, TX_ROLLUP_WITHDRAW_LIST_HASH_PREFIX):
+			return HashTypeTxRollupWithdrawList
 		}
 	case 54:
 		switch {
@@ -186,8 +188,10 @@ func ParseHashType(s string) HashType {
 			return HashTypeScriptExpr
 		case strings.HasPrefix(s, BLS12_381_SECRET_KEY_PREFIX):
 			return HashTypeSkBls12_381
-		case strings.HasPrefix(s, TORU_MESSAGE_RESULT_HASH_PREFIX):
-			return HashTypeToruMessageResult
+		case strings.HasPrefix(s, TX_ROLLUP_MESSAGE_RESULT_HASH_PREFIX):
+			return HashTypeTxRollupMessageResult
+		case strings.HasPrefix(s, SMART_ROLLUP_STATE_HASH_PREFIX):
+			return HashTypeSmartRollupStateHash
 		}
 	case 55:
 		switch {
@@ -195,6 +199,10 @@ func ParseHashType(s string) HashType {
 			return HashTypePkSecp256k1
 		case strings.HasPrefix(s, P256_PUBLIC_KEY_PREFIX):
 			return HashTypePkP256
+		}
+	case 56:
+		if strings.HasPrefix(s, SMART_ROLLUP_REVEAL_HASH_PREFIX) {
+			return HashTypeSmartRollupRevealHash
 		}
 	case 76:
 		if strings.HasPrefix(s, BLS12_381_PUBLIC_KEY_PREFIX) {
@@ -353,22 +361,26 @@ func (t HashType) Prefix() string {
 		return BLS12_381_SECRET_KEY_PREFIX
 	case HashTypeEncryptedSkBls12_381:
 		return BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX
-	case HashTypeToruAddress:
-		return TORU_ADDRESS_PREFIX
-	case HashTypeToruInbox:
-		return TORU_INBOX_HASH_PREFIX
-	case HashTypeToruMessage:
-		return TORU_MESSAGE_HASH_PREFIX
-	case HashTypeToruCommitment:
-		return TORU_COMMITMENT_HASH_PREFIX
-	case HashTypeToruMessageResult:
-		return TORU_MESSAGE_RESULT_HASH_PREFIX
-	case HashTypeToruMessageResultList:
-		return TORU_MESSAGE_RESULT_LIST_HASH_PREFIX
-	case HashTypeToruWithdrawList:
-		return TORU_WITHDRAW_LIST_HASH_PREFIX
-	case HashTypeScruAddress:
-		return SCRU_ADDRESS_PREFIX
+	case HashTypeTxRollupAddress:
+		return TX_ROLLUP_ADDRESS_PREFIX
+	case HashTypeTxRollupInbox:
+		return TX_ROLLUP_INBOX_HASH_PREFIX
+	case HashTypeTxRollupMessage:
+		return TX_ROLLUP_MESSAGE_HASH_PREFIX
+	case HashTypeTxRollupCommitment:
+		return TX_ROLLUP_COMMITMENT_HASH_PREFIX
+	case HashTypeTxRollupMessageResult:
+		return TX_ROLLUP_MESSAGE_RESULT_HASH_PREFIX
+	case HashTypeTxRollupMessageResultList:
+		return TX_ROLLUP_MESSAGE_RESULT_LIST_HASH_PREFIX
+	case HashTypeTxRollupWithdrawList:
+		return TX_ROLLUP_WITHDRAW_LIST_HASH_PREFIX
+	case HashTypeSmartRollupAddress:
+		return SMART_ROLLUP_ADDRESS_PREFIX
+	case HashTypeSmartRollupStateHash:
+		return SMART_ROLLUP_STATE_HASH_PREFIX
+	case HashTypeSmartRollupRevealHash:
+		return SMART_ROLLUP_REVEAL_HASH_PREFIX
 	default:
 		return ""
 	}
@@ -466,22 +478,26 @@ func (t HashType) PrefixBytes() []byte {
 		return BLS12_381_SECRET_KEY_ID
 	case HashTypeEncryptedSkBls12_381:
 		return BLS12_381_ENCRYPTED_SECRET_KEY_ID
-	case HashTypeToruAddress:
-		return TORU_ADDRESS_ID
-	case HashTypeToruInbox:
-		return TORU_INBOX_HASH_ID
-	case HashTypeToruMessage:
-		return TORU_MESSAGE_HASH_ID
-	case HashTypeToruCommitment:
-		return TORU_COMMITMENT_HASH_ID
-	case HashTypeToruMessageResult:
-		return TORU_MESSAGE_RESULT_HASH_ID
-	case HashTypeToruMessageResultList:
-		return TORU_MESSAGE_RESULT_LIST_HASH_ID
-	case HashTypeToruWithdrawList:
-		return TORU_WITHDRAW_LIST_HASH_ID
-	case HashTypeScruAddress:
-		return SCRU_ADDRESS_ID
+	case HashTypeTxRollupAddress:
+		return TX_ROLLUP_ADDRESS_ID
+	case HashTypeTxRollupInbox:
+		return TX_ROLLUP_INBOX_HASH_ID
+	case HashTypeTxRollupMessage:
+		return TX_ROLLUP_MESSAGE_HASH_ID
+	case HashTypeTxRollupCommitment:
+		return TX_ROLLUP_COMMITMENT_HASH_ID
+	case HashTypeTxRollupMessageResult:
+		return TX_ROLLUP_MESSAGE_RESULT_HASH_ID
+	case HashTypeTxRollupMessageResultList:
+		return TX_ROLLUP_MESSAGE_RESULT_LIST_HASH_ID
+	case HashTypeTxRollupWithdrawList:
+		return TX_ROLLUP_WITHDRAW_LIST_HASH_ID
+	case HashTypeSmartRollupAddress:
+		return SMART_ROLLUP_ADDRESS_ID
+	case HashTypeSmartRollupStateHash:
+		return SMART_ROLLUP_STATE_HASH_ID
+	case HashTypeSmartRollupRevealHash:
+		return SMART_ROLLUP_REVEAL_HASH_ID
 	default:
 		return nil
 	}
@@ -499,8 +515,8 @@ func (t HashType) Len() int {
 		HashTypePkhNocurve,
 		HashTypePkhBlinded,
 		HashTypePkhBls12_381,
-		HashTypeToruAddress,
-		HashTypeScruAddress:
+		HashTypeTxRollupAddress,
+		HashTypeSmartRollupAddress:
 		return 20
 	case HashTypeBlock,
 		HashTypeOperation,
@@ -519,13 +535,15 @@ func (t HashType) Len() int {
 		HashTypeOperationMetadata,
 		HashTypeOperationMetadataList,
 		HashTypeOperationMetadataListList,
-		HashTypeToruInbox,
-		HashTypeToruMessage,
-		HashTypeToruCommitment,
-		HashTypeToruMessageResultList,
-		HashTypeToruWithdrawList,
-		HashTypeToruMessageResult,
-		HashTypeSkBls12_381:
+		HashTypeTxRollupInbox,
+		HashTypeTxRollupMessage,
+		HashTypeTxRollupCommitment,
+		HashTypeTxRollupMessageResultList,
+		HashTypeTxRollupWithdrawList,
+		HashTypeTxRollupMessageResult,
+		HashTypeSkBls12_381,
+		HashTypeSmartRollupStateHash,
+		HashTypeSmartRollupRevealHash:
 		return 32
 	case HashTypePkSecp256k1,
 		HashTypePkP256,
@@ -569,11 +587,11 @@ func (t HashType) Base58Len() int {
 		HashTypePkhSecp256k1,
 		HashTypePkhP256,
 		HashTypePkhNocurve,
-		HashTypePkhBls12_381:
+		HashTypePkhBls12_381,
+		HashTypeSmartRollupAddress:
 		return 36
 	case HashTypePkhBlinded,
-		HashTypeToruAddress,
-		HashTypeScruAddress:
+		HashTypeTxRollupAddress:
 		return 37
 	case HashTypeBlock,
 		HashTypeOperation,
@@ -590,11 +608,11 @@ func (t HashType) Base58Len() int {
 		HashTypeNonce,
 		HashTypeScalarSecp256k1,
 		HashTypeOperationMetadataListList,
-		HashTypeToruInbox,
-		HashTypeToruMessage,
-		HashTypeToruCommitment,
-		HashTypeToruMessageResultList,
-		HashTypeToruWithdrawList:
+		HashTypeTxRollupInbox,
+		HashTypeTxRollupMessage,
+		HashTypeTxRollupCommitment,
+		HashTypeTxRollupMessageResultList,
+		HashTypeTxRollupWithdrawList:
 		return 53
 	case HashTypeSeedEd25519,
 		HashTypePkEd25519,
@@ -602,12 +620,15 @@ func (t HashType) Base58Len() int {
 		HashTypeSkP256,
 		HashTypeElementSecp256k1,
 		HashTypeScriptExpr,
-		HashTypeToruMessageResult,
-		HashTypeSkBls12_381:
+		HashTypeTxRollupMessageResult,
+		HashTypeSkBls12_381,
+		HashTypeSmartRollupStateHash:
 		return 54
 	case HashTypePkSecp256k1,
 		HashTypePkP256:
 		return 55
+	case HashTypeSmartRollupRevealHash:
+		return 56
 	case HashTypeSaplingAddress:
 		return 69
 	case HashTypePkBls12_381:

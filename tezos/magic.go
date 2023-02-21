@@ -68,20 +68,22 @@ const (
 	SAPLING_ADDRESS_PREFIX      = "zet1" // "\018\071\040\223" (* zet1(69) *) // 43 bytes
 
 	// base58 prefixes for rollup hash magics
-	BLS12_381_PUBLIC_KEY_HASH_PREFIX      = "tz4"
-	GENERIC_AGGREGATE_SIGNATURE_PREFIX    = "asig"
-	BLS12_381_SIGNATURE_PREFIX            = "BLsig"
-	BLS12_381_PUBLIC_KEY_PREFIX           = "BLpk"
-	BLS12_381_SECRET_KEY_PREFIX           = "BLsk"
-	BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX = "BLesk"
-	TORU_ADDRESS_PREFIX                   = "txr1"
-	TORU_INBOX_HASH_PREFIX                = "txi"
-	TORU_MESSAGE_HASH_PREFIX              = "txm"
-	TORU_COMMITMENT_HASH_PREFIX           = "txc"
-	TORU_MESSAGE_RESULT_HASH_PREFIX       = "txmr"
-	TORU_MESSAGE_RESULT_LIST_HASH_PREFIX  = "txM"
-	TORU_WITHDRAW_LIST_HASH_PREFIX        = "txw"
-	SCRU_ADDRESS_PREFIX                   = "scr1"
+	BLS12_381_PUBLIC_KEY_HASH_PREFIX          = "tz4"
+	GENERIC_AGGREGATE_SIGNATURE_PREFIX        = "asig"
+	BLS12_381_SIGNATURE_PREFIX                = "BLsig"
+	BLS12_381_PUBLIC_KEY_PREFIX               = "BLpk"
+	BLS12_381_SECRET_KEY_PREFIX               = "BLsk"
+	BLS12_381_ENCRYPTED_SECRET_KEY_PREFIX     = "BLesk"
+	TX_ROLLUP_ADDRESS_PREFIX                  = "txr1"
+	TX_ROLLUP_INBOX_HASH_PREFIX               = "txi"
+	TX_ROLLUP_MESSAGE_HASH_PREFIX             = "txm"
+	TX_ROLLUP_COMMITMENT_HASH_PREFIX          = "txc"
+	TX_ROLLUP_MESSAGE_RESULT_HASH_PREFIX      = "txmr"
+	TX_ROLLUP_MESSAGE_RESULT_LIST_HASH_PREFIX = "txM"
+	TX_ROLLUP_WITHDRAW_LIST_HASH_PREFIX       = "txw"
+	SMART_ROLLUP_ADDRESS_PREFIX               = "sr1"
+	SMART_ROLLUP_STATE_HASH_PREFIX            = "srs1"
+	SMART_ROLLUP_REVEAL_HASH_PREFIX           = "scrrh1"
 )
 
 var (
@@ -147,18 +149,20 @@ var (
 	SAPLING_ADDRESS_ID      = []byte{0x12, 0x47, 0x28, 0xDF} // "\018\071\040\223" (* zet1(69) *)
 
 	// Rollup hash magics
-	BLS12_381_PUBLIC_KEY_HASH_ID      = []byte{6, 161, 166}       // "\006\161\166" tz4(36) 20
-	GENERIC_AGGREGATE_SIGNATURE_ID    = []byte{2, 075, 234, 101}  // "\002\075\234\101" asig(96) 141
-	BLS12_381_SIGNATURE_ID            = []byte{40, 171, 064, 207} // "\040\171\064\207" (* BLsig(96) *) 142
-	BLS12_381_PUBLIC_KEY_ID           = []byte{6, 149, 135, 204}  // "\006\149\135\204" (* BLpk(48) *) 76
-	BLS12_381_SECRET_KEY_ID           = []byte{3, 150, 192, 40}   // "\003\150\192\040" (* BLsk(32) *) 54
-	BLS12_381_ENCRYPTED_SECRET_KEY_ID = []byte{2, 5, 30, 53, 25}  // "\002\005\030\053\025" (* BLesk(58) *) 88
-	TORU_ADDRESS_ID                   = []byte{1, 128, 120, 31}   // "\001\128\120\031" txr1(37) 20
-	TORU_INBOX_HASH_ID                = []byte{79, 148, 196}      // "\079\148\196" txi(53) 32
-	TORU_MESSAGE_HASH_ID              = []byte{79, 149, 30}       // "\079\149\030" txm(53) 32
-	TORU_COMMITMENT_HASH_ID           = []byte{79, 148, 17}       // "\079\148\017" txc(53) 32
-	TORU_MESSAGE_RESULT_HASH_ID       = []byte{18, 7, 206, 87}    // "\018\007\206\087" txmr(54) 32
-	TORU_MESSAGE_RESULT_LIST_HASH_ID  = []byte{79, 146, 82}       // "\079\146\082" txM(53) 32
-	TORU_WITHDRAW_LIST_HASH_ID        = []byte{79, 150, 72}       // "\079\150\072" txw(53) 32
-	SCRU_ADDRESS_ID                   = []byte{1, 118, 131, 217}  // "\001\118\132\217" scr1(37) 20
+	BLS12_381_PUBLIC_KEY_HASH_ID          = []byte{6, 161, 166}             // "\006\161\166" tz4(36) 20
+	GENERIC_AGGREGATE_SIGNATURE_ID        = []byte{2, 075, 234, 101}        // "\002\075\234\101" asig(96) 141
+	BLS12_381_SIGNATURE_ID                = []byte{40, 171, 064, 207}       // "\040\171\064\207" (* BLsig(96) *) 142
+	BLS12_381_PUBLIC_KEY_ID               = []byte{6, 149, 135, 204}        // "\006\149\135\204" (* BLpk(48) *) 76
+	BLS12_381_SECRET_KEY_ID               = []byte{3, 150, 192, 40}         // "\003\150\192\040" (* BLsk(32) *) 54
+	BLS12_381_ENCRYPTED_SECRET_KEY_ID     = []byte{2, 5, 30, 53, 25}        // "\002\005\030\053\025" (* BLesk(58) *) 88
+	TX_ROLLUP_ADDRESS_ID                  = []byte{1, 128, 120, 31}         // "\001\128\120\031" txr1(37) 20
+	TX_ROLLUP_INBOX_HASH_ID               = []byte{79, 148, 196}            // "\079\148\196" txi(53) 32
+	TX_ROLLUP_MESSAGE_HASH_ID             = []byte{79, 149, 30}             // "\079\149\030" txm(53) 32
+	TX_ROLLUP_COMMITMENT_HASH_ID          = []byte{79, 148, 17}             // "\079\148\017" txc(53) 32
+	TX_ROLLUP_MESSAGE_RESULT_HASH_ID      = []byte{18, 7, 206, 87}          // "\018\007\206\087" txmr(54) 32
+	TX_ROLLUP_MESSAGE_RESULT_LIST_HASH_ID = []byte{79, 146, 82}             // "\079\146\082" txM(53) 32
+	TX_ROLLUP_WITHDRAW_LIST_HASH_ID       = []byte{79, 150, 72}             // "\079\150\072" txw(53) 32
+	SMART_ROLLUP_ADDRESS_ID               = []byte{6, 124, 117}             // "\001\118\132\217" sr1(36) 20
+	SMART_ROLLUP_STATE_HASH_ID            = []byte{17, 165, 235, 240}       // "\017\165\235\240" srs1(54)
+	SMART_ROLLUP_REVEAL_HASH_ID           = []byte{230, 206, 128, 200, 196} // "\230\206\128\200\196" scrrh1(56)
 )

@@ -72,96 +72,94 @@ type OpType byte
 
 // enums are allocated in chronological order
 const (
-	OpTypeInvalid                      OpType = iota
-	OpTypeActivateAccount                     // 1
-	OpTypeDoubleBakingEvidence                // 2
-	OpTypeDoubleEndorsementEvidence           // 3
-	OpTypeSeedNonceRevelation                 // 4
-	OpTypeTransaction                         // 5
-	OpTypeOrigination                         // 6
-	OpTypeDelegation                          // 7
-	OpTypeReveal                              // 8
-	OpTypeEndorsement                         // 9
-	OpTypeProposals                           // 10
-	OpTypeBallot                              // 11
-	OpTypeFailingNoop                         // 12 v009
-	OpTypeEndorsementWithSlot                 // 13 v009
-	OpTypeRegisterConstant                    // 14 v011
-	OpTypePreendorsement                      // 15 v012
-	OpTypeDoublePreendorsementEvidence        // 16 v012
-	OpTypeSetDepositsLimit                    // 17 v012
-	OpTypeToruOrigination                     // 18 v013
-	OpTypeToruSubmitBatch                     // 19 v013
-	OpTypeToruCommit                          // 20 v013
-	OpTypeToruReturnBond                      // 21 v013
-	OpTypeToruFinalizeCommitment              // 22 v013
-	OpTypeToruRemoveCommitment                // 23 v013
-	OpTypeToruRejection                       // 24 v013
-	OpTypeToruDispatchTickets                 // 25 v013
-	OpTypeTransferTicket                      // 26 v013
-	OpTypeScRollupOriginate                   // 27 v013
-	OpTypeScRollupAddMessages                 // 28 v013
-	OpTypeScRollupCement                      // 29 v013
-	OpTypeScRollupPublish                     // 30 v013
-	OpTypeVdfRevelation                       // 31 v014
-	OpTypeIncreasePaidStorage                 // 32 v014
-	OpTypeScRollupRefute                      // 33 v014
-	OpTypeScRollupTimeout                     // 34 v014
-	OpTypeScRollupExecuteOutboxMessage        // 35 v014
-	OpTypeScRollupRecoverBond                 // 36 v014
-	OpTypeScRollupDalSlotSubscribe            // 37 v014
-	OpTypeDalSlotAvailability                 // 38 v014
-	OpTypeDalPublishSlotHeader                // 39 v014
-	OpTypeEvent                               // 40 v014 (only in internal_operation_results)
-	OpTypeDrainDelegate                       // 41 v015
-	OpTypeUpdateConsensusKey                  // 42 v015
+	OpTypeInvalid                         OpType = iota
+	OpTypeActivateAccount                        // 1
+	OpTypeDoubleBakingEvidence                   // 2
+	OpTypeDoubleEndorsementEvidence              // 3
+	OpTypeSeedNonceRevelation                    // 4
+	OpTypeTransaction                            // 5
+	OpTypeOrigination                            // 6
+	OpTypeDelegation                             // 7
+	OpTypeReveal                                 // 8
+	OpTypeEndorsement                            // 9
+	OpTypeProposals                              // 10
+	OpTypeBallot                                 // 11
+	OpTypeFailingNoop                            // 12 v009
+	OpTypeEndorsementWithSlot                    // 13 v009
+	OpTypeRegisterConstant                       // 14 v011
+	OpTypePreendorsement                         // 15 v012
+	OpTypeDoublePreendorsementEvidence           // 16 v012
+	OpTypeSetDepositsLimit                       // 17 v012
+	OpTypeTxRollupOrigination                    // 18 v013
+	OpTypeTxRollupSubmitBatch                    // 19 v013
+	OpTypeTxRollupCommit                         // 20 v013
+	OpTypeTxRollupReturnBond                     // 21 v013
+	OpTypeTxRollupFinalizeCommitment             // 22 v013
+	OpTypeTxRollupRemoveCommitment               // 23 v013
+	OpTypeTxRollupRejection                      // 24 v013
+	OpTypeTxRollupDispatchTickets                // 25 v013
+	OpTypeTransferTicket                         // 26 v013
+	OpTypeVdfRevelation                          // 27 v014
+	OpTypeIncreasePaidStorage                    // 28 v014
+	OpTypeEvent                                  // 29 v014 (only in internal_operation_results)
+	OpTypeDrainDelegate                          // 30 v015
+	OpTypeUpdateConsensusKey                     // 31 v015
+	OpTypeSmartRollupOriginate                   // 32 v016
+	OpTypeSmartRollupAddMessages                 // 33 v016
+	OpTypeSmartRollupCement                      // 34 v016
+	OpTypeSmartRollupPublish                     // 35 v016
+	OpTypeSmartRollupRefute                      // 36 v016
+	OpTypeSmartRollupTimeout                     // 37 v016
+	OpTypeSmartRollupExecuteOutboxMessage        // 38 v016
+	OpTypeSmartRollupRecoverBond                 // 39 v016
+	OpTypeDalAttestation                         // 40 v016+?
+	OpTypeDalPublishSlotHeader                   // 41 v016+?
 )
 
 var (
 	opTypeStrings = map[OpType]string{
-		OpTypeInvalid:                      "",
-		OpTypeActivateAccount:              "activate_account",
-		OpTypeDoubleBakingEvidence:         "double_baking_evidence",
-		OpTypeDoubleEndorsementEvidence:    "double_endorsement_evidence",
-		OpTypeSeedNonceRevelation:          "seed_nonce_revelation",
-		OpTypeTransaction:                  "transaction",
-		OpTypeOrigination:                  "origination",
-		OpTypeDelegation:                   "delegation",
-		OpTypeReveal:                       "reveal",
-		OpTypeEndorsement:                  "endorsement",
-		OpTypeProposals:                    "proposals",
-		OpTypeBallot:                       "ballot",
-		OpTypeFailingNoop:                  "failing_noop",
-		OpTypeEndorsementWithSlot:          "endorsement_with_slot",
-		OpTypeRegisterConstant:             "register_global_constant",
-		OpTypePreendorsement:               "preendorsement",
-		OpTypeDoublePreendorsementEvidence: "double_preendorsement_evidence",
-		OpTypeSetDepositsLimit:             "set_deposits_limit",
-		OpTypeToruOrigination:              "tx_rollup_origination",
-		OpTypeToruSubmitBatch:              "tx_rollup_submit_batch",
-		OpTypeToruCommit:                   "tx_rollup_commit",
-		OpTypeToruReturnBond:               "tx_rollup_return_bond",
-		OpTypeToruFinalizeCommitment:       "tx_rollup_finalize_commitment",
-		OpTypeToruRemoveCommitment:         "tx_rollup_remove_commitment",
-		OpTypeToruRejection:                "tx_rollup_rejection",
-		OpTypeToruDispatchTickets:          "tx_rollup_dispatch_tickets",
-		OpTypeTransferTicket:               "transfer_ticket",
-		OpTypeScRollupOriginate:            "sc_rollup_originate",
-		OpTypeScRollupAddMessages:          "sc_rollup_add_messages",
-		OpTypeScRollupCement:               "sc_rollup_cement",
-		OpTypeScRollupPublish:              "sc_rollup_publish",
-		OpTypeVdfRevelation:                "vdf_revelation",
-		OpTypeIncreasePaidStorage:          "increase_paid_storage",
-		OpTypeScRollupRefute:               "sc_rollup_refute",
-		OpTypeScRollupTimeout:              "sc_rollup_timeout",
-		OpTypeScRollupExecuteOutboxMessage: "sc_rollup_execute_outbox_message",
-		OpTypeScRollupRecoverBond:          "sc_rollup_recover_bond",
-		OpTypeScRollupDalSlotSubscribe:     "sc_rollup_dal_slot_subscribe",
-		OpTypeDalSlotAvailability:          "dal_slot_availability",
-		OpTypeDalPublishSlotHeader:         "dal_publish_slot_header",
-		OpTypeEvent:                        "event",
-		OpTypeDrainDelegate:                "drain_delegate",
-		OpTypeUpdateConsensusKey:           "update_consensus_key",
+		OpTypeInvalid:                         "",
+		OpTypeActivateAccount:                 "activate_account",
+		OpTypeDoubleBakingEvidence:            "double_baking_evidence",
+		OpTypeDoubleEndorsementEvidence:       "double_endorsement_evidence",
+		OpTypeSeedNonceRevelation:             "seed_nonce_revelation",
+		OpTypeTransaction:                     "transaction",
+		OpTypeOrigination:                     "origination",
+		OpTypeDelegation:                      "delegation",
+		OpTypeReveal:                          "reveal",
+		OpTypeEndorsement:                     "endorsement",
+		OpTypeProposals:                       "proposals",
+		OpTypeBallot:                          "ballot",
+		OpTypeFailingNoop:                     "failing_noop",
+		OpTypeEndorsementWithSlot:             "endorsement_with_slot",
+		OpTypeRegisterConstant:                "register_global_constant",
+		OpTypePreendorsement:                  "preendorsement",
+		OpTypeDoublePreendorsementEvidence:    "double_preendorsement_evidence",
+		OpTypeSetDepositsLimit:                "set_deposits_limit",
+		OpTypeTxRollupOrigination:             "tx_rollup_origination",
+		OpTypeTxRollupSubmitBatch:             "tx_rollup_submit_batch",
+		OpTypeTxRollupCommit:                  "tx_rollup_commit",
+		OpTypeTxRollupReturnBond:              "tx_rollup_return_bond",
+		OpTypeTxRollupFinalizeCommitment:      "tx_rollup_finalize_commitment",
+		OpTypeTxRollupRemoveCommitment:        "tx_rollup_remove_commitment",
+		OpTypeTxRollupRejection:               "tx_rollup_rejection",
+		OpTypeTxRollupDispatchTickets:         "tx_rollup_dispatch_tickets",
+		OpTypeTransferTicket:                  "transfer_ticket",
+		OpTypeVdfRevelation:                   "vdf_revelation",
+		OpTypeIncreasePaidStorage:             "increase_paid_storage",
+		OpTypeEvent:                           "event",
+		OpTypeDrainDelegate:                   "drain_delegate",
+		OpTypeUpdateConsensusKey:              "update_consensus_key",
+		OpTypeSmartRollupOriginate:            "smart_rollup_originate",
+		OpTypeSmartRollupAddMessages:          "smart_rollup_add_messages",
+		OpTypeSmartRollupCement:               "smart_rollup_cement",
+		OpTypeSmartRollupPublish:              "smart_rollup_publish",
+		OpTypeSmartRollupRefute:               "smart_rollup_refute",
+		OpTypeSmartRollupTimeout:              "smart_rollup_timeout",
+		OpTypeSmartRollupExecuteOutboxMessage: "smart_rollup_execute_outbox_message",
+		OpTypeSmartRollupRecoverBond:          "smart_rollup_recover_bond",
+		OpTypeDalAttestation:                  "dal_attestation",
+		OpTypeDalPublishSlotHeader:            "dal_publish_slot_header",
 	}
 	opTypeReverseStrings = make(map[string]OpType)
 )
@@ -235,45 +233,44 @@ var (
 	}
 	// Ithaca v012 and up
 	opTagV2 = map[OpType]byte{
-		OpTypeSeedNonceRevelation:          1,
-		OpTypeDoubleEndorsementEvidence:    2,
-		OpTypeDoubleBakingEvidence:         3,
-		OpTypeActivateAccount:              4,
-		OpTypeProposals:                    5,
-		OpTypeBallot:                       6,
-		OpTypeReveal:                       107, // v005
-		OpTypeTransaction:                  108, // v005
-		OpTypeOrigination:                  109, // v005
-		OpTypeDelegation:                   110, // v005
-		OpTypeFailingNoop:                  17,  // v009
-		OpTypeRegisterConstant:             111, // v011
-		OpTypePreendorsement:               20,  // v012
-		OpTypeEndorsement:                  21,  // v012
-		OpTypeDoublePreendorsementEvidence: 7,   // v012
-		OpTypeSetDepositsLimit:             112, // v012
-		OpTypeToruOrigination:              150, // v013
-		OpTypeToruSubmitBatch:              151, // v013
-		OpTypeToruCommit:                   152, // v013
-		OpTypeToruReturnBond:               153, // v013
-		OpTypeToruFinalizeCommitment:       154, // v013
-		OpTypeToruRemoveCommitment:         155, // v013
-		OpTypeToruRejection:                156, // v013
-		OpTypeToruDispatchTickets:          157, // v013
-		OpTypeTransferTicket:               158, // v013
-		OpTypeScRollupOriginate:            200, // v013
-		OpTypeScRollupAddMessages:          201, // v013
-		OpTypeScRollupCement:               202, // v013
-		OpTypeScRollupPublish:              203, // v013
-		OpTypeVdfRevelation:                8,   // v014
-		OpTypeDalSlotAvailability:          22,  // v014
-		OpTypeScRollupRefute:               204, // v014
-		OpTypeScRollupTimeout:              205, // v014
-		OpTypeScRollupExecuteOutboxMessage: 206, // v014
-		OpTypeScRollupRecoverBond:          207, // v014
-		OpTypeScRollupDalSlotSubscribe:     208, // v014
-		OpTypeDalPublishSlotHeader:         230, // v014
-		OpTypeDrainDelegate:                9,   // v015
-		OpTypeUpdateConsensusKey:           114, // v015
+		OpTypeSeedNonceRevelation:             1,
+		OpTypeDoubleEndorsementEvidence:       2,
+		OpTypeDoubleBakingEvidence:            3,
+		OpTypeActivateAccount:                 4,
+		OpTypeProposals:                       5,
+		OpTypeBallot:                          6,
+		OpTypeReveal:                          107, // v005
+		OpTypeTransaction:                     108, // v005
+		OpTypeOrigination:                     109, // v005
+		OpTypeDelegation:                      110, // v005
+		OpTypeFailingNoop:                     17,  // v009
+		OpTypeRegisterConstant:                111, // v011
+		OpTypePreendorsement:                  20,  // v012
+		OpTypeEndorsement:                     21,  // v012
+		OpTypeDoublePreendorsementEvidence:    7,   // v012
+		OpTypeSetDepositsLimit:                112, // v012
+		OpTypeTxRollupOrigination:             150, // v013
+		OpTypeTxRollupSubmitBatch:             151, // v013
+		OpTypeTxRollupCommit:                  152, // v013
+		OpTypeTxRollupReturnBond:              153, // v013
+		OpTypeTxRollupFinalizeCommitment:      154, // v013
+		OpTypeTxRollupRemoveCommitment:        155, // v013
+		OpTypeTxRollupRejection:               156, // v013
+		OpTypeTxRollupDispatchTickets:         157, // v013
+		OpTypeTransferTicket:                  158, // v013
+		OpTypeVdfRevelation:                   8,   // v014
+		OpTypeDrainDelegate:                   9,   // v015
+		OpTypeUpdateConsensusKey:              114, // v015
+		OpTypeSmartRollupOriginate:            200, // v016
+		OpTypeSmartRollupAddMessages:          201, // v016
+		OpTypeSmartRollupCement:               202, // v016
+		OpTypeSmartRollupPublish:              203, // v016
+		OpTypeSmartRollupRefute:               204, // v016
+		OpTypeSmartRollupTimeout:              205, // v016
+		OpTypeSmartRollupExecuteOutboxMessage: 206, // v016
+		OpTypeSmartRollupRecoverBond:          207, // v016
+		OpTypeDalPublishSlotHeader:            230, // v016+
+		OpTypeDalAttestation:                  22,  // v016+
 	}
 )
 
@@ -356,6 +353,17 @@ var (
 		112: 27,               // OpTypeSetDepositsLimit // v012
 		9:   1 + 3*21,         // OpTypeDrainDelegate // v015
 		114: 26 + 32,          // OpTypeUpdateConsensusKey // v015
+		158: 0,                // TODO OpTypeTransferTicket // v013
+		200: 0,                // TODO OpTypeSmartRollupOriginate // v016
+		201: 0,                // TODO OpTypeSmartRollupAddMessages // v016
+		202: 0,                // TODO OpTypeSmartRollupCement // v016
+		203: 0,                // TODO OpTypeSmartRollupPublish // v016
+		204: 0,                // TODO OpTypeSmartRollupRefute // v016
+		205: 0,                // TODO OpTypeSmartRollupTimeout // v016
+		206: 0,                // TODO OpTypeSmartRollupExecuteOutboxMessage // v016
+		207: 0,                // TODO OpTypeSmartRollupRecoverBond // v016
+		230: 0,                // TODO OpTypeDalPublishSlotHeader // v016+
+		22:  0,                // TODO OpTypeDalAttestation  // v016+
 	}
 )
 
@@ -386,7 +394,8 @@ func (t OpType) ListId() int {
 		OpTypeSeedNonceRevelation,
 		OpTypeDoublePreendorsementEvidence,
 		OpTypeVdfRevelation,
-		OpTypeDrainDelegate:
+		OpTypeDrainDelegate,
+		OpTypeDalAttestation:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
@@ -394,27 +403,25 @@ func (t OpType) ListId() int {
 		OpTypeReveal,
 		OpTypeRegisterConstant,
 		OpTypeSetDepositsLimit,
-		OpTypeToruOrigination,
-		OpTypeToruSubmitBatch,
-		OpTypeToruCommit,
-		OpTypeToruReturnBond,
-		OpTypeToruFinalizeCommitment,
-		OpTypeToruRemoveCommitment,
-		OpTypeToruRejection,
-		OpTypeToruDispatchTickets,
+		OpTypeTxRollupOrigination,
+		OpTypeTxRollupSubmitBatch,
+		OpTypeTxRollupCommit,
+		OpTypeTxRollupReturnBond,
+		OpTypeTxRollupFinalizeCommitment,
+		OpTypeTxRollupRemoveCommitment,
+		OpTypeTxRollupRejection,
+		OpTypeTxRollupDispatchTickets,
 		OpTypeTransferTicket,
-		OpTypeScRollupOriginate,
-		OpTypeScRollupAddMessages,
-		OpTypeScRollupCement,
-		OpTypeScRollupPublish,
-		OpTypeDalSlotAvailability,
-		OpTypeScRollupRefute,
-		OpTypeScRollupTimeout,
-		OpTypeScRollupExecuteOutboxMessage,
-		OpTypeScRollupRecoverBond,
-		OpTypeScRollupDalSlotSubscribe,
-		OpTypeDalPublishSlotHeader,
-		OpTypeUpdateConsensusKey:
+		OpTypeUpdateConsensusKey,
+		OpTypeSmartRollupOriginate,
+		OpTypeSmartRollupAddMessages,
+		OpTypeSmartRollupCement,
+		OpTypeSmartRollupPublish,
+		OpTypeSmartRollupRefute,
+		OpTypeSmartRollupTimeout,
+		OpTypeSmartRollupExecuteOutboxMessage,
+		OpTypeSmartRollupRecoverBond,
+		OpTypeDalPublishSlotHeader:
 		return 3
 	default:
 		return -1 // invalid
@@ -425,8 +432,6 @@ func ParseOpTag(t byte) OpType {
 	switch t {
 	case 0:
 		return OpTypeEndorsement
-	case 10:
-		return OpTypeEndorsementWithSlot
 	case 1:
 		return OpTypeSeedNonceRevelation
 	case 2:
@@ -439,6 +444,22 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeProposals
 	case 6:
 		return OpTypeBallot
+	case 7:
+		return OpTypeDoublePreendorsementEvidence
+	case 8:
+		return OpTypeVdfRevelation
+	case 9:
+		return OpTypeDrainDelegate
+	case 10:
+		return OpTypeEndorsementWithSlot
+	case 17:
+		return OpTypeFailingNoop
+	case 20:
+		return OpTypePreendorsement
+	case 21:
+		return OpTypeEndorsement
+	case 22:
+		return OpTypeDalAttestation
 	case 107:
 		return OpTypeReveal
 	case 108:
@@ -447,64 +468,48 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeOrigination
 	case 110:
 		return OpTypeDelegation
-	case 17:
-		return OpTypeFailingNoop
 	case 111:
 		return OpTypeRegisterConstant
-	case 20:
-		return OpTypePreendorsement
-	case 21:
-		return OpTypeEndorsement
-	case 7:
-		return OpTypeDoublePreendorsementEvidence
 	case 112:
 		return OpTypeSetDepositsLimit
+	case 114:
+		return OpTypeUpdateConsensusKey
 	case 150:
-		return OpTypeToruOrigination
+		return OpTypeTxRollupOrigination
 	case 151:
-		return OpTypeToruSubmitBatch
+		return OpTypeTxRollupSubmitBatch
 	case 152:
-		return OpTypeToruCommit
+		return OpTypeTxRollupCommit
 	case 153:
-		return OpTypeToruReturnBond
+		return OpTypeTxRollupReturnBond
 	case 154:
-		return OpTypeToruFinalizeCommitment
+		return OpTypeTxRollupFinalizeCommitment
 	case 155:
-		return OpTypeToruRemoveCommitment
+		return OpTypeTxRollupRemoveCommitment
 	case 156:
-		return OpTypeToruRejection
+		return OpTypeTxRollupRejection
 	case 157:
-		return OpTypeToruDispatchTickets
+		return OpTypeTxRollupDispatchTickets
 	case 158:
 		return OpTypeTransferTicket
 	case 200:
-		return OpTypeScRollupOriginate
+		return OpTypeSmartRollupOriginate
 	case 201:
-		return OpTypeScRollupAddMessages
+		return OpTypeSmartRollupAddMessages
 	case 202:
-		return OpTypeScRollupCement
+		return OpTypeSmartRollupCement
 	case 203:
-		return OpTypeScRollupPublish
-	case 8:
-		return OpTypeVdfRevelation
-	case 22:
-		return OpTypeDalSlotAvailability
+		return OpTypeSmartRollupPublish
 	case 204:
-		return OpTypeScRollupRefute
+		return OpTypeSmartRollupRefute
 	case 205:
-		return OpTypeScRollupTimeout
+		return OpTypeSmartRollupTimeout
 	case 206:
-		return OpTypeScRollupExecuteOutboxMessage
+		return OpTypeSmartRollupExecuteOutboxMessage
 	case 207:
-		return OpTypeScRollupRecoverBond
-	case 208:
-		return OpTypeScRollupDalSlotSubscribe
+		return OpTypeSmartRollupRecoverBond
 	case 230:
 		return OpTypeDalPublishSlotHeader
-	case 9:
-		return OpTypeDrainDelegate
-	case 114:
-		return OpTypeUpdateConsensusKey
 	default:
 		return OpTypeInvalid
 	}
