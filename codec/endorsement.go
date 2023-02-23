@@ -76,7 +76,7 @@ func (o InlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) err
 }
 
 func (o *InlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}
@@ -231,7 +231,7 @@ func (o TenderbakeInlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.P
 }
 
 func (o *TenderbakeInlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}
@@ -327,7 +327,7 @@ func (o TenderbakeInlinedPreendorsement) EncodeBuffer(buf *bytes.Buffer, p *tezo
 }
 
 func (o *TenderbakeInlinedPreendorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}

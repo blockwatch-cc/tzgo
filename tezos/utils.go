@@ -5,6 +5,8 @@ package tezos
 
 import (
 	"encoding/hex"
+	"fmt"
+	"sync"
 )
 
 // HexBytes represents bytes as a JSON string of hexadecimal digits
@@ -50,4 +52,37 @@ func (r Ratio) Float64() float64 {
 		return 0
 	}
 	return float64(r.Num) / float64(r.Den)
+}
+
+func Short(v any) string {
+	var s string
+	if str, ok := v.(fmt.Stringer); ok {
+		s = str.String()
+	} else {
+		s = v.(string)
+	}
+	if len(s) <= 12 {
+		return s
+	}
+	return s[:8] + "..." + s[len(s)-4:]
+}
+
+func panicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func b2i(b bool) (i int) {
+	// The compiler currently only optimizes this form into movzbl.
+	// See https://0x0f.me/blog/golang-compiler-optimization/
+	// See issue 6011.
+	if b {
+		i = 1
+	}
+	return
+}
+
+var bufPool32 = &sync.Pool{
+	New: func() any { return make([]byte, 32) },
 }

@@ -91,7 +91,7 @@ func run() error {
 		}
 	}
 	p := cons.MapToChainParams().ForNetwork(forNet).ForProtocol(forProto)
-	fmt.Printf("Using protocol %s on %s\n", forProto.Short()[:8], p.Network)
+	fmt.Printf("Using protocol %s on %s\n", tezos.Short(forProto)[:8], p.Network)
 
 	fmt.Println("Height ...................... ", height)
 	fmt.Println("Protocol .................... ", forProto)

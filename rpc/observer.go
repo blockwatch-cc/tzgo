@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -81,10 +81,9 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 		cb: cb,
 		oh: oh,
 	}
-	hv := hashval(oh)
-	m.watched[hv] = seq
+	m.watched[oh] = seq
 	log.Debugf("monitor: %03d subscribed %s", seq, oh)
-	if pos, ok := m.recent[hv]; ok {
+	if pos, ok := m.recent[oh]; ok {
 		match := m.subs[seq]
 		if remove := match.cb(m.bestHash, pos[0], pos[1], false); remove {
 			delete(m.subs, match.id)
@@ -98,7 +97,7 @@ func (m *Observer) Unsubscribe(id int) {
 	defer m.mu.Unlock()
 	req, ok := m.subs[id]
 	if ok {
-		delete(m.watched, hashval(req.oh))
+		delete(m.watched, req.oh)
 		delete(m.subs, id)
 		log.Debugf("monitor: %03d unsubscribed %s", id, req.oh)
 	}
@@ -249,11 +248,10 @@ func (m *Observer) listenBlocks() {
 		for l, list := range ohs {
 			for n, h := range list {
 				// keep as recent
-				hv := hashval(h)
-				m.recent[hv] = [2]int{l, n}
+				m.recent[h] = [2]int{l, n}
 
 				// match op hash against subs
-				id, ok := m.watched[hv]
+				id, ok := m.watched[h]
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
@@ -295,9 +293,4 @@ func (m *Observer) listenBlocks() {
 			}
 		}
 	}
-}
-
-func hashval(oh tezos.OpHash) (val [32]byte) {
-	copy(val[:], oh.Hash.Hash)
-	return
 }

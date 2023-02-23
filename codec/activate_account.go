@@ -38,7 +38,7 @@ func (o ActivateAccount) MarshalJSON() ([]byte, error) {
 
 func (o ActivateAccount) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
-	buf.Write(o.PublicKeyHash.Hash) // only place where a 20 byte address is used (!)
+	buf.Write(o.PublicKeyHash[1:]) // only place where a 20 byte address is used (!)
 	buf.Write(o.Secret.Bytes())
 	return nil
 }
@@ -49,7 +49,7 @@ func (o *ActivateAccount) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 	}
 	o.PublicKeyHash = tezos.NewAddress(tezos.AddressTypeEd25519, buf.Next(20))
 	if !o.PublicKeyHash.IsValid() {
-		return fmt.Errorf("invalid address type=%s len=%d", o.PublicKeyHash.Type, len(o.PublicKeyHash.Hash))
+		return fmt.Errorf("invalid address %q", o.PublicKeyHash)
 	}
 	o.Secret = make([]byte, 20)
 	copy(o.Secret, buf.Next(20))

@@ -36,6 +36,7 @@ const (
 	SignatureTypeP256
 	// SignatureTypeBls12_381
 	SignatureTypeGeneric
+	// SignatureTypeGenericAggregate
 	SignatureTypeInvalid
 )
 

@@ -834,7 +834,7 @@ func (p Prim) Value(as OpCode) interface{} {
 			}
 
 		case T_CHAIN_ID:
-			if len(p.Bytes) == tezos.HashTypeChainId.Len() {
+			if len(p.Bytes) == tezos.HashTypeChainId.Len {
 				return tezos.NewChainIdHash(p.Bytes)
 			}
 

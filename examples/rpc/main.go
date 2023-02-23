@@ -134,7 +134,7 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		if addr.Type != tezos.AddressTypeContract {
+		if addr.Type() != tezos.AddressTypeContract {
 			return fmt.Errorf("%s is not a smart contract address", a)
 		}
 		return showContractInfo(ctx, c, addr)

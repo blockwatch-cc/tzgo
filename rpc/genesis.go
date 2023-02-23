@@ -198,12 +198,12 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 		// keygroups >> signatories
 		for _, v := range c[i].Script.Storage.Args[0].Args[1].Args[0].Args {
 			for _, vv := range v.Args[0].Args {
-				edpk, err := tezos.ParseHash(vv.String)
+				edpk, err := tezos.ParseKey(vv.String)
 				if err != nil {
 					return nil, fmt.Errorf("decoding signatory key %s: %v", vv.String, err)
 				}
 				vv.Type = micheline.PrimBytes
-				vv.Bytes = append([]byte{0}, edpk.Hash...)
+				vv.Bytes = append([]byte{0}, edpk.Data...)
 				vv.String = ""
 			}
 		}
@@ -221,13 +221,13 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 			pair[0].String = ""
 
 			// pour_authorizer
-			edpk, err := tezos.ParseHash(pair[1].String)
+			edpk, err := tezos.ParseKey(pair[1].String)
 			if err != nil {
 				return nil, fmt.Errorf("decoding pour_authorizer key %s: %v", pair[1].String, err)
 			}
 			// replace with byte sequence
 			pair[1].Type = micheline.PrimBytes
-			pair[1].Bytes = append([]byte{0}, edpk.Hash...)
+			pair[1].Bytes = append([]byte{0}, edpk.Data...)
 			pair[1].String = ""
 		}
 	}

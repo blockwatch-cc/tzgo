@@ -47,7 +47,7 @@ func (o Proposals) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
 	buf.Write(o.Source.Bytes())
 	binary.Write(buf, enc, o.Period)
-	binary.Write(buf, enc, int32(len(o.Proposals)*tezos.HashTypeProtocol.Len()))
+	binary.Write(buf, enc, int32(len(o.Proposals)*tezos.HashTypeProtocol.Len))
 	for _, v := range o.Proposals {
 		buf.Write(v.Bytes())
 	}

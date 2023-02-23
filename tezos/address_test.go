@@ -106,13 +106,13 @@ func TestAddress(t *testing.T) {
 		}
 
 		// check type
-		if got, want := a.Type, c.Type; got != want {
+		if got, want := a.Type(), c.Type; got != want {
 			t.Errorf("Case %d - mismatched type got=%s want=%s", i, got, want)
 		}
 
 		// check hash
-		if !bytes.Equal(a.Hash, h) {
-			t.Errorf("Case %d - mismatched hash got=%x want=%x", i, a.Hash, h)
+		if !bytes.Equal(a[1:], h) {
+			t.Errorf("Case %d - mismatched hash got=%x want=%x", i, a[1:], h)
 		}
 
 		// check bytes
@@ -214,5 +214,22 @@ func TestInvalidAddress(t *testing.T) {
 	err = a.UnmarshalBinary(MustDecodeString("00FF000b80d92ce17aa6070fde1a99288a4213a5b650"))
 	if err == nil || a.IsValid() {
 		t.Errorf("Expected unmarshal error from invalid buffer")
+	}
+}
+
+func BenchmarkAddressDecode(b *testing.B) {
+	b.SetBytes(21)
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseAddress("tz3Qa3kjWa6B3XgvZcVe24gTfjkc5WZRz59Q")
+	}
+}
+
+func BenchmarkAddressEncode(b *testing.B) {
+	a, _ := ParseAddress("tz3Qa3kjWa6B3XgvZcVe24gTfjkc5WZRz59Q")
+	b.SetBytes(21)
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = a.String()
 	}
 }

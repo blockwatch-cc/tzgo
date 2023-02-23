@@ -47,8 +47,7 @@ func MustBuildAddressSet(s ...string) *AddressSet {
 
 func (s AddressSet) hash(addr Address) uint64 {
 	h := hash.NewInlineFNV64a()
-	h.Write([]byte{byte(addr.Type)})
-	h.Write(addr.Hash)
+	h.Write(addr[:])
 	return h.Sum64()
 }
 

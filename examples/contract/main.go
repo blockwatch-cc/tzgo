@@ -189,7 +189,7 @@ func loadContract(ctx context.Context, c *rpc.Client, addr string, resolve bool)
 	if err != nil {
 		return nil, err
 	}
-	if a.Type != tezos.AddressTypeContract {
+	if a.Type() != tezos.AddressTypeContract {
 		return nil, fmt.Errorf("Invalid contract address")
 	}
 	con := contract.NewContract(a, c)
