@@ -348,18 +348,29 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			tezos.OpTypeTxRollupFinalizeCommitment,
 			tezos.OpTypeTxRollupRemoveCommitment,
 			tezos.OpTypeTxRollupRejection,
-			tezos.OpTypeTxRollupDispatchTickets,
-			tezos.OpTypeSmartRollupOriginate,
-			tezos.OpTypeSmartRollupAddMessages,
-			tezos.OpTypeSmartRollupCement,
-			tezos.OpTypeSmartRollupPublish,
-			tezos.OpTypeSmartRollupRefute,
-			tezos.OpTypeSmartRollupTimeout,
-			tezos.OpTypeSmartRollupExecuteOutboxMessage,
-			tezos.OpTypeSmartRollupRecoverBond,
-			tezos.OpTypeDalAttestation,
-			tezos.OpTypeDalPublishSlotHeader:
-			op = &Rollup{}
+			tezos.OpTypeTxRollupDispatchTickets:
+			op = &TxRollup{}
+
+		case tezos.OpTypeSmartRollupOriginate:
+			op = &SmartRollupOrigination{}
+		case tezos.OpTypeSmartRollupAddMessages:
+			op = &SmartRollupAddMessages{}
+		case tezos.OpTypeSmartRollupCement:
+			op = &SmartRollupCement{}
+		case tezos.OpTypeSmartRollupPublish:
+			op = &SmartRollupPublish{}
+		case tezos.OpTypeSmartRollupRefute:
+			op = &SmartRollupRefute{}
+		case tezos.OpTypeSmartRollupTimeout:
+			op = &SmartRollupTimeout{}
+		case tezos.OpTypeSmartRollupExecuteOutboxMessage:
+			op = &SmartRollupExecuteOutboxMessage{}
+		case tezos.OpTypeSmartRollupRecoverBond:
+			op = &SmartRollupRecoverBond{}
+		case tezos.OpTypeDalAttestation:
+			op = &DalAttestation{}
+		case tezos.OpTypeDalPublishSlotHeader:
+			op = &DalPublishSlotHeader{}
 
 		default:
 			return fmt.Errorf("rpc: unsupported op %q", string(data[start:end]))
