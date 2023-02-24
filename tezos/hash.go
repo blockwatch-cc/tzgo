@@ -20,15 +20,17 @@ var (
 	ErrUnknownHashType = errors.New("tezos: unknown hash type")
 
 	// Zero hashes
-	ZeroChainIdHash    = NewChainIdHash(nil)
-	ZeroBlockHash      = NewBlockHash(nil)
-	ZeroProtocolHash   = NewProtocolHash(nil)
-	ZeroOpHash         = NewOpHash(nil)
-	ZeroOpListListHash = NewOpListListHash(nil)
-	ZeroPayloadHash    = NewPayloadHash(nil)
-	ZeroExprHash       = NewExprHash(nil)
-	ZeroNonceHash      = NewNonceHash(nil)
-	ZeroContextHash    = NewContextHash(nil)
+	ZeroChainIdHash           = NewChainIdHash(nil)
+	ZeroBlockHash             = NewBlockHash(nil)
+	ZeroProtocolHash          = NewProtocolHash(nil)
+	ZeroOpHash                = NewOpHash(nil)
+	ZeroOpListListHash        = NewOpListListHash(nil)
+	ZeroPayloadHash           = NewPayloadHash(nil)
+	ZeroExprHash              = NewExprHash(nil)
+	ZeroNonceHash             = NewNonceHash(nil)
+	ZeroContextHash           = NewContextHash(nil)
+	ZeroSmartRollupStateHash  = NewSmartRollupStateHash(nil)
+	ZeroSmartRollupCommitHash = NewSmartRollupCommitHash(nil)
 )
 
 // type HashType byte
@@ -98,6 +100,7 @@ var (
 	HashTypeTxRollupWithdrawList      = HashType{TX_ROLLUP_WITHDRAW_LIST_HASH_ID, 32, TX_ROLLUP_WITHDRAW_LIST_HASH_PREFIX, 53}
 	HashTypeSmartRollupAddress        = HashType{SMART_ROLLUP_ADDRESS_ID, 20, SMART_ROLLUP_ADDRESS_PREFIX, 36}
 	HashTypeSmartRollupStateHash      = HashType{SMART_ROLLUP_STATE_HASH_ID, 32, SMART_ROLLUP_STATE_HASH_PREFIX, 54}
+	HashTypeSmartRollupCommitHash     = HashType{SMART_ROLLUP_COMMITMENT_HASH_ID, 32, SMART_ROLLUP_COMMITMENT_HASH_PREFIX, 54}
 	HashTypeSmartRollupRevealHash     = HashType{SMART_ROLLUP_REVEAL_HASH_ID, 32, SMART_ROLLUP_REVEAL_HASH_PREFIX, 56}
 )
 
@@ -667,15 +670,132 @@ func (h *ContextHash) Set(hash string) (err error) {
 	return
 }
 
+// SmartRollupCommitHash
+type SmartRollupCommitHash [32]byte
+
+func NewSmartRollupCommitHash(buf []byte) (h SmartRollupCommitHash) {
+	copy(h[:], buf)
+	return
+}
+
+func (h SmartRollupCommitHash) IsValid() bool {
+	return !h.Equal(ZeroSmartRollupCommitHash)
+}
+
+func (h SmartRollupCommitHash) Equal(h2 SmartRollupCommitHash) bool {
+	return h == h2
+}
+
+func (h SmartRollupCommitHash) Clone() SmartRollupCommitHash {
+	return NewSmartRollupCommitHash(h[:])
+}
+
+func (h SmartRollupCommitHash) String() string {
+	return base58.CheckEncode(h[:], HashTypeSmartRollupCommitHash.Id)
+}
+
+func (h SmartRollupCommitHash) Bytes() []byte {
+	return h[:]
+}
+
+func (h *SmartRollupCommitHash) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	return decodeHash(data, HashTypeSmartRollupCommitHash, h[:])
+}
+
+func (h *SmartRollupCommitHash) UnmarshalBinary(data []byte) error {
+	if l := len(data); l > 0 && l != HashTypeContext.Len {
+		return fmt.Errorf("tezos: invalid len %d for smart rollup commit hash", l)
+	}
+	copy(h[:], data)
+	return nil
+}
+
+func ParseSmartRollupCommitHash(s string) (h SmartRollupCommitHash, err error) {
+	err = decodeHashString(s, HashTypeSmartRollupCommitHash, h[:])
+	return
+}
+
+func MustParseSmartRollupCommitHash(s string) SmartRollupCommitHash {
+	b, err := ParseSmartRollupCommitHash(s)
+	panicOnError(err)
+	return b
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *SmartRollupCommitHash) Set(hash string) (err error) {
+	*h, err = ParseSmartRollupCommitHash(hash)
+	return
+}
+
+// SmartRollupStateHash
+type SmartRollupStateHash [32]byte
+
+func NewSmartRollupStateHash(buf []byte) (h SmartRollupStateHash) {
+	copy(h[:], buf)
+	return
+}
+
+func (h SmartRollupStateHash) IsValid() bool {
+	return !h.Equal(ZeroSmartRollupStateHash)
+}
+
+func (h SmartRollupStateHash) Equal(h2 SmartRollupStateHash) bool {
+	return h == h2
+}
+
+func (h SmartRollupStateHash) Clone() SmartRollupStateHash {
+	return NewSmartRollupStateHash(h[:])
+}
+
+func (h SmartRollupStateHash) String() string {
+	return base58.CheckEncode(h[:], HashTypeSmartRollupStateHash.Id)
+}
+
+func (h SmartRollupStateHash) Bytes() []byte {
+	return h[:]
+}
+
+func (h *SmartRollupStateHash) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	return decodeHash(data, HashTypeSmartRollupStateHash, h[:])
+}
+
+func (h *SmartRollupStateHash) UnmarshalBinary(data []byte) error {
+	if l := len(data); l > 0 && l != HashTypeContext.Len {
+		return fmt.Errorf("tezos: invalid len %d for smart rollup commit hash", l)
+	}
+	copy(h[:], data)
+	return nil
+}
+
+func ParseSmartRollupStateHash(s string) (h SmartRollupStateHash, err error) {
+	err = decodeHashString(s, HashTypeSmartRollupStateHash, h[:])
+	return
+}
+
+func MustParseSmartRollupStateHash(s string) SmartRollupStateHash {
+	b, err := ParseSmartRollupStateHash(s)
+	panicOnError(err)
+	return b
+}
+
+// Set implements the flags.Value interface for use in command line argument parsing.
+func (h *SmartRollupStateHash) Set(hash string) (err error) {
+	*h, err = ParseSmartRollupStateHash(hash)
+	return
+}
+
 // internal decoders
 func decodeHash(data []byte, typ HashType, buf []byte) error {
 	return decodeHashString(string(data), typ, buf)
 }
 
 func decodeHashString(src string, typ HashType, buf []byte) error {
-	// if !strings.HasPrefix(src, typ.B58Prefix) {
-	// 	return fmt.Errorf("tezos: %q has invalid hash prefix for type %s", src, typ)
-	// }
 	ibuf := bufPool32.Get()
 	dec, ver, err := base58.CheckDecode(src, len(typ.Id), ibuf.([]byte))
 	if err != nil {
@@ -689,21 +809,11 @@ func decodeHashString(src string, typ HashType, buf []byte) error {
 		bufPool32.Put(ibuf)
 		return fmt.Errorf("tezos: invalid prefix '%x' for decoded hash type '%s'", ver, typ)
 	}
-	// if have, want := len(dec), typ.Len; have != want {
-	// 	bufPool32.Put(ibuf)
-	// 	return fmt.Errorf("tezos: invalid length for decoded hash have=%d want=%d", have, want)
-	// }
 	copy(buf, dec)
 	bufPool32.Put(ibuf)
 	return nil
 }
 
 func encodeHash(typ HashType, h []byte) string {
-	// if typ == HashTypeInvalid {
-	// 	return "", ErrUnknownHashType
-	// }
-	// if have, want := len(h), typ.Len(); have != want {
-	// 	return "", fmt.Errorf("tezos: invalid hash length have=%d want=%d", have, want)
-	// }
 	return base58.CheckEncode(h, typ.Id)
 }
