@@ -34,9 +34,9 @@ const (
 	SignatureTypeEd25519 SignatureType = iota
 	SignatureTypeSecp256k1
 	SignatureTypeP256
-	// SignatureTypeBls12_381
+	SignatureTypeBls12_381
 	SignatureTypeGeneric
-	// SignatureTypeGenericAggregate
+	SignatureTypeGenericAggregate
 	SignatureTypeInvalid
 )
 
@@ -52,10 +52,12 @@ func (t SignatureType) HashType() HashType {
 		return HashTypeSigSecp256k1
 	case SignatureTypeP256:
 		return HashTypeSigP256
-	// case SignatureTypeBls12_381:
-	// 	return HashTypeSigBls12_381
+	case SignatureTypeBls12_381:
+		return HashTypeSigBls12_381
 	case SignatureTypeGeneric:
 		return HashTypeSigGeneric
+	case SignatureTypeGenericAggregate:
+		return HashTypeSigGenericAggregate
 	default:
 		return HashTypeInvalid
 	}
@@ -69,10 +71,12 @@ func (t SignatureType) PrefixBytes() []byte {
 		return SECP256K1_SIGNATURE_ID
 	case SignatureTypeP256:
 		return P256_SIGNATURE_ID
-	// case SignatureTypeBls12_381:
-	// 	return BLS12_381_SIGNATURE_ID
+	case SignatureTypeBls12_381:
+		return BLS12_381_SIGNATURE_ID
 	case SignatureTypeGeneric:
 		return GENERIC_SIGNATURE_ID
+	case SignatureTypeGenericAggregate:
+		return GENERIC_AGGREGATE_SIGNATURE_ID
 	default:
 		return nil
 	}
@@ -86,10 +90,12 @@ func (t SignatureType) Prefix() string {
 		return SECP256K1_SIGNATURE_PREFIX
 	case SignatureTypeP256:
 		return P256_SIGNATURE_PREFIX
-	// case SignatureTypeBls12_381:
-	// 	return BLS12_381_SIGNATURE_PREFIX
+	case SignatureTypeBls12_381:
+		return BLS12_381_SIGNATURE_PREFIX
 	case SignatureTypeGeneric:
 		return GENERIC_SIGNATURE_PREFIX
+	case SignatureTypeGenericAggregate:
+		return GENERIC_AGGREGATE_SIGNATURE_PREFIX
 	default:
 		return ""
 	}
@@ -107,10 +113,8 @@ func (t SignatureType) Tag() byte {
 		return 1
 	case SignatureTypeP256:
 		return 2
-	case SignatureTypeGeneric:
+	case SignatureTypeBls12_381:
 		return 3
-	// case SignatureTypeBls12_381:
-	// 	return 3 // ?? operation_repr.ml:1949
 	default:
 		return 255
 	}
@@ -125,11 +129,9 @@ func ParseSignatureTag(b byte) SignatureType {
 	case 2:
 		return SignatureTypeP256
 	case 3:
-		return SignatureTypeGeneric
-	// case 3: // ??
-	// 	return SignatureTypeBls12_381
+		return SignatureTypeBls12_381
 	default:
-		return SignatureTypeInvalid
+		return SignatureTypeGeneric
 	}
 }
 
@@ -138,8 +140,9 @@ func HasSignaturePrefix(s string) bool {
 		ED25519_SIGNATURE_PREFIX,
 		SECP256K1_SIGNATURE_PREFIX,
 		P256_SIGNATURE_PREFIX,
-		// BLS12_381_SIGNATURE_PREFIX,
+		BLS12_381_SIGNATURE_PREFIX,
 		GENERIC_SIGNATURE_PREFIX,
+		GENERIC_AGGREGATE_SIGNATURE_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -160,8 +163,9 @@ func IsSignature(s string) bool {
 		ED25519_SIGNATURE_PREFIX,
 		SECP256K1_SIGNATURE_PREFIX,
 		P256_SIGNATURE_PREFIX,
-		// BLS12_381_SIGNATURE_PREFIX,
+		BLS12_381_SIGNATURE_PREFIX,
 		GENERIC_SIGNATURE_PREFIX,
+		GENERIC_AGGREGATE_SIGNATURE_PREFIX,
 	} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -229,10 +233,11 @@ func (s *Signature) UnmarshalText(data []byte) error {
 }
 
 func (s Signature) Bytes() []byte {
-	if s.Type == SignatureTypeGeneric {
+	tag := s.Type.Tag()
+	if tag == 255 {
 		return s.Data
 	}
-	return append([]byte{s.Type.Tag()}, s.Data...)
+	return append([]byte{tag}, s.Data...)
 }
 
 func (s *Signature) DecodeBuffer(buf *bytes.Buffer) error {
@@ -242,7 +247,8 @@ func (s *Signature) DecodeBuffer(buf *bytes.Buffer) error {
 	}
 	// default to generic without tag
 	s.Type = SignatureTypeGeneric
-	if l > s.Type.Len() {
+	// tagged signatures are either 65 byte or 97 byte (BLS)
+	if l == 65 || l == 97 {
 		tag := buf.Next(1)[0]
 		if typ := ParseSignatureTag(tag); !typ.IsValid() {
 			return fmt.Errorf("tezos: invalid binary signature type %x", tag)
@@ -270,7 +276,9 @@ func (s *Signature) UnmarshalBinary(b []byte) error {
 	switch len(b) {
 	case 64:
 		s.Type = SignatureTypeGeneric
-	case 65:
+	case 96:
+		s.Type = SignatureTypeGenericAggregate
+	case 65, 97:
 		if typ := ParseSignatureTag(b[0]); !typ.IsValid() {
 			return fmt.Errorf("tezos: invalid binary signature type %x", b[0])
 		} else {
@@ -289,11 +297,10 @@ func (s *Signature) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-func ParseSignature(s string) (Signature, error) {
+func ParseSignature(s string) (sig Signature, err error) {
 	var (
 		dec, ver []byte
 		typ      SignatureType
-		err      error
 	)
 	switch {
 	case strings.HasPrefix(s, ED25519_SIGNATURE_PREFIX):
@@ -308,37 +315,45 @@ func ParseSignature(s string) (Signature, error) {
 		dec, ver, err = base58.CheckDecode(s, 4, nil)
 		typ = SignatureTypeP256
 
-	// case strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX):
-	// 	dec, ver, err = base58.CheckDecode(s, 4, nil)
-	// 	typ = SignatureTypeBls12_381
+	case strings.HasPrefix(s, BLS12_381_SIGNATURE_PREFIX):
+		dec, ver, err = base58.CheckDecode(s, 4, nil)
+		typ = SignatureTypeBls12_381
 
 	case strings.HasPrefix(s, GENERIC_SIGNATURE_PREFIX):
 		dec, ver, err = base58.CheckDecode(s, 3, nil)
 		typ = SignatureTypeGeneric
 
+	case strings.HasPrefix(s, GENERIC_AGGREGATE_SIGNATURE_PREFIX):
+		dec, ver, err = base58.CheckDecode(s, 4, nil)
+		typ = SignatureTypeGenericAggregate
+
 	default:
-		return Signature{}, fmt.Errorf("tezos: unknown signature prefix %s", s)
+		err = fmt.Errorf("tezos: unknown signature prefix %s", s)
+		return
 	}
 
 	if err != nil {
 		if err == base58.ErrChecksum {
-			return Signature{}, ErrChecksumMismatch
+			err = ErrChecksumMismatch
+			return
 		}
-		return Signature{}, fmt.Errorf("tezos: unknown signature format: %w", err)
+		err = fmt.Errorf("tezos: unknown signature format: %w", err)
+		return
 	}
 
 	if !bytes.Equal(ver, typ.PrefixBytes()) {
-		return Signature{}, fmt.Errorf("tezos: invalid signature type %s for %s", ver, typ.Prefix())
+		err = fmt.Errorf("tezos: invalid signature type %s for %s", ver, typ.Prefix())
+		return
 	}
 
 	if l := len(dec); l < typ.Len() {
-		return Signature{}, fmt.Errorf("tezos: invalid length %d for %s signature data", l, typ.Prefix())
+		err = fmt.Errorf("tezos: invalid length %d for %s signature data", l, typ.Prefix())
+		return
 	}
 
-	return Signature{
-		Type: typ,
-		Data: dec[:typ.Len()],
-	}, nil
+	sig.Type = typ
+	sig.Data = dec[:typ.Len()]
+	return
 }
 
 func MustParseSignature(s string) Signature {
