@@ -6,6 +6,7 @@ package tezos
 import (
 	"encoding/hex"
 	"fmt"
+	"io"
 	"sync"
 )
 
@@ -21,6 +22,25 @@ func (h *HexBytes) UnmarshalText(data []byte) error {
 		return err
 	}
 	*h = dst
+	return nil
+}
+
+// ReadBytes copies size bytes from r into h. If h is nil or too short,
+// a new byte slice is allocated. Fails with io.ErrShortBuffer when
+// less than size bytes can be read from r.
+func (h *HexBytes) ReadBytes(r io.Reader, size int) error {
+	if cap(*h) < size {
+		*h = make([]byte, size)
+	} else {
+		*h = (*h)[:size]
+	}
+	n, err := r.Read(*h)
+	if err != nil {
+		return err
+	}
+	if n < size {
+		return io.ErrShortBuffer
+	}
 	return nil
 }
 

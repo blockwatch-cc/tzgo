@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -259,6 +259,7 @@ var (
 		OpTypeTxRollupDispatchTickets:         157, // v013
 		OpTypeTransferTicket:                  158, // v013
 		OpTypeVdfRevelation:                   8,   // v014
+		OpTypeIncreasePaidStorage:             113, // v014
 		OpTypeDrainDelegate:                   9,   // v015
 		OpTypeUpdateConsensusKey:              114, // v015
 		OpTypeSmartRollupOriginate:            200, // v016
@@ -335,35 +336,37 @@ var (
 	}
 	// Ithaca v012 and up
 	opMinSizeV2 = map[byte]int{
-		1:   37,               // OpTypeSeedNonceRevelation
-		2:   9 + 2*(32+43+64), // OpTypeDoubleEndorsementEvidence
-		3:   9 + 2*237,        // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, min fitness size)
-		4:   41,               // OpTypeActivateAccount
-		5:   30,               // OpTypeProposals
-		6:   59,               // OpTypeBallot
-		107: 26 + 32,          // OpTypeReveal // v005 (assuming shortest pk)
-		108: 50,               // OpTypeTransaction // v005
-		109: 28,               // OpTypeOrigination // v005
-		110: 27,               // OpTypeDelegation // v005
-		17:  5,                // OpTypeFailingNoop  // v009
-		111: 30,               // OpTypeRegisterConstant // v011
-		7:   9 + 2*(32+43+64), // OpTypeDoublePreendorsementEvidence // v012
-		20:  43,               // OpTypePreendorsement // v012
-		21:  43,               // OpTypeEndorsement // v012
-		112: 27,               // OpTypeSetDepositsLimit // v012
-		9:   1 + 3*21,         // OpTypeDrainDelegate // v015
-		114: 26 + 32,          // OpTypeUpdateConsensusKey // v015
-		158: 0,                // TODO OpTypeTransferTicket // v013
-		200: 0,                // TODO OpTypeSmartRollupOriginate // v016
-		201: 0,                // TODO OpTypeSmartRollupAddMessages // v016
-		202: 0,                // TODO OpTypeSmartRollupCement // v016
-		203: 0,                // TODO OpTypeSmartRollupPublish // v016
-		204: 0,                // TODO OpTypeSmartRollupRefute // v016
-		205: 0,                // TODO OpTypeSmartRollupTimeout // v016
-		206: 0,                // TODO OpTypeSmartRollupExecuteOutboxMessage // v016
-		207: 0,                // TODO OpTypeSmartRollupRecoverBond // v016
-		230: 0,                // TODO OpTypeDalPublishSlotHeader // v016+
-		22:  0,                // TODO OpTypeDalAttestation  // v016+
+		1:   37,                       // OpTypeSeedNonceRevelation
+		2:   9 + 2*(32+43+64),         // OpTypeDoubleEndorsementEvidence
+		3:   9 + 2*237,                // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, min fitness size)
+		4:   41,                       // OpTypeActivateAccount
+		5:   30,                       // OpTypeProposals
+		6:   59,                       // OpTypeBallot
+		107: 26 + 32,                  // OpTypeReveal // v005 (assuming shortest pk)
+		108: 50,                       // OpTypeTransaction // v005
+		109: 28,                       // OpTypeOrigination // v005
+		110: 27,                       // OpTypeDelegation // v005
+		17:  5,                        // OpTypeFailingNoop  // v009
+		111: 30,                       // OpTypeRegisterConstant // v011
+		7:   9 + 2*(32+43+64),         // OpTypeDoublePreendorsementEvidence // v012
+		20:  43,                       // OpTypePreendorsement // v012
+		21:  43,                       // OpTypeEndorsement // v012
+		112: 27,                       // OpTypeSetDepositsLimit // v012
+		8:   201,                      // OpTypeVdfRevelation // v014
+		113: 27 + 22,                  // OpTypeIncreasePaidStorage // v014
+		9:   1 + 3*21,                 // OpTypeDrainDelegate // v015
+		114: 26 + 32,                  // OpTypeUpdateConsensusKey // v015
+		158: 26 + 8 + 22 + 1 + 22 + 4, // OpTypeTransferTicket // v013
+		200: 26 + 13,                  // OpTypeSmartRollupOriginate // v016
+		201: 26 + 4,                   // OpTypeSmartRollupAddMessages // v016
+		202: 26 + 52,                  // OpTypeSmartRollupCement // v016
+		203: 26 + 96,                  // OpTypeSmartRollupPublish // v016
+		204: 26 + 41,                  // OpTypeSmartRollupRefute // v016
+		205: 26 + 62,                  // OpTypeSmartRollupTimeout // v016
+		206: 26 + 56,                  // OpTypeSmartRollupExecuteOutboxMessage // v016
+		207: 26 + 41,                  // OpTypeSmartRollupRecoverBond // v016
+		230: 26 + 101,                 // OpTypeDalPublishSlotHeader // v016+
+		22:  1 + 21 + 1 + 4,           // OpTypeDalAttestation  // v016+
 	}
 )
 
@@ -472,6 +475,8 @@ func ParseOpTag(t byte) OpType {
 		return OpTypeRegisterConstant
 	case 112:
 		return OpTypeSetDepositsLimit
+	case 113:
+		return OpTypeIncreasePaidStorage
 	case 114:
 		return OpTypeUpdateConsensusKey
 	case 150:
