@@ -194,6 +194,10 @@ const (
 	D_LAMBDA_REC // 98
 	I_LAMBDA_REC // 99
 	I_TICKET     // 9A
+
+	// v016 additions
+	I_BYTES // 9B
+	I_NAT   // 9C
 )
 
 func (op OpCode) IsValid() bool {
@@ -357,6 +361,8 @@ var (
 		D_LAMBDA_REC:            "Lambda_rec",
 		I_LAMBDA_REC:            "LAMBDA_REC",
 		I_TICKET:                "TICKET",
+		I_BYTES:                 "BYTES",
+		I_NAT:                   "NAT",
 	}
 	stringToOp map[string]OpCode
 )
