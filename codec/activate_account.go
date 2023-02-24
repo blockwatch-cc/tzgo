@@ -6,7 +6,6 @@ package codec
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"strconv"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -51,12 +50,7 @@ func (o *ActivateAccount) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 	if !o.PublicKeyHash.IsValid() {
 		return fmt.Errorf("invalid address %q", o.PublicKeyHash)
 	}
-	o.Secret = make([]byte, 20)
-	copy(o.Secret, buf.Next(20))
-	if len(o.Secret) != 20 {
-		return io.ErrShortBuffer
-	}
-	return nil
+	return o.Secret.ReadBytes(buf, 20)
 }
 
 func (o ActivateAccount) MarshalBinary() ([]byte, error) {

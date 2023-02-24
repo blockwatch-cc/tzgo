@@ -14,7 +14,7 @@ import (
 // SeedNonceRevelation represents "seed_nonce_revelation" operation
 type SeedNonceRevelation struct {
 	Simple
-	Level int32          `json:"level,string"`
+	Level int32          `json:"level"`
 	Nonce tezos.HexBytes `json:"nonce"`
 }
 
@@ -50,9 +50,7 @@ func (o *SeedNonceRevelation) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (
 	if err != nil {
 		return
 	}
-	o.Nonce = make([]byte, 32)
-	copy(o.Nonce, buf.Next(32))
-	return nil
+	return o.Nonce.ReadBytes(buf, 32)
 }
 
 func (o SeedNonceRevelation) MarshalBinary() ([]byte, error) {

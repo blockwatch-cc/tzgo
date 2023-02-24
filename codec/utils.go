@@ -5,10 +5,12 @@ package codec
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"math"
 
+	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
 )
 
@@ -95,13 +97,6 @@ func readUint32(buf []byte) (uint32, error) {
 	return enc.Uint32(buf), nil
 }
 
-// func readUint16(buf []byte) (uint16, error) {
-//     if len(buf) != 2 {
-//         return 0, io.ErrShortBuffer
-//     }
-//     return enc.Uint16(buf), nil
-// }
-
 func readBool(buf []byte) (bool, error) {
 	if len(buf) != 1 {
 		return false, io.ErrShortBuffer
@@ -121,4 +116,68 @@ func max64(x, y int64) int64 {
 		return x
 	}
 	return y
+}
+
+func writeBytesWithLen(buf *bytes.Buffer, b tezos.HexBytes) (err error) {
+	err = binary.Write(buf, enc, uint32(len(b)))
+	if err != nil {
+		return
+	}
+	_, err = buf.Write(b)
+	return err
+}
+
+func readBytesWithLen(buf *bytes.Buffer) (b tezos.HexBytes, err error) {
+	var l uint32
+	l, err = readUint32(buf.Next(4))
+	if err != nil {
+		return
+	}
+	err = b.ReadBytes(buf, int(l))
+	return
+}
+
+func readPrimWithLen(buf *bytes.Buffer) (p micheline.Prim, err error) {
+	var l uint32
+	l, err = readUint32(buf.Next(4))
+	if err != nil {
+		return
+	}
+	err = p.UnmarshalBinary(buf.Next(int(l)))
+	return
+}
+
+func writePrimWithLen(buf *bytes.Buffer, p micheline.Prim) error {
+	v, err := p.MarshalBinary()
+	if err != nil {
+		return err
+	}
+	if err := binary.Write(buf, enc, uint32(len(v))); err != nil {
+		return err
+	}
+	_, err = buf.Write(v)
+	return err
+}
+
+func readStringWithLen(buf *bytes.Buffer) (s string, err error) {
+	var l uint32
+	l, err = readUint32(buf.Next(4))
+	if err != nil {
+		return
+	}
+	if b := buf.Next(int(l)); len(b) != int(l) {
+		err = io.ErrShortBuffer
+		return
+	} else {
+		s = string(b)
+	}
+	return
+}
+
+func writeStringWithLen(buf *bytes.Buffer, s string) error {
+	if err := binary.Write(buf, enc, uint32(len(s))); err != nil {
+		return err
+	}
+	_, err := buf.WriteString(s)
+	return err
 }

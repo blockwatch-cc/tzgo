@@ -50,7 +50,7 @@ func (o *Reveal) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
 	if err = o.PublicKey.DecodeBuffer(buf); err != nil {
 		return
 	}
-	return nil
+	return
 }
 
 func (o Reveal) MarshalBinary() ([]byte, error) {

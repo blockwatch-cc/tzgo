@@ -499,8 +499,42 @@ func DecodeOp(data []byte) (*Op, error) {
 			op = new(RegisterGlobalConstant)
 		case tezos.OpTypeSetDepositsLimit:
 			op = new(SetDepositsLimit)
+		case tezos.OpTypeTransferTicket:
+			op = new(TransferTicket)
+		case tezos.OpTypeVdfRevelation:
+			op = new(VdfRevelation)
+		case tezos.OpTypeIncreasePaidStorage:
+			op = new(IncreasePaidStorage)
+		case tezos.OpTypeDrainDelegate:
+			op = new(DrainDelegate)
+		case tezos.OpTypeUpdateConsensusKey:
+			op = new(UpdateConsensusKey)
+		case tezos.OpTypeSmartRollupOriginate:
+			op = new(SmartRollupOriginate)
+		case tezos.OpTypeSmartRollupAddMessages:
+			op = new(SmartRollupAddMessages)
+		case tezos.OpTypeSmartRollupCement:
+			op = new(SmartRollupCement)
+		case tezos.OpTypeSmartRollupPublish:
+			op = new(SmartRollupPublish)
+		// TODO
+		// case tezos.OpTypeSmartRollupRefute:
+		// 	op = new(SmartRollupRefute)
+		case tezos.OpTypeSmartRollupTimeout:
+			op = new(SmartRollupTimeout)
+		case tezos.OpTypeSmartRollupExecuteOutboxMessage:
+			op = new(SmartRollupExecuteOutboxMessage)
+		case tezos.OpTypeSmartRollupRecoverBond:
+			op = new(SmartRollupRecoverBond)
+		case tezos.OpTypeDalAttestation:
+			op = new(DalAttestation)
+		case tezos.OpTypeDalPublishSlotHeader:
+			op = new(DalPublishSlotHeader)
+
 		default:
 			// stop if rest looks like a signature
+			// FIXME: BLS sigs are 96 bytes, but accepting this here will
+			// collide with detecting valid operation types in a batch
 			if buf.Len() == 64 {
 				break
 			}
@@ -513,6 +547,7 @@ func DecodeOp(data []byte) (*Op, error) {
 	}
 
 	if buf.Len() > 0 {
+		// FIXME: BLS sigs are 96 byte
 		if err := o.Signature.UnmarshalBinary(buf.Next(64)); err != nil {
 			return nil, err
 		}
