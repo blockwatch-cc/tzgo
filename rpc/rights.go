@@ -220,13 +220,13 @@ func (c *Client) ListEndorsingRightsCycle(ctx context.Context, id BlockID, cycle
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
 	rights := make([]EndorsingRight, 0)
 	// Note: future cycles are seen from current protocol (!)
-	if p.Version >= 12 && p.StartHeight <= id.Int64() {
+	if p.Version >= 12 {
 		type V12Rights struct {
 			Level         int64            `json:"level"`
 			Delegates     []EndorsingRight `json:"delegates"`
 			EstimatedTime time.Time        `json:"estimated_time"`
 		}
-		v12rights := make([]V12Rights, 0, p.BlocksPerCycle)
+		v12rights := make([]V12Rights, 0, 8192)
 		if err := c.Get(ctx, u, &v12rights); err != nil {
 			return nil, err
 		}

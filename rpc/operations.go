@@ -340,7 +340,7 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeUpdateConsensusKey:
 			op = &UpdateConsensusKey{}
 
-			// rollup operations
+			// DEPRECATED: tx rollup operations, kept for testnet backward compatibility
 		case tezos.OpTypeTxRollupOrigination,
 			tezos.OpTypeTxRollupSubmitBatch,
 			tezos.OpTypeTxRollupCommit,
