@@ -1,4 +1,4 @@
-// Copyright (c) 2018 - 2021 Blockwatch Data Inc.
+// Copyright (c) 2018 - 2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package hash
@@ -6,6 +6,16 @@ package hash
 import (
 	"encoding/binary"
 )
+
+// Hash64 computes the FNV-1a hash of buf.
+func Hash64(buf []byte) uint64 {
+	hash := uint64(offset64)
+	for _, c := range buf {
+		hash ^= uint64(c)
+		hash *= prime64
+	}
+	return hash
+}
 
 // from stdlib hash/fnv/fnv.go
 const (

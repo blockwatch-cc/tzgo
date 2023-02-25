@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -45,14 +45,8 @@ func MustBuildAddressSet(s ...string) *AddressSet {
 	return set
 }
 
-func (s AddressSet) hash(addr Address) uint64 {
-	h := hash.NewInlineFNV64a()
-	h.Write(addr[:])
-	return h.Sum64()
-}
-
 func (s *AddressSet) AddUnique(addr Address) bool {
-	h := s.hash(addr)
+	h := hash.Hash64(addr[:])
 	a, ok := s.set[h]
 	if ok {
 		if !a.Equal(addr) {
@@ -71,7 +65,7 @@ func (s *AddressSet) Add(addr Address) {
 }
 
 func (s *AddressSet) Remove(addr Address) {
-	delete(s.set, s.hash(addr))
+	delete(s.set, hash.Hash64(addr[:]))
 	for i := range s.coll {
 		if !s.coll[i].Equal(addr) {
 			continue
@@ -92,7 +86,7 @@ func (s *AddressSet) Contains(addr Address) bool {
 	if s == nil {
 		return false
 	}
-	a, ok := s.set[s.hash(addr)]
+	a, ok := s.set[hash.Hash64(addr[:])]
 	if !ok {
 		return false
 	}
