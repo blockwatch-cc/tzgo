@@ -40,7 +40,7 @@ func (o SmartRollupRecoverBond) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params)
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     buf.Write(o.Rollup.Hash()) // 20 byte only
-    buf.Write(o.Staker.Bytes())
+    buf.Write(o.Staker.Encode())
     return nil
 }
 
@@ -52,7 +52,7 @@ func (o *SmartRollupRecoverBond) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params
         return
     }
     o.Rollup = tezos.NewAddress(tezos.AddressTypeSmartRollup, buf.Next(20))
-    err = o.Staker.UnmarshalBinary(buf.Next(21))
+    err = o.Staker.Decode(buf.Next(21))
     return
 }
 

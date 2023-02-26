@@ -46,8 +46,8 @@ func (o SmartRollupTimeout) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) err
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     buf.Write(o.Rollup.Hash()) // 20 byte only
-    buf.Write(o.Stakers.Alice.Bytes())
-    buf.Write(o.Stakers.Bob.Bytes())
+    buf.Write(o.Stakers.Alice.Encode())
+    buf.Write(o.Stakers.Bob.Encode())
     return nil
 }
 
@@ -59,10 +59,10 @@ func (o *SmartRollupTimeout) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (e
         return
     }
     o.Rollup = tezos.NewAddress(tezos.AddressTypeSmartRollup, buf.Next(20))
-    if err = o.Stakers.Alice.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.Stakers.Alice.Decode(buf.Next(21)); err != nil {
         return
     }
-    if err = o.Stakers.Bob.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.Stakers.Bob.Decode(buf.Next(21)); err != nil {
         return
     }
     return

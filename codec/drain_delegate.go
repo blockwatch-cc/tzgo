@@ -39,9 +39,9 @@ func (o DrainDelegate) MarshalJSON() ([]byte, error) {
 
 func (o DrainDelegate) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
-    buf.Write(o.ConsensusKey.Bytes())
-    buf.Write(o.Delegate.Bytes())
-    buf.Write(o.Destination.Bytes())
+    buf.Write(o.ConsensusKey.Encode())
+    buf.Write(o.Delegate.Encode())
+    buf.Write(o.Destination.Encode())
     return nil
 }
 
@@ -49,13 +49,13 @@ func (o *DrainDelegate) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err er
     if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
         return
     }
-    if err = o.ConsensusKey.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.ConsensusKey.Decode(buf.Next(21)); err != nil {
         return
     }
-    if err = o.Delegate.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.Delegate.Decode(buf.Next(21)); err != nil {
         return
     }
-    if err = o.Destination.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.Destination.Decode(buf.Next(21)); err != nil {
         return
     }
     return nil

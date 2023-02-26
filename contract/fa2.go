@@ -63,7 +63,7 @@ func (t FA2Token) GetBalances(ctx context.Context, req []FA2BalanceRequest) ([]F
 	args := micheline.NewSeq()
 	for _, r := range req {
 		args.Args = append(args.Args, micheline.NewPair(
-			micheline.NewBytes(r.Owner.Bytes22()),
+			micheline.NewBytes(r.Owner.EncodePadded()),
 			micheline.NewNat(r.TokenId.Big()),
 		))
 	}
@@ -154,9 +154,9 @@ func (p FA2ApprovalArgs) Parameters() *micheline.Parameters {
 		params.Value.Args = append(params.Value.Args, micheline.NewCode(
 			branch,
 			micheline.NewPair(
-				micheline.NewBytes(v.Owner.Bytes22()),
+				micheline.NewBytes(v.Owner.EncodePadded()),
 				micheline.NewPair(
-					micheline.NewBytes(v.Operator.Bytes22()),
+					micheline.NewBytes(v.Operator.EncodePadded()),
 					micheline.NewNat(v.TokenId.Big()),
 				),
 			),
@@ -226,7 +226,7 @@ type FA2Transfer struct {
 
 func (t FA2Transfer) Prim() micheline.Prim {
 	return micheline.NewPair(
-		micheline.NewBytes(t.To.Bytes22()),
+		micheline.NewBytes(t.To.EncodePadded()),
 		micheline.NewPair(
 			micheline.NewNat(t.TokenId.Big()),
 			micheline.NewNat(t.Amount.Big()),
@@ -238,7 +238,7 @@ type FA2TransferList []FA2Transfer
 
 func (l FA2TransferList) Len() int { return len(l) }
 func (l FA2TransferList) Less(i, j int) bool {
-	return bytes.Compare(l[i].From.Bytes22(), l[j].From.Bytes22()) < 0
+	return bytes.Compare(l[i].From.EncodePadded(), l[j].From.EncodePadded()) < 0
 }
 func (l FA2TransferList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 
@@ -325,7 +325,7 @@ func (t FA2TransferArgs) Parameters() *micheline.Parameters {
 		if i == 0 || !v.From.Equal(t.Transfers[i-1].From) {
 			seq.Args = append(seq.Args,
 				micheline.NewPair(
-					micheline.NewBytes(v.From.Bytes22()),
+					micheline.NewBytes(v.From.EncodePadded()),
 					micheline.NewSeq(),
 				),
 			)

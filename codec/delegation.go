@@ -40,7 +40,7 @@ func (o Delegation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	o.Manager.EncodeBuffer(buf, p)
 	if o.Delegate.IsValid() {
 		buf.WriteByte(0xff)
-		buf.Write(o.Delegate.Bytes())
+		buf.Write(o.Delegate.Encode())
 	} else {
 		buf.WriteByte(0x0)
 	}
@@ -60,7 +60,7 @@ func (o *Delegation) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error
 		return err
 	}
 	if ok {
-		err = o.Delegate.UnmarshalBinary(buf.Next(21))
+		err = o.Delegate.Decode(buf.Next(21))
 		if err != nil {
 			return err
 		}

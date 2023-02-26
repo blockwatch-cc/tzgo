@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.16.0
+
+Refactoring
+
+* Changed memory layout and interface for all hash types and `tezos.Address`
+  - hashes and addresses can now be used as Golang Map keys
+  - renamed `Address.Bytes()` to `Encode()`
+  - renamed `Address.Bytes22()` to `EncodePadded()`
+  - use `Address.Decode(buf []byte)` instead of `UnmarshalBinary()` for reading binary encoded addresses
+* Simplified `tezos.Params` removing unused fields and protocol deployment hendling
+
 ## v1.15.0
 
 Lima support

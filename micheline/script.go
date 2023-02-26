@@ -220,7 +220,7 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 						name = string(buf)
 					} else if tezos.IsAddressBytes(buf) {
 						a := tezos.Address{}
-						_ = a.UnmarshalBinary(buf)
+						_ = a.Decode(buf)
 						name = a.String()
 					}
 				}

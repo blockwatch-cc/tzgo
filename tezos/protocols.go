@@ -40,9 +40,9 @@ var (
 	PtMumbai = ProtoV016
 
 	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
+	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Jakartanet   = MustParseChainIdHash("NetXLH1uAxK7CCh")
 	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
 	Limanet      = MustParseChainIdHash("NetXizpkH94bocH")
 	Mumbainet    = MustParseChainIdHash("NetXQw6nWSnrJ5t")
-	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
 )

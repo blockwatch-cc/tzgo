@@ -709,7 +709,7 @@ func (p Prim) Unpack() (pp Prim, err error) {
 		}
 	case tezos.IsAddressBytes(p.Bytes):
 		a := tezos.Address{}
-		if err := a.UnmarshalBinary(p.Bytes); err != nil {
+		if err := a.Decode(p.Bytes); err != nil {
 			return p, err
 		}
 		pp.Type = PrimString
@@ -815,7 +815,7 @@ func (p Prim) Value(as OpCode) interface{} {
 		switch as {
 		case T_KEY_HASH, T_ADDRESS, T_CONTRACT:
 			a := tezos.Address{}
-			if err := a.UnmarshalBinary(p.Bytes); err == nil {
+			if err := a.Decode(p.Bytes); err == nil {
 				return a
 			}
 		case T_TX_ROLLUP_L2_ADDRESS:

@@ -58,7 +58,7 @@ func NewNat(i *big.Int) Prim {
 }
 
 func NewAddress(a tezos.Address) Prim {
-	return NewBytes(a.Bytes22())
+	return NewBytes(a.EncodePadded())
 }
 
 func NewBytes(b []byte) Prim {

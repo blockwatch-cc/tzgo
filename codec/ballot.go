@@ -43,7 +43,7 @@ func (o Ballot) MarshalJSON() ([]byte, error) {
 
 func (o Ballot) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
-	buf.Write(o.Source.Bytes())
+	buf.Write(o.Source.Encode())
 	binary.Write(buf, enc, o.Period)
 	buf.Write(o.Proposal.Bytes())
 	buf.WriteByte(o.Ballot.Tag())
@@ -54,7 +54,7 @@ func (o *Ballot) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
 	if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
 		return
 	}
-	if err = o.Source.UnmarshalBinary(buf.Next(21)); err != nil {
+	if err = o.Source.Decode(buf.Next(21)); err != nil {
 		return
 	}
 	o.Period, err = readInt32(buf.Next(4))

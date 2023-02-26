@@ -40,7 +40,7 @@ func (o DalAttestation) MarshalJSON() ([]byte, error) {
 
 func (o DalAttestation) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
-    buf.Write(o.Attestor.Bytes())
+    buf.Write(o.Attestor.Encode())
     buf.Write(o.Attestation.Bytes())
     binary.Write(buf, enc, o.Level)
     return nil
@@ -50,7 +50,7 @@ func (o *DalAttestation) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err e
     if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
         return
     }
-    if err = o.Attestor.UnmarshalBinary(buf.Next(21)); err != nil {
+    if err = o.Attestor.Decode(buf.Next(21)); err != nil {
         return
     }
     if err = o.Attestation.DecodeBuffer(buf); err != nil {

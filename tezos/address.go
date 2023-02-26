@@ -6,6 +6,7 @@ package tezos
 import (
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"blockwatch.cc/tzgo/base58"
@@ -241,7 +242,8 @@ func (a Address) MarshalText() ([]byte, error) {
 
 // Bytes returns the 21 (implicit) or 22 byte (contract) tagged and optionally padded
 // binary hash value of the address.
-func (a Address) Bytes() []byte {
+// func (a Address) Bytes() []byte {
+func (a Address) Encode() []byte {
 	var buf [22]byte
 	switch a.Type() {
 	case AddressTypeInvalid:
@@ -267,7 +269,8 @@ func (a Address) Bytes() []byte {
 // Bytes22 returns the 22 byte tagged and padded binary encoding for contracts
 // and EOAs (tz1/2/3). In contrast to Bytes which outputs the 21 byte address for EOAs
 // here we add a leading 0-byte.
-func (a Address) Bytes22() []byte {
+// func (a Address) Bytes22() []byte {
+func (a Address) EncodePadded() []byte {
 	var buf [22]byte
 	switch a.Type() {
 	case AddressTypeInvalid:
@@ -288,18 +291,26 @@ func (a Address) Bytes22() []byte {
 	return buf[:]
 }
 
-// MarshalBinary always output the 22 byte version for contracts and EOAs.
+// MarshalBinary outputs the 21 byte TzGo version of an address containing
+// a one byte type tag and the 20 byte address hash.
 func (a Address) MarshalBinary() ([]byte, error) {
-	if a.Type() == AddressTypeInvalid {
-		return nil, ErrUnknownAddressType
-	}
-	return a.Bytes22(), nil
+	return a[:], nil
 }
 
-// UnmarshalBinary reads a 21 byte or 22 byte address versions and is
+// UnmarshalBinary reads the 21 byte TzGo version of an address containing
+// a one byte type tag and the 20 byte address hash.
+func (a *Address) UnmarshalBinary(b []byte) error {
+	if len(b) != 21 {
+		return io.ErrShortBuffer
+	}
+	copy(a[:], b)
+	return nil
+}
+
+// Decode reads a 21 byte or 22 byte address versions and is
 // resilient to longer byte strings that contain extra padding or a suffix
 // (e.g. an entrypoint suffix as found in smart contract data).
-func (a *Address) UnmarshalBinary(b []byte) error {
+func (a *Address) Decode(b []byte) error {
 	a[0] = 0
 	switch {
 	case len(b) >= 22 && b[0] <= 3:

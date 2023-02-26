@@ -32,8 +32,6 @@ var (
 	ZeroSmartRollupCommitHash = NewSmartRollupCommitHash(nil)
 )
 
-// type HashType byte
-
 type HashType struct {
 	Id        []byte
 	Len       int
@@ -143,18 +141,26 @@ func (h ChainIdHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *ChainIdHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeChainId, h[:])
+func (h ChainIdHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *ChainIdHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeChainId.Len {
-		return fmt.Errorf("tezos: invalid len %d for chain id hash", l)
+func (h *ChainIdHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeChainId, h[:])
+}
+
+func (h ChainIdHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *ChainIdHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeChainId.Len {
+		return fmt.Errorf("tezos: short chain_id hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -207,18 +213,26 @@ func (h BlockHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *BlockHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeBlock, h[:])
+func (h BlockHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *BlockHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeBlock.Len {
-		return fmt.Errorf("tezos: invalid len %d for block hash", l)
+func (h *BlockHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeBlock, h[:])
+}
+
+func (h BlockHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *BlockHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeBlock.Len {
+		return fmt.Errorf("tezos: short block hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -272,18 +286,26 @@ func (h ProtocolHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *ProtocolHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeProtocol, h[:])
+func (h ProtocolHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *ProtocolHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeProtocol.Len {
-		return fmt.Errorf("tezos: invalid len %d for protocol hash", l)
+func (h *ProtocolHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeProtocol, h[:])
+}
+
+func (h ProtocolHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *ProtocolHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeProtocol.Len {
+		return fmt.Errorf("tezos: short protocol hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -332,18 +354,26 @@ func (h OpHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *OpHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeOperation, h[:])
+func (h OpHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *OpHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeOperation.Len {
-		return fmt.Errorf("tezos: invalid len %d for operation hash", l)
+func (h *OpHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeOperation, h[:])
+}
+
+func (h OpHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *OpHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeOperation.Len {
+		return fmt.Errorf("tezosshortor operation hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -392,18 +422,26 @@ func (h OpListListHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *OpListListHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeOperationListList, h[:])
+func (h OpListListHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *OpListListHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeOperationListList.Len {
-		return fmt.Errorf("tezos: invalid len %d for operation list list hash", l)
+func (h *OpListListHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeOperationListList, h[:])
+}
+
+func (h OpListListHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *OpListListHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeOperationListList.Len {
+		return fmt.Errorf("tezos: short operation list list hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -452,18 +490,26 @@ func (h PayloadHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *PayloadHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeBlockPayload, h[:])
+func (h PayloadHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *PayloadHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeBlockPayload.Len {
-		return fmt.Errorf("tezos: invalid len %d for payload hash", l)
+func (h *PayloadHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeBlockPayload, h[:])
+}
+
+func (h PayloadHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *PayloadHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeBlockPayload.Len {
+		return fmt.Errorf("teshortd for payload hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -512,18 +558,26 @@ func (h ExprHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *ExprHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeScriptExpr, h[:])
+func (h ExprHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *ExprHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeScriptExpr.Len {
-		return fmt.Errorf("tezos: invalid len %d for script expression hash", l)
+func (h *ExprHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeScriptExpr, h[:])
+}
+
+func (h ExprHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *ExprHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeScriptExpr.Len {
+		return fmt.Errorf("tezoshortfor script expression hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -572,23 +626,31 @@ func (h NonceHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *NonceHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeNonce, h[:])
+func (h NonceHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *NonceHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeNonce.Len {
-		return fmt.Errorf("tezos: invalid len %d for nonce hash '%s'", l, string(data))
+func (h *NonceHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeNonce, h[:])
+}
+
+func (h NonceHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *NonceHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeNonce.Len {
+		return fmt.Errorf("tezos: short nonce")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
 func ParseNonceHash(s string) (h NonceHash, err error) {
-	err = decodeHashString(s, HashTypeBlockPayload, h[:])
+	err = decodeHashString(s, HashTypeNonce, h[:])
 	return
 }
 
@@ -637,18 +699,26 @@ func (h ContextHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *ContextHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeContext, h[:])
+func (h ContextHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *ContextHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeContext.Len {
-		return fmt.Errorf("tezos: invalid len %d for context hash", l)
+func (h *ContextHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeContext, h[:])
+}
+
+func (h ContextHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *ContextHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeContext.Len {
+		return fmt.Errorf("tezos: short context hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -697,18 +767,26 @@ func (h SmartRollupCommitHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *SmartRollupCommitHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeSmartRollupCommitHash, h[:])
+func (h SmartRollupCommitHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *SmartRollupCommitHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeContext.Len {
-		return fmt.Errorf("tezos: invalid len %d for smart rollup commit hash", l)
+func (h *SmartRollupCommitHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeSmartRollupCommitHash, h[:])
+}
+
+func (h SmartRollupCommitHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *SmartRollupCommitHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeSmartRollupCommitHash.Len {
+		return fmt.Errorf("tezos: short smart rollup commit hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -757,18 +835,26 @@ func (h SmartRollupStateHash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *SmartRollupStateHash) UnmarshalText(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
-	return decodeHash(data, HashTypeSmartRollupStateHash, h[:])
+func (h SmartRollupStateHash) MarshalText() ([]byte, error) {
+	return []byte(h.String()), nil
 }
 
-func (h *SmartRollupStateHash) UnmarshalBinary(data []byte) error {
-	if l := len(data); l > 0 && l != HashTypeContext.Len {
-		return fmt.Errorf("tezos: invalid len %d for smart rollup commit hash", l)
+func (h *SmartRollupStateHash) UnmarshalText(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
 	}
-	copy(h[:], data)
+	return decodeHash(buf, HashTypeSmartRollupStateHash, h[:])
+}
+
+func (h SmartRollupStateHash) MarshalBinary() ([]byte, error) {
+	return h[:], nil
+}
+
+func (h *SmartRollupStateHash) UnmarshalBinary(buf []byte) error {
+	if l := len(buf); l > 0 && l != HashTypeSmartRollupStateHash.Len {
+		return fmt.Errorf("tezos: short smart rollup commit hash")
+	}
+	copy(h[:], buf)
 	return nil
 }
 
@@ -790,11 +876,11 @@ func (h *SmartRollupStateHash) Set(hash string) (err error) {
 }
 
 // internal decoders
-func decodeHash(data []byte, typ HashType, buf []byte) error {
-	return decodeHashString(string(data), typ, buf)
+func decodeHash(src []byte, typ HashType, dst []byte) error {
+	return decodeHashString(string(src), typ, dst)
 }
 
-func decodeHashString(src string, typ HashType, buf []byte) error {
+func decodeHashString(src string, typ HashType, dst []byte) error {
 	ibuf := bufPool32.Get()
 	dec, ver, err := base58.CheckDecode(src, len(typ.Id), ibuf.([]byte))
 	if err != nil {
@@ -808,7 +894,7 @@ func decodeHashString(src string, typ HashType, buf []byte) error {
 		bufPool32.Put(ibuf)
 		return fmt.Errorf("tezos: invalid prefix '%x' for decoded hash type '%s'", ver, typ)
 	}
-	copy(buf, dec)
+	copy(dst, dec)
 	bufPool32.Put(ibuf)
 	return nil
 }

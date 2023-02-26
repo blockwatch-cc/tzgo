@@ -217,7 +217,7 @@ func (b *bootstrap) DecodeContracts() ([]*X1, error) {
 				return nil, fmt.Errorf("decoding pour_dest %s: %v", pair[0].String, err)
 			}
 			pair[0].Type = micheline.PrimBytes
-			pair[0].Bytes, _ = dest.MarshalBinary()
+			pair[0].Bytes = dest.Encode()
 			pair[0].String = ""
 
 			// pour_authorizer

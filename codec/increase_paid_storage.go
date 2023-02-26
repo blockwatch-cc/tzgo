@@ -40,7 +40,7 @@ func (o IncreasePaidStorage) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) er
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
     o.Amount.EncodeBuffer(buf)
-    buf.Write(o.Destination.Bytes22())
+    buf.Write(o.Destination.EncodePadded())
     return nil
 }
 
@@ -54,7 +54,7 @@ func (o *IncreasePaidStorage) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (
     if err = o.Amount.DecodeBuffer(buf); err != nil {
         return err
     }
-    return o.Destination.UnmarshalBinary(buf.Next(22))
+    return o.Destination.Decode(buf.Next(22))
 }
 
 func (o IncreasePaidStorage) MarshalBinary() ([]byte, error) {

@@ -66,7 +66,7 @@ func run() error {
 			if err != nil {
 				return err
 			}
-			err = addr.UnmarshalBinary(buf)
+			err = addr.Decode(buf)
 			if err != nil {
 				if err = key.UnmarshalBinary(buf); err != nil {
 					return fmt.Errorf("Not a valid key or address")

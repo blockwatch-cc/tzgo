@@ -45,7 +45,7 @@ func (o Proposals) MarshalJSON() ([]byte, error) {
 
 func (o Proposals) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
-	buf.Write(o.Source.Bytes())
+	buf.Write(o.Source.Encode())
 	binary.Write(buf, enc, o.Period)
 	binary.Write(buf, enc, int32(len(o.Proposals)*tezos.HashTypeProtocol.Len))
 	for _, v := range o.Proposals {
@@ -58,7 +58,7 @@ func (o *Proposals) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error)
 	if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
 		return
 	}
-	if err = o.Source.UnmarshalBinary(buf.Next(21)); err != nil {
+	if err = o.Source.Decode(buf.Next(21)); err != nil {
 		return
 	}
 	o.Period, err = readInt32(buf.Next(4))

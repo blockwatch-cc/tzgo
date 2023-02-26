@@ -87,7 +87,7 @@ func NewKey(typ Type, key Prim) (Key, error) {
 			k.AddrKey = a
 		} else {
 			a := tezos.Address{}
-			if err := a.UnmarshalBinary(key.Bytes); err != nil {
+			if err := a.Decode(key.Bytes); err != nil {
 				return Key{}, fmt.Errorf("micheline: invalid big_map key for type address: %w", err)
 			}
 			k.AddrKey = a
@@ -334,11 +334,10 @@ func (k Key) Bytes() []byte {
 		p.Int = z.Big()
 	case T_ADDRESS:
 		p.Type = PrimBytes
-		p.Bytes, _ = k.AddrKey.MarshalBinary()
+		p.Bytes = k.AddrKey.EncodePadded()
 	case T_KEY_HASH:
 		p.Type = PrimBytes
-		b, _ := k.AddrKey.MarshalBinary()
-		p.Bytes = b[1:] // strip leading flag
+		p.Bytes = k.AddrKey.Encode() // 21 byte version for implicit accounts
 	case T_KEY:
 		p.Type = PrimBytes
 		p.Bytes, _ = k.KeyKey.MarshalBinary()
@@ -463,8 +462,11 @@ func (k Key) Prim() Prim {
 	case T_BYTES:
 		p.Bytes = k.BytesKey
 		p.Type = PrimBytes
-	case T_ADDRESS, T_KEY_HASH:
-		p.Bytes, _ = k.AddrKey.MarshalBinary()
+	case T_ADDRESS:
+		p.Bytes = k.AddrKey.EncodePadded()
+		p.Type = PrimBytes
+	case T_KEY_HASH:
+		p.Bytes = k.AddrKey.Encode()
 		p.Type = PrimBytes
 	case T_KEY:
 		p.Bytes, _ = k.KeyKey.MarshalBinary()

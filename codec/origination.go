@@ -50,7 +50,7 @@ func (o Origination) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	o.Balance.EncodeBuffer(buf)
 	if o.Delegate.IsValid() {
 		buf.WriteByte(0xff)
-		buf.Write(o.Delegate.Bytes())
+		buf.Write(o.Delegate.Encode())
 	} else {
 		buf.WriteByte(0x0)
 	}
@@ -75,7 +75,7 @@ func (o *Origination) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
 	}
 	if ok {
 		addr := tezos.Address{}
-		err = addr.UnmarshalBinary(buf.Next(21))
+		err = addr.Decode(buf.Next(21))
 		if err != nil {
 			return err
 		}

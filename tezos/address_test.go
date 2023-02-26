@@ -116,13 +116,13 @@ func TestAddress(t *testing.T) {
 		}
 
 		// check bytes
-		if !bytes.Equal(a.Bytes(), buf) {
-			t.Errorf("Case %d - mismatched binary encoding got=%x want=%x", i, a.Bytes(), buf)
+		if !bytes.Equal(a.Encode(), buf) {
+			t.Errorf("Case %d - mismatched binary encoding got=%x want=%x", i, a.Encode(), buf)
 		}
 
 		// check padded bytes
-		if !bytes.Equal(a.Bytes22(), pad) {
-			t.Errorf("Case %d - mismatched padded binary encoding got=%x want=%x", i, a.Bytes22(), pad)
+		if !bytes.Equal(a.EncodePadded(), pad) {
+			t.Errorf("Case %d - mismatched padded binary encoding got=%x want=%x", i, a.EncodePadded(), pad)
 		}
 
 		// marshal text
@@ -137,7 +137,7 @@ func TestAddress(t *testing.T) {
 
 		// unmarshal from bytes
 		var a2 Address
-		err = a2.UnmarshalBinary(buf)
+		err = a2.Decode(buf)
 		if err != nil {
 			t.Fatalf("Case %d - unmarshal binary %s: %v", i, c.Bytes, err)
 		}
@@ -147,7 +147,7 @@ func TestAddress(t *testing.T) {
 		}
 
 		// unmarshal from padded bytes
-		err = a2.UnmarshalBinary(pad)
+		err = a2.Decode(pad)
 		if err != nil {
 			t.Fatalf("Case %d - unmarshal binary %s: %v", i, c.Padded, err)
 		}
@@ -167,8 +167,8 @@ func TestAddress(t *testing.T) {
 		}
 
 		// marshal binary roundtrip
-		out, _ = a.MarshalBinary()
-		err = a2.UnmarshalBinary(out)
+		out = a.Encode()
+		err = a2.Decode(out)
 		if err != nil {
 			t.Fatalf("Case %d - binary roundtrip: %v", i, err)
 		}
@@ -199,19 +199,19 @@ func TestInvalidAddress(t *testing.T) {
 	}
 
 	// decode from short buffer
-	err := a.UnmarshalBinary(MustDecodeString("000b78887fdd0cd3bfbe75a717655728e0205bb9"))
+	err := a.Decode(MustDecodeString("000b78887fdd0cd3bfbe75a717655728e0205bb9"))
 	if err == nil || a.IsValid() {
 		t.Errorf("Expected unmarshal error from short buffer")
 	}
 
 	// decode from nil buffer
-	err = a.UnmarshalBinary(nil)
+	err = a.Decode(nil)
 	if err == nil || a.IsValid() {
 		t.Errorf("Expected unmarshal error from short buffer")
 	}
 
 	// decode from invalid buffer (wrong type)
-	err = a.UnmarshalBinary(MustDecodeString("00FF000b80d92ce17aa6070fde1a99288a4213a5b650"))
+	err = a.Decode(MustDecodeString("00FF000b80d92ce17aa6070fde1a99288a4213a5b650"))
 	if err == nil || a.IsValid() {
 		t.Errorf("Expected unmarshal error from invalid buffer")
 	}

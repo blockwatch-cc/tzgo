@@ -54,9 +54,9 @@ func (o TransferTicket) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     o.Manager.EncodeBuffer(buf, p)
     writePrimWithLen(buf, o.Contents)
     writePrimWithLen(buf, o.Type)
-    buf.Write(o.Ticketer.Bytes22())
+    buf.Write(o.Ticketer.EncodePadded())
     o.Amount.EncodeBuffer(buf)
-    buf.Write(o.Destination.Bytes22())
+    buf.Write(o.Destination.EncodePadded())
     writeStringWithLen(buf, o.Entrypoint)
     return nil
 }
@@ -74,13 +74,13 @@ func (o *TransferTicket) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err e
     if o.Type, err = readPrimWithLen(buf); err != nil {
         return
     }
-    if err = o.Ticketer.UnmarshalBinary(buf.Next(22)); err != nil {
+    if err = o.Ticketer.Decode(buf.Next(22)); err != nil {
         return
     }
     if err = o.Amount.DecodeBuffer(buf); err != nil {
         return
     }
-    if err = o.Destination.UnmarshalBinary(buf.Next(22)); err != nil {
+    if err = o.Destination.Decode(buf.Next(22)); err != nil {
         return
     }
     o.Entrypoint, err = readStringWithLen(buf)
