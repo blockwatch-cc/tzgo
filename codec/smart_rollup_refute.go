@@ -1,15 +1,13 @@
 // Copyright (c) 2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
-//go:build ignore
-// +build ignore
 
 package codec
 
 import (
     "bytes"
-    "encoding/binary"
-    "io"
-    "strconv"
+    // "encoding/binary"
+    // "io"
+    // "strconv"
 
     "blockwatch.cc/tzgo/tezos"
 )
@@ -133,16 +131,41 @@ import (
 // SmartRollupRefute represents "smart_rollup_refute" operation
 type SmartRollupRefute struct {
     Manager
-    Rollup   tezos.Address `json:"rollup"`
-    Opponent tezos.Address `json:"opponent"`
-    // start
-    Start struct {
-        State         tezos.SmartRollupStateHash `json:"compressed_state"`
-        InboxLevel    int32                      `json:"inbox_level"`
-        Predecessor   tezos.SmartRollupStateHash `json:"predecessor"`
-        NumberOfTicks int64                      `json:"number_of_ticks"`
-    } `json:"commitment"`
-    // move
+    Rollup     tezos.Address `json:"rollup"`
+    Opponent   tezos.Address `json:"opponent"`
+    Refutation struct {
+        Kind string `json:"refutation_kind"`
+        // start
+        Player   *tezos.SmartRollupCommitHash `json:"player_commitment_hash,omitempty"`
+        Opponent *tezos.SmartRollupCommitHash `json:"opponent_commitment_hash,omitempty"`
+        // move
+        Choice *tezos.N `json:"choice,omitempty"`
+        Step   any      `json:"step,omitempty"`
+    } `json:"refutation"`
+}
+
+type SmartRollupRefuteStep struct {
+    State tezos.SmartRollupStateHash `json:"state"`
+    Tick  tezos.N                    `json:"tick"`
+}
+
+type SmartRollupRefuteProof struct {
+    PvmStep    tezos.HexBytes `json:"pvm_step"`
+    InputProof struct {
+        InputProofKind   string         `json:"input_proof_kind"`
+        Level            int32          `json:"level,omitempty"`
+        MessageCounter   *tezos.Z       `json:"message_counter,omitempty"`
+        Serialized_proof tezos.HexBytes `json:"serialized_proof,omitempty"`
+        RevealProof      *struct {
+            RawData   tezos.HexBytes `json:"raw_data",omitempty`
+            DalPageId *struct {
+                PublishedLevel int32 `json:"published_level"`
+                SlotIndex      byte  `json:"slot_index"`
+                PageIndex      int16 `json:"page_index"`
+            } `json:"dal_page_id,omitempty"`
+            DalProof tezos.HexBytes `json:"dal_proof"`
+        } `json:"reveal_proof,omitempty"`
+    } `json:"input_proof"`
 }
 
 func (o SmartRollupRefute) Kind() tezos.OpType {
@@ -151,34 +174,34 @@ func (o SmartRollupRefute) Kind() tezos.OpType {
 
 func (o SmartRollupRefute) MarshalJSON() ([]byte, error) {
     buf := bytes.NewBuffer(nil)
-    buf.WriteByte('{')
-    buf.WriteString(`"kind":`)
-    buf.WriteString(strconv.Quote(o.Kind().String()))
-    buf.WriteByte(',')
-    o.Manager.EncodeJSON(buf)
-    buf.WriteString(`,"rollup":`)
-    buf.WriteString(strconv.Quote(o.Rollup.String()))
-    buf.WriteString(`,"commitment":{`)
-    buf.WriteString(`"compressed_state":`)
-    buf.WriteString(strconv.Quote(o.Commitment.State.String()))
-    buf.WriteString(`,"inbox_level":`)
-    buf.WriteString(strconv.FormatInt(o.Commitment.InboxLevel, 10))
-    buf.WriteString(`",predecessor":`)
-    buf.WriteString(strconv.Quote(o.Commitment.Predecessor.String()))
-    buf.WriteString(`,"number_of_ticks":`)
-    buf.WriteString(strconv.FormatInt(o.Commitment.NumberOfTicks, 10))
-    buf.WriteString("}}")
+    // buf.WriteByte('{')
+    // buf.WriteString(`"kind":`)
+    // buf.WriteString(strconv.Quote(o.Kind().String()))
+    // buf.WriteByte(',')
+    // o.Manager.EncodeJSON(buf)
+    // buf.WriteString(`,"rollup":`)
+    // buf.WriteString(strconv.Quote(o.Rollup.String()))
+    // buf.WriteString(`,"commitment":{`)
+    // buf.WriteString(`"compressed_state":`)
+    // buf.WriteString(strconv.Quote(o.Commitment.State.String()))
+    // buf.WriteString(`,"inbox_level":`)
+    // buf.WriteString(strconv.FormatInt(o.Commitment.InboxLevel, 10))
+    // buf.WriteString(`",predecessor":`)
+    // buf.WriteString(strconv.Quote(o.Commitment.Predecessor.String()))
+    // buf.WriteString(`,"number_of_ticks":`)
+    // buf.WriteString(strconv.FormatInt(o.Commitment.NumberOfTicks, 10))
+    // buf.WriteString("}}")
     return buf.Bytes(), nil
 }
 
 func (o SmartRollupRefute) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
     buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
     o.Manager.EncodeBuffer(buf, p)
-    buf.Write(o.Rollup.Hash()) // 20 byte only
-    buf.Write(o.Commitment.State)
-    binary.Write(buf, enc, uint32(o.Commitment.InboxLevel))
-    buf.Write(o.Commitment.Predecessor)
-    binary.Write(buf, enc, o.Commitment.NumberOfTicks)
+    // buf.Write(o.Rollup.Hash()) // 20 byte only
+    // buf.Write(o.Commitment.State)
+    // binary.Write(buf, enc, uint32(o.Commitment.InboxLevel))
+    // buf.Write(o.Commitment.Predecessor)
+    // binary.Write(buf, enc, o.Commitment.NumberOfTicks)
     return nil
 }
 
@@ -189,14 +212,14 @@ func (o *SmartRollupRefute) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (er
     if err = o.Manager.DecodeBuffer(buf, p); err != nil {
         return
     }
-    o.Rollup = tezos.NewAddress(tezos.SmartRollupAddress, buf.Next(20))
-    o.Commitment.State = tezos.NewSmartRollupStateHash(buf.Next(32))
-    o.Commitment.InboxLevel, err = readInt32(buf.Next(4))
-    if err != nil {
-        return
-    }
-    o.Commitment.Predecessor = tezos.NewSmartRollupStateHash(buf.Next(32))
-    o.Commitment.NumberOfTicks, err = readInt64(buf.Next(8))
+    // o.Rollup = tezos.NewAddress(tezos.SmartRollupAddress, buf.Next(20))
+    // o.Commitment.State = tezos.NewSmartRollupStateHash(buf.Next(32))
+    // o.Commitment.InboxLevel, err = readInt32(buf.Next(4))
+    // if err != nil {
+    //     return
+    // }
+    // o.Commitment.Predecessor = tezos.NewSmartRollupStateHash(buf.Next(32))
+    // o.Commitment.NumberOfTicks, err = readInt64(buf.Next(8))
     return
 }
 
