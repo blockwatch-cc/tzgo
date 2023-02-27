@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"encoding"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
@@ -41,7 +40,7 @@ type Operation interface {
 	WithLimits(tezos.Limits)
 	encoding.BinaryMarshaler
 	encoding.BinaryUnmarshaler
-	json.Marshaler
+	MarshalJSON() ([]byte, error)
 	EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 	DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 }
@@ -421,8 +420,18 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 	buf.WriteString(`"branch":`)
 	buf.WriteString(strconv.Quote(o.Branch.String()))
-	buf.WriteString(`,"contents":`)
-	json.NewEncoder(buf).Encode(o.Contents)
+	buf.WriteString(`,"contents":[`)
+	for i, op := range o.Contents {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		if b, err := op.MarshalJSON(); err != nil {
+			return nil, err
+		} else {
+			buf.Write(b)
+		}
+	}
+	buf.WriteByte(']')
 	sig := o.Signature
 	if len(o.Contents) > 0 && o.Contents[0].Kind() == tezos.OpTypeEndorsementWithSlot {
 		sig = tezos.InvalidSignature

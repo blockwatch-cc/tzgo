@@ -5,7 +5,6 @@ package codec
 
 import (
 	"bytes"
-	"encoding/json"
 	"strconv"
 
 	"blockwatch.cc/tzgo/micheline"
@@ -38,7 +37,7 @@ func (o Origination) MarshalJSON() ([]byte, error) {
 		buf.WriteString(strconv.Quote(o.Delegate.String()))
 	}
 	buf.WriteString(`,"script":`)
-	b, _ := json.Marshal(o.Script)
+	b, _ := o.Script.MarshalJSON()
 	buf.Write(b)
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
