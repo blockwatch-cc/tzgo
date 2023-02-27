@@ -293,7 +293,7 @@ func (s *Signature) UnmarshalBinary(b []byte) error {
 	} else {
 		s.Data = s.Data[:s.Type.Len()]
 	}
-	copy(s.Data, b[1:])
+	copy(s.Data, b)
 	return nil
 }
 
