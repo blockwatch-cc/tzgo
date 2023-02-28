@@ -152,7 +152,7 @@ var (
 	// Rollup hash magics
 	BLS12_381_PUBLIC_KEY_HASH_ID          = []byte{6, 161, 166}             // "\006\161\166" tz4(36) 20
 	GENERIC_AGGREGATE_SIGNATURE_ID        = []byte{2, 075, 234, 101}        // "\002\075\234\101" asig(96) 141
-	BLS12_381_SIGNATURE_ID                = []byte{40, 171, 064, 207}       // "\040\171\064\207" (* BLsig(96) *) 142
+	BLS12_381_SIGNATURE_ID                = []byte{40, 171, 64, 207}        // "\040\171\064\207" (* BLsig(96) *) 142
 	BLS12_381_PUBLIC_KEY_ID               = []byte{6, 149, 135, 204}        // "\006\149\135\204" (* BLpk(48) *) 76
 	BLS12_381_SECRET_KEY_ID               = []byte{3, 150, 192, 40}         // "\003\150\192\040" (* BLsk(32) *) 54
 	BLS12_381_ENCRYPTED_SECRET_KEY_ID     = []byte{2, 5, 30, 53, 25}        // "\002\005\030\053\025" (* BLesk(58) *) 88

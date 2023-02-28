@@ -152,10 +152,14 @@ func HasSignaturePrefix(s string) bool {
 }
 
 func (t SignatureType) Len() int {
-	if t.IsValid() {
+	switch t {
+	case SignatureTypeBls12_381, SignatureTypeGenericAggregate:
+		return 96
+	case SignatureTypeInvalid:
+		return 0
+	default:
 		return 64
 	}
-	return 0
 }
 
 func IsSignature(s string) bool {
@@ -191,7 +195,7 @@ func (s Signature) IsValid() bool {
 	return s.Type.IsValid() && s.Type.Len() == len(s.Data)
 }
 
-func (s Signature) IsEqual(s2 Signature) bool {
+func (s Signature) Equal(s2 Signature) bool {
 	return s.Type == s2.Type && bytes.Equal(s.Data, s2.Data)
 }
 
@@ -342,7 +346,7 @@ func ParseSignature(s string) (sig Signature, err error) {
 	}
 
 	if !bytes.Equal(ver, typ.PrefixBytes()) {
-		err = fmt.Errorf("tezos: invalid signature type %s for %s", ver, typ.Prefix())
+		err = fmt.Errorf("tezos: invalid signature type %x for %s", ver, typ.Prefix())
 		return
 	}
 
