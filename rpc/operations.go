@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -84,7 +84,7 @@ type OperationMetadata struct {
 	EndorsementPower    int           `json:"endorsement_power,omitempty"`    // v12+
 	PreendorsementPower int           `json:"preendorsement_power,omitempty"` // v12+
 
-	// some rollup ops only
+	// some rollup ops only, FIXME: is this correct here or is this field in result?
 	Level int64 `json:"level"`
 }
 
@@ -110,9 +110,20 @@ type OperationResult struct {
 	BigmapDiff           json.RawMessage  `json:"big_map_diff,omitempty"`         // tx, orig, <v013
 	LazyStorageDiff      json.RawMessage  `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
 	GlobalAddress        tezos.ExprHash   `json:"global_address"`                 // const
-	OriginatedRollup     tezos.Address    `json:"originated_rollup"`              // v013
 	TicketUpdatesCorrect []TicketUpdate   `json:"ticket_updates"`                 // v015
 	TicketReceipts       []TicketUpdate   `json:"ticket_receipt"`                 // v015, name on internal
+
+	// v013 tx rollup
+	OriginatedRollup tezos.Address `json:"originated_rollup"` // v013
+	Level            int64         `json:"level"`             // v013 ?? here or in metadata??
+
+	// v016 smart rollup
+	Address          tezos.Address               `json:"address"`            // v016, smart_rollup_originate
+	Size             tezos.Z                     `json:"size"`               // v016, smart_rollup_originate
+	InboxLevel       int64                       `json:"inbox_level"`        // v016, smart_rollup_cement
+	StakedHash       tezos.SmartRollupCommitHash `json:"staked_hash"`        // v016, smart_rollup_publish
+	PublishedAtLevel int64                       `json:"published_at_level"` // v016, smart_rollup_publish
+	GameStatus       string                      `json:"game_status"`        // v016, smart_rollup_refute, smart_rollup_timeout
 }
 
 // Always use this helper to retrieve Ticket updates. This is because due to

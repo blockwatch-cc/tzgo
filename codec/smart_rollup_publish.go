@@ -19,7 +19,7 @@ type SmartRollupPublish struct {
         State         tezos.SmartRollupStateHash `json:"compressed_state"`
         InboxLevel    int32                      `json:"inbox_level"`
         Predecessor   tezos.SmartRollupStateHash `json:"predecessor"`
-        NumberOfTicks int64                      `json:"number_of_ticks"`
+        NumberOfTicks int64                      `json:"number_of_ticks,string"`
     } `json:"commitment"`
 }
 
@@ -44,7 +44,7 @@ func (o SmartRollupPublish) MarshalJSON() ([]byte, error) {
     buf.WriteString(`,"predecessor":`)
     buf.WriteString(strconv.Quote(o.Commitment.Predecessor.String()))
     buf.WriteString(`,"number_of_ticks":`)
-    buf.WriteString(strconv.FormatInt(o.Commitment.NumberOfTicks, 10))
+    buf.WriteString(strconv.Quote(strconv.FormatInt(o.Commitment.NumberOfTicks, 10)))
     buf.WriteString("}}")
     return buf.Bytes(), nil
 }

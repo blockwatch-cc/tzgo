@@ -48,7 +48,7 @@ type SmartRollupPublish struct {
         CompressedState string `json:"compressed_state"`
         InboxLevel      int64  `json:"inbox_level"`
         Predecessor     string `json:"predecessor"`
-        NumberOfTicks   int64  `json:"number_of_ticks"`
+        NumberOfTicks   int64  `json:"number_of_ticks,string"`
     } `json:"commitment"`
 }
 
