@@ -1,6 +1,6 @@
 ## Build and sign Tezos operations
 
-Use TzGo to produce any type of Tezos operation. One by one, this example shows all the basic steps to make, encode, simulate, sign, broadacst and wait for operation to be confirmed .
+Use TzGo to produce any type of Tezos operation. One by one, this example shows all the basic steps to make, encode, simulate, sign, broadcast and wait for operation to be confirmed.
 
 ### Usage
 
@@ -20,7 +20,7 @@ Commands
   decode <msg>               decode binary operation
   digest <msg>               generate operation digest for signing
   sign <key> <msg>           sign message digest
-  sign-remoate <key> <msg>   sign message digest using remote signer
+  sign-remote <key> <msg>    sign message digest using remote signer
   simulate <msg>             simulate executing operation using invalid signature
   broadcast <msg> <sig>      broadcast signed operation
   wait <ophash> [<n>]        waits for operation to be included after n confirmations (optional)
@@ -46,7 +46,7 @@ Operation types & required JSON keys
 
 ### Examples
 
-We use a `reveal` operation as simple example, but others work with the same schema. Note that the binary encoding used as input to simulation and signing already contains a recent block hash. You can't jost copy paste below examples 1:1 to walk through the steps. Instead, start at the first command and use each command's output as the input to the following.
+We use a `reveal` operation as simple example, but others work with the same schema. Note that the binary encoding used as input to simulation and signing already contains a recent block hash. You can't just copy paste below examples 1:1 to walk through the steps. Instead, start at the first command and use each command's output as the input to the following.
 
 ```sh
 # encode to binary (also adds a recent block hash for TTL control)
