@@ -881,6 +881,9 @@ func decodeHash(src []byte, typ HashType, dst []byte) error {
 }
 
 func decodeHashString(src string, typ HashType, dst []byte) error {
+	if len(src) == 0 {
+		return nil
+	}
 	ibuf := bufPool32.Get()
 	dec, ver, err := base58.CheckDecode(src, len(typ.Id), ibuf.([]byte))
 	if err != nil {

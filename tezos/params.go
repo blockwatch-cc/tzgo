@@ -15,16 +15,16 @@ var (
 	DefaultParams = &Params{
 		Network:                      "Mainnet",
 		ChainId:                      Mainnet,
-		Protocol:                     ProtoV015,
-		Version:                      15,
+		Protocol:                     ProtoV016_2,
+		Version:                      16,
 		OperationTagsVersion:         2,
-		MaxOperationsTTL:             120,
+		MaxOperationsTTL:             240,
 		HardGasLimitPerOperation:     1040000,
-		HardGasLimitPerBlock:         5200000,
+		HardGasLimitPerBlock:         2600000,
 		OriginationSize:              257,
 		CostPerByte:                  250,
 		HardStorageLimitPerOperation: 60000,
-		MinimalBlockDelay:            30 * time.Second,
+		MinimalBlockDelay:            15 * time.Second,
 		PreservedCycles:              5,
 	}
 
@@ -33,12 +33,12 @@ var (
 	GhostnetParams = &Params{
 		Network:                      "Ghostnet",
 		ChainId:                      Ghostnet,
-		Protocol:                     ProtoV015,
-		Version:                      15,
+		Protocol:                     ProtoV016_2,
+		Version:                      16,
 		OperationTagsVersion:         2,
-		MaxOperationsTTL:             120,
+		MaxOperationsTTL:             240,
 		HardGasLimitPerOperation:     1040000,
-		HardGasLimitPerBlock:         5200000,
+		HardGasLimitPerBlock:         2600000,
 		OriginationSize:              257,
 		CostPerByte:                  250,
 		HardStorageLimitPerOperation: 60000,
@@ -69,7 +69,7 @@ var (
 	MumbainetParams = &Params{
 		Network:                      "Mumbainet",
 		ChainId:                      Mumbainet,
-		Protocol:                     ProtoV016,
+		Protocol:                     ProtoV016_2,
 		Version:                      16,
 		OperationTagsVersion:         2,
 		MaxOperationsTTL:             240,
@@ -101,6 +101,7 @@ type Params struct {
 	OriginationSize int64 `json:"origination_size"`
 
 	// limits
+	BlocksPerCycle               int64 `json:"blocks_per_cycle"`
 	PreservedCycles              int64 `json:"preserved_cycles"`
 	HardGasLimitPerOperation     int64 `json:"hard_gas_limit_per_operation"`
 	HardGasLimitPerBlock         int64 `json:"hard_gas_limit_per_block"`

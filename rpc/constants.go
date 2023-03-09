@@ -87,6 +87,8 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 
 func (c Constants) MapToChainParams() *tezos.Params {
 	p := &tezos.Params{
+		BlocksPerCycle:               c.BlocksPerCycle,
+		PreservedCycles:              c.PreservedCycles,
 		OriginationSize:              c.OriginationSize + c.OriginationBurn,
 		CostPerByte:                  c.CostPerByte,
 		HardGasLimitPerOperation:     c.HardGasLimitPerOperation,
@@ -94,7 +96,6 @@ func (c Constants) MapToChainParams() *tezos.Params {
 		HardStorageLimitPerOperation: c.HardStorageLimitPerOperation,
 		MaxOperationDataLength:       c.MaxOperationDataLength,
 		MaxOperationsTTL:             c.MaxOperationsTimeToLive,
-		PreservedCycles:              c.PreservedCycles,
 		MinimalBlockDelay:            time.Duration(c.MinimalBlockDelay) * time.Second,
 	}
 
