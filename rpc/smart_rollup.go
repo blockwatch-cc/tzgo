@@ -5,6 +5,7 @@ package rpc
 
 import (
     "encoding/json"
+    "fmt"
 
     "blockwatch.cc/tzgo/micheline"
     "blockwatch.cc/tzgo/tezos"
@@ -85,4 +86,27 @@ type SmartRollupRecoverBond struct {
     Manager
     Rollup tezos.Address `json:"rollup"`
     Staker tezos.Address `json:"staker"`
+}
+
+type GameStatus struct {
+    Status string        `json:"-"`
+    Kind   string        `json:"kind"`
+    Reason string        `json:"reason"`
+    Player tezos.Address `json:"player"`
+}
+
+func (s *GameStatus) UnmarshalJSON(buf []byte) error {
+    if len(buf) == 0 {
+        return nil
+    }
+    switch buf[0] {
+    case '"':
+        s.Status = string(buf[1 : len(buf)-1])
+    case '{':
+        type alias *GameStatus
+        return json.Unmarshal(buf, alias(s))
+    default:
+        return fmt.Errorf("Invalid game status data %q", string(buf))
+    }
+    return nil
 }

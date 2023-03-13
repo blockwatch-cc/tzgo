@@ -65,10 +65,6 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 	if err != nil {
 		return nil, err
 	}
-	head, err := c.GetBlockHeader(ctx, id)
-	if err != nil {
-		return nil, err
-	}
 	con, err := c.GetConstants(ctx, id)
 	if err != nil {
 		return nil, err
@@ -80,8 +76,7 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 	p := con.MapToChainParams().
 		WithChainId(c.ChainId).
 		WithProtocol(meta.Protocol).
-		WithNetwork(ver.NetworkVersion.ChainName).
-		WithVersion(head.Proto)
+		WithNetwork(ver.NetworkVersion.ChainName)
 	return p, nil
 }
 

@@ -123,7 +123,7 @@ type OperationResult struct {
 	InboxLevel       int64                       `json:"inbox_level"`        // v016, smart_rollup_cement
 	StakedHash       tezos.SmartRollupCommitHash `json:"staked_hash"`        // v016, smart_rollup_publish
 	PublishedAtLevel int64                       `json:"published_at_level"` // v016, smart_rollup_publish
-	GameStatus       string                      `json:"game_status"`        // v016, smart_rollup_refute, smart_rollup_timeout
+	GameStatus       GameStatus                  `json:"game_status"`        // v016, smart_rollup_refute, smart_rollup_timeout
 }
 
 // Always use this helper to retrieve Ticket updates. This is because due to
