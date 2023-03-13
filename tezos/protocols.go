@@ -46,4 +46,27 @@ var (
 	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
 	Limanet      = MustParseChainIdHash("NetXizpkH94bocH")
 	Mumbainet    = MustParseChainIdHash("NetXgbcrNtXD2yA")
+
+	Versions = map[ProtocolHash]int{
+		ProtoGenesis:   0,
+		ProtoBootstrap: 0,
+		ProtoV001:      1,
+		ProtoV002:      2,
+		ProtoV003:      3,
+		ProtoV004:      4,
+		ProtoV005_2:    5,
+		ProtoV006_2:    6,
+		ProtoV007:      7,
+		ProtoV008_2:    8,
+		ProtoV009:      9,
+		ProtoV010:      10,
+		ProtoV011_2:    11,
+		ProtoV012_2:    12,
+		ProtoV013_2:    13,
+		ProtoV014:      14,
+		ProtoV015:      15,
+		ProtoV016:      16,
+		ProtoV016_2:    16,
+		ProtoAlpha:     17,
+	}
 )

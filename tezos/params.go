@@ -120,15 +120,11 @@ func (p *Params) WithChainId(id ChainIdHash) *Params {
 
 func (p *Params) WithProtocol(h ProtocolHash) *Params {
 	p.Protocol = h
-	return p
-}
-
-func (p *Params) WithVersion(v int) *Params {
-	p.Version = v
+	p.Version = Versions[h]
 	switch {
-	case v > 11:
+	case p.Version > 11:
 		p.OperationTagsVersion = 2
-	case v > 4:
+	case p.Version > 4:
 		p.OperationTagsVersion = 1
 	}
 	return p
