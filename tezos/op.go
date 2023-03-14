@@ -90,14 +90,14 @@ const (
 	OpTypePreendorsement                         // 15 v012
 	OpTypeDoublePreendorsementEvidence           // 16 v012
 	OpTypeSetDepositsLimit                       // 17 v012
-	OpTypeTxRollupOrigination                    // 18 v013
-	OpTypeTxRollupSubmitBatch                    // 19 v013
-	OpTypeTxRollupCommit                         // 20 v013
-	OpTypeTxRollupReturnBond                     // 21 v013
-	OpTypeTxRollupFinalizeCommitment             // 22 v013
-	OpTypeTxRollupRemoveCommitment               // 23 v013
-	OpTypeTxRollupRejection                      // 24 v013
-	OpTypeTxRollupDispatchTickets                // 25 v013
+	OpTypeTxRollupOrigination                    // 18 v013 DEPRECATED in v016
+	OpTypeTxRollupSubmitBatch                    // 19 v013 DEPRECATED in v016
+	OpTypeTxRollupCommit                         // 20 v013 DEPRECATED in v016
+	OpTypeTxRollupReturnBond                     // 21 v013 DEPRECATED in v016
+	OpTypeTxRollupFinalizeCommitment             // 22 v013 DEPRECATED in v016
+	OpTypeTxRollupRemoveCommitment               // 23 v013 DEPRECATED in v016
+	OpTypeTxRollupRejection                      // 24 v013 DEPRECATED in v016
+	OpTypeTxRollupDispatchTickets                // 25 v013 DEPRECATED in v016
 	OpTypeTransferTicket                         // 26 v013
 	OpTypeVdfRevelation                          // 27 v014
 	OpTypeIncreasePaidStorage                    // 28 v014
