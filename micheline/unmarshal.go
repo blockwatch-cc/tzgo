@@ -278,7 +278,7 @@ func (p Prim) unmarshal(val reflect.Value) error {
 				err  error
 			)
 			if pp.Bytes != nil {
-				err = addr.UnmarshalBinary(pp.Bytes)
+				err = addr.Decode(pp.Bytes)
 			} else {
 				err = addr.UnmarshalText([]byte(pp.String))
 			}

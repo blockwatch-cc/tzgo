@@ -34,7 +34,7 @@ func TicketType(t Prim) Type {
 // use explicit fields for value, amount and ticketer.
 func TicketValue(v Prim, ticketer tezos.Address, amount tezos.Z) Prim {
 	return NewPair(
-		NewBytes(ticketer.Bytes22()),
+		NewBytes(ticketer.EncodePadded()),
 		NewPair(v, NewNat(amount.Big())),
 	)
 }

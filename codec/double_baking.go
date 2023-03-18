@@ -6,7 +6,6 @@ package codec
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/json"
 	"strconv"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -29,10 +28,17 @@ func (o DoubleBakingEvidence) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`"kind":`)
 	buf.WriteString(strconv.Quote(o.Kind().String()))
 	buf.WriteString(`,"bh1":`)
-	enc := json.NewEncoder(buf)
-	enc.Encode(o.Bh1)
+	if b, err := o.Bh1.MarshalJSON(); err != nil {
+		return nil, err
+	} else {
+		buf.Write(b)
+	}
 	buf.WriteString(`,"bh2":`)
-	enc.Encode(o.Bh2)
+	if b, err := o.Bh2.MarshalJSON(); err != nil {
+		return nil, err
+	} else {
+		buf.Write(b)
+	}
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }

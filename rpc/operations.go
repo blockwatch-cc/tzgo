@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -84,7 +84,7 @@ type OperationMetadata struct {
 	EndorsementPower    int           `json:"endorsement_power,omitempty"`    // v12+
 	PreendorsementPower int           `json:"preendorsement_power,omitempty"` // v12+
 
-	// some rollup ops only
+	// some rollup ops only, FIXME: is this correct here or is this field in result?
 	Level int64 `json:"level"`
 }
 
@@ -98,8 +98,8 @@ func (m OperationMetadata) Address() tezos.Address {
 // used depends on operation type and performed actions.
 type OperationResult struct {
 	Status               tezos.OpStatus   `json:"status"`
-	BalanceUpdates       BalanceUpdates   `json:"balance_updates"` // burn, etc
-	ConsumedGas          int64            `json:"consumed_gas,string"`
+	BalanceUpdates       BalanceUpdates   `json:"balance_updates"`
+	ConsumedGas          int64            `json:"consumed_gas,string"`      // deprecated in v015
 	ConsumedMilliGas     int64            `json:"consumed_milligas,string"` // v007+
 	Errors               []OperationError `json:"errors,omitempty"`
 	Allocated            bool             `json:"allocated_destination_contract"` // tx only
@@ -110,9 +110,14 @@ type OperationResult struct {
 	BigmapDiff           json.RawMessage  `json:"big_map_diff,omitempty"`         // tx, orig, <v013
 	LazyStorageDiff      json.RawMessage  `json:"lazy_storage_diff,omitempty"`    // v008+ tx, orig
 	GlobalAddress        tezos.ExprHash   `json:"global_address"`                 // const
-	OriginatedRollup     tezos.Address    `json:"originated_rollup"`              // v013
 	TicketUpdatesCorrect []TicketUpdate   `json:"ticket_updates"`                 // v015
 	TicketReceipts       []TicketUpdate   `json:"ticket_receipt"`                 // v015, name on internal
+
+	// v013 tx rollup
+	TxRollupResult
+
+	// v016 smart rollup
+	SmartRollupResult
 }
 
 // Always use this helper to retrieve Ticket updates. This is because due to
@@ -340,27 +345,37 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeUpdateConsensusKey:
 			op = &UpdateConsensusKey{}
 
-			// rollup operations
-		case tezos.OpTypeToruOrigination,
-			tezos.OpTypeToruSubmitBatch,
-			tezos.OpTypeToruCommit,
-			tezos.OpTypeToruReturnBond,
-			tezos.OpTypeToruFinalizeCommitment,
-			tezos.OpTypeToruRemoveCommitment,
-			tezos.OpTypeToruRejection,
-			tezos.OpTypeToruDispatchTickets,
-			tezos.OpTypeScRollupOriginate,
-			tezos.OpTypeScRollupAddMessages,
-			tezos.OpTypeScRollupCement,
-			tezos.OpTypeScRollupPublish,
-			tezos.OpTypeScRollupRefute,
-			tezos.OpTypeScRollupTimeout,
-			tezos.OpTypeScRollupExecuteOutboxMessage,
-			tezos.OpTypeScRollupRecoverBond,
-			tezos.OpTypeScRollupDalSlotSubscribe,
-			tezos.OpTypeDalSlotAvailability,
-			tezos.OpTypeDalPublishSlotHeader:
-			op = &Rollup{}
+			// DEPRECATED: tx rollup operations, kept for testnet backward compatibility
+		case tezos.OpTypeTxRollupOrigination,
+			tezos.OpTypeTxRollupSubmitBatch,
+			tezos.OpTypeTxRollupCommit,
+			tezos.OpTypeTxRollupReturnBond,
+			tezos.OpTypeTxRollupFinalizeCommitment,
+			tezos.OpTypeTxRollupRemoveCommitment,
+			tezos.OpTypeTxRollupRejection,
+			tezos.OpTypeTxRollupDispatchTickets:
+			op = &TxRollup{}
+
+		case tezos.OpTypeSmartRollupOriginate:
+			op = &SmartRollupOriginate{}
+		case tezos.OpTypeSmartRollupAddMessages:
+			op = &SmartRollupAddMessages{}
+		case tezos.OpTypeSmartRollupCement:
+			op = &SmartRollupCement{}
+		case tezos.OpTypeSmartRollupPublish:
+			op = &SmartRollupPublish{}
+		case tezos.OpTypeSmartRollupRefute:
+			op = &SmartRollupRefute{}
+		case tezos.OpTypeSmartRollupTimeout:
+			op = &SmartRollupTimeout{}
+		case tezos.OpTypeSmartRollupExecuteOutboxMessage:
+			op = &SmartRollupExecuteOutboxMessage{}
+		case tezos.OpTypeSmartRollupRecoverBond:
+			op = &SmartRollupRecoverBond{}
+		case tezos.OpTypeDalAttestation:
+			op = &DalAttestation{}
+		case tezos.OpTypeDalPublishSlotHeader:
+			op = &DalPublishSlotHeader{}
 
 		default:
 			return fmt.Errorf("rpc: unsupported op %q", string(data[start:end]))

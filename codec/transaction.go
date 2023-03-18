@@ -47,7 +47,7 @@ func (o Transaction) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
 	o.Manager.EncodeBuffer(buf, p)
 	o.Amount.EncodeBuffer(buf)
-	buf.Write(o.Destination.Bytes22())
+	buf.Write(o.Destination.EncodePadded())
 	if o.Parameters != nil {
 		buf.WriteByte(0xff)
 		o.Parameters.EncodeBuffer(buf)
@@ -67,7 +67,7 @@ func (o *Transaction) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
 	if err = o.Amount.DecodeBuffer(buf); err != nil {
 		return
 	}
-	if err = o.Destination.UnmarshalBinary(buf.Next(22)); err != nil {
+	if err = o.Destination.Decode(buf.Next(22)); err != nil {
 		return
 	}
 	var ok bool

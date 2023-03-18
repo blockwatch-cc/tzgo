@@ -6,7 +6,6 @@ package codec
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/json"
 	"strconv"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -68,6 +67,23 @@ type InlinedEndorsement struct {
 	Signature   tezos.Signature `json:"signature"`
 }
 
+func (o InlinedEndorsement) MarshalJSON() ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteByte('{')
+	buf.WriteString(`"branch":`)
+	buf.WriteString(strconv.Quote(o.Branch.String()))
+	buf.WriteString(`,"operations":`)
+	if b, err := o.Endorsement.MarshalJSON(); err != nil {
+		return nil, err
+	} else {
+		buf.Write(b)
+	}
+	buf.WriteString(`,"signature":`)
+	buf.WriteString(strconv.Quote(o.Signature.String()))
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
 func (o InlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.Write(o.Branch.Bytes())
 	o.Endorsement.EncodeBuffer(buf, p)
@@ -76,7 +92,7 @@ func (o InlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) err
 }
 
 func (o *InlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}
@@ -106,7 +122,8 @@ func (o EndorsementWithSlot) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`"kind":`)
 	buf.WriteString(strconv.Quote(o.Kind().String()))
 	buf.WriteString(`,"endorsement":`)
-	json.NewEncoder(buf).Encode(o.Endorsement)
+	b, _ := o.Endorsement.MarshalJSON()
+	buf.Write(b)
 	buf.WriteString(`,"slot":`)
 	buf.WriteString(strconv.Itoa(int(o.Slot)))
 	buf.WriteByte('}')
@@ -223,6 +240,20 @@ type TenderbakeInlinedEndorsement struct {
 	Signature   tezos.Signature       `json:"signature"`
 }
 
+func (o TenderbakeInlinedEndorsement) MarshalJSON() ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteByte('{')
+	buf.WriteString(`"branch":`)
+	buf.WriteString(strconv.Quote(o.Branch.String()))
+	buf.WriteString(`,"operations":`)
+	b, _ := o.Endorsement.MarshalJSON()
+	buf.Write(b)
+	buf.WriteString(`,"signature":`)
+	buf.WriteString(strconv.Quote(o.Signature.String()))
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
 func (o TenderbakeInlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.Write(o.Branch.Bytes())
 	o.Endorsement.EncodeBuffer(buf, p)
@@ -231,7 +262,7 @@ func (o TenderbakeInlinedEndorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.P
 }
 
 func (o *TenderbakeInlinedEndorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}
@@ -319,6 +350,20 @@ type TenderbakeInlinedPreendorsement struct {
 	Signature   tezos.Signature          `json:"signature"`
 }
 
+func (o TenderbakeInlinedPreendorsement) MarshalJSON() ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteByte('{')
+	buf.WriteString(`"branch":`)
+	buf.WriteString(strconv.Quote(o.Branch.String()))
+	buf.WriteString(`,"operations":`)
+	b, _ := o.Endorsement.MarshalJSON()
+	buf.Write(b)
+	buf.WriteString(`,"signature":`)
+	buf.WriteString(strconv.Quote(o.Signature.String()))
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
 func (o TenderbakeInlinedPreendorsement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.Write(o.Branch.Bytes())
 	o.Endorsement.EncodeBuffer(buf, p)
@@ -327,7 +372,7 @@ func (o TenderbakeInlinedPreendorsement) EncodeBuffer(buf *bytes.Buffer, p *tezo
 }
 
 func (o *TenderbakeInlinedPreendorsement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len()))
+	err = o.Branch.UnmarshalBinary(buf.Next(tezos.HashTypeBlock.Len))
 	if err != nil {
 		return
 	}

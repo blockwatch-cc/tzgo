@@ -93,7 +93,7 @@ var keyInfo = []keyTest{
 		Hex:    "0a000000150046a2c00eb115343242347fa1cd672a2bc1dcc609",
 		Value:  []byte(`"tz1S5WxdZR5f9NzsPXhr7L9L1vrEb5spZFur"`),
 		String: "tz1S5WxdZR5f9NzsPXhr7L9L1vrEb5spZFur",
-		Prim:   NewBytes(tezos.MustParseAddress("tz1S5WxdZR5f9NzsPXhr7L9L1vrEb5spZFur").Bytes22()),
+		Prim:   NewBytes(tezos.MustParseAddress("tz1S5WxdZR5f9NzsPXhr7L9L1vrEb5spZFur").Encode()),
 	},
 	//   address
 	{
@@ -103,7 +103,7 @@ var keyInfo = []keyTest{
 		Hex:    "0a000000160000b8c25930f179a13ffeefa8b0026318f7e508a8fc",
 		Value:  []byte(`"tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH"`),
 		String: "tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH",
-		Prim:   NewBytes(tezos.MustParseAddress("tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH").Bytes22()),
+		Prim:   NewBytes(tezos.MustParseAddress("tz1cUwqynCFDp1D22kLNtWMKxpoZFDHg5eZH").EncodePadded()),
 	},
 	{
 		Name:   "KT1 address",
@@ -112,7 +112,7 @@ var keyInfo = []keyTest{
 		Hex:    "0a0000001601a3d0f58d8964bd1b37fb0a0c197b38cf46608d4900",
 		Value:  []byte(`"KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn"`),
 		String: "KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn",
-		Prim:   NewBytes(tezos.MustParseAddress("KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn").Bytes22()),
+		Prim:   NewBytes(tezos.MustParseAddress("KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn").EncodePadded()),
 	},
 
 	//   timestamp as string
@@ -141,7 +141,7 @@ var keyInfo = []keyTest{
 		Value:  []byte(`{"0":"tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw","1":"153"}`),
 		String: "tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw,153",
 		Prim: NewPair(
-			NewBytes(tezos.MustParseAddress("tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw").Bytes22()),
+			NewBytes(tezos.MustParseAddress("tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw").EncodePadded()),
 			NewInt64(153),
 		),
 	},
@@ -153,7 +153,7 @@ var keyInfo = []keyTest{
 		Value:  []byte(`{"0":"tz1ipn31fhqk47Tr3f7KZAeCamyqMBXBAKBi","1":"DICRERJ28"}`),
 		String: "tz1ipn31fhqk47Tr3f7KZAeCamyqMBXBAKBi,DICRERJ28",
 		Prim: NewPair(
-			NewBytes(tezos.MustParseAddress("tz1ipn31fhqk47Tr3f7KZAeCamyqMBXBAKBi").Bytes22()),
+			NewBytes(tezos.MustParseAddress("tz1ipn31fhqk47Tr3f7KZAeCamyqMBXBAKBi").EncodePadded()),
 			NewString("DICRERJ28"),
 		),
 	},
@@ -165,9 +165,9 @@ var keyInfo = []keyTest{
 		Value:  []byte(`{"0":"tz1UU772ew1GALQ2Uh8fCCN4uhzWBzSQH4Az","1":"KT1SwH9P1Tx8a58Mm6qBExQFTcy2rwZyZiXS","2":"79"}`),
 		String: "tz1UU772ew1GALQ2Uh8fCCN4uhzWBzSQH4Az,KT1SwH9P1Tx8a58Mm6qBExQFTcy2rwZyZiXS,79",
 		Prim: NewPair(
-			NewBytes(tezos.MustParseAddress("tz1UU772ew1GALQ2Uh8fCCN4uhzWBzSQH4Az").Bytes22()),
+			NewBytes(tezos.MustParseAddress("tz1UU772ew1GALQ2Uh8fCCN4uhzWBzSQH4Az").EncodePadded()),
 			NewPair(
-				NewBytes(tezos.MustParseAddress("KT1SwH9P1Tx8a58Mm6qBExQFTcy2rwZyZiXS").Bytes22()),
+				NewBytes(tezos.MustParseAddress("KT1SwH9P1Tx8a58Mm6qBExQFTcy2rwZyZiXS").EncodePadded()),
 				NewInt64(79),
 			),
 		),

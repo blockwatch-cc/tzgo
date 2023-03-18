@@ -5,7 +5,6 @@ package tezos
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 
 	"blockwatch.cc/tzgo/base58"
@@ -40,62 +39,42 @@ func BlindHash(hash, secret []byte) ([]byte, error) {
 }
 
 func BlindAddress(a Address, secret []byte) (Address, error) {
-	bh, err := BlindHash(a.Hash, secret)
+	bh, err := BlindHash(a[1:], secret)
 	if err != nil {
 		return Address{}, err
 	}
-	return Address{
-		Type: AddressTypeBlinded,
-		Hash: bh,
-	}, nil
+	return NewAddress(AddressTypeBlinded, bh), nil
 }
 
 // Checks if address a when blinded with secret equals blinded address b.
 func MatchBlindedAddress(a, b Address, secret []byte) bool {
-	bh, _ := BlindHash(a.Hash, secret)
-	return bytes.Equal(bh, b.Hash)
+	bh, _ := BlindHash(a[1:], secret)
+	return bytes.Equal(bh, b[1:])
 }
 
-func (a *Address) DecodeBlindedString(addr string) error {
-	a.Type = AddressTypeInvalid
-	decoded, version, err := base58.CheckDecode(addr, 4, a.Hash)
-	if err != nil {
+func DecodeBlindedAddress(addr string) (a Address, err error) {
+	ibuf := bufPool32.Get()
+	dec, ver, err2 := base58.CheckDecode(addr, 4, ibuf.([]byte))
+	if err2 != nil {
 		if err == base58.ErrChecksum {
-			return ErrChecksumMismatch
+			err = ErrChecksumMismatch
+			return
 		}
-		return fmt.Errorf("tezos: decoded address is of unknown format: %w", err)
+		err = fmt.Errorf("tezos: decoded address is of unknown format: %w", err2)
+		return
 	}
-	if len(decoded) != 20 {
-		return fmt.Errorf("tezos: decoded address hash is of invalid length")
+	if len(dec) != 20 {
+		err = fmt.Errorf("tezos: decoded address hash has invalid length %d", len(dec))
+		return
 	}
-	switch {
-	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
-		a.Type = AddressTypeBlinded
-		a.Hash = decoded
-	default:
-		return fmt.Errorf("tezos: decoded blinded address %s is of unknown type %x", addr, version)
+	if !bytes.Equal(ver, BLINDED_PUBLIC_KEY_HASH_ID) {
+		err = fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, ver)
+		return
 	}
-	return nil
-}
-
-func DecodeBlindedAddress(addr string) (Address, error) {
-	a := Address{}
-	decoded, version, err := base58.CheckDecode(addr, 4, nil)
-	if err != nil {
-		if err == base58.ErrChecksum {
-			return a, ErrChecksumMismatch
-		}
-		return a, fmt.Errorf("tezos: decoded address is of unknown format: %w", err)
-	}
-	if len(decoded) != 20 {
-		return a, errors.New("tezos: decoded address hash is of invalid length")
-	}
-	switch {
-	case bytes.Equal(version, BLINDED_PUBLIC_KEY_HASH_ID):
-		return Address{Type: AddressTypeBlinded, Hash: decoded}, nil
-	default:
-		return a, fmt.Errorf("tezos: decoded address %s is of unknown type %x", addr, version)
-	}
+	a[0] = byte(AddressTypeBlinded)
+	copy(a[1:], dec)
+	bufPool32.Put(ibuf)
+	return
 }
 
 func EncodeBlindedAddress(hash, secret []byte) (string, error) {
@@ -103,5 +82,5 @@ func EncodeBlindedAddress(hash, secret []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return EncodeAddress(AddressTypeBlinded, bh)
+	return EncodeAddress(AddressTypeBlinded, bh), nil
 }

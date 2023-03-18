@@ -560,7 +560,7 @@ func (p Prim) BuildType() Type {
 		t.Type = PrimNullary
 		// detect address encoding first
 		var addr tezos.Address
-		if err := addr.UnmarshalBinary(p.Bytes); err == nil {
+		if err := addr.Decode(p.Bytes); err == nil {
 			if addr.IsRollup() {
 				t.OpCode = T_TX_ROLLUP_L2_ADDRESS
 			} else {

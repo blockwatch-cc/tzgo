@@ -220,7 +220,7 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 						name = string(buf)
 					} else if tezos.IsAddressBytes(buf) {
 						a := tezos.Address{}
-						_ = a.UnmarshalBinary(buf)
+						_ = a.Decode(buf)
 						name = a.String()
 					}
 				}
@@ -370,6 +370,11 @@ func (p *Script) DecodeBuffer(buf *bytes.Buffer) error {
 	}
 
 	return nil
+}
+
+func (p Script) MarshalJSON() ([]byte, error) {
+	type alias Script
+	return json.Marshal(alias(p))
 }
 
 func (p Script) MarshalBinary() ([]byte, error) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package codec
@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"encoding"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
@@ -41,7 +40,7 @@ type Operation interface {
 	WithLimits(tezos.Limits)
 	encoding.BinaryMarshaler
 	encoding.BinaryUnmarshaler
-	json.Marshaler
+	MarshalJSON() ([]byte, error)
 	EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 	DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) error
 }
@@ -421,8 +420,18 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 	buf.WriteString(`"branch":`)
 	buf.WriteString(strconv.Quote(o.Branch.String()))
-	buf.WriteString(`,"contents":`)
-	json.NewEncoder(buf).Encode(o.Contents)
+	buf.WriteString(`,"contents":[`)
+	for i, op := range o.Contents {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		if b, err := op.MarshalJSON(); err != nil {
+			return nil, err
+		} else {
+			buf.Write(b)
+		}
+	}
+	buf.WriteByte(']')
 	sig := o.Signature
 	if len(o.Contents) > 0 && o.Contents[0].Kind() == tezos.OpTypeEndorsementWithSlot {
 		sig = tezos.InvalidSignature
@@ -499,8 +508,42 @@ func DecodeOp(data []byte) (*Op, error) {
 			op = new(RegisterGlobalConstant)
 		case tezos.OpTypeSetDepositsLimit:
 			op = new(SetDepositsLimit)
+		case tezos.OpTypeTransferTicket:
+			op = new(TransferTicket)
+		case tezos.OpTypeVdfRevelation:
+			op = new(VdfRevelation)
+		case tezos.OpTypeIncreasePaidStorage:
+			op = new(IncreasePaidStorage)
+		case tezos.OpTypeDrainDelegate:
+			op = new(DrainDelegate)
+		case tezos.OpTypeUpdateConsensusKey:
+			op = new(UpdateConsensusKey)
+		case tezos.OpTypeSmartRollupOriginate:
+			op = new(SmartRollupOriginate)
+		case tezos.OpTypeSmartRollupAddMessages:
+			op = new(SmartRollupAddMessages)
+		case tezos.OpTypeSmartRollupCement:
+			op = new(SmartRollupCement)
+		case tezos.OpTypeSmartRollupPublish:
+			op = new(SmartRollupPublish)
+		// TODO
+		// case tezos.OpTypeSmartRollupRefute:
+		// 	op = new(SmartRollupRefute)
+		case tezos.OpTypeSmartRollupTimeout:
+			op = new(SmartRollupTimeout)
+		case tezos.OpTypeSmartRollupExecuteOutboxMessage:
+			op = new(SmartRollupExecuteOutboxMessage)
+		case tezos.OpTypeSmartRollupRecoverBond:
+			op = new(SmartRollupRecoverBond)
+		case tezos.OpTypeDalAttestation:
+			op = new(DalAttestation)
+		case tezos.OpTypeDalPublishSlotHeader:
+			op = new(DalPublishSlotHeader)
+
 		default:
 			// stop if rest looks like a signature
+			// FIXME: BLS sigs are 96 bytes, but accepting this here will
+			// collide with detecting valid operation types in a batch
 			if buf.Len() == 64 {
 				break
 			}
@@ -513,6 +556,7 @@ func DecodeOp(data []byte) (*Op, error) {
 	}
 
 	if buf.Len() > 0 {
+		// FIXME: BLS sigs are 96 byte
 		if err := o.Signature.UnmarshalBinary(buf.Next(64)); err != nil {
 			return nil, err
 		}

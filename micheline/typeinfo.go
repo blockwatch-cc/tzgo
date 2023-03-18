@@ -169,12 +169,23 @@ func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
 		oc = T_STRING
 	case reflect.Bool:
 		oc = T_BOOL
+	case reflect.Array:
+		switch typ.String() {
+		case "tezos.Address":
+			oc = T_ADDRESS
+		case "tezos.ChainIdHash":
+			oc = T_CHAIN_ID
+		default:
+			if typ.Implements(binaryUnmarshalerType) {
+				oc = T_BYTES
+			} else {
+				err = fmt.Errorf("unsupported embedded array type %s", typ.String())
+			}
+		}
 	case reflect.Struct:
 		switch typ.String() {
 		case "time.Time":
 			oc = T_TIMESTAMP
-		case "tezos.Address":
-			oc = T_ADDRESS
 		case "tezos.Z":
 			oc = T_NAT
 		case "tezos.N":
@@ -183,8 +194,6 @@ func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
 			oc = T_KEY
 		case "tezos.Signature":
 			oc = T_SIGNATURE
-		case "tezos.ChainIdHash":
-			oc = T_CHAIN_ID
 		default:
 			if typ.Implements(binaryUnmarshalerType) {
 				oc = T_BYTES

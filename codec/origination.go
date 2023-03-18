@@ -5,7 +5,6 @@ package codec
 
 import (
 	"bytes"
-	"encoding/json"
 	"strconv"
 
 	"blockwatch.cc/tzgo/micheline"
@@ -38,7 +37,7 @@ func (o Origination) MarshalJSON() ([]byte, error) {
 		buf.WriteString(strconv.Quote(o.Delegate.String()))
 	}
 	buf.WriteString(`,"script":`)
-	b, _ := json.Marshal(o.Script)
+	b, _ := o.Script.MarshalJSON()
 	buf.Write(b)
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
@@ -50,7 +49,7 @@ func (o Origination) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	o.Balance.EncodeBuffer(buf)
 	if o.Delegate.IsValid() {
 		buf.WriteByte(0xff)
-		buf.Write(o.Delegate.Bytes())
+		buf.Write(o.Delegate.Encode())
 	} else {
 		buf.WriteByte(0x0)
 	}
@@ -75,7 +74,7 @@ func (o *Origination) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err erro
 	}
 	if ok {
 		addr := tezos.Address{}
-		err = addr.UnmarshalBinary(buf.Next(21))
+		err = addr.Decode(buf.Next(21))
 		if err != nil {
 			return err
 		}

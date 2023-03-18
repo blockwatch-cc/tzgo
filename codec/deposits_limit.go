@@ -13,7 +13,7 @@ import (
 // SetDepositsLimit represents "set_deposits_limit" operation
 type SetDepositsLimit struct {
 	Manager
-	Limit *tezos.N `json:"limit"`
+	Limit *tezos.N `json:"limit,omitempty"`
 }
 
 func (o SetDepositsLimit) Kind() tezos.OpType {

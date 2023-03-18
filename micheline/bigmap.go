@@ -173,7 +173,7 @@ func (b BigmapEvents) MarshalBinary() ([]byte, error) {
 					v.Key,
 					{
 						Type:  PrimBytes,
-						Bytes: v.KeyHash.Hash.Hash,
+						Bytes: v.KeyHash[:],
 					},
 				},
 			}

@@ -8,7 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
+	// "strconv"
 
 	"blockwatch.cc/tzgo/rpc"
 	"blockwatch.cc/tzgo/tezos"
@@ -33,7 +33,7 @@ func init() {
 func main() {
 	if err := flags.Parse(os.Args[1:]); err != nil {
 		if err == flag.ErrHelp {
-			fmt.Println("Params Test")
+			fmt.Println("params [height/hash/alias]")
 			flags.PrintDefaults()
 			os.Exit(0)
 		}
@@ -48,19 +48,15 @@ func main() {
 }
 
 func run() error {
-	if flags.NArg() < 1 {
-		return fmt.Errorf("Block height required")
-	}
-
-	height, err := strconv.ParseInt(flags.Arg(0), 10, 64)
-	if err != nil {
-		return err
+	id := rpc.Head
+	if flags.NArg() > 0 {
+		id = rpc.BlockAlias(flags.Arg(0))
 	}
 	ctx := context.Background()
 
 	// fetch block & constants at height
 	c, _ := rpc.NewClient(node, nil)
-	block, err := c.GetBlockHeight(ctx, height)
+	block, err := c.GetBlock(ctx, id)
 	if err != nil {
 		if rpc.ErrorStatus(err) != 404 {
 			return err
@@ -69,54 +65,44 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Block %d does not exist yet. Using constants at current head block %d\n", height, block.GetLevel())
+		fmt.Printf("Block %s does not exist yet. Using constants at current head block %d\n", id, block.GetLevel())
 	}
-	cons, err := c.GetConstants(ctx, rpc.BlockLevel(block.GetLevel()))
+	p, err := c.GetParams(ctx, rpc.BlockLevel(block.GetLevel()))
 	if err != nil {
 		return err
 	}
-	forNet, forProto := block.ChainId, block.Protocol
 
 	// simulate
 	if proto != "" {
-		forProto, err = tezos.ParseProtocolHash(proto)
+		p.Protocol, err = tezos.ParseProtocolHash(proto)
 		if err != nil {
 			return err
 		}
 	}
 	if net != "" {
-		forNet, err = tezos.ParseChainIdHash(net)
+		p.ChainId, err = tezos.ParseChainIdHash(net)
 		if err != nil {
 			return err
 		}
 	}
-	p := cons.MapToChainParams().ForNetwork(forNet).ForProtocol(forProto)
-	fmt.Printf("Using protocol %s on %s\n", forProto.Short()[:8], p.Network)
+	fmt.Printf("Using protocol %s on %s\n", tezos.Short(p.Protocol.String())[:8], p.Network)
 
-	fmt.Println("Height ...................... ", height)
-	fmt.Println("Protocol .................... ", forProto)
-	fmt.Println("Period ...................... ", block.GetVotingPeriodKind(), block.GetVotingPeriod())
-	fmt.Println("StartCycle .................. ", p.StartCycle)
-	fmt.Println("StartBlockOffset ............ ", p.StartBlockOffset)
-	fmt.Println("VoteBlockOffset ............. ", p.VoteBlockOffset)
-	fmt.Println("BlocksPerCycle .............. ", p.BlocksPerCycle)
-	fmt.Println("BlocksPerVotingPeriod ....... ", p.BlocksPerVotingPeriod)
-	fmt.Println("----------------------------- ")
-	fmt.Println("IsCycleStart ................ ", p.IsCycleStart(height))
-	fmt.Println("IsCycleEnd .................. ", p.IsCycleEnd(height))
-	fmt.Println("IsSnapshotBlock ............. ", p.IsSnapshotBlock(height))
-	fmt.Println("IsSeedRequired .............. ", p.IsSeedRequired(height))
-	fmt.Println("CycleFromHeight ............. ", p.CycleFromHeight(height))
-	fmt.Println("CycleStartHeight ............ ", p.CycleStartHeight(p.CycleFromHeight(height)))
-	fmt.Println("CycleEndHeight .............. ", p.CycleEndHeight(p.CycleFromHeight(height)))
-	fmt.Println("SnapshotIndex ............... ", p.SnapshotIndex(height))
-	fmt.Println("MaxSnapshotIndex ............ ", p.MaxSnapshotIndex())
-	fmt.Println("VotingStartCycleFromHeight .. ", p.VotingStartCycleFromHeight(height))
-	fmt.Println("IsVoteStart ................. ", p.IsVoteStart(height))
-	fmt.Println("IsVoteEnd ................... ", p.IsVoteEnd(height))
-	fmt.Println("VoteStartHeight ............. ", p.VoteStartHeight(height))
-	fmt.Println("VoteEndHeight ............... ", p.VoteEndHeight(height))
-	fmt.Println("IsPreBabylonHeight .......... ", p.IsPreBabylonHeight(height))
-
+	fmt.Println("Height .............................. ", block.GetLevel())
+	fmt.Println("Protocol ............................ ", p.Protocol)
+	fmt.Println("Network ............................. ", p.Network)
+	fmt.Println("Version ............................. ", p.Version)
+	fmt.Println("Chain_id ............................ ", p.ChainId)
+	fmt.Println("Operation Tags ...................... ", p.OperationTagsVersion)
+	fmt.Println("--------------------------------------------- ")
+	fmt.Println("minimal_block_delay ................. ", p.MinimalBlockDelay)
+	fmt.Println("max_operations_ttl .................. ", p.MaxOperationsTTL)
+	fmt.Println("cost_per_byte ....................... ", p.CostPerByte)
+	fmt.Println("origination_size .................... ", p.OriginationSize)
+	fmt.Println("preserved_cycles .................... ", p.PreservedCycles)
+	fmt.Println("--------------------------------------------- ")
+	fmt.Println("hard_gas_limit_per_operation ........ ", p.HardGasLimitPerOperation)
+	fmt.Println("hard_gas_limit_per_block ............ ", p.HardGasLimitPerBlock)
+	fmt.Println("hard_storage_limit_per_operation .... ", p.HardStorageLimitPerOperation)
+	fmt.Println("max_operation_data_length ........... ", p.MaxOperationDataLength)
 	return nil
 }

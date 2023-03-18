@@ -15,7 +15,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
+	"strings"
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/rpc"
@@ -43,6 +45,7 @@ func main() {
 			fmt.Println("\nArguments")
 			flags.PrintDefaults()
 			fmt.Println("\nCommands")
+			fmt.Printf("  describe <type>            describe JSON data required for op `type`\n")
 			fmt.Printf("  encode <type> <data>       generate operation `type` from JSON `data`\n")
 			fmt.Printf("  validate <type> <data>     compare local encoding against remote encoding\n")
 			fmt.Printf("  decode <msg>               decode binary operation\n")
@@ -52,23 +55,38 @@ func main() {
 			fmt.Printf("  simulate <msg>             simulate executing an operation using a fake signature\n")
 			fmt.Printf("  broadcast <msg> <sig>      broadcast signed operation\n")
 			fmt.Printf("  wait <ophash> [<n>]        waits for operation to be included after n confirmations (optional)\n")
-			fmt.Println("\nOperation types & required JSON keys")
-			fmt.Printf("  endorsement                    level:int slot:int round:int payload_hash:hash\n")
-			fmt.Printf("  preendorsement                 level:int slot:int round:int payload_hash:hash\n")
-			fmt.Printf("  double_baking_evidence         <complex>\n")
-			fmt.Printf("  double_endorsement_evidence    <complex>\n")
-			fmt.Printf("  double_preendorsement_evidence <complex>\n")
-			fmt.Printf("  seed_nonce_revelation          level:str(int) nonce:hash\n")
-			fmt.Printf("  activate_account               pkh:addr secret:hex32\n")
-			fmt.Printf("  reveal                         source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) public_key:key \n")
-			fmt.Printf("  transaction                    source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) amount:str(int) destination:addr \n")
-			fmt.Printf("  origination                    source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) balance:str(int) delegate?:addr script:prim\n")
-			fmt.Printf("  delegation                     source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) delegate?:addr\n")
-			fmt.Printf("  proposals                      source:addr period:str(int) proposal:[hash]\n")
-			fmt.Printf("  ballot                         source:addr period:str(int) proposal:hash ballot:(yay,nay,pass)\n")
-			fmt.Printf("  register_global_constant       source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) value:prim\n")
-			fmt.Printf("  set_deposits_limit             source:addr fee:str(int) counter:str(int) gas_limit:str(int) storage_limit:str(int) limit:int\n")
-			fmt.Printf("  failing_noop                   arbitrary:str\n")
+			fmt.Println("\nOperation types")
+			fmt.Println("  endorsement")
+			fmt.Println("  preendorsement")
+			fmt.Println("  double_baking_evidence")
+			fmt.Println("  double_endorsement_evidence")
+			fmt.Println("  double_preendorsement_evidence")
+			fmt.Println("  seed_nonce_revelation")
+			fmt.Println("  activate_account")
+			fmt.Println("  reveal")
+			fmt.Println("  transaction")
+			fmt.Println("  origination")
+			fmt.Println("  delegation")
+			fmt.Println("  proposals")
+			fmt.Println("  ballot")
+			fmt.Println("  register_global_constant")
+			fmt.Println("  set_deposits_limit")
+			fmt.Println("  failing_noop")
+			fmt.Println("  transfer_ticket")
+			fmt.Println("  vdf_revelation")
+			fmt.Println("  increase_paid_storage")
+			fmt.Println("  drain_delegate")
+			fmt.Println("  update_consensus_key")
+			fmt.Println("  smart_rollup_originate")
+			fmt.Println("  smart_rollup_add_messages")
+			fmt.Println("  smart_rollup_cement")
+			fmt.Println("  smart_rollup_publish")
+			fmt.Println("  smart_rollup_refute")
+			fmt.Println("  smart_rollup_timeout")
+			fmt.Println("  smart_rollup_execute_outbox_message")
+			fmt.Println("  smart_rollup_recover_bond")
+			fmt.Println("  dal_attestation")
+			fmt.Println("  dal_publish_slot_header")
 			os.Exit(0)
 		}
 		fmt.Println("Error:", err)
@@ -117,6 +135,11 @@ func run() error {
 			return fmt.Errorf("Missing number")
 		}
 		return encodeN(flags.Arg(1))
+	case "describe":
+		if n < 2 {
+			return fmt.Errorf("Missing type")
+		}
+		return describe(ctx, c, flags.Arg(1))
 	case "encode":
 		if n < 3 {
 			return fmt.Errorf("Missing type or data")
@@ -209,6 +232,36 @@ func makeOp(c *rpc.Client, t, data string) (codec.Operation, error) {
 		o = new(codec.RegisterGlobalConstant)
 	case tezos.OpTypeSetDepositsLimit:
 		o = new(codec.SetDepositsLimit)
+	case tezos.OpTypeTransferTicket:
+		o = new(codec.TransferTicket)
+	case tezos.OpTypeVdfRevelation:
+		o = new(codec.VdfRevelation)
+	case tezos.OpTypeIncreasePaidStorage:
+		o = new(codec.IncreasePaidStorage)
+	case tezos.OpTypeDrainDelegate:
+		o = new(codec.DrainDelegate)
+	case tezos.OpTypeUpdateConsensusKey:
+		o = new(codec.UpdateConsensusKey)
+	case tezos.OpTypeSmartRollupOriginate:
+		o = new(codec.SmartRollupOriginate)
+	case tezos.OpTypeSmartRollupAddMessages:
+		o = new(codec.SmartRollupAddMessages)
+	case tezos.OpTypeSmartRollupCement:
+		o = new(codec.SmartRollupCement)
+	case tezos.OpTypeSmartRollupPublish:
+		o = new(codec.SmartRollupPublish)
+	case tezos.OpTypeSmartRollupRefute:
+		o = new(codec.SmartRollupRefute)
+	case tezos.OpTypeSmartRollupTimeout:
+		o = new(codec.SmartRollupTimeout)
+	case tezos.OpTypeSmartRollupExecuteOutboxMessage:
+		o = new(codec.SmartRollupExecuteOutboxMessage)
+	case tezos.OpTypeSmartRollupRecoverBond:
+		o = new(codec.SmartRollupRecoverBond)
+	case tezos.OpTypeDalAttestation:
+		o = new(codec.DalAttestation)
+	case tezos.OpTypeDalPublishSlotHeader:
+		o = new(codec.DalPublishSlotHeader)
 	default:
 		return nil, fmt.Errorf("Unsupported op type %q", t)
 	}
@@ -248,6 +301,57 @@ func encodeN(s string) error {
 	buf, _ = x.MarshalBinary()
 	fmt.Println("Recoded:", hex.EncodeToString(buf))
 	return nil
+}
+
+func describe(ctx context.Context, c *rpc.Client, typ string) error {
+	o, err := makeOp(c, typ, "{}")
+	if err != nil {
+		return err
+	}
+	fmt.Println("op type", typ)
+	fmt.Println("-----------------------------------------------")
+	printTypeInfo(reflect.Indirect(reflect.ValueOf(o)).Type(), "")
+	return nil
+}
+
+func printTypeInfo(typ reflect.Type, prefix string) {
+	if prefix != "" {
+		prefix = prefix + "."
+	}
+	for i := 0; i < typ.NumField(); i++ {
+		f := typ.Field(i)
+		tag, aux, _ := strings.Cut(f.Tag.Get("json"), ",")
+		typname := f.Type.String()
+
+		// skip private fields
+		if (f.PkgPath != "" && !f.Anonymous) || tag == "-" {
+			continue
+		}
+
+		// embedded structs
+		if f.Anonymous {
+			t := f.Type
+			if t.Kind() == reflect.Ptr {
+				t = t.Elem()
+			}
+			if t.Kind() == reflect.Struct {
+				printTypeInfo(t, prefix+tag)
+				continue
+			}
+		}
+
+		// print nested structs
+		if f.Type.Kind() == reflect.Struct && (strings.HasPrefix(typname, "struct") || strings.HasPrefix(typname, "codec.")) {
+			printTypeInfo(f.Type, prefix+tag)
+			continue
+		}
+
+		if aux != "" {
+			aux = "(" + aux + ")"
+		}
+
+		fmt.Printf("%-30s %s %s\n", prefix+tag, typname, aux)
+	}
 }
 
 func encode(ctx context.Context, c *rpc.Client, typ, data string) error {

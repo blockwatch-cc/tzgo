@@ -6,7 +6,6 @@ package codec
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/json"
 	"strconv"
 
 	"blockwatch.cc/tzgo/tezos"
@@ -29,11 +28,12 @@ func (o DoubleEndorsementEvidence) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 	buf.WriteString(`"kind":`)
 	buf.WriteString(strconv.Quote(o.Kind().String()))
-	enc := json.NewEncoder(buf)
 	buf.WriteString(`,"op1":`)
-	enc.Encode(o.Op1)
+	b, _ := o.Op1.MarshalJSON()
+	buf.Write(b)
 	buf.WriteString(`,"op2":`)
-	enc.Encode(o.Op2)
+	b, _ = o.Op2.MarshalJSON()
+	buf.Write(b)
 	buf.WriteString(`,"slot":`)
 	buf.WriteString(strconv.Itoa(int(o.Slot)))
 	buf.WriteByte('}')
@@ -106,11 +106,12 @@ func (o TenderbakeDoubleEndorsementEvidence) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 	buf.WriteString(`"kind":`)
 	buf.WriteString(strconv.Quote(o.Kind().String()))
-	enc := json.NewEncoder(buf)
 	buf.WriteString(`,"op1":`)
-	enc.Encode(o.Op1)
+	b, _ := o.Op1.MarshalJSON()
+	buf.Write(b)
 	buf.WriteString(`,"op2":`)
-	enc.Encode(o.Op2)
+	b, _ = o.Op2.MarshalJSON()
+	buf.Write(b)
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }
@@ -176,11 +177,12 @@ func (o TenderbakeDoublePreendorsementEvidence) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 	buf.WriteString(`"kind":`)
 	buf.WriteString(strconv.Quote(o.Kind().String()))
-	enc := json.NewEncoder(buf)
 	buf.WriteString(`,"op1":`)
-	enc.Encode(o.Op1)
+	b, _ := o.Op1.MarshalJSON()
+	buf.Write(b)
 	buf.WriteString(`,"op2":`)
-	enc.Encode(o.Op2)
+	b, _ = o.Op2.MarshalJSON()
+	buf.Write(b)
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }

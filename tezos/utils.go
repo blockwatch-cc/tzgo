@@ -5,6 +5,9 @@ package tezos
 
 import (
 	"encoding/hex"
+	"fmt"
+	"io"
+	"sync"
 )
 
 // HexBytes represents bytes as a JSON string of hexadecimal digits
@@ -19,6 +22,25 @@ func (h *HexBytes) UnmarshalText(data []byte) error {
 		return err
 	}
 	*h = dst
+	return nil
+}
+
+// ReadBytes copies size bytes from r into h. If h is nil or too short,
+// a new byte slice is allocated. Fails with io.ErrShortBuffer when
+// less than size bytes can be read from r.
+func (h *HexBytes) ReadBytes(r io.Reader, size int) error {
+	if cap(*h) < size {
+		*h = make([]byte, size)
+	} else {
+		*h = (*h)[:size]
+	}
+	n, err := r.Read(*h)
+	if err != nil {
+		return err
+	}
+	if n < size {
+		return io.ErrShortBuffer
+	}
 	return nil
 }
 
@@ -50,4 +72,37 @@ func (r Ratio) Float64() float64 {
 		return 0
 	}
 	return float64(r.Num) / float64(r.Den)
+}
+
+func Short(v any) string {
+	var s string
+	if str, ok := v.(fmt.Stringer); ok {
+		s = str.String()
+	} else {
+		s = v.(string)
+	}
+	if len(s) <= 12 {
+		return s
+	}
+	return s[:8] + "..." + s[len(s)-4:]
+}
+
+func panicOnError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func b2i(b bool) (i int) {
+	// The compiler currently only optimizes this form into movzbl.
+	// See https://0x0f.me/blog/golang-compiler-optimization/
+	// See issue 6011.
+	if b {
+		i = 1
+	}
+	return
+}
+
+var bufPool32 = &sync.Pool{
+	New: func() any { return make([]byte, 32) },
 }

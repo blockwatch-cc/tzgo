@@ -55,7 +55,6 @@ func run() error {
 	var (
 		key  tezos.Key
 		addr tezos.Address
-		hash tezos.Hash
 		err  error
 	)
 	// try decoding as key
@@ -67,7 +66,7 @@ func run() error {
 			if err != nil {
 				return err
 			}
-			err = addr.UnmarshalBinary(buf)
+			err = addr.Decode(buf)
 			if err != nil {
 				if err = key.UnmarshalBinary(buf); err != nil {
 					return fmt.Errorf("Not a valid key or address")
@@ -76,24 +75,18 @@ func run() error {
 		}
 	} else {
 		addr = key.Address()
-		hash, err = tezos.ParseHash(flags.Arg(0))
-		if err != nil {
-			return err
-		}
 	}
 
 	if key.IsValid() {
 		fmt.Printf("Key     %s\n", key.String())
-		fmt.Printf("ReKey   %s\n", tezos.NewKey(addr.Type.KeyType(), key.Data))
+		fmt.Printf("ReKey   %s\n", tezos.NewKey(addr.KeyType(), key.Data))
 		fmt.Printf("KeyData %x\n", key.Data)
-		fmt.Printf("AsHash  %x\n", hash.Hash)
-		fmt.Printf("HType   %s\n", hash.Type)
 		addr = key.Address()
 	}
 	fmt.Printf("Address %s\n", addr.String())
-	fmt.Printf("Short   %s\n", addr.Short())
-	fmt.Printf("PkType  %s\n", addr.Type)
-	fmt.Printf("PkHash  %x\n", addr.Hash)
+	fmt.Printf("Short   %s\n", tezos.Short(addr))
+	fmt.Printf("PkType  %s\n", addr.Type())
+	fmt.Printf("PkHash  %x\n", addr.Hash())
 	return nil
 }
 
@@ -117,7 +110,7 @@ func blinded() error {
 		return err
 	}
 	fmt.Printf("Address %s\n", addr.String())
-	fmt.Printf("Hash    %x\n", addr.Hash)
+	fmt.Printf("Hash    %x\n", addr.Hash())
 	fmt.Printf("Blinded %s\n", blind.String())
 	return nil
 }

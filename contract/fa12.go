@@ -38,7 +38,7 @@ func (t FA1Token) ResolveMetadata(ctx context.Context) (*TokenMetadata, error) {
 
 func (t FA1Token) GetBalance(ctx context.Context, owner tezos.Address) (tezos.Z, error) {
 	var balance tezos.Z
-	prim, err := t.contract.RunCallback(ctx, "getBalance", micheline.NewBytes(owner.Bytes22()))
+	prim, err := t.contract.RunCallback(ctx, "getBalance", micheline.NewBytes(owner.EncodePadded()))
 	if err == nil {
 		balance.SetBig(prim.Int)
 	}
@@ -58,8 +58,8 @@ func (t FA1Token) GetAllowance(ctx context.Context, owner, spender tezos.Address
 	var allowance tezos.Z
 	prim, err := t.contract.RunCallback(ctx, "getAllowance",
 		micheline.NewPair(
-			micheline.NewBytes(owner.Bytes22()),
-			micheline.NewBytes(spender.Bytes22()),
+			micheline.NewBytes(owner.EncodePadded()),
+			micheline.NewBytes(spender.EncodePadded()),
 		),
 	)
 	if err == nil {
@@ -130,7 +130,7 @@ func (a FA1ApprovalArgs) Parameters() *micheline.Parameters {
 	return &micheline.Parameters{
 		Entrypoint: "approve",
 		Value: micheline.NewPair(
-			micheline.NewBytes(a.Approval.Spender.Bytes22()),
+			micheline.NewBytes(a.Approval.Spender.EncodePadded()),
 			micheline.NewNat(a.Approval.Value.Big()),
 		),
 	}
@@ -202,9 +202,9 @@ func (t FA1TransferArgs) Parameters() *micheline.Parameters {
 	return &micheline.Parameters{
 		Entrypoint: "transfer",
 		Value: micheline.NewPair(
-			micheline.NewBytes(t.Transfer.From.Bytes22()),
+			micheline.NewBytes(t.Transfer.From.EncodePadded()),
 			micheline.NewPair(
-				micheline.NewBytes(t.Transfer.To.Bytes22()),
+				micheline.NewBytes(t.Transfer.To.EncodePadded()),
 				micheline.NewNat(t.Transfer.Amount.Big()),
 			),
 		),

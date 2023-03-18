@@ -61,7 +61,7 @@ func (o Manager) EncodeJSON(buf *bytes.Buffer) error {
 }
 
 func (o Manager) EncodeBuffer(buf *bytes.Buffer, _ *tezos.Params) error {
-	buf.Write(o.Source.Bytes())
+	buf.Write(o.Source.Encode())
 	o.Fee.EncodeBuffer(buf)
 	o.Counter.EncodeBuffer(buf)
 	o.GasLimit.EncodeBuffer(buf)
@@ -70,7 +70,7 @@ func (o Manager) EncodeBuffer(buf *bytes.Buffer, _ *tezos.Params) error {
 }
 
 func (o *Manager) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
-	if err = o.Source.UnmarshalBinary(buf.Next(21)); err != nil {
+	if err = o.Source.Decode(buf.Next(21)); err != nil {
 		return
 	}
 	if err = o.Fee.DecodeBuffer(buf); err != nil {

@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -344,7 +344,7 @@ func (k Key) Verify(hash []byte, sig Signature) error {
 }
 
 func (k Key) IsValid() bool {
-	return k.Type.IsValid() && k.Type.PkHashType().Len() == len(k.Data)
+	return k.Type.IsValid() && k.Type.PkHashType().Len == len(k.Data)
 }
 
 func (k Key) IsEqual(k2 Key) bool {
@@ -367,10 +367,7 @@ func (k Key) Hash() []byte {
 }
 
 func (k Key) Address() Address {
-	return Address{
-		Type: k.Type.AddressType(),
-		Hash: k.Hash(),
-	}
+	return NewAddress(k.Type.AddressType(), k.Hash())
 }
 
 func (k Key) String() string {
@@ -455,7 +452,7 @@ func (k *Key) DecodeBuffer(buf *bytes.Buffer) error {
 	} else {
 		k.Type = typ
 	}
-	l := k.Type.PkHashType().Len()
+	l := k.Type.PkHashType().Len
 	k.Data = make([]byte, l)
 	copy(k.Data, buf.Next(l))
 	if !k.IsValid() {
@@ -488,7 +485,7 @@ func ParseKey(s string) (Key, error) {
 	default:
 		return k, fmt.Errorf("tezos: unknown version %x for key %s", version, s)
 	}
-	if l := len(decoded); l != k.Type.PkHashType().Len() {
+	if l := len(decoded); l != k.Type.PkHashType().Len {
 		return k, fmt.Errorf("tezos: invalid length %d for %s key data", l, k.Type.PkPrefix())
 	}
 	k.Data = decoded
@@ -516,7 +513,7 @@ type PrivateKey struct {
 }
 
 func (k PrivateKey) IsValid() bool {
-	return k.Type.IsValid() && k.Type.SkHashType().Len() == len(k.Data)
+	return k.Type.IsValid() && k.Type.SkHashType().Len == len(k.Data)
 }
 
 func (k PrivateKey) String() string {
@@ -567,7 +564,7 @@ func GenerateKey(typ KeyType) (PrivateKey, error) {
 		if err != nil {
 			return key, err
 		}
-		key.Data = make([]byte, typ.SkHashType().Len())
+		key.Data = make([]byte, typ.SkHashType().Len)
 		ecKey.D.FillBytes(key.Data)
 	case KeyTypeBls12_381:
 		// TODO
@@ -708,7 +705,7 @@ func ParseEncryptedPrivateKey(s string, fn PassphraseFunc) (k PrivateKey, err er
 		err = fmt.Errorf("tezos: unknown version %x for private key %s", version, s)
 		return
 	}
-	if l := len(decoded); l != k.Type.SkHashType().Len() {
+	if l := len(decoded); l != k.Type.SkHashType().Len {
 		return k, fmt.Errorf("tezos: invalid length %d for %s private key data", l, k.Type.SkPrefix())
 	}
 	k.Data = decoded
