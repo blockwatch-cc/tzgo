@@ -98,8 +98,8 @@ func (m OperationMetadata) Address() tezos.Address {
 // used depends on operation type and performed actions.
 type OperationResult struct {
 	Status               tezos.OpStatus   `json:"status"`
-	BalanceUpdates       BalanceUpdates   `json:"balance_updates"` // burn, etc
-	ConsumedGas          int64            `json:"consumed_gas,string"`
+	BalanceUpdates       BalanceUpdates   `json:"balance_updates"`
+	ConsumedGas          int64            `json:"consumed_gas,string"`      // deprecated in v015
 	ConsumedMilliGas     int64            `json:"consumed_milligas,string"` // v007+
 	Errors               []OperationError `json:"errors,omitempty"`
 	Allocated            bool             `json:"allocated_destination_contract"` // tx only
@@ -114,16 +114,10 @@ type OperationResult struct {
 	TicketReceipts       []TicketUpdate   `json:"ticket_receipt"`                 // v015, name on internal
 
 	// v013 tx rollup
-	OriginatedRollup tezos.Address `json:"originated_rollup"` // v013
-	Level            int64         `json:"level"`             // v013 ?? here or in metadata??
+	TxRollupResult
 
 	// v016 smart rollup
-	Address          tezos.Address               `json:"address"`            // v016, smart_rollup_originate
-	Size             tezos.Z                     `json:"size"`               // v016, smart_rollup_originate
-	InboxLevel       int64                       `json:"inbox_level"`        // v016, smart_rollup_cement
-	StakedHash       tezos.SmartRollupCommitHash `json:"staked_hash"`        // v016, smart_rollup_publish
-	PublishedAtLevel int64                       `json:"published_at_level"` // v016, smart_rollup_publish
-	GameStatus       GameStatus                  `json:"game_status"`        // v016, smart_rollup_refute, smart_rollup_timeout
+	SmartRollupResult
 }
 
 // Always use this helper to retrieve Ticket updates. This is because due to
@@ -363,7 +357,7 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &TxRollup{}
 
 		case tezos.OpTypeSmartRollupOriginate:
-			op = &SmartRollupOrigination{}
+			op = &SmartRollupOriginate{}
 		case tezos.OpTypeSmartRollupAddMessages:
 			op = &SmartRollupAddMessages{}
 		case tezos.OpTypeSmartRollupCement:

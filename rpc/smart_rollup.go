@@ -13,7 +13,7 @@ import (
 
 // Ensure SmartRollup types implement the TypedOperation interface.
 var (
-    _ TypedOperation = (*SmartRollupOrigination)(nil)
+    _ TypedOperation = (*SmartRollupOriginate)(nil)
     _ TypedOperation = (*SmartRollupAddMessages)(nil)
     _ TypedOperation = (*SmartRollupCement)(nil)
     _ TypedOperation = (*SmartRollupPublish)(nil)
@@ -23,7 +23,16 @@ var (
     _ TypedOperation = (*SmartRollupRecoverBond)(nil)
 )
 
-type SmartRollupOrigination struct {
+type SmartRollupResult struct {
+    Address          *tezos.Address               `json:"address,omitempty"`            // v016, smart_rollup_originate
+    Size             *tezos.Z                     `json:"size,omitempty"`               // v016, smart_rollup_originate
+    InboxLevel       int64                        `json:"inbox_level,omitempty"`        // v016, smart_rollup_cement
+    StakedHash       *tezos.SmartRollupCommitHash `json:"staked_hash,omitempty"`        // v016, smart_rollup_publish
+    PublishedAtLevel int64                        `json:"published_at_level,omitempty"` // v016, smart_rollup_publish
+    GameStatus       *GameStatus                  `json:"game_status,omitempty"`        // v016, smart_rollup_refute, smart_rollup_timeout
+}
+
+type SmartRollupOriginate struct {
     Manager
     PvmKind          tezos.PvmKind  `json:"pvm_kind"`
     Kernel           tezos.HexBytes `json:"kernel"`
@@ -42,28 +51,32 @@ type SmartRollupCement struct {
     Commitment tezos.SmartRollupCommitHash `json:"commitment"`
 }
 
+type SmartRollupCommitment struct {
+    CompressedState tezos.SmartRollupStateHash  `json:"compressed_state"`
+    InboxLevel      int64                       `json:"inbox_level"`
+    Predecessor     tezos.SmartRollupCommitHash `json:"predecessor"`
+    NumberOfTicks   tezos.Z                     `json:"number_of_ticks"`
+}
+
 type SmartRollupPublish struct {
     Manager
-    Rollup     tezos.Address `json:"rollup"`
-    Commitment struct {
-        CompressedState tezos.SmartRollupStateHash  `json:"compressed_state"`
-        InboxLevel      int64                       `json:"inbox_level"`
-        Predecessor     tezos.SmartRollupCommitHash `json:"predecessor"`
-        NumberOfTicks   tezos.Z                     `json:"number_of_ticks"`
-    } `json:"commitment"`
+    Rollup     tezos.Address         `json:"rollup"`
+    Commitment SmartRollupCommitment `json:"commitment"`
 }
 
 type SmartRollupRefute struct {
     Manager
-    Rollup     tezos.Address `json:"rollup"`
-    Opponent   tezos.Address `json:"opponent"`
-    Refutation struct {
-        Kind         string                      `json:"refutation_kind"`
-        PlayerHash   tezos.SmartRollupCommitHash `json:"player_commitment_hash"`
-        OpponentHash tezos.SmartRollupCommitHash `json:"opponent_commitment_hash"`
-        Choice       tezos.Z                     `json:"choice"`
-        Step         *SmartRollupRefuteStep      `json:"step"`
-    } `json:"refutation"`
+    Rollup     tezos.Address         `json:"rollup"`
+    Opponent   tezos.Address         `json:"opponent"`
+    Refutation SmartRollupRefutation `json:"refutation"`
+}
+
+type SmartRollupRefutation struct {
+    Kind         string                       `json:"refutation_kind"`
+    PlayerHash   *tezos.SmartRollupCommitHash `json:"player_commitment_hash,omitempty"`
+    OpponentHash *tezos.SmartRollupCommitHash `json:"opponent_commitment_hash,omitempty"`
+    Choice       *tezos.Z                     `json:"choice,omitempty"`
+    Step         *SmartRollupRefuteStep       `json:"step,omitempty"`
 }
 
 // Step can either be
@@ -76,7 +89,12 @@ type SmartRollupRefute struct {
 // suggests how to decode this.
 type SmartRollupRefuteStep struct {
     Ticks []SmartRollupTick
-    Proof *SmartRollupInputProof
+    Proof *SmartRollupProof
+}
+
+type SmartRollupProof struct {
+    PvmStep    tezos.HexBytes         `json:"pvm_step,omitempty"`
+    InputProof *SmartRollupInputProof `json:"input_proof,omitempty"`
 }
 
 func (s *SmartRollupRefuteStep) UnmarshalJSON(buf []byte) error {
@@ -88,7 +106,7 @@ func (s *SmartRollupRefuteStep) UnmarshalJSON(buf []byte) error {
         s.Ticks = make([]SmartRollupTick, 0)
         return json.Unmarshal(buf, &s.Ticks)
     case '{':
-        s.Proof = &SmartRollupInputProof{}
+        s.Proof = &SmartRollupProof{}
         return json.Unmarshal(buf, s.Proof)
     default:
         return fmt.Errorf("Invalid refute step data %q", string(buf))
@@ -141,10 +159,10 @@ type SmartRollupRecoverBond struct {
 }
 
 type GameStatus struct {
-    Status string        `json:"-"`
-    Kind   string        `json:"kind"`
-    Reason string        `json:"reason"`
-    Player tezos.Address `json:"player"`
+    Status string         `json:"status,omitempty"`
+    Kind   string         `json:"kind,omitempty"`
+    Reason string         `json:"reason,omitempty"`
+    Player *tezos.Address `json:"player,omitempty"`
 }
 
 func (s *GameStatus) UnmarshalJSON(buf []byte) error {
@@ -155,22 +173,14 @@ func (s *GameStatus) UnmarshalJSON(buf []byte) error {
     case '"':
         s.Status = string(buf[1 : len(buf)-1])
     case '{':
-        type alias struct {
-            S *GameStatus `json:"result"`
+        type alias *GameStatus
+        type wrapper struct {
+            S alias `json:"result"`
         }
-        return json.Unmarshal(buf, &alias{s})
+        a := wrapper{alias(s)}
+        _ = json.Unmarshal(buf, &a)
     default:
         return fmt.Errorf("Invalid game status data %q", string(buf))
     }
     return nil
-}
-
-func (s GameStatus) MarshalJSON() ([]byte, error) {
-    if s.Status != "" {
-        return []byte(`"` + s.Status + `"`), nil
-    }
-    type alias struct {
-        S GameStatus `json:"result"`
-    }
-    return json.Marshal(alias{s})
 }

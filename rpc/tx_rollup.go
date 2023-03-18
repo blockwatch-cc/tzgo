@@ -35,6 +35,11 @@ type TxRollup struct {
 	Commit TxRollupCommit `json:"commitment"`
 }
 
+type TxRollupResult struct {
+	OriginatedRollup tezos.Address `json:"originated_rollup"` // v013 tx_rollup_originate
+	Level            int64         `json:"level"`             // v013 ?? here or in metadata??
+}
+
 func (r *TxRollup) UnmarshalJSON(data []byte) error {
 	type alias *TxRollup
 	if err := json.Unmarshal(data, alias(r)); err != nil {
