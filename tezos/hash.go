@@ -902,6 +902,6 @@ func decodeHashString(src string, typ HashType, dst []byte) error {
 	return nil
 }
 
-func encodeHash(typ HashType, h []byte) string {
-	return base58.CheckEncode(h, typ.Id)
-}
+// func encodeHash(typ HashType, h []byte) string {
+// 	return base58.CheckEncode(h, typ.Id)
+// }
