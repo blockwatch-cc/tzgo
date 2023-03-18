@@ -2,14 +2,33 @@
 
 ## v1.16.0
 
-Refactoring
+Refactoring and Mumbai support
 
-* Changed memory layout and interface for all hash types and `tezos.Address`
-  - hashes and addresses can now be used as Golang Map keys
+BREAKING: Note that due to a new internal address encoding data writting using binary marshalers with earlier versions of TzGo is incompatible.
+
+* Changed memory layout and interface for all hash types and `tezos.Address` to save 24 bytes per address/hash that was previously required for a byte slice header
+  - hashes and addresses directly comparable now and can thus be used as Golang Map keys
   - renamed `Address.Bytes()` to `Encode()`
   - renamed `Address.Bytes22()` to `EncodePadded()`
   - use `Address.Decode(buf []byte)` instead of `UnmarshalBinary()` for reading binary encoded addresses
-* Simplified `tezos.Params` removing unused fields and protocol deployment hendling
+* Simplified `tezos.Params` removing unused fields and protocol deployment handling
+* Added smart rollup support to rpc and codec packages
+* Added binary encoders for new operations since Lima
+  - `drain_delegate`
+  - `increase_paid_storage`
+  - `set_deposits_limit`
+  - `update_consensus_key`
+  - `transfer_ticket`
+  - `smart_rollup_add_messages`
+  - `smart_rollup_cement`
+  - `smart_rollup_originate`
+  - `smart_rollup_execute_outbox_message`
+  - `smart_rollup_publish`
+  - `smart_rollup_recover_bond`
+  - `smart_rollup_refute` (incomplete)
+  - `smart_rollup_timeout`
+  - `dal_attestation`
+  - `dal_publish`
 
 ## v1.15.0
 

@@ -6,6 +6,7 @@ Our main focus is on **correctness**, **stability**, and **compliance** with the
 
 Current Tezos protocol support in TzGo
 
+- Mumbai v016
 - Lima v015
 - Kathmandu v014
 - Jakarta v013
@@ -355,7 +356,7 @@ func main() {
 
 ## License
 
-The MIT License (MIT) Copyright (c) 2020-2022 Blockwatch Data Inc.
+The MIT License (MIT) Copyright (c) 2020-2023 Blockwatch Data Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

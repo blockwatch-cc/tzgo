@@ -11,7 +11,7 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// TransferTicket represents "transaction" operation
+// TransferTicket represents "transfer_ticket" operation
 type TransferTicket struct {
 	Manager
 	Contents    micheline.Prim `json:"ticket_contents"`
