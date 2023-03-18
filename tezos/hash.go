@@ -583,7 +583,7 @@ func (h *ExprHash) UnmarshalBinary(buf []byte) error {
 
 func ParseExprHash(s string) (h ExprHash, err error) {
 	err = decodeHashString(s, HashTypeScriptExpr, h[:])
-	return h, nil
+	return
 }
 
 func MustParseExprHash(s string) ExprHash {
@@ -901,7 +901,3 @@ func decodeHashString(src string, typ HashType, dst []byte) error {
 	bufPool32.Put(ibuf)
 	return nil
 }
-
-// func encodeHash(typ HashType, h []byte) string {
-// 	return base58.CheckEncode(h, typ.Id)
-// }

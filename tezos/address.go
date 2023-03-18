@@ -120,10 +120,6 @@ func (t AddressType) asByte() byte {
 	return byte(t)
 }
 
-func (t AddressType) asInt() int {
-	return int(t)
-}
-
 func parseAddressTag(b byte) byte {
 	t := AddressTypeInvalid
 	if int(b) < len(addressTags) {
