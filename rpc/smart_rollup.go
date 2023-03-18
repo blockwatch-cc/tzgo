@@ -111,7 +111,6 @@ func (s *SmartRollupRefuteStep) UnmarshalJSON(buf []byte) error {
     default:
         return fmt.Errorf("Invalid refute step data %q", string(buf))
     }
-    return nil
 }
 
 func (s SmartRollupRefuteStep) MarshalJSON() ([]byte, error) {
