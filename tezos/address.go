@@ -422,5 +422,8 @@ func ParseAddress(addr string) (a Address, err error) {
 }
 
 func EncodeAddress(typ AddressType, hash []byte) string {
+	if typ == AddressTypeInvalid {
+		return ""
+	}
 	return base58.CheckEncode(hash, typ.HashType().Id)
 }
