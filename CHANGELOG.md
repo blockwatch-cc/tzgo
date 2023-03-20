@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.16.2
+
+- working fix for crashes when decoding illegally typed Micheline values
+
+## v1.16.1
+
+- incomplete fix for crashes when decoding illegally typed Micheline values
+
 ## v1.16.0
 
 Refactoring and Mumbai support
