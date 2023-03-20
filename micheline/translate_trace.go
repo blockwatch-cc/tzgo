@@ -332,6 +332,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				log("L%0d: > val[%s]=%s\n", lvl, val.OpCode, val.Dump())
 			})
 
+			// skip if broken
+			if len(val.Args) == 0 {
+				return fmt.Errorf("micheline: broken T_OPTION value prim")
+			}
+
 			// detect nested type when missing, this can happen with option types
 			// inside containers when the first element (used to detect the type
 			// for all elements) has option None.
