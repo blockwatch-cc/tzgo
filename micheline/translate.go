@@ -61,6 +61,9 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 	switch typ.OpCode {
 	case T_SET:
 		// set <comparable type>
+		if len(typ.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_SET type prim")
+		}
 		arr := make([]interface{}, 0, len(val.Args))
 		for _, v := range val.Args {
 			if v.IsScalar() && !v.IsSequence() {
@@ -155,6 +158,10 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				}
 			}
 			return nil
+		}
+
+		if len(typ.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_BIG_MAP type prim")
 		}
 
 		switch val.Type {
@@ -265,6 +272,10 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			// for all elements) has option None.
 			if len(typ.Args) == 0 {
 				typ = val.BuildType()
+				// skip if broken
+				if len(typ.Args) == 0 {
+					return fmt.Errorf("micheline: broken T_OPTION type/value prim")
+				}
 			}
 
 			// with annots (name) use it for scalar or complex render
@@ -292,6 +303,14 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_OR:
 		// or <type> <type>
+		// skip if broken
+		if len(typ.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_OR type prim")
+		}
+		if len(val.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_OR value prim")
+		}
+
 		// use map to capture nested names
 		mm := make(map[string]interface{})
 		switch val.OpCode {
@@ -356,6 +375,9 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		}
 
 	case T_TICKET:
+		if len(typ.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_TICKET type prim")
+		}
 		// always Pair( ticketer:address, Pair( original_type, int ))
 		stack.Push(val)
 		if err := walkTree(m, label, TicketType(typ.Args[0]), stack, lvl+1); err != nil {
@@ -363,6 +385,9 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		}
 
 	case T_SAPLING_STATE:
+		if len(typ.Args) == 0 {
+			return fmt.Errorf("micheline: broken T_SAPLING_STATE value prim")
+		}
 		mm := make(map[string]interface{})
 		if err := walkTree(mm, "memo_size", Type{NewPrim(T_INT)}, NewStack(typ.Args[0]), lvl+1); err != nil {
 			return err
