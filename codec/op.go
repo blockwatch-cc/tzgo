@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	EmmyBlockWatermark                byte = 1 // deprecated
-	EmmyEndorsementWatermark          byte = 2 // deprecated
-	OperationWatermark                byte = 3
-	TenderbakeBlockWatermark          byte = 11
-	TenderbakePreendorsementWatermark byte = 12
-	TenderbakeEndorsementWatermark    byte = 13
+	EmmyBlockWatermark                byte = 0x01 // deprecated
+	EmmyEndorsementWatermark          byte = 0x02 // deprecated
+	OperationWatermark                byte = 0x03
+	TenderbakeBlockWatermark          byte = 0x11
+	TenderbakePreendorsementWatermark byte = 0x12
+	TenderbakeEndorsementWatermark    byte = 0x13
 )
 
 var (
