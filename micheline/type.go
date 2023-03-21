@@ -75,12 +75,16 @@ func (t Typedef) Unfold() Typedef {
 func (t Typedef) unfold() []Typedef {
 	switch t.Type {
 	case TypeStruct:
-		// unfold nested structs unless they are optional
-		if !t.Optional {
-			args := make([]Typedef, 0, len(t.Args))
-			for _, v := range t.Args {
-				args = append(args, v.unfold()...)
-			}
+		// unfold nested structs
+		args := make([]Typedef, 0, len(t.Args))
+		for _, v := range t.Args {
+			args = append(args, v.unfold()...)
+		}
+		if t.Optional {
+			// keep struct header when optional
+			t.Args = args
+			return []Typedef{t}
+		} else {
 			return args
 		}
 	case TypeUnion:

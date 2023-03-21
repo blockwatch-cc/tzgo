@@ -1,12 +1,16 @@
 # Changelog
 
+## unreleased
+
+* fix Micheline type compare for nested optional structs
+
 ## v1.16.2
 
-- working fix for crashes when decoding illegally typed Micheline values
+* working fix for crashes when decoding illegally typed Micheline values
 
 ## v1.16.1
 
-- incomplete fix for crashes when decoding illegally typed Micheline values
+* incomplete fix for crashes when decoding illegally typed Micheline values
 
 ## v1.16.0
 
