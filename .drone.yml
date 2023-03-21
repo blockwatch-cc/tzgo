@@ -16,18 +16,18 @@ environment:
 
 steps:
 - name: run linter
-  image: golangci/golangci-lint:v1.45-alpine
+  image: golangci/golangci-lint:v1.52-alpine
   commands:
     - golangci-lint run
 
 - name: scan the files
-  image: aquasec/trivy:0.24.3
+  image: aquasec/trivy:0.38.3
   commands:
-    - trivy fs --exit-code 1 --security-checks vuln,config ./
+    - trivy fs --exit-code 1 --scanners vuln,config ./
     - trivy config --exit-code 1 ./
 
 - name: go build
-  image: golang:1.19.0-alpine3.16
+  image: golang:1.20.2-alpine3.17
   commands:
     - go vet ./...
     - go test ./...

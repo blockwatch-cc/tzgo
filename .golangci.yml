@@ -1,17 +1,18 @@
 linters:
   enable:
     - bodyclose
-    - goconst
+    - durationcheck
+    - exportloopref
+    - gomoddirectives
+    - prealloc
+    - reassign
     - gocritic
     - gofmt
     - govet
     - prealloc
     - unconvert
     - unparam
-    - deadcode
     - gosimple
-    - structcheck
-    - varcheck
     - unused
   disable:
-    - errcheck
+   - errcheck
