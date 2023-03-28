@@ -437,7 +437,7 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.BlocksPerVotingPeriod = 40960
 			pp.EndorsersPerBlock = 0
 			pp.StartHeight = 2981889
-			pp.EndHeight = -1
+			pp.EndHeight = 3268608
 		case Limanet.Equal(p.ChainId):
 			pp.StartBlockOffset = 8192
 			pp.StartCycle = 2
@@ -447,7 +447,29 @@ func (p *Params) ForProtocol(proto ProtocolHash) *Params {
 			pp.StartBlockOffset = 1654784
 			pp.StartCycle = 404
 			pp.StartHeight = 1654785
+			pp.EndHeight = 3268608
+		}
+	case PtMumbai.Equal(proto): // Mumbai
+		pp.Version = 16
+		pp.OperationTagsVersion = 2
+		pp.NumVotingPeriods = 5
+		pp.MaxOperationsTTL = 120
+		switch {
+		case Mainnet.Equal(p.ChainId):
+			pp.StartBlockOffset = 3268608
+			pp.StartCycle = 593
+			pp.VoteBlockOffset = 0
+			// FIXME: this is extremely hacky!
+			// Block time reduced to 15s now so we double the block per cycle
+			pp.BlocksPerCycle = 16384
+			pp.BlocksPerCommitment = 128
+			pp.BlocksPerSnapshot = 1024
+			pp.BlocksPerVotingPeriod = 81920
+			pp.EndorsersPerBlock = 0
+			pp.StartHeight = 3268609
 			pp.EndHeight = -1
+		case Limanet.Equal(p.ChainId), Ghostnet.Equal(p.ChainId), Mumbainet.Equal(p.ChainId):
+			panic("not implemented")
 		}
 	}
 	return pp
