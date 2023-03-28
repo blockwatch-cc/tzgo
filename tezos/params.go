@@ -83,6 +83,20 @@ var (
 	}
 )
 
+func NewParams() *Params {
+	return &Params{
+		Name:             "Tezos",
+		Network:          "",
+		Symbol:           "XTZ",
+		StartHeight:      -1,
+		EndHeight:        -1,
+		Decimals:         6,
+		Token:            1000000, // initial, changed several times later
+		NumVotingPeriods: 4,       // initial, changed once in v008
+		MaxOperationsTTL: 60,      // initial, changed once in v011
+	}
+}
+
 // Params contains a subset of protocol configuration settings that are relevant
 // for dapps and most indexers. For additional protocol data, call rpc.GetCustomConstants()
 // with a custom data struct.
