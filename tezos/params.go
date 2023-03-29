@@ -26,8 +26,8 @@ var (
 		HardStorageLimitPerOperation: 60000,
 		MinimalBlockDelay:            15 * time.Second,
 		PreservedCycles:              5,
-		BlocksPerCycle:               8192,
-		BlocksPerSnapshot:            512,
+		BlocksPerCycle:               16384,
+		BlocksPerSnapshot:            1024,
 	}
 
 	// GhostnetParams defines the blockchain configuration for Ghostnet testnet.

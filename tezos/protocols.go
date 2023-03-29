@@ -22,7 +22,6 @@ var (
 	ProtoV013_2    = MustParseProtocolHash("PtJakart2xVj7pYXJBXrqHgd82rdkLey5ZeeGwDgPp9rhQUbSqY")
 	ProtoV014      = MustParseProtocolHash("PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg")
 	ProtoV015      = MustParseProtocolHash("PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW")
-	ProtoV016      = MustParseProtocolHash("PtMumbaiiFFEGbew1rRjzSPyzRbA51Tm3RVZL5suHPxSZYDhCEc")
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
 
 	// aliases
@@ -65,7 +64,6 @@ var (
 		ProtoV013_2:    13,
 		ProtoV014:      14,
 		ProtoV015:      15,
-		ProtoV016:      16,
 		ProtoV016_2:    16,
 		ProtoAlpha:     17,
 	}
