@@ -1,8 +1,14 @@
 # Changelog
 
-## unreleased
+## v1.16.4
+
+* backport params helpers for block/cycle calculations
+* add a refactored version of a hard-coded protocol activation database
+
+## v1.16.3
 
 * fix Micheline type compare for nested optional structs
+* fix watermarks for block and consensus op signing
 
 ## v1.16.2
 

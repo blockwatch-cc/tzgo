@@ -18,6 +18,7 @@ import (
 type Constants struct {
 	PreservedCycles              int64    `json:"preserved_cycles"`
 	BlocksPerCycle               int64    `json:"blocks_per_cycle"`
+	BlocksPerRollSnapshot        int64    `json:"blocks_per_roll_snapshot"`
 	TimeBetweenBlocks            []string `json:"time_between_blocks"`
 	HardGasLimitPerOperation     int64    `json:"hard_gas_limit_per_operation,string"`
 	HardGasLimitPerBlock         int64    `json:"hard_gas_limit_per_block,string"`
@@ -33,6 +34,7 @@ type Constants struct {
 
 	// New in v12
 	MaxOperationsTimeToLive int64 `json:"max_operations_time_to_live"`
+	BlocksPerStakeSnapshot  int64 `json:"blocks_per_stake_snapshot"`
 }
 
 // GetConstants returns chain configuration constants at block id
@@ -84,6 +86,7 @@ func (c Constants) MapToChainParams() *tezos.Params {
 	p := &tezos.Params{
 		BlocksPerCycle:               c.BlocksPerCycle,
 		PreservedCycles:              c.PreservedCycles,
+		BlocksPerSnapshot:            c.BlocksPerRollSnapshot + c.BlocksPerStakeSnapshot,
 		OriginationSize:              c.OriginationSize + c.OriginationBurn,
 		CostPerByte:                  c.CostPerByte,
 		HardGasLimitPerOperation:     c.HardGasLimitPerOperation,

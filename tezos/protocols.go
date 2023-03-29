@@ -69,4 +69,95 @@ var (
 		ProtoV016_2:    16,
 		ProtoAlpha:     17,
 	}
+
+	Deployments = map[ChainIdHash]ProtocolHistory{
+		Mainnet: {
+			{ProtoGenesis, 0, 0, 0, 0, 5, 4096, 256},              // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 5, 4096, 256},            // 0
+			{ProtoV001, 2, 2, 28082, 0, 5, 4096, 256},             // v1
+			{ProtoV002, 3507, 28083, 204761, 6, 5, 4096, 256},     // v2
+			{ProtoV003, 4057, 204762, 458752, 49, 5, 4096, 256},   // v3
+			{PtAthens, 0, 458753, 655360, 112, 5, 4096, 256},      // v4
+			{PsBabyM1, 0, 655361, 851968, 160, 5, 4096, 256},      // v5
+			{PsCARTHA, 0, 851969, 1212416, 208, 5, 4096, 256},     // v6
+			{PsDELPH1, 0, 1212417, 1343488, 296, 5, 4096, 256},    // v7
+			{PtEdo2Zk, 0, 1343489, 1466367, 328, 5, 4096, 256},    // v8
+			{PsFLoren, 4095, 1466368, 1589247, 357, 5, 4096, 256}, // v9
+			{PtGRANAD, -1, 1589248, 1916928, 388, 5, 8192, 512},   // v10
+			{PtHangz2, 0, 1916929, 2244608, 428, 5, 8192, 512},    // v11
+			{Psithaca, 0, 2244609, 2490368, 468, 5, 8192, 512},    // v12
+			{PtJakart, 0, 2490369, 2736128, 498, 5, 8192, 512},    // v13
+			{PtKathma, 0, 2736129, 2981888, 528, 5, 8192, 512},    // v14
+			{PtLimaPt, 0, 2981889, 3268608, 558, 5, 8192, 512},    // v15
+			{PtMumbai, 0, 3268609, -1, 593, 5, 16384, 1024},       // v16
+		},
+		Ghostnet: {
+			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},           // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 4096, 256},         // 0
+			{PtHangz2, 2, 2, 8191, 0, 3, 4096, 256},            // v11
+			{Psithaca, 0, 8192, 765952, 2, 3, 4096, 256},       // v12
+			{PtJakart, 0, 765953, 1191936, 187, 3, 4096, 256},  // v13
+			{PtKathma, 0, 1191937, 1654784, 291, 3, 4096, 256}, // v14
+			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256}, // v15
+			{PtMumbai, 0, 2162689, -1, 528, 3, 8192, 512},      // v16
+		},
+		Mumbainet: {
+			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
+			{PtMumbai, 2, 2, -1, 0, 3, 8192, 512},      // v16
+		},
+	}
 )
+
+type Deployment struct {
+	Protocol          ProtocolHash
+	StartOffset       int64
+	StartHeight       int64
+	EndHeight         int64
+	StartCycle        int64
+	PreservedCycles   int64
+	BlocksPerCycle    int64
+	BlocksPerSnapshot int64
+}
+
+type ProtocolHistory []Deployment
+
+func (h ProtocolHistory) Clone() ProtocolHistory {
+	clone := make(ProtocolHistory, len(h))
+	copy(clone, h)
+	return clone
+}
+
+func (h ProtocolHistory) AtBlock(height int64) (d Deployment) {
+	for i := len(h) - 1; i >= 0; i-- {
+		if h[i].StartHeight >= height {
+			d = h[i]
+			break
+		}
+	}
+	return
+}
+
+func (h ProtocolHistory) AtCycle(cycle int64) (d Deployment) {
+	for i := len(h) - 1; i >= 0; i-- {
+		if h[i].StartCycle >= cycle {
+			d = h[i]
+			break
+		}
+	}
+	return
+}
+
+func (h ProtocolHistory) AtProtocol(proto ProtocolHash) (d Deployment) {
+	for _, v := range h {
+		if v.Protocol == proto {
+			d = v
+			break
+		}
+	}
+	return
+}
+
+func (h *ProtocolHistory) Add(d Deployment) {
+	(*h) = append((*h), d)
+}
