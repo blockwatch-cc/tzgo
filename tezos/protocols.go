@@ -128,7 +128,7 @@ func (h ProtocolHistory) Clone() ProtocolHistory {
 
 func (h ProtocolHistory) AtBlock(height int64) (d Deployment) {
 	for i := len(h) - 1; i >= 0; i-- {
-		if h[i].StartHeight >= height {
+		if h[i].StartHeight <= height {
 			d = h[i]
 			break
 		}
@@ -138,7 +138,7 @@ func (h ProtocolHistory) AtBlock(height int64) (d Deployment) {
 
 func (h ProtocolHistory) AtCycle(cycle int64) (d Deployment) {
 	for i := len(h) - 1; i >= 0; i-- {
-		if h[i].StartCycle >= cycle {
+		if h[i].StartCycle <= cycle {
 			d = h[i]
 			break
 		}

@@ -108,7 +108,8 @@ type Params struct {
 
 func NewParams() *Params {
 	return &Params{
-		Network: "unknown",
+		Network:     "unknown",
+		StartHeight: 1<<63 - 1,
 	}
 }
 

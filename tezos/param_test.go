@@ -40,9 +40,7 @@ var (
 )
 
 func TestParams(t *testing.T) {
-	var (
-		lastProto tezos.ProtocolHash
-	)
+	var lastProto tezos.ProtocolHash
 
 	// walk test blocks
 	for _, v := range paramBlocks {
@@ -72,47 +70,58 @@ func TestParams(t *testing.T) {
 		// load expected result
 		check := paramResults[height]
 
-		// test param functions
-		if !p.ContainsHeight(height) {
-			t.Errorf("v%03d ContainsHeight(%d) failed", p.Version, height)
-		}
-		if !p.ContainsCycle(cycle) {
-			t.Errorf("v%03d %d ContainsCycle(%d) failed", p.Version, height, cycle)
-		}
-		if have, want := p.IsCycleStart(height), check.IsCycleStart(); have != want {
-			t.Errorf("v%03d IsCycleStart(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
-		}
-		if have, want := p.IsCycleEnd(height), check.IsCycleEnd(); have != want {
-			t.Errorf("v%03d IsCycleEnd(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
-		}
-		if have, want := p.CycleFromHeight(height), check.Cycle; have != want {
-			t.Errorf("v%03d CycleFromHeight(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
-		}
-		cstart := p.CycleStartHeight(cycle)
-		cend := p.CycleEndHeight(cycle)
-		cpos := p.CyclePosition(height)
-		if cstart < 0 {
-			t.Errorf("v%03d %d negative cycle start %d", p.Version, height, cstart)
-		}
-		if cend < 0 {
-			t.Errorf("v%03d %d negative cycle end %d", p.Version, height, cend)
-		}
-		if cpos < 0 {
-			t.Errorf("v%03d %d negative cycle pos %d", p.Version, height, cpos)
-		}
-		if cstart >= cend {
-			t.Errorf("v%03d %d cycle start %d > end %d", p.Version, height, cstart, cend)
-		}
-		if cstart+cpos != height {
-			t.Errorf("v%03d %d cycle pos %d + start %d != height", p.Version, height, cstart, cpos)
-		}
+		checkParams(t, p, height, cycle, check)
+	}
+}
 
-		if have, want := p.IsSnapshotBlock(height), check.IsSnapshot(); have != want {
-			t.Errorf("v%03d IsSnapshotBlock(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
-		}
-		if have, want := p.SnapshotIndex(height), check.Snap; have != want {
-			t.Errorf("v%03d SnapshotIndex(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
-		}
+func TestParamsStatic(t *testing.T) {
+	for height, check := range paramResults {
+		p := NewParams().WithChainId(Mainnet).AtBlock(height)
+		checkParams(t, p, height, check.Cycle, check)
+	}
+}
+
+func checkParams(t *testing.T, p *tezos.Params, height, cycle int64, check paramResult) {
+	// test param functions
+	if !p.ContainsHeight(height) {
+		t.Errorf("v%03d ContainsHeight(%d) failed", p.Version, height)
+	}
+	if !p.ContainsCycle(cycle) {
+		t.Errorf("v%03d %d ContainsCycle(%d) failed", p.Version, height, cycle)
+	}
+	if have, want := p.IsCycleStart(height), check.IsCycleStart(); have != want {
+		t.Errorf("v%03d IsCycleStart(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
+	}
+	if have, want := p.IsCycleEnd(height), check.IsCycleEnd(); have != want {
+		t.Errorf("v%03d IsCycleEnd(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
+	}
+	if have, want := p.CycleFromHeight(height), check.Cycle; have != want {
+		t.Errorf("v%03d CycleFromHeight(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
+	}
+	cstart := p.CycleStartHeight(cycle)
+	cend := p.CycleEndHeight(cycle)
+	cpos := p.CyclePosition(height)
+	if cstart < 0 {
+		t.Errorf("v%03d %d negative cycle start %d", p.Version, height, cstart)
+	}
+	if cend < 0 {
+		t.Errorf("v%03d %d negative cycle end %d", p.Version, height, cend)
+	}
+	if cpos < 0 {
+		t.Errorf("v%03d %d negative cycle pos %d", p.Version, height, cpos)
+	}
+	if cstart >= cend {
+		t.Errorf("v%03d %d cycle start %d > end %d", p.Version, height, cstart, cend)
+	}
+	if cstart+cpos != height {
+		t.Errorf("v%03d %d cycle pos %d + start %d != height", p.Version, height, cstart, cpos)
+	}
+
+	if have, want := p.IsSnapshotBlock(height), check.IsSnapshot(); have != want {
+		t.Errorf("v%03d IsSnapshotBlock(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
+	}
+	if have, want := p.SnapshotIndex(height), check.Snap; have != want {
+		t.Errorf("v%03d SnapshotIndex(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
 	}
 }
 
