@@ -206,6 +206,9 @@ func (p Params) ContainsCycle(c int64) bool {
 	if c == 387 && p.IsMainnet() {
 		s--
 	}
+	if s == 0 {
+		return false
+	}
 	return s <= c
 }
 
