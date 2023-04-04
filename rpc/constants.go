@@ -79,6 +79,12 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 		WithChainId(c.ChainId).
 		WithProtocol(meta.Protocol).
 		WithNetwork(ver.NetworkVersion.ChainName)
+
+	if ver.NetworkVersion.ChainName == "TEZOS_MAINNET" {
+		p.StartHeight = tezos.DefaultParams.StartHeight
+		p.StartCycle = tezos.DefaultParams.StartCycle
+	}
+
 	return p, nil
 }
 

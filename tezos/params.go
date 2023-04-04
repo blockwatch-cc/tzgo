@@ -28,6 +28,8 @@ var (
 		PreservedCycles:              5,
 		BlocksPerCycle:               16384,
 		BlocksPerSnapshot:            1024,
+		StartHeight:                  3268609,
+		StartCycle:                   593,
 	}
 
 	// GhostnetParams defines the blockchain configuration for Ghostnet testnet.
@@ -205,9 +207,6 @@ func (p Params) ContainsCycle(c int64) bool {
 	s := p.StartCycle
 	if c == 387 && p.IsMainnet() {
 		s--
-	}
-	if s == 0 {
-		return false
 	}
 	return s <= c
 }
