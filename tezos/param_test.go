@@ -1,9 +1,10 @@
 package tezos_test
 
 import (
+	"testing"
+
 	"blockwatch.cc/tzgo/rpc"
 	"blockwatch.cc/tzgo/tezos"
-	"testing"
 )
 
 type (
@@ -120,6 +121,11 @@ func checkParams(t *testing.T, p *tezos.Params, height, cycle int64, check param
 	if have, want := p.IsSnapshotBlock(height), check.IsSnapshot(); have != want {
 		t.Errorf("v%03d IsSnapshotBlock(%d) mismatch: have=%t want=%t", p.Version, height, have, want)
 	}
+
+	if have, want := p.SnapshotBlock(cycle, check.Snap), snapLevelResults[height]; have != want {
+		t.Errorf("v%03d SnapshotBlock(%d, %d) mismatch: have=%d want=%d", p.Version, cycle, check.Snap, have, want)
+	}
+
 	if have, want := p.SnapshotIndex(height), check.Snap; have != want {
 		t.Errorf("v%03d SnapshotIndex(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
 	}
@@ -149,6 +155,44 @@ func (p paramResult) IsVoteStart() bool {
 
 func (p paramResult) IsVoteEnd() bool {
 	return p.Flags&0x1 > 0
+}
+
+var snapLevelResults = map[int64]int64{
+	0:       0,       // genesis
+	1:       0,       // bootstrap
+	2:       0,       // v001 start
+	28082:   0,       // ---> end
+	28083:   0,       // v002 start
+	204761:  175871,  // ---> end
+	204762:  175871,  // v003 start
+	458752:  430080,  // ---> end
+	458753:  430080,  // v004 start
+	655360:  626688,  // ---> end
+	655361:  626688,  // v005 start
+	851968:  823296,  // ---> end
+	851969:  823296,  // v006 start
+	1212416: 1183744, // ---> end
+	1212417: 1183744, // v007 start
+	1343488: 1314816, // ---> end
+	1343489: 1314816, // v008 start Edo Bug
+	1466367: 1437440, // ---> end (proto end, vote end, !cycle end)
+	1466368: 1437696, // v009 start (proto start, vote start, cycle end)
+	1466369: 1437696, // v009 cycle start
+	1589247: 1560320, // --> end (proto end, vote end, !cycle end)
+	1589248: 1564672, // v010 start (proto start, vote start, cycle end)
+	1589249: 1560576, // v010 cycle start
+	1916928: 1859584, // --> end
+	1916929: 1859584, // v011 start
+	2244608: 2187264, // --> end
+	2244609: 2195456, // v012 start
+	2490368: 2441216, // --> end
+	2490369: 2441216, // v013 start
+	2736128: 2686976, // --> end
+	2736129: 2686976, // v014 start
+	2981888: 2932736, // --> end
+	2981889: 2932736, // v015 start
+	3268608: 3219456, // --> end
+	3268609: 3219456, // v016 start
 }
 
 var paramResults = map[int64]paramResult{
