@@ -12,63 +12,48 @@ var (
 	// protocol. It is used to generate compliant transaction encodings. To change,
 	// either overwrite this default or set custom params per operation using
 	// op.WithParams().
-	DefaultParams = &Params{
-		Network:                      "Mainnet",
-		ChainId:                      Mainnet,
-		Protocol:                     ProtoV016_2,
-		Version:                      16,
-		OperationTagsVersion:         2,
-		MaxOperationsTTL:             240,
+	DefaultParams = (&Params{
+		MinimalBlockDelay:            15 * time.Second,
+		CostPerByte:                  250,
+		OriginationSize:              257,
 		HardGasLimitPerOperation:     1040000,
 		HardGasLimitPerBlock:         2600000,
-		OriginationSize:              257,
-		CostPerByte:                  250,
 		HardStorageLimitPerOperation: 60000,
-		MinimalBlockDelay:            15 * time.Second,
-		PreservedCycles:              5,
-		BlocksPerCycle:               16384,
-		BlocksPerSnapshot:            1024,
-	}
+		MaxOperationDataLength:       32768,
+		MaxOperationsTTL:             240,
+	}).
+		WithChainId(Mainnet).
+		WithDeployment(Deployments[Mainnet].AtProtocol(ProtoV016_2))
 
 	// GhostnetParams defines the blockchain configuration for Ghostnet testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
-	GhostnetParams = &Params{
-		Network:                      "Ghostnet",
-		ChainId:                      Ghostnet,
-		Protocol:                     ProtoV016_2,
-		Version:                      16,
-		OperationTagsVersion:         2,
-		MaxOperationsTTL:             240,
+	GhostnetParams = (&Params{
+		MinimalBlockDelay:            8 * time.Second,
+		CostPerByte:                  250,
+		OriginationSize:              257,
 		HardGasLimitPerOperation:     1040000,
 		HardGasLimitPerBlock:         2600000,
-		OriginationSize:              257,
-		CostPerByte:                  250,
 		HardStorageLimitPerOperation: 60000,
-		MinimalBlockDelay:            8 * time.Second,
-		PreservedCycles:              3,
-		BlocksPerCycle:               8192,
-		BlocksPerSnapshot:            512,
-	}
+		MaxOperationDataLength:       32768,
+		MaxOperationsTTL:             240,
+	}).
+		WithChainId(Ghostnet).
+		WithDeployment(Deployments[Ghostnet].AtProtocol(ProtoV016_2))
 
 	// MumbainetParams defines the blockchain configuration for Mumbai testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
-	MumbainetParams = &Params{
-		Network:                      "Mumbainet",
-		ChainId:                      Mumbainet,
-		Protocol:                     ProtoV016_2,
-		Version:                      16,
-		OperationTagsVersion:         2,
-		MaxOperationsTTL:             240,
+	MumbainetParams = (&Params{
+		MinimalBlockDelay:            8 * time.Second,
+		CostPerByte:                  250,
+		OriginationSize:              257,
 		HardGasLimitPerOperation:     1040000,
 		HardGasLimitPerBlock:         2600000,
-		OriginationSize:              257,
-		CostPerByte:                  250,
 		HardStorageLimitPerOperation: 60000,
-		MinimalBlockDelay:            8 * time.Second,
-		PreservedCycles:              3,
-		BlocksPerCycle:               8192,
-		BlocksPerSnapshot:            512,
-	}
+		MaxOperationDataLength:       32768,
+		MaxOperationsTTL:             240,
+	}).
+		WithChainId(Mumbainet).
+		WithDeployment(Deployments[Mumbainet].AtProtocol(ProtoV016_2))
 )
 
 // Params contains a subset of protocol configuration settings that are relevant
@@ -77,9 +62,9 @@ var (
 type Params struct {
 	// identity
 	Network  string       `json:"network,omitempty"`
-	Version  int          `json:"version"`
 	ChainId  ChainIdHash  `json:"chain_id"`
 	Protocol ProtocolHash `json:"protocol"`
+	Version  int          `json:"version"`
 
 	// timing
 	MinimalBlockDelay time.Duration `json:"minimal_block_delay"`
@@ -113,9 +98,14 @@ func NewParams() *Params {
 	}
 }
 
+func (p Params) Clone() *Params {
+	np := p
+	return &np
+}
+
 func (p *Params) WithChainId(id ChainIdHash) *Params {
 	p.ChainId = id
-	if p.Network == "unknown" {
+	if p.Network == "unknown" || p.Network == "" {
 		switch id {
 		case Mainnet:
 			p.Network = "Mainnet"
@@ -161,24 +151,27 @@ func (p *Params) WithDeployment(d Deployment) *Params {
 	return p
 }
 
+func (p *Params) WithBlock(height int64) *Params {
+	d := Deployments[p.ChainId].AtBlock(height)
+	p.StartOffset = d.StartOffset
+	p.StartHeight = d.StartHeight
+	p.EndHeight = d.EndHeight
+	p.StartCycle = d.StartCycle
+	return p
+}
+
 func (p *Params) AtBlock(height int64) *Params {
 	if p.ContainsHeight(height) {
 		return p
 	}
-	return NewParams().
-		WithChainId(p.ChainId).
-		WithNetwork(p.Network).
-		WithDeployment(Deployments[p.ChainId].AtBlock(height))
+	return p.Clone().WithDeployment(Deployments[p.ChainId].AtBlock(height))
 }
 
 func (p *Params) AtCycle(cycle int64) *Params {
 	if p.ContainsCycle(cycle) {
 		return p
 	}
-	return NewParams().
-		WithChainId(p.ChainId).
-		WithNetwork(p.Network).
-		WithDeployment(Deployments[p.ChainId].AtCycle(cycle))
+	return p.Clone().WithDeployment(Deployments[p.ChainId].AtCycle(cycle))
 }
 
 func (p Params) SnapshotBaseCycle(cycle int64) int64 {

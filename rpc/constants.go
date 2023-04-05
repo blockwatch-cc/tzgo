@@ -78,7 +78,8 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 	p := con.MapToChainParams().
 		WithChainId(c.ChainId).
 		WithProtocol(meta.Protocol).
-		WithNetwork(ver.NetworkVersion.ChainName)
+		WithNetwork(ver.NetworkVersion.ChainName).
+		WithBlock(meta.GetLevel())
 	return p, nil
 }
 

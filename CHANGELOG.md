@@ -1,5 +1,13 @@
 # Changelog
 
+## unreleased
+
+* sanitize params to prevent uninitialized values
+
+## v1.16.5
+
+* fix deployment database scan required for static param init
+
 ## v1.16.4
 
 * backport params helpers for block/cycle calculations

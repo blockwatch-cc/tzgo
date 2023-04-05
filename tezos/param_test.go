@@ -81,6 +81,75 @@ func TestParamsStatic(t *testing.T) {
 	}
 }
 
+func TestDefaultParams(t *testing.T) {
+	for n, p := range map[string]*tezos.Params{
+		"main":   tezos.DefaultParams,
+		"ghost":  tezos.GhostnetParams,
+		"mumbai": tezos.MumbainetParams,
+	} {
+		if p.Network == "" {
+			t.Errorf("%s params: Empty network name", n)
+		}
+		if !p.ChainId.IsValid() {
+			t.Errorf("%s params: zero network id", n)
+		}
+		if !p.Protocol.IsValid() {
+			t.Errorf("%s params: zero protocol", n)
+		}
+		if have, want := p.Version, tezos.Versions[p.Protocol]; have != want {
+			t.Errorf("%s params: version mismatch: have=%d want=%d", n, have, want)
+		}
+		if p.MinimalBlockDelay == 0 {
+			t.Errorf("%s params: zero MinimalBlockDelay", n)
+		}
+		if p.CostPerByte == 0 {
+			t.Errorf("%s params: zero CostPerByte", n)
+		}
+		if p.OriginationSize == 0 {
+			t.Errorf("%s params: zero OriginationSize", n)
+		}
+		if p.BlocksPerCycle == 0 {
+			t.Errorf("%s params: zero BlocksPerCycle", n)
+		}
+		if p.PreservedCycles == 0 {
+			t.Errorf("%s params: zero PreservedCycles", n)
+		}
+		if p.BlocksPerSnapshot == 0 {
+			t.Errorf("%s params: zero BlocksPerSnapshot", n)
+		}
+		if p.HardGasLimitPerOperation == 0 {
+			t.Errorf("%s params: zero HardGasLimitPerOperation", n)
+		}
+		if p.HardGasLimitPerBlock == 0 {
+			t.Errorf("%s params: zero HardGasLimitPerBlock", n)
+		}
+		if p.HardStorageLimitPerOperation == 0 {
+			t.Errorf("%s params: zero HardStorageLimitPerOperation", n)
+		}
+		if p.MaxOperationDataLength == 0 {
+			t.Errorf("%s params: zero MaxOperationDataLength", n)
+		}
+		if p.MaxOperationsTTL == 0 {
+			t.Errorf("%s params: zero MaxOperationsTTL", n)
+		}
+		if p.MaxOperationDataLength == 0 {
+			t.Errorf("%s params: zero MaxOperationDataLength", n)
+		}
+		if p.OperationTagsVersion < 0 || p.OperationTagsVersion > 2 {
+			t.Errorf("%s params: unknown OperationTagsVersion %d", n, p.OperationTagsVersion)
+		}
+		if p.StartHeight == 0 {
+			t.Errorf("%s params: zero StartHeight", n)
+		}
+		if p.EndHeight == 0 {
+			t.Errorf("%s params: zero EndHeight", n)
+		}
+		if p.StartHeight > p.BlocksPerCycle && p.StartCycle == 0 {
+			t.Errorf("%s params: zero StartCycle", n)
+		}
+	}
+}
+
 func checkParams(t *testing.T, p *tezos.Params, height, cycle int64, check paramResult) {
 	// test param functions
 	if !p.ContainsHeight(height) {
@@ -122,6 +191,9 @@ func checkParams(t *testing.T, p *tezos.Params, height, cycle int64, check param
 	}
 	if have, want := p.SnapshotIndex(height), check.Snap; have != want {
 		t.Errorf("v%03d SnapshotIndex(%d) mismatch: have=%d want=%d", p.Version, height, have, want)
+	}
+	if have, want := p.SnapshotBlock(cycle, 0), height; have > want {
+		t.Errorf("v%03d SnapshotBlock(%d) mismatch: have=%d > want=%d", p.Version, height, have, want)
 	}
 }
 

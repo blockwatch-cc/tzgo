@@ -127,6 +127,7 @@ func (h ProtocolHistory) Clone() ProtocolHistory {
 }
 
 func (h ProtocolHistory) AtBlock(height int64) (d Deployment) {
+	d = h.Last()
 	for i := len(h) - 1; i >= 0; i-- {
 		if h[i].StartHeight <= height {
 			d = h[i]
@@ -137,6 +138,7 @@ func (h ProtocolHistory) AtBlock(height int64) (d Deployment) {
 }
 
 func (h ProtocolHistory) AtCycle(cycle int64) (d Deployment) {
+	d = h.Last()
 	for i := len(h) - 1; i >= 0; i-- {
 		if h[i].StartCycle <= cycle {
 			d = h[i]
@@ -147,6 +149,7 @@ func (h ProtocolHistory) AtCycle(cycle int64) (d Deployment) {
 }
 
 func (h ProtocolHistory) AtProtocol(proto ProtocolHash) (d Deployment) {
+	d = h.Last()
 	for _, v := range h {
 		if v.Protocol == proto {
 			d = v
@@ -158,4 +161,11 @@ func (h ProtocolHistory) AtProtocol(proto ProtocolHash) (d Deployment) {
 
 func (h *ProtocolHistory) Add(d Deployment) {
 	(*h) = append((*h), d)
+}
+
+func (h ProtocolHistory) Last() (d Deployment) {
+	if l := len(h); l > 0 {
+		d = h[l-1]
+	}
+	return
 }
