@@ -17,6 +17,7 @@ import (
 type Voter struct {
 	Delegate tezos.Address `json:"pkh"`
 	Rolls    int64         `json:"rolls"`
+	Power    int64         `json:"voting_power,string"`
 }
 
 // VoterList contains a list of voters
@@ -33,9 +34,9 @@ type BallotList []BallotInfo
 
 // Ballots holds the current summary of a vote
 type BallotSummary struct {
-	Yay  int `json:"yay"`
-	Nay  int `json:"nay"`
-	Pass int `json:"pass"`
+	Yay  Int64orString `json:"yay"`
+	Nay  Int64orString `json:"nay"`
+	Pass Int64orString `json:"pass"`
 }
 
 // Proposal holds information about a vote listing
@@ -64,7 +65,12 @@ func (p *Proposal) UnmarshalJSON(data []byte) error {
 	if err := p.Proposal.UnmarshalText([]byte(unpacked[0].(string))); err != nil {
 		return fmt.Errorf("rpc: proposal: %v", err)
 	}
-	p.Upvotes, err = strconv.ParseInt(unpacked[1].(json.Number).String(), 10, 64)
+	switch v := unpacked[1].(type) {
+	case json.Number:
+		p.Upvotes, err = strconv.ParseInt(v.String(), 10, 64)
+	case string:
+		p.Upvotes, err = strconv.ParseInt(v, 10, 64)
+	}
 	if err != nil {
 		return fmt.Errorf("rpc: proposal: %v", err)
 	}

@@ -155,6 +155,10 @@ func (i Int64orString) Int64() int64 {
 	return int64(i)
 }
 
+func (i Int64orString) Int() int {
+	return int(i)
+}
+
 func (i Int64orString) String() string {
 	return strconv.FormatInt(int64(i), 10)
 }
