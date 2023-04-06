@@ -32,10 +32,6 @@ func NewToken(contract Address, id Z) (t Token) {
 	return
 }
 
-func (t Token) IsValid() bool {
-	return true
-}
-
 func (t Token) Contract() Address {
 	return NewAddress(AddressTypeContract, t.Hash[:])
 }
