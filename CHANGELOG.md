@@ -1,8 +1,10 @@
 # Changelog
 
-## unreleased
+## v1.16.6
 
-* sanitize params to prevent uninitialized values
+* sanitize params handling to prevent uninitialized values
+* fix vote result decoding which changed in new protocol releases
+* remove token address IsValid() function as token identity is always valid now (including zero contract hash, zero token id which apps may use for special meaning, e.g. representing tez)
 
 ## v1.16.5
 
