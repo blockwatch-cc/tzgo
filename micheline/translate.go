@@ -88,10 +88,10 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// does not work
 		//
 		// Conflicting cases
-		// TestParamsValues/Jakartanet/oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX
-		// TestStorageValues/Mainnet/KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY
-		//
-		if len(typ.Args) > 0 && !typ.Args[0].IsList() && len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() {
+		// Jakartanet: oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX
+		// Mainnet: KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY
+		// Mainnet: ooxcyrwLVfC7kcJvLvYTGXKsAvdrotzKci95au8tBwdjhMMjFTU
+		if len(typ.Args) > 0 && !typ.Args[0].IsList() && len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() && !val.Args[0].IsConvertedComb() {
 			stack.Push(val.Args...)
 			val = stack.Pop()
 		}
@@ -184,7 +184,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			if err != nil {
 				return err
 			}
-
 			mm := make(map[string]interface{})
 			if err := walkTree(mm, key.String(), valType, NewStack(val.Args[1]), lvl+1); err != nil {
 				return err
@@ -215,7 +214,6 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 				if err != nil {
 					return err
 				}
-
 				if err := walkTree(mm, key.String(), valType, NewStack(v.Args[1]), lvl+1); err != nil {
 					return err
 				}

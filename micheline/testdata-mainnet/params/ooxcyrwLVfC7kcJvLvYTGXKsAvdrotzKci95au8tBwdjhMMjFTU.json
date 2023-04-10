@@ -1,0 +1,216 @@
+[
+  {
+    "name": "Mainnet/ooxcyrwLVfC7kcJvLvYTGXKsAvdrotzKci95au8tBwdjhMMjFTU/252/7",
+    "type": {
+      "prim": "list",
+      "annots": [
+        "%validate_collect"
+      ],
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "string",
+              "annots": [
+                "%category"
+              ]
+            },
+            {
+              "prim": "pair",
+              "args": [
+                {
+                  "prim": "map",
+                  "annots": [
+                    "%ints"
+                  ],
+                  "args": [
+                    {
+                      "prim": "string"
+                    },
+                    {
+                      "prim": "int"
+                    }
+                  ]
+                },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "bool",
+                      "annots": [
+                        "%on_sale"
+                      ]
+                    },
+                    {
+                      "prim": "pair",
+                      "args": [
+                        {
+                          "prim": "address",
+                          "annots": [
+                            "%owner"
+                          ]
+                        },
+                        {
+                          "prim": "pair",
+                          "args": [
+                            {
+                              "prim": "map",
+                              "annots": [
+                                "%sets"
+                              ],
+                              "args": [
+                                {
+                                  "prim": "string"
+                                },
+                                {
+                                  "prim": "set",
+                                  "args": [
+                                    {
+                                      "prim": "nat"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "prim": "pair",
+                              "args": [
+                                {
+                                  "prim": "map",
+                                  "annots": [
+                                    "%strings"
+                                  ],
+                                  "args": [
+                                    {
+                                      "prim": "string"
+                                    },
+                                    {
+                                      "prim": "string"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    {
+                                      "prim": "nat",
+                                      "annots": [
+                                        "%token_id"
+                                      ]
+                                    },
+                                    {
+                                      "prim": "nat",
+                                      "annots": [
+                                        "%uid"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "value": [
+      [
+        {"string":"tezotop"},
+        [
+          {"prim":"Elt","args":[{"string":"br"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"enr"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"mch"},{"int":"2"}]},
+          {"prim":"Elt","args":[{"string":"min"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"mint_time"},{"int":"1649803199"}]},
+          {"prim":"Elt","args":[{"string":"sb"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"uno"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"ur"},{"int":"1"}]}
+        ],
+        {"prim":"False"},
+        {"bytes":"0000dc1b0a78aa19224693f954def998916fb0bd5171"},
+        [],
+        [],
+        {"int":"41999"},
+        {"int":"9033"}
+      ],[
+        {"string":"tezotop"},
+        [
+          {"prim":"Elt","args":[{"string":"ac"},{"int":"2"}]},
+          {"prim":"Elt","args":[{"string":"enr"},{"int":"18"}]},
+          {"prim":"Elt","args":[{"string":"mch"},{"int":"2"}]},
+          {"prim":"Elt","args":[{"string":"min"},{"int":"13"}]},
+          {"prim":"Elt","args":[{"string":"sb"},{"int":"1"}]},
+          {"prim":"Elt","args":[{"string":"tezotopian"},{"int":"0"}]},
+          {"prim":"Elt","args":[{"string":"tm"},{"int":"2"}]},
+          {"prim":"Elt","args":[{"string":"uno"},{"int":"4"}]},
+          {"prim":"Elt","args":[{"string":"ur"},{"int":"2"}]}
+        ],
+        {"prim":"False"},
+        {"bytes":"0000dc1b0a78aa19224693f954def998916fb0bd5171"},
+        [
+          {"prim":"Elt","args":[
+            {"string":"building"},[
+              {"int":"0"}
+            ]
+          ]}
+        ]
+        ,[],{"int":"230"},{"int":"78"}
+      ]
+    ],
+    "type_hex": "065f07650468000000092563617465676f7279076508600368035b0000000525696e74730765045900000008256f6e5f73616c650765046e00000006256f776e65720765086003680566036200000005257365747307650860036803680000000825737472696e6773076504620000000925746f6b656e5f696404620000000425756964000000112576616c69646174655f636f6c6c656374",
+    "value_hex": "020000017402000000a7010000000774657a6f746f700200000067070401000000026272000107040100000003656e720001070401000000036d63680002070401000000036d696e0001070401000000096d696e745f74696d6500bffeafa50c070401000000027362000107040100000003756e6f0001070401000000027572000103030a000000160000dc1b0a78aa19224693f954def998916fb0bd517102000000000200000000008f900500898d0102000000c3010000000774657a6f746f70020000006f070401000000026163000207040100000003656e720012070401000000036d63680002070401000000036d696e000d07040100000002736200010704010000000a74657a6f746f7069616e000007040100000002746d000207040100000003756e6f0004070401000000027572000203030a000000160000dc1b0a78aa19224693f954def998916fb0bd51710200000016070401000000086275696c64696e6702000000020000020000000000a603008e01",
+    "want_value": {
+      "validate_collect": [{
+        "category": "tezotop",
+        "ints": {
+          "br": "1",
+          "enr": "1",
+          "mch": "2",
+          "min": "1",
+          "mint_time": "1649803199",
+          "sb": "1",
+          "uno": "1",
+          "ur": "1"
+        },
+        "on_sale": false,
+        "owner": "tz1fhqkA3maDZVvikfNGN1YNfm6kXJPncTSB",
+        "sets": {},
+        "strings": {},
+        "token_id": "41999",
+        "uid": "9033"
+      },
+      {
+        "category": "tezotop",
+        "ints": {
+          "ac": "2",
+          "enr": "18",
+          "mch": "2",
+          "min": "13",
+          "sb": "1",
+          "tezotopian": "0",
+          "tm": "2",
+          "uno": "4",
+          "ur": "2"
+        },
+        "on_sale": false,
+        "owner": "tz1fhqkA3maDZVvikfNGN1YNfm6kXJPncTSB",
+        "sets": {
+          "building": [
+            "0"
+          ]
+        },
+        "strings": {},
+        "token_id": "230",
+        "uid": "78"
+      }]
+    }
+  }
+]

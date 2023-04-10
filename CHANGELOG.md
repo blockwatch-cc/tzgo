@@ -1,5 +1,10 @@
 # Changelog
 
+## unreleased
+
+* fix some Micheline translation bugs for nested list/comb-pair ambiguities
+* fix decoding for some single-value entrypoints
+
 ## v1.16.6
 
 * sanitize params handling to prevent uninitialized values

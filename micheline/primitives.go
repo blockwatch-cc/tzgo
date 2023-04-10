@@ -507,7 +507,7 @@ func (p Prim) IsConvertedComb() bool {
 			return false
 		}
 	}
-	return true
+	return len(p.Args) > 0
 }
 
 // Checks if a Prim looks like a container type. This is necessary to
