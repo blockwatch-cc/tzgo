@@ -168,6 +168,23 @@ var entryInfo = []entryTest{
 			},
 		},
 	},
+
+	// Ticket
+	{
+		Name: "Ticket save",
+		Spec: `{"prim":"parameter","args":[{"prim":"or","args":[{"prim":"ticket","annots":["%save"],"args":[{"prim":"string"}]},{"prim":"address","annots":["%send"]}]}]}`,
+		Want: `{
+			"save":{"branch":"/L","id":0,"name":"save","type":[{"name":"","type":"ticket","args":[{"name":"@value","type":"string"}]}]},
+			"send":{"branch":"/R","id":1,"name":"send","type":[{"name":"","type":"address"}]}
+		}`,
+		Calls: []entryCallTest{
+			{
+				Params:     `{"entrypoint":"save","value":{"prim":"Pair","args":[{"bytes":"01841548c7ac7da287a25f527e5838e5f714e9449000"},{"prim":"Pair","args":[{"string":"Ticket"},{"int":"1"}]}]}}`,
+				WantName:   `save`,
+				WantParams: `{"prim":"Pair","args":[{"bytes":"01841548c7ac7da287a25f527e5838e5f714e9449000"},{"prim":"Pair","args":[{"string":"Ticket"},{"int":"1"}]}]}`,
+			},
+		},
+	},
 }
 
 func TestEntrypointRendering(t *testing.T) {

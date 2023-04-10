@@ -148,6 +148,12 @@ var typedefTests = []typedefTest{
 		Spec: `{"prim": "ticket", "args":[{"prim":"timestamp"}]}`,
 		Want: `{"name":"","type":"ticket","args":[{"name":"@value","type":"timestamp"}]}`,
 	},
+	// ticket 2
+	{
+		Name: "ticket2",
+		Spec: `{"prim": "ticket", "annots":["%save"], "args":[{"prim":"string"}]}`,
+		Want: `{"name":"save","type":"ticket","args":[{"name":"@value","type":"string"}]}`,
+	},
 	// option
 	{
 		Name: "option",

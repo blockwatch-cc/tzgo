@@ -160,10 +160,14 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 		ep.Typedef[0].Name = ""
 	} else {
 		td := buildTypedef("", node)
-		if len(td.Args) > 0 {
-			ep.Typedef = td.Args
-		} else {
+		switch len(td.Args) {
+		case 0:
 			ep.Typedef = []Typedef{td}
+		case 1:
+			td.Name = ""
+			ep.Typedef = []Typedef{td}
+		default:
+			ep.Typedef = td.Args
 		}
 	}
 
