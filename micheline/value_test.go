@@ -220,8 +220,9 @@ func TestBigmapValues(t *testing.T) {
 		next int
 		err  error
 	)
-	UseTrace(t.Logf)
 	scanTestFiles(t, "bigmap")
+	trace = t.Logf
+	// dbg = t.Logf
 	for {
 		var tests []testcase
 		next, err = loadNextTestFile("bigmap", next, &tests)
@@ -300,8 +301,9 @@ func TestStorageValues(t *testing.T) {
 		next int
 		err  error
 	)
-	UseTrace(t.Logf)
 	scanTestFiles(t, "storage")
+	trace = t.Logf
+	// dbg = t.Logf
 	for {
 		var tests []testcase
 		next, err = loadNextTestFile("storage", next, &tests)
@@ -354,8 +356,9 @@ func TestParamsValues(t *testing.T) {
 		next int
 		err  error
 	)
-	UseTrace(t.Logf)
 	scanTestFiles(t, "params")
+	trace = t.Logf
+	// dbg = t.Logf
 	for {
 		var tests []testcase
 		next, err = loadNextTestFile("params", next, &tests)

@@ -981,7 +981,7 @@
               "fee": "50000000000000000",
               "reward_per_sec": "570776250",
               "total_out": null
-                     },
+            },
             "KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY,0": {
               "claimable": true,
               "fee": "0",

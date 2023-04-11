@@ -82,6 +82,10 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_LIST:
 		// list <type>
+		// dbg("List: lvl=%d", lvl)
+		// dbg("List: typ=%s %s", typ.OpCode, label)
+		// dbg("List: val=%s/%s", val.Type, val.OpCode)
+		// dbg("-----------------------")
 
 		// fix for pair(list, x) - we wrongly prevent a nested list from being unpacked,
 		// this is to compensate for CanUnfold() and another case where list/pair unfold
@@ -91,6 +95,9 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// Jakartanet: oorcMSVaYBH3rcsDJ3n8EvpU4e8h38WFjJJfYUu2wXyDN4N7NMX
 		// Mainnet: KT1K4jn23GonEmZot3pMGth7unnzZ6EaMVjY
 		// Mainnet: ooxcyrwLVfC7kcJvLvYTGXKsAvdrotzKci95au8tBwdjhMMjFTU
+		// Mainnet: ooQuRnwv2Bo1VVPMxmFvUZrDB7t34H3eCty2DAZW2Ps6LLyWoH6
+		//
+		// if len(typ.Args) > 0 && !typ.Args[0].IsList() && len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() { //&& !val.Args[0].IsConvertedComb() {
 		if len(typ.Args) > 0 && !typ.Args[0].IsList() && len(val.Args) > 1 && !val.LooksLikeContainer() && val.Args[0].IsSequence() && !val.Args[0].IsConvertedComb() {
 			stack.Push(val.Args...)
 			val = stack.Pop()
@@ -128,12 +135,20 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 
 	case T_LAMBDA:
 		// LAMBDA <type> <type> { <instruction> ... }
+		// dbg("LAMBDA: lvl=%d", lvl)
+		// dbg("LAMBDA: typ=%s %s", typ.OpCode, label)
+		// dbg("LAMBDA: val=%s/%s", val.Type, val.OpCode)
+		// dbg("-----------------------")
 		m[label] = val
 
 	case T_MAP, T_BIG_MAP:
 		// map <comparable type> <type>
 		// big_map <comparable type> <type>
 		// sequence of Elt (key/value) pairs
+		// dbg("MAP: lvl=%d", lvl)
+		// dbg("MAP: typ=%s %s", typ.OpCode, label)
+		// dbg("MAP: val=%s/%s", val.Type, val.OpCode)
+		// dbg("-----------------------")
 
 		// render bigmap reference
 		if typ.OpCode == T_BIG_MAP && (len(val.Args) == 0 || !val.Args[0].IsElt()) {
@@ -232,19 +247,32 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		if haveTypeLabel || haveKeyLabel {
 			mm = make(map[string]interface{})
 		}
+		// dbg("PAIR: lvl=%d", lvl)
 
 		// Try unfolding value (again) when type is T_PAIR,
 		// reuse the existing stack and push unfolded values
 		switch {
 		case val.IsPair() && !typ.IsPair():
 			// unfold regular pair
+			// dbg("Unfold1: lvl=%d", lvl)
+			// dbg("Unfold1: typ=%s", typ.Dump())
+			// dbg("Unfold1: val=%s", val.Dump())
+			// dbg("-----------------------")
 			unfolded := val.UnfoldPair(typ)
 			stack.Push(unfolded...)
 		case val.CanUnfold(typ):
 			// comb pair
+			// dbg("Unfold2: lvl=%d", lvl)
+			// dbg("Unfold2: typ=%s %s", typ.OpCode, label)
+			// dbg("Unfold2: val=%s/%s", val.Type, val.OpCode)
+			// dbg("-----------------------")
 			stack.Push(val.Args...)
 		default:
 			// push value back on stack
+			// dbg("Unfold3: lvl=%d", lvl)
+			// dbg("Unfold3: typ=%s %s", typ.OpCode, label)
+			// dbg("Unfold3: val=%s/%s", val.Type, val.OpCode)
+			// dbg("-----------------------")
 			stack.Push(val)
 		}
 
@@ -367,7 +395,7 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 			}
 
 		default:
-			return fmt.Errorf("micheline: unexpected T_OR branch with value opcode %s", val.OpCode)
+			return fmt.Errorf("micheline: unexpected T_OR branch with value %s", val.Dump())
 		}
 
 		// lift anon content
@@ -422,6 +450,11 @@ func walkTree(m map[string]interface{}, label string, typ Type, stack *Stack, lv
 		// chest
 		// l2 address
 		// append scalar or other complex value
+
+		// dbg("Other: lvl=%d", lvl)
+		// dbg("Other: typ=%s %s", typ.OpCode, label)
+		// dbg("Other: val=%s/%s", val.Type, val.OpCode)
+		// dbg("-----------------------")
 
 		// comb-pair records might have slipped through in LooksLikeContainer()
 		// so if we detect any unpacked comb part (i.e. sequence) we unpack it here

@@ -467,11 +467,6 @@ func (p Prim) IsContainerType() bool {
 // Detects whether a primitive contains a regular pair or any form
 // of container type. Pairs can be unfolded into flat sequences.
 func (p Prim) CanUnfold(typ Type) bool {
-	// fix for pair(list, x)
-	if p.IsSequence() && typ.IsPair() && typ.Args[0].IsList() {
-		return false
-	}
-
 	// regular pairs (works for type and value trees)
 	if p.IsPair() {
 		return true
@@ -564,7 +559,7 @@ func (p Prim) HasSimilarChildTypes() bool {
 		case D_SOME, D_NONE, D_FALSE, D_TRUE, D_LEFT, D_RIGHT:
 			isSame = oc == v.OpCode.TypeCode()
 		default:
-			isSame = firstType.IsEqual(v.BuildType())
+			isSame = firstType.IsSimilar(v.BuildType())
 		}
 		if !isSame {
 			return false
@@ -607,8 +602,8 @@ func (p Prim) LooksLikeCode() bool {
 		return false
 	}
 
-	// first and last prim contain instruction ocpode
-	if p.Args[0].IsInstruction() && p.Args[len(p.Args)-1].IsInstruction() {
+	// first prim contains instruction ocpode
+	if p.Args[0].IsInstruction() {
 		return true
 	}
 

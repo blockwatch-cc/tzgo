@@ -60,6 +60,30 @@ func (a Typedef) Equal(b Typedef) bool {
 	return true
 }
 
+func (a Typedef) Similar(b Typedef) bool {
+	if a.Optional != b.Optional {
+		return false
+	}
+	if ((a.Type == "list" || a.Type == "set") && len(a.Args) == 0 && b.Type == "map") ||
+		((b.Type == "list" || b.Type == "set") && len(b.Args) == 0 && a.Type == "map") {
+		return true
+	}
+	if a.Type != b.Type && !a.Optional {
+		return false
+	}
+	if len(a.Args) != len(b.Args) && !a.Optional {
+		return false
+	}
+	if len(a.Args) == len(b.Args) {
+		for i, av := range a.Args {
+			if !av.Similar(b.Args[i]) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (t Typedef) Unfold() Typedef {
 	b := Typedef{
 		Name:     t.Name,
@@ -113,11 +137,13 @@ func (t Typedef) unfold() []Typedef {
 		}
 	case "lambda":
 		// unfold arg and result structs inside independently
-		if t.Args[0].Name == CONST_PARAM && t.Args[0].Type == TypeStruct {
-			t.Args[0].Args = t.Args[0].unfold()
-		}
-		if t.Args[1].Name == CONST_RETURN && t.Args[1].Type == TypeStruct {
-			t.Args[1].Args = t.Args[1].unfold()
+		if len(t.Args) == 2 {
+			if t.Args[0].Name == CONST_PARAM && t.Args[0].Type == TypeStruct {
+				t.Args[0].Args = t.Args[0].unfold()
+			}
+			if t.Args[1].Name == CONST_RETURN && t.Args[1].Type == TypeStruct {
+				t.Args[1].Args = t.Args[1].unfold()
+			}
 		}
 	}
 	return []Typedef{t}
@@ -293,6 +319,12 @@ func (t Type) TypedefPtr(name string) *Typedef {
 	return &td
 }
 
+func (t Type) IsSimilar(t2 Type) bool {
+	u1 := t.Typedef("").Unfold()
+	u2 := t2.Typedef("").Unfold()
+	return u1.Similar(u2)
+}
+
 func (t Type) MarshalJSON() ([]byte, error) {
 	if !t.IsValid() {
 		return []byte("{}"), nil
@@ -453,8 +485,10 @@ func buildTypedef(name string, typ Prim) Typedef {
 
 	switch typ.OpCode {
 	case T_LIST, T_SET:
-		td.Args = []Typedef{
-			buildTypedef(CONST_ITEM, typ.Args[0]),
+		if len(typ.Args) > 0 {
+			td.Args = []Typedef{
+				buildTypedef(CONST_ITEM, typ.Args[0]),
+			}
 		}
 
 	case T_MAP, T_BIG_MAP:
@@ -492,10 +526,14 @@ func buildTypedef(name string, typ Prim) Typedef {
 		}
 
 	case T_OPTION:
-		child := buildTypedef(name, typ.Args[0])
 		td.Optional = true
-		td.Type = child.Type
-		td.Args = child.Args
+		if len(typ.Args) > 0 {
+			child := buildTypedef(name, typ.Args[0])
+			td.Type = child.Type
+			td.Args = child.Args
+		} else {
+			td.Type = "unknown"
+		}
 
 	case T_OR:
 		td.Type = TypeUnion
@@ -598,6 +636,9 @@ func (p Prim) BuildType() Type {
 
 	case PrimSequence:
 		switch {
+		case p.LooksLikeCode():
+			t.Type = PrimNullary // we don't know in/out types
+			t.OpCode = T_LAMBDA
 		case p.LooksLikeMap():
 			t.OpCode = T_MAP
 			t.Type = PrimBinary
@@ -605,36 +646,33 @@ func (p Prim) BuildType() Type {
 				p.Args[0].Args[0].BuildType().Prim, // key type
 				p.Args[0].Args[1].BuildType().Prim, // value type
 			}
-		case p.LooksLikeCode():
-			t.Type = PrimNullary // we don't know in/out types
-			t.OpCode = T_LAMBDA
 		case p.LooksLikeSet():
-			t.OpCode = T_SET
+			t.OpCode = T_SET // guess, can also be LIST
 			t.Type = PrimUnary
 			t.Args = []Prim{
 				p.Args[0].BuildType().Prim, // single set type
 			}
+		case len(p.Args) == 0:
+			t.OpCode = T_LIST // guess, can be MAP, SET, LIST
+			t.Type = PrimNullary
+		case len(p.Args) == 1:
+			t.OpCode = T_LIST // guess, can be SET, LIST
+			t.Type = PrimUnary
+			t.Args = []Prim{p.Args[0].BuildType().Prim}
+		case len(p.Args) == 2:
+			t.OpCode = T_PAIR
+			t.Type = PrimBinary
+			t.Args = []Prim{
+				p.Args[0].BuildType().Prim,
+				p.Args[1].BuildType().Prim,
+			}
 		default:
-			// walk the entire list and generate types for each element in-order
-			t.OpCode = T_LIST
-			switch len(p.Args) {
-			case 0:
-				t.Type = PrimNullary
-			case 1:
-				t.Type = PrimUnary
-				t.Args = []Prim{p.Args[0].BuildType().Prim}
-			case 2:
-				t.Type = PrimBinary
-				t.Args = []Prim{
-					p.Args[0].BuildType().Prim,
-					p.Args[1].BuildType().Prim,
-				}
-			default:
-				t.Type = PrimVariadicAnno
-				t.Args = make([]Prim, len(p.Args))
-				for i, v := range p.Args {
-					t.Args[i] = v.BuildType().Prim
-				}
+			// struct
+			t.OpCode = T_PAIR
+			t.Type = PrimVariadicAnno
+			t.Args = make([]Prim, len(p.Args))
+			for i, v := range p.Args {
+				t.Args[i] = v.BuildType().Prim
 			}
 		}
 	case PrimNullary, PrimNullaryAnno:

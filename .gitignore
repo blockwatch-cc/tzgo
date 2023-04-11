@@ -9,3 +9,4 @@
 
 # Go specific files
 vendor/
+playground/
