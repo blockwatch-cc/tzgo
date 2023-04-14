@@ -336,6 +336,16 @@ func (z Z) Div(y Z) Z {
 	return x
 }
 
+func (z Z) CeilDiv(y Z) Z {
+	var x Z
+	if !y.IsZero() {
+		d, m := new(big.Int).DivMod(z.Big(), y.Big(), new(big.Int))
+		x.SetBig(d)
+		x = x.Add64(int64(m.Cmp(Zero.Big())))
+	}
+	return x
+}
+
 func (z Z) Add64(y int64) Z {
 	var x Z
 	x.SetBig(new(big.Int).Add(z.Big(), big.NewInt(y)))
@@ -374,6 +384,24 @@ func (z Z) Scale(n int) Z {
 		if n < 0 {
 			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(-n)), nil)
 			x.SetBig(factor.Div(z.Big(), factor))
+		} else {
+			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(n)), nil)
+			x.SetBig(factor.Mul(z.Big(), factor))
+		}
+	}
+	return x
+}
+
+func (z Z) CeilScale(n int) Z {
+	var x Z
+	if n == 0 {
+		x.SetBig(z.Big())
+	} else {
+		if n < 0 {
+			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(-n)), nil)
+			f, m := factor.DivMod(z.Big(), factor, new(big.Int))
+			x.SetBig(f)
+			x = x.Add64(int64(m.Cmp(Zero.Big())))
 		} else {
 			factor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(n)), nil)
 			x.SetBig(factor.Mul(z.Big(), factor))
