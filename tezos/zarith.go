@@ -424,6 +424,14 @@ func (z Z) Float64(dec int) float64 {
 	}
 }
 
+func (z Z) Lsh(n uint) Z {
+	return NewBigZ(new(big.Int).Lsh(z.Big(), n))
+}
+
+func (z Z) Rsh(n uint) Z {
+	return NewBigZ(new(big.Int).Rsh(z.Big(), n))
+}
+
 func MaxZ(args ...Z) Z {
 	var m Z
 	for _, z := range args {
