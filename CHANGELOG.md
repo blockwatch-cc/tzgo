@@ -37,7 +37,7 @@
 
 Refactoring and Mumbai support
 
-BREAKING: Note that due to a new internal address encoding data writting using binary marshalers with earlier versions of TzGo is incompatible.
+BREAKING: Note that due to a new internal address encoding data writing using binary marshalers with earlier versions of TzGo is incompatible.
 
 * Changed memory layout and interface for all hash types and `tezos.Address` to save 24 bytes per address/hash that was previously required for a byte slice header
   - hashes and addresses directly comparable now and can thus be used as Golang Map keys
@@ -126,7 +126,7 @@ Other changes
 * Fix negative block offset in RPC
 * Add Deku contract address support
 * Harden address set against hash collisions
-* Read more token metdata
+* Read more token metadata
 * Improve decoding Go structs from Micheline primitives
 * Improve bigmap detection
 * Fix ghostnet start cycle
@@ -250,7 +250,7 @@ Other changes
 
 ## v1.11-rc0
 
-This is the first release of TzGo that allows to send transaction. All types and interfaces are engineered to be easily composable. We start with essential low level types/functions for public and private key handling, operation encoding/signing/broadcast and mempool/block monitoring. This feature set is already fully sufficient to build end-user applications including the possibility to send smart contract calls, but may at times be less convenient. To simplify complex use cases we will introduce higher order functionality in the next release candidate.
+This is the first release of TzGo that allows sending transactions. All types and interfaces are engineered to be easily composable. We start with essential low level types/functions for public and private key handling, operation encoding/signing/broadcast and mempool/block monitoring. This feature set is already fully sufficient to build end-user applications including the possibility to send smart contract calls, but may at times be less convenient. To simplify complex use cases we will introduce higher order functionality in the next release candidate.
 
 **Package `tezos`**
 
