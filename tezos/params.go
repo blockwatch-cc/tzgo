@@ -54,6 +54,21 @@ var (
 	}).
 		WithChainId(Mumbainet).
 		WithDeployment(Deployments[Mumbainet].AtProtocol(ProtoV016_2))
+
+	// NairobinetParams defines the blockchain configuration for Mumbai testnet.
+	// To produce compliant transactions, use these defaults in op.WithParams().
+	NairobinetParams = (&Params{
+		MinimalBlockDelay:            8 * time.Second,
+		CostPerByte:                  250,
+		OriginationSize:              257,
+		HardGasLimitPerOperation:     1040000,
+		HardGasLimitPerBlock:         2600000,
+		HardStorageLimitPerOperation: 60000,
+		MaxOperationDataLength:       32768,
+		MaxOperationsTTL:             240,
+	}).
+		WithChainId(Nairobinet).
+		WithDeployment(Deployments[Nairobinet].AtProtocol(ProtoV017))
 )
 
 // Params contains a subset of protocol configuration settings that are relevant
@@ -115,16 +130,28 @@ func (p *Params) WithChainId(id ChainIdHash) *Params {
 			p.Network = "Limanet"
 		case Mumbainet:
 			p.Network = "Mumbainet"
-		default:
-			p.Network = "Sandbox"
+		case Nairobinet:
+			p.Network = "Nairobinet"
 		}
 	}
 	return p
 }
 
 func (p *Params) WithProtocol(h ProtocolHash) *Params {
+	var ok bool
 	p.Protocol = h
-	p.Version = Versions[h]
+	p.Version, ok = Versions[h]
+	if !ok {
+		var max int
+		for _, v := range Versions {
+			if v < max {
+				continue
+			}
+			max = v
+		}
+		p.Version = max + 1
+		Versions[h] = p.Version
+	}
 	switch {
 	case p.Version > 11:
 		p.OperationTagsVersion = 2
@@ -135,7 +162,9 @@ func (p *Params) WithProtocol(h ProtocolHash) *Params {
 }
 
 func (p *Params) WithNetwork(n string) *Params {
-	p.Network = n
+	if p.Network == "unknown" {
+		p.Network = n
+	}
 	return p
 }
 

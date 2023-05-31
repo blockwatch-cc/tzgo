@@ -1,9 +1,10 @@
 package tezos_test
 
 import (
+	"testing"
+
 	"blockwatch.cc/tzgo/rpc"
 	"blockwatch.cc/tzgo/tezos"
-	"testing"
 )
 
 type (
@@ -33,6 +34,7 @@ var (
 	PtKathma       = tezos.PtKathma
 	PtLimaPt       = tezos.PtLimaPt
 	PtMumbai       = tezos.PtMumbai
+	PtNairobi      = tezos.PtNairobi
 
 	Mainnet     = tezos.Mainnet
 	NewParams   = tezos.NewParams
@@ -259,6 +261,8 @@ var paramResults = map[int64]paramResult{
 	2981889: {558, -1, 8 + 2},      // v015 start
 	3268608: {592, 15, 16 + 4 + 1}, // --> end
 	3268609: {593, -1, 8 + 2},      // v016 start
+	3760128: {622, 15, 16 + 4 + 1}, // --> end
+	3760129: {623, -1, 8 + 2},      // v017 start
 }
 
 var paramBlocks = []BlockMetadata{
@@ -738,6 +742,34 @@ var paramBlocks = []BlockMetadata{
 			Position:  0,
 			Remaining: 81912,
 		},
+	}, {
+		// v16 end
+		Protocol:     PtMumbai,
+		NextProtocol: PtNairobi,
+		LevelInfo: &LevelInfo{
+			Level:              3760128,
+			Cycle:              622,
+			CyclePosition:      8191,
+			ExpectedCommitment: true,
+		},
+		VotingPeriodInfo: &VotingPeriodInfo{
+			Position:  40959,
+			Remaining: 0,
+		},
+	}, {
+		// v17 start
+		Protocol:     PtNairobi,
+		NextProtocol: PtNairobi,
+		LevelInfo: &LevelInfo{
+			Level:              3760129,
+			Cycle:              623,
+			CyclePosition:      0,
+			ExpectedCommitment: false,
+		},
+		VotingPeriodInfo: &VotingPeriodInfo{
+			Position:  0,
+			Remaining: 81912,
+		},
 	},
 }
 
@@ -790,5 +822,6 @@ var paramBlocks = []BlockMetadata{
 //         PtKathma:       granadaParams,
 //         PtLimaPt:       granadaParams,
 //         PtMumbai:       mumbaiParams,
+//         PtNairobi:      mumbaiParams,
 //     }
 // )
