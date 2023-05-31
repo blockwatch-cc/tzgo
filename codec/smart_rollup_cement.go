@@ -13,8 +13,7 @@ import (
 // SmartRollupCement represents "smart_rollup_cement" operation
 type SmartRollupCement struct {
 	Manager
-	Rollup     tezos.Address               `json:"rollup"`
-	Commitment tezos.SmartRollupCommitHash `json:"commitment"`
+	Rollup tezos.Address `json:"rollup"`
 }
 
 func (o SmartRollupCement) Kind() tezos.OpType {
@@ -30,8 +29,6 @@ func (o SmartRollupCement) MarshalJSON() ([]byte, error) {
 	o.Manager.EncodeJSON(buf)
 	buf.WriteString(`,"rollup":`)
 	buf.WriteString(strconv.Quote(o.Rollup.String()))
-	buf.WriteString(`,"commitment":`)
-	buf.WriteString(strconv.Quote(o.Commitment.String()))
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }
@@ -40,7 +37,6 @@ func (o SmartRollupCement) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) erro
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
 	o.Manager.EncodeBuffer(buf, p)
 	buf.Write(o.Rollup.Hash()) // 20 byte only
-	buf.Write(o.Commitment[:])
 	return nil
 }
 
@@ -52,7 +48,6 @@ func (o *SmartRollupCement) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (er
 		return
 	}
 	o.Rollup = tezos.NewAddress(tezos.AddressTypeSmartRollup, buf.Next(20))
-	o.Commitment = tezos.NewSmartRollupCommitHash(buf.Next(32))
 	return
 }
 
