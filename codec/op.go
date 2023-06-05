@@ -253,7 +253,7 @@ func (o *Op) WithChainId(id tezos.ChainIdHash) *Op {
 
 // WithLimits sets the limits (fee, gas and storage limit) of each
 // contained operation to provided limits. Use this to apply values from
-// simulation with an optional safety margin on gas. This will also
+// simulation with an optional safety margin on gas and storage. This will also
 // calculate the minFee for each operation in the list and add the minFee
 // for header bytes (branch and signature) to the first operation in a list.
 //
@@ -271,15 +271,19 @@ func (o *Op) WithLimits(limits []tezos.Limits, margin int64) *Op {
 		// apply simulated limit to get a better size estimate
 		v.WithLimits(limits[i])
 
-		// re-calculate limits with gas safety margin
+		// re-calculate limits with safety margins
 		gas := limits[i].GasLimit + margin
+		storage := limits[i].StorageLimit
+		if storage > 0 {
+			storage += margin
+		}
 		adj := tezos.Limits{
 			GasLimit:     gas,
-			StorageLimit: limits[i].StorageLimit,
+			StorageLimit: storage,
 		}
 
 		// Apply limits, and re-compute the fee if needed.
-		// This is required, because the value of the fee has an impact on the operation size.
+		// This is required, because fee value has an impact on operation size.
 		var lastFee int64 = -1
 		for lastFee < adj.Fee {
 			lastFee = adj.Fee

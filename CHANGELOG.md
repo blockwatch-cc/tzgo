@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* add storage limit safety margin (100 byte)
 * fix some Micheline translation bugs for nested list/comb-pair ambiguities
 * fix decoding for some single-value entrypoints
 
