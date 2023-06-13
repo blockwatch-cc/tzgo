@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strings"
 
 	"blockwatch.cc/tzgo/signer"
@@ -19,7 +20,7 @@ import (
 )
 
 const (
-	libraryVersion = "1.12.2"
+	libraryVersion = "1.17.0"
 	userAgent      = "tzgo/v" + libraryVersion
 	mediaType      = "application/json"
 	ipfsUrl        = "https://ipfs.io"
@@ -70,6 +71,8 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if key != "" {
 		q.Del("X-Api-Key")
 		u.RawQuery = q.Encode()
+	} else {
+		key = os.Getenv("TZGO_API_KEY")
 	}
 	ipfs, _ := url.Parse(ipfsUrl)
 	c := &Client{

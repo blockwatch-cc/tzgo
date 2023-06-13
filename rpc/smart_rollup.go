@@ -30,6 +30,7 @@ type SmartRollupResult struct {
 	StakedHash       *tezos.SmartRollupCommitHash `json:"staked_hash,omitempty"`        // v016, smart_rollup_publish
 	PublishedAtLevel int64                        `json:"published_at_level,omitempty"` // v016, smart_rollup_publish
 	GameStatus       *GameStatus                  `json:"game_status,omitempty"`        // v016, smart_rollup_refute, smart_rollup_timeout
+	Commitment       *tezos.SmartRollupCommitHash `json:"commitment_hash,omitempty"`    // v017, smart_rollup_cement
 }
 
 type SmartRollupOriginate struct {
@@ -47,8 +48,8 @@ type SmartRollupAddMessages struct {
 
 type SmartRollupCement struct {
 	Manager
-	Rollup     tezos.Address               `json:"rollup"`
-	Commitment tezos.SmartRollupCommitHash `json:"commitment"`
+	Rollup     tezos.Address                `json:"rollup"`
+	Commitment *tezos.SmartRollupCommitHash `json:"commitment,omitempty"` // deprecated in v17
 }
 
 type SmartRollupCommitment struct {

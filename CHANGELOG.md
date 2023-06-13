@@ -1,9 +1,15 @@
 # Changelog
 
-## unreleased
+## v1.17.0
 
+* add Nairobi and Nairobinet constants
+* update smart_rollup_cement parameters to Nairobi changes
+* fix accounting for internal origination allocation burn
+* update secp256k1 package
+* add storage limit safety margin (100 byte)
 * fix some Micheline translation bugs for nested list/comb-pair ambiguities
 * fix decoding for some single-value entrypoints
+* support TZGO_API_KEY env variable
 
 ## v1.16.6
 
