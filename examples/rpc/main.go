@@ -40,12 +40,13 @@ func main() {
 		if err == flag.ErrHelp {
 			fmt.Println("Usage: rpc [args] <cmd> [sub-args]")
 			fmt.Printf("\nCommands\n")
-			fmt.Printf("  block <hash>|head        show block info\n")
-			fmt.Printf("  op <block>/<list>/<pos>  show operation info\n")
-			fmt.Printf("  contract <hash>          show contract info\n")
-			fmt.Printf("  search <ops> <lvl>       output blocks containing operations in list\n")
-			fmt.Printf("  bootstrap                wait until node is bootstrapped\n")
-			fmt.Printf("  monitor                  wait and show new heads as they are baked\n")
+			fmt.Printf("  block <hash>|head         show block info\n")
+			fmt.Printf("  op <block>/<list>/<pos>   show operation info\n")
+			fmt.Printf("  cost <block>/<list>/<pos> show operation cost\n")
+			fmt.Printf("  contract <hash>           show contract info\n")
+			fmt.Printf("  search <ops> <lvl>        output blocks containing operations in list\n")
+			fmt.Printf("  bootstrap                 wait until node is bootstrapped\n")
+			fmt.Printf("  monitor                   wait and show new heads as they are baked\n")
 			fmt.Printf("\nGlobal arguments\n")
 			flags.PrintDefaults()
 			os.Exit(0)
@@ -120,6 +121,26 @@ func run() error {
 			return fmt.Errorf("Invalid position identifier: %v", err)
 		}
 		return showOpInfo(ctx, c, bid, list, pos)
+
+	case "cost":
+		h := flags.Arg(1)
+		if h == "" {
+			return fmt.Errorf("Missing operation identifier")
+		}
+		parts := strings.SplitN(h, "/", 3)
+		if len(parts) != 3 {
+			return fmt.Errorf("Invalid operation identifier (form: block-hash:list:pos)")
+		}
+		bid := rpc.BlockAlias(parts[0])
+		list, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return fmt.Errorf("Invalid list identifier: %v", err)
+		}
+		pos, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return fmt.Errorf("Invalid position identifier: %v", err)
+		}
+		return showOpCost(ctx, c, bid, list, pos)
 
 	case "bootstrap":
 		return waitBootstrap(ctx, c)
@@ -549,6 +570,50 @@ func showOpInfo(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos in
 					return err
 				}
 				fmt.Printf("Storage:\n  %s\n", string(buf))
+			}
+		}
+	}
+
+	return nil
+}
+
+func showOpCost(ctx context.Context, c *rpc.Client, bh rpc.BlockID, list, pos int) error {
+	fmt.Printf("Loading op %s/%d/%d\n", bh, list, pos)
+	op, err := c.GetBlockOperation(ctx, bh, list, pos)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Hash   %s\n", op.Hash)
+	total := op.TotalCosts()
+	fmt.Printf("Totals\n")
+	fmt.Printf("  Fee             %d\n", total.Fee)
+	fmt.Printf("  Burn            %d\n", total.Burn)
+	fmt.Printf("  GasUsed         %d\n", total.GasUsed)
+	fmt.Printf("  StorageUsed     %d\n", total.StorageUsed)
+	fmt.Printf("  StorageBurn     %d\n", total.StorageBurn)
+	fmt.Printf("  AllocationBurn  %d\n", total.AllocationBurn)
+
+	for i, o := range op.Contents {
+		limits := o.Limits()
+		costs := o.Costs()
+		fmt.Printf("Op %d -----------------\n", i+1)
+		fmt.Printf("  Type            %s\n", o.Kind())
+		fmt.Printf("  Gas             %d/%d\n", costs.GasUsed, limits.GasLimit)
+		fmt.Printf("  Storage         %d/%d\n", costs.StorageUsed, limits.StorageLimit)
+		fmt.Printf("  StorageBurn     %d\n", costs.StorageBurn)
+		fmt.Printf("  AllocationBurn  %d\n", costs.AllocationBurn)
+
+		switch o.Kind() {
+		case tezos.OpTypeTransaction:
+			tx := o.(*rpc.Transaction)
+			for j, ir := range tx.Metadata.InternalResults {
+				costs := ir.Costs()
+				fmt.Printf("Internal %d -----------------\n", j+1)
+				fmt.Printf("  Type            %s\n", ir.Kind)
+				fmt.Printf("  Gas             %d\n", costs.GasUsed)
+				fmt.Printf("  Storage         %d\n", costs.StorageUsed)
+				fmt.Printf("  StorageBurn     %d\n", costs.StorageBurn)
+				fmt.Printf("  AllocationBurn  %d\n", costs.AllocationBurn)
 			}
 		}
 	}

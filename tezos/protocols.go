@@ -23,21 +23,23 @@ var (
 	ProtoV014      = MustParseProtocolHash("PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg")
 	ProtoV015      = MustParseProtocolHash("PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW")
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
+	ProtoV017      = MustParseProtocolHash("PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf")
 
 	// aliases
-	PtAthens = ProtoV004
-	PsBabyM1 = ProtoV005_2
-	PsCARTHA = ProtoV006_2
-	PsDELPH1 = ProtoV007
-	PtEdo2Zk = ProtoV008_2
-	PsFLoren = ProtoV009
-	PtGRANAD = ProtoV010
-	PtHangz2 = ProtoV011_2
-	Psithaca = ProtoV012_2
-	PtJakart = ProtoV013_2
-	PtKathma = ProtoV014
-	PtLimaPt = ProtoV015
-	PtMumbai = ProtoV016_2
+	PtAthens  = ProtoV004
+	PsBabyM1  = ProtoV005_2
+	PsCARTHA  = ProtoV006_2
+	PsDELPH1  = ProtoV007
+	PtEdo2Zk  = ProtoV008_2
+	PsFLoren  = ProtoV009
+	PtGRANAD  = ProtoV010
+	PtHangz2  = ProtoV011_2
+	Psithaca  = ProtoV012_2
+	PtJakart  = ProtoV013_2
+	PtKathma  = ProtoV014
+	PtLimaPt  = ProtoV015
+	PtMumbai  = ProtoV016_2
+	PtNairobi = ProtoV017
 
 	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
@@ -45,6 +47,7 @@ var (
 	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
 	Limanet      = MustParseChainIdHash("NetXizpkH94bocH")
 	Mumbainet    = MustParseChainIdHash("NetXgbcrNtXD2yA")
+	Nairobinet   = MustParseChainIdHash("NetXyuzvDo2Ugzb")
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -65,7 +68,8 @@ var (
 		ProtoV014:      14,
 		ProtoV015:      15,
 		ProtoV016_2:    16,
-		ProtoAlpha:     17,
+		ProtoV017:      17,
+		ProtoAlpha:     18,
 	}
 
 	Deployments = map[ChainIdHash]ProtocolHistory{
@@ -87,7 +91,8 @@ var (
 			{PtJakart, 0, 2490369, 2736128, 498, 5, 8192, 512},    // v13
 			{PtKathma, 0, 2736129, 2981888, 528, 5, 8192, 512},    // v14
 			{PtLimaPt, 0, 2981889, 3268608, 558, 5, 8192, 512},    // v15
-			{PtMumbai, 0, 3268609, -1, 593, 5, 16384, 1024},       // v16
+			{PtMumbai, 0, 3268609, 3760128, 593, 5, 16384, 1024},  // v16
+			{PtNairobi, 0, 3760129, -1, 623, 5, 16384, 1024},      // v17
 		},
 		Ghostnet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},           // 0
@@ -97,12 +102,19 @@ var (
 			{PtJakart, 0, 765953, 1191936, 187, 3, 4096, 256},  // v13
 			{PtKathma, 0, 1191937, 1654784, 291, 3, 4096, 256}, // v14
 			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256}, // v15
-			{PtMumbai, 0, 2162689, -1, 528, 3, 8192, 512},      // v16
+			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512}, // v16
+			{PtNairobi, 0, 2957313, -1, 625, 3, 8192, 512},     // v17
 		},
 		Mumbainet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
 			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
 			{PtMumbai, 2, 2, -1, 0, 3, 8192, 512},      // v16
+		},
+		Nairobinet: {
+			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
+			{PtMumbai, 2, 2, 16384, 0, 3, 8192, 512},   // v16
+			{PtNairobi, 0, 16385, -1, 2, 3, 8192, 512}, // v17
 		},
 	}
 )

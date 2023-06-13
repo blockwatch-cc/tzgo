@@ -15,7 +15,7 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-const GasSafetyMargin int64 = 100
+const ExtraSafetyMargin int64 = 100 // used to adjust gas and storage estimations
 
 var (
 	// for reveal
@@ -305,7 +305,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 
 	// apply simulated cost as limits to tx list
 	if !opts.IgnoreLimits {
-		op.WithLimits(sim.MinLimits(), GasSafetyMargin)
+		op.WithLimits(sim.MinLimits(), ExtraSafetyMargin)
 	}
 
 	// log info about tx costs

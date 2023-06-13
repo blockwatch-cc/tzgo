@@ -1,11 +1,12 @@
-## TzGo – Go SDK for Tezos by Blockwatch Data
+## Blockwatch TzGo - Tezos Go SDK
 
-TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
+TzGo is [Blockwatch](https://blockwatch.cc)'s low-level Tezos Go SDK for reliable, high-performance applications. This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
-Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos protocol. TzGo supports binary and JSON encodings for all Tezos types including the Micheline smart contract data and all transaction formats so it's perfectly suited for high-performance applications that read and write to the Tezos blockchain.
+TzGo's main focus is on **correctness**, **stability**, and **compliance** with Tezos mainnet. It supports binary and JSON encodings for all Tezos types including Micheline smart contract data and all transaction formats. It's an ideal fit for high-performance applications that read from and write to the Tezos blockchain.
 
 Current Tezos protocol support in TzGo
 
+- Nairobi v017
 - Mumbai v016
 - Lima v015
 - Kathmandu v014
@@ -28,21 +29,16 @@ TzGo contains a full set of features to read, monitor, decode, translate, analyz
 - a low-level **Types library** `tzgo/tezos` to handle hashes, addresses, keys, signatures other types found on-chain
 - a powerful **Micheline library** `tzgo/micheline` to decode and translate data found in smart contract calls, storage, and bigmaps
 - an **RPC library** `tzgo/rpc` for accessing the Tezos Node RPC
-- an **Codec library** `tzgo/codec` to construct and serialize operations
+- a **Codec library** `tzgo/codec` to construct and serialize operations
 - a **Contract library** `tzgo/contract` for smart contract calls and tokens
 - a **Signer library** `tzgo/signer` to sign transactions local or remote
 - helpers like an efficient base58 en/decoder, hash maps, etc
 
-### TzGo Versioning
+### TzGo Compatibility
 
-As long as TzGo is in beta status we will use major version 0.x. Once interfaces are stable we'll switch to 1.x. We'll use the minor version number to express compatibility with a Tezos protocol release, e.g. v0.11.0 supports all protocols up to Hangzhou.
+TzGo's RPC package attempts to be compatible with all protocols so that reading historic block data is always supported. Binary transaction encoding and signing support is limited to the most recent protocol.
 
-### TzGo Roadmap
-
-When new Tezos protocols are proposed and later deployed we will upgrade TzGo to support new features as soon as practically feasible and as demand for such features exists. For example, we don't fully support Sapling and Lazy Storage updates yet but will add support in the future as usage of these features becomes more widespread.
-
-TzGo used to be read-only until v0.11, i.e. you could use it to access Tezos on-chain data, but you could not send transactions. Starting with v0.11.1 we have added transaction serialization, signing and broadcast support which later has been finalized and published as  release v1.12.
-
+We attempt to upgrade TzGo whenever new protocols are proposed and will add new protocol features as soon as practically feasible and as demand for such features exists. For example, we don't fully Sapling and BLS signatures yet, but may add support in the future.
 
 ### Usage
 
