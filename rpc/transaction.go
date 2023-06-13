@@ -92,15 +92,16 @@ func (r InternalResult) Costs() tezos.Costs {
 		if burn >= 0 {
 			continue
 		}
-		if r.Result.PaidStorageSizeDiff > 0 && i == 0 {
+		switch {
+		case r.Result.PaidStorageSizeDiff > 0 && i == 0:
 			cost.StorageBurn += -burn
 			cost.Burn += -burn
 			i++
-		} else if len(r.Result.OriginatedContracts) > 0 && i == 1 {
+		case len(r.Result.OriginatedContracts) > 0 && i == 1:
 			cost.AllocationBurn += -burn
 			cost.Burn += -burn
 			i++
-		} else if r.Result.Allocated {
+		case r.Result.Allocated:
 			cost.AllocationBurn += -burn
 			cost.Burn += -burn
 			i++
