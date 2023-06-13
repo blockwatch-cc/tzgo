@@ -1,8 +1,8 @@
-## TzGo – Go SDK for Tezos by Blockwatch Data
+## Blockwatch TzGo - Tezos Go SDK
 
-TzGo is the officially supported Tezos Go client library by [Blockwatch](https://blockwatch.cc). This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
+TzGo is [Blockwatch](https://blockwatch.cc)'s low-level Tezos Go SDK for reliable, high-performance applications. This SDK is free to use in commercial and non-commercial projects with a permissive license. Blockwatch is committed to keeping interfaces stable, providing long-term support, and updating TzGo on a regular basis to stay compliant with the most recent Tezos network protocol.
 
-Our main focus is on **correctness**, **stability**, and **compliance** with the Tezos mainnet network. TzGo supports binary and JSON encodings for all Tezos types including the Micheline smart contract data and all transaction formats so it's perfectly suited for high-performance applications that read and write to the Tezos blockchain.
+TzGo's main focus is on **correctness**, **stability**, and **compliance** with Tezos mainnet. It supports binary and JSON encodings for all Tezos types including Micheline smart contract data and all transaction formats. It's an ideal fit for high-performance applications that read from and write to the Tezos blockchain.
 
 Current Tezos protocol support in TzGo
 
@@ -29,7 +29,7 @@ TzGo contains a full set of features to read, monitor, decode, translate, analyz
 - a low-level **Types library** `tzgo/tezos` to handle hashes, addresses, keys, signatures other types found on-chain
 - a powerful **Micheline library** `tzgo/micheline` to decode and translate data found in smart contract calls, storage, and bigmaps
 - an **RPC library** `tzgo/rpc` for accessing the Tezos Node RPC
-- an **Codec library** `tzgo/codec` to construct and serialize operations
+- a **Codec library** `tzgo/codec` to construct and serialize operations
 - a **Contract library** `tzgo/contract` for smart contract calls and tokens
 - a **Signer library** `tzgo/signer` to sign transactions local or remote
 - helpers like an efficient base58 en/decoder, hash maps, etc
