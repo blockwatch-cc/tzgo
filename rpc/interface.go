@@ -10,6 +10,9 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
+// Ensure Client implements the RpcClient interface
+var _ RpcClient = (*Client)(nil)
+
 // RpcClient interface for various clients implementations and mocks generation
 type RpcClient interface {
 	Init(ctx context.Context) error
