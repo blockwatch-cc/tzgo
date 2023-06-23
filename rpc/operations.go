@@ -6,7 +6,6 @@ package rpc
 import (
 	"bytes"
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -465,27 +464,4 @@ func (c *Client) GetBlockOperations(ctx context.Context, id BlockID) ([][]Operat
 		return nil, err
 	}
 	return ops, nil
-}
-
-// BroadcastOperation sends a signed operation to the network (injection).
-// The call returns the operation hash on success. If theoperation was rejected
-// by the node error is of type RPCError.
-func (c *Client) BroadcastOperation(ctx context.Context, body []byte) (hash tezos.OpHash, err error) {
-	err = c.Post(ctx, "injection/operation", hex.EncodeToString(body), &hash)
-	return
-}
-
-// RunOperation simulates executing an operation without requiring a valid signature.
-// The call returns the execution result as regular operation receipt.
-func (c *Client) RunOperation(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_operation", id)
-	return c.Post(ctx, u, body, resp)
-}
-
-// ForgeOperation uses a remote node to serialize an operation to its binary format.
-// The result of this call SHOULD NEVER be used for signing the operation, it is only
-// meant for validating the locally generated serialized output.
-func (c *Client) ForgeOperation(ctx context.Context, id BlockID, body, resp interface{}) error {
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/forge/operations", id)
-	return c.Post(ctx, u, body, resp)
 }

@@ -51,21 +51,26 @@ type CallOptions struct {
 	MaxFee            int64         // max acceptable fee, optional (default = 0)
 	TTL               int64         // max lifetime for operations in blocks
 	IgnoreLimits      bool          // ignore simulated limits and use user-defined limits from op
-	SimulationBlockID BlockID       // custom block id to simulate operation
+	ExtraGasMargin    int64         // safety margin in case simulation underestimates future usage
+	SimulationBlockID BlockID       // custom block id to simulate operation (default is head, use to select a past block)
+	SimulationOffset  int64         // custom block offset for future block simulations
 	Signer            signer.Signer // optional signer interface to use for signing the transaction
 	Sender            tezos.Address // optional address to sign for (use when signer manages multiple addresses)
 	Observer          *Observer     // optional custom block observer for waiting on confirmations
 }
 
 var DefaultOptions = CallOptions{
-	Confirmations: 2,
-	TTL:           tezos.DefaultParams.MaxOperationsTTL - 2,
-	MaxFee:        1_000_000,
+	Confirmations:    2,
+	TTL:              tezos.DefaultParams.MaxOperationsTTL - 2,
+	MaxFee:           1_000_000,
+	ExtraGasMargin:   ExtraSafetyMargin,
+	SimulationOffset: 5, // use pessimistic value to prevent gas exhausted errors (node's default is 3)
 }
 
 type RunOperationRequest struct {
 	Operation *codec.Op         `json:"operation"`
 	ChainId   tezos.ChainIdHash `json:"chain_id"`
+	Latency   int64             `json:"latency,omitempty"`
 }
 
 type RunViewRequest struct {
@@ -176,6 +181,10 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		Params:    o.Params,
 	}
 
+	if opts == nil {
+		opts = &DefaultOptions
+	}
+
 	if sim.TTL == 0 && opts != nil {
 		sim.TTL = opts.TTL
 	}
@@ -189,7 +198,7 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		sim.Branch = hash
 	}
 
-	if opts == nil || !opts.IgnoreLimits {
+	if !opts.IgnoreLimits {
 		// use default gas/storage limits, set min fee
 		for _, op := range o.Contents {
 			l := op.Limits()
@@ -203,17 +212,23 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		}
 	}
 
-	blockID := BlockID(Head)
-	if opts != nil && opts.SimulationBlockID != nil {
-		blockID = opts.SimulationBlockID
-	}
-
 	req := RunOperationRequest{
 		Operation: sim,
 		ChainId:   c.ChainId,
 	}
+	var err error
 	resp := &Operation{}
-	if err := c.RunOperation(ctx, blockID, req, resp); err != nil {
+
+	// select simulation method based on requested block
+	if opts.SimulationBlockID != nil {
+		// simulate in the past
+		err = c.RunOperation(ctx, opts.SimulationBlockID, req, resp)
+	} else {
+		// simulate in the future
+		req.Latency = opts.SimulationOffset
+		err = c.SimulateOperation(ctx, Head, req, resp)
+	}
+	if err != nil {
 		return nil, err
 	}
 
@@ -305,7 +320,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 
 	// apply simulated cost as limits to tx list
 	if !opts.IgnoreLimits {
-		op.WithLimits(sim.MinLimits(), ExtraSafetyMargin)
+		op.WithLimits(sim.MinLimits(), opts.ExtraGasMargin)
 	}
 
 	// log info about tx costs
@@ -367,6 +382,13 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	return res.GetReceipt(ctx)
 }
 
+// RunOperation simulates executing an operation without requiring a valid signature.
+// The call returns the execution result as regular operation receipt.
+func (c *Client) RunOperation(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_operation", id)
+	return c.Post(ctx, u, body, resp)
+}
+
 // RunCode simulates executing of provided code on the context of a contract at selected block.
 func (c *Client) RunCode(ctx context.Context, id BlockID, body, resp interface{}) error {
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/run_code", id)
@@ -389,5 +411,38 @@ func (c *Client) RunView(ctx context.Context, id BlockID, body, resp interface{}
 // returns a full execution trace.
 func (c *Client) TraceCode(ctx context.Context, id BlockID, body, resp interface{}) error {
 	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/trace_code", id)
+	return c.Post(ctx, u, body, resp)
+}
+
+// BroadcastOperation sends a signed operation to the network (injection).
+// The call returns the operation hash on success. If theoperation was rejected
+// by the node error is of type RPCError.
+func (c *Client) BroadcastOperation(ctx context.Context, body []byte) (hash tezos.OpHash, err error) {
+	err = c.Post(ctx, "injection/operation", hex.EncodeToString(body), &hash)
+	return
+}
+
+// ForgeOperation uses a remote node to serialize an operation to its binary format.
+// The result of this call SHOULD NEVER be used for signing the operation, it is only
+// meant for validating the locally generated serialized output.
+func (c *Client) ForgeOperation(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/forge/operations", id)
+	return c.Post(ctx, u, body, resp)
+}
+
+// SimulateOperation simulates executing an operation without requiring a valid signature.
+// The call returns the execution result as regular operation receipt with estimated
+// future gas usage.
+//
+// Note gas consumption may differ based on whether a contract is cached inside a node
+// at the time of operation inclusion in a block. The contract cache is dynamic
+// so under rare circumstances the simulation can underestimates real gas cost
+// and a contract call may fail. In such cases attempt to resend the transaction with a
+// higher gas margin (CallOptions.ExtraGasMargin > ExtraSafetyMargin).
+//
+// For simulation purposes a future cache state is predicted. You can control the
+// future simulation point via RunOperationRequest.Latency (in blocks).
+func (c *Client) SimulateOperation(ctx context.Context, id BlockID, body, resp interface{}) error {
+	u := fmt.Sprintf("chains/main/blocks/%s/helpers/scripts/simulate_operation", id)
 	return c.Post(ctx, u, body, resp)
 }

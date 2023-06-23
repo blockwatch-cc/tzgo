@@ -42,6 +42,10 @@ type Typedef struct {
 	Args     []Typedef `json:"args,omitempty"`
 }
 
+func (a Typedef) IsValid() bool {
+	return a.Name != "" || a.Type != "" || len(a.Args) > 0
+}
+
 func (a Typedef) Equal(b Typedef) bool {
 	if a.Type != b.Type {
 		return false

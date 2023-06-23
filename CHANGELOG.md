@@ -1,5 +1,12 @@
 # Changelog
 
+## unreleased
+
+* change gas simulation to `/helpers/scripts/simulate_operation` for better future estimates
+* new `CallOptions.ExtraGasMargin` arg for manual override of the default (100)
+* new `CallOptions.SimulationOffset` arg to control future block offset
+* new `Client.SimulateOperation()` method to simulate execution at a future block
+
 ## v1.17.0
 
 * add Nairobi and Nairobinet constants
@@ -43,7 +50,7 @@
 
 Refactoring and Mumbai support
 
-BREAKING: Note that due to a new internal address encoding data writing using binary marshalers with earlier versions of TzGo is incompatible.
+BREAKING: Note that due to a new internal address encoding data written by binary marshalers from earlier versions of TzGo is incompatible.
 
 * Changed memory layout and interface for all hash types and `tezos.Address` to save 24 bytes per address/hash that was previously required for a byte slice header
   - hashes and addresses directly comparable now and can thus be used as Golang Map keys
