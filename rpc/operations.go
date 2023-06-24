@@ -153,7 +153,11 @@ func (r OperationResult) IsSuccess() bool {
 
 func (r OperationResult) Gas() int64 {
 	if r.ConsumedMilliGas > 0 {
-		return r.ConsumedMilliGas / 1000
+		var corr int64
+		if r.ConsumedMilliGas%1000 > 0 {
+			corr++
+		}
+		return r.ConsumedMilliGas/1000 + corr
 	}
 	return r.ConsumedGas
 }
