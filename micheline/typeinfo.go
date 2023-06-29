@@ -47,6 +47,16 @@ var (
 	szPrim        = int(reflect.TypeOf(Prim{}).Size())
 )
 
+func canTypUnmarshalBinary(typ reflect.Type) bool {
+	return reflect.PointerTo(typ).Implements(binaryUnmarshalerType) ||
+		typ.Implements(binaryUnmarshalerType)
+}
+
+func canTypUnmarshalText(typ reflect.Type) bool {
+	return reflect.PointerTo(typ).Implements(textUnmarshalerType) ||
+		typ.Implements(textUnmarshalerType)
+}
+
 // getTypeInfo returns the typeInfo structure with details necessary
 // for marshaling and unmarshaling of typ.
 func getTypeInfo(typ reflect.Type) (*typeInfo, error) {
@@ -154,9 +164,9 @@ func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
 		oc = T_INT
 	case reflect.Slice:
 		switch {
-		case typ.Implements(binaryUnmarshalerType):
+		case canTypUnmarshalBinary(typ):
 			oc = T_BYTES
-		case typ.Implements(textUnmarshalerType):
+		case canTypUnmarshalText(typ):
 			oc = T_STRING
 		case typ == byteSliceType:
 			oc = T_BYTES
@@ -176,7 +186,7 @@ func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
 		case "tezos.ChainIdHash":
 			oc = T_CHAIN_ID
 		default:
-			if typ.Implements(binaryUnmarshalerType) {
+			if canTypUnmarshalBinary(typ) {
 				oc = T_BYTES
 			} else {
 				err = fmt.Errorf("unsupported embedded array type %s", typ.String())
@@ -195,7 +205,7 @@ func mapGoTypeToPrimType(typ reflect.Type) (oc OpCode, err error) {
 		case "tezos.Signature":
 			oc = T_SIGNATURE
 		default:
-			if typ.Implements(binaryUnmarshalerType) {
+			if canTypUnmarshalBinary(typ) {
 				oc = T_BYTES
 			} else {
 				err = fmt.Errorf("unsupported embedded struct type %s", typ.String())
