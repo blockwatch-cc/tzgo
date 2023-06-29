@@ -61,6 +61,23 @@ func (h HexBytes) Bytes() []byte {
 	return []byte(h)
 }
 
+// UnmarshalBinary umarshals a binary slice. It implements the
+// encoding.BinaryUnmarshaler interface.
+func (h *HexBytes) UnmarshalBinary(data []byte) error {
+	if cap(*h) < len(data) {
+		*h = make([]byte, len(data))
+	}
+	*h = (*h)[:len(data)]
+	copy(*h, data)
+	return nil
+}
+
+// MarshalBinary marshals as binary slice. It implements the
+// encoding.BinaryMarshaler interface.
+func (h HexBytes) MarshalBinary() ([]byte, error) {
+	return h, nil
+}
+
 // Ratio represents a numeric ratio used in Ithaca constants
 type Ratio struct {
 	Num int `json:"numerator"`
