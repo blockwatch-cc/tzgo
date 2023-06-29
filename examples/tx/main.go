@@ -21,6 +21,7 @@ import (
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/rpc"
+	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/signer/remote"
 	"blockwatch.cc/tzgo/tezos"
 	"github.com/echa/log"
@@ -30,12 +31,20 @@ var (
 	flags   = flag.NewFlagSet("tx", flag.ContinueOnError)
 	verbose bool
 	node    string
+	sk      tezos.PrivateKey
 )
+
+func init() {
+	if k := os.Getenv("TZGO_PRIVATE_KEY"); k != "" {
+		sk = tezos.MustParsePrivateKey(k)
+	}
+}
 
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
 	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node URL")
+	// flags.Var(&sk, "sk", "")
 }
 
 func main() {
@@ -50,11 +59,12 @@ func main() {
 			fmt.Printf("  validate <type> <data>     compare local encoding against remote encoding\n")
 			fmt.Printf("  decode <msg>               decode binary operation\n")
 			fmt.Printf("  digest <msg>               generate operation digest for signing\n")
-			fmt.Printf("  sign <key> <msg>           sign message digest\n")
-			fmt.Printf("  sign-remote <key> <msg>    sign message digest using remote signer\n")
+			fmt.Printf("  sign <msg>                 sign message digest\n")
+			fmt.Printf("  sign-remote <addr> <msg>   sign message digest using remote signer\n")
 			fmt.Printf("  simulate <msg>             simulate executing an operation using a fake signature\n")
 			fmt.Printf("  broadcast <msg> <sig>      broadcast signed operation\n")
 			fmt.Printf("  wait <ophash> [<n>]        waits for operation to be included after n confirmations (optional)\n")
+			fmt.Printf("  send <type> <data>         perform all steps at once\n")
 			fmt.Println("\nOperation types")
 			fmt.Println("  endorsement")
 			fmt.Println("  preendorsement")
@@ -106,7 +116,7 @@ func run() error {
 
 	switch {
 	case verbose:
-		log.SetLevel(log.LevelDebug)
+		log.SetLevel(log.LevelTrace)
 	default:
 		log.SetLevel(log.LevelWarn)
 	}
@@ -161,13 +171,13 @@ func run() error {
 		}
 		return digest(ctx, c, flags.Arg(1))
 	case "sign":
-		if n < 3 {
-			return fmt.Errorf("Missing key or message")
+		if n < 2 {
+			return fmt.Errorf("Missing message")
 		}
-		return sign(ctx, c, flags.Arg(1), flags.Arg(2))
+		return sign(ctx, c, flags.Arg(1))
 	case "sign_remote":
 		if n < 3 {
-			return fmt.Errorf("Missing key or message")
+			return fmt.Errorf("Missing address or message")
 		}
 		return sign_remote(ctx, c, flags.Arg(1), flags.Arg(2))
 	case "simulate":
@@ -182,6 +192,8 @@ func run() error {
 		return broadcast(ctx, c, flags.Arg(1), flags.Arg(2))
 	case "wait":
 		return wait(ctx, c, flags.Arg(1), flags.Arg(2), flags.Arg(3))
+	case "send":
+		return send(ctx, c, flags.Arg(1), flags.Arg(2))
 	default:
 		return fmt.Errorf("Unknown command %q", cmd)
 	}
@@ -355,17 +367,37 @@ func printTypeInfo(typ reflect.Type, prefix string) {
 }
 
 func encode(ctx context.Context, c *rpc.Client, typ, data string) error {
-	o, err := makeOp(c, typ, data)
-	if err != nil {
-		return err
+	if !sk.IsValid() {
+		return fmt.Errorf("Invalid private key. use -sk or TZGO_PRIVATE_KEY")
+	}
+	op := codec.NewOp()
+	if data[0] == '[' {
+		var batch []json.RawMessage
+		if err := json.Unmarshal([]byte(data), &batch); err != nil {
+			return err
+		}
+		for _, v := range batch {
+			o, err := makeOp(c, typ, string(v))
+			if err != nil {
+				return err
+			}
+			op.WithContents(o)
+		}
+	} else {
+		o, err := makeOp(c, typ, data)
+		if err != nil {
+			return err
+		}
+		op.WithContents(o)
 	}
 	hash, err := c.GetBlockHash(ctx, rpc.Head)
 	if err != nil {
 		return err
 	}
-	op := codec.NewOp().
-		WithContents(o).
-		WithBranch(hash)
+	op.WithBranch(hash)
+	if err := c.Complete(ctx, op, sk.Public()); err != nil {
+		return err
+	}
 	fmt.Println("Encoded:", hex.EncodeToString(op.Bytes()))
 	return nil
 }
@@ -420,16 +452,15 @@ func digest(ctx context.Context, c *rpc.Client, msg string) error {
 	return nil
 }
 
-func sign(ctx context.Context, c *rpc.Client, key, msg string) error {
+func sign(ctx context.Context, c *rpc.Client, msg string) error {
+	if !sk.IsValid() {
+		return fmt.Errorf("Invalid private key. use -sk or TZGO_PRIVATE_KEY")
+	}
 	buf, err := hex.DecodeString(msg)
 	if err != nil {
 		return err
 	}
 	op, err := codec.DecodeOp(buf)
-	if err != nil {
-		return err
-	}
-	sk, err := tezos.ParsePrivateKey(key)
 	if err != nil {
 		return err
 	}
@@ -555,5 +586,59 @@ func wait(ctx context.Context, c *rpc.Client, op, conf, ttl string) error {
 		return err
 	}
 	fmt.Println("Cost\n", string(buf))
+	return nil
+}
+
+func send(ctx context.Context, c *rpc.Client, typ, data string) error {
+	if !sk.IsValid() {
+		return fmt.Errorf("Invalid private key. use -sk or TZGO_PRIVATE_KEY")
+	}
+	c.Signer = signer.NewFromKey(sk)
+	op := codec.NewOp()
+	if data[0] == '[' {
+		var batch []json.RawMessage
+		if err := json.Unmarshal([]byte(data), &batch); err != nil {
+			return err
+		}
+		for _, v := range batch {
+			o, err := makeOp(c, typ, string(v))
+			if err != nil {
+				return err
+			}
+			op.WithContents(o)
+		}
+	} else {
+		o, err := makeOp(c, typ, data)
+		if err != nil {
+			return err
+		}
+		op.WithContents(o)
+	}
+	rcpt, err := c.Send(ctx, op, &rpc.CallOptions{
+		Confirmations:    2,
+		TTL:              10,
+		MaxFee:           1_000_000,
+		ExtraGasMargin:   0,
+		SimulationOffset: 5,
+	})
+	if err != nil {
+		return err
+	}
+	if !rcpt.IsSuccess() {
+		return rcpt.Error()
+	} else {
+		fmt.Printf("Op included in at %s/chains/main/blocks/%s/operations/%d/%d\n", node, rcpt.Block, rcpt.List, rcpt.Pos)
+		buf, err := json.MarshalIndent(rcpt.Op, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Println("Result\n", string(buf))
+		buf, err = json.MarshalIndent(rcpt.TotalCosts(), "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Println("Cost\n", string(buf))
+	}
+
 	return nil
 }
