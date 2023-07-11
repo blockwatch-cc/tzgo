@@ -1,5 +1,9 @@
 # Changelog
 
+## unreleased
+
+* remove Mumbainet hashes, config and references
+
 ## v1.17.1
 
 * change gas simulation to `/helpers/scripts/simulate_operation` for better future estimates

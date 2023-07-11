@@ -40,21 +40,6 @@ var (
 		WithChainId(Ghostnet).
 		WithDeployment(Deployments[Ghostnet].AtProtocol(ProtoV016_2))
 
-	// MumbainetParams defines the blockchain configuration for Mumbai testnet.
-	// To produce compliant transactions, use these defaults in op.WithParams().
-	MumbainetParams = (&Params{
-		MinimalBlockDelay:            8 * time.Second,
-		CostPerByte:                  250,
-		OriginationSize:              257,
-		HardGasLimitPerOperation:     1040000,
-		HardGasLimitPerBlock:         2600000,
-		HardStorageLimitPerOperation: 60000,
-		MaxOperationDataLength:       32768,
-		MaxOperationsTTL:             240,
-	}).
-		WithChainId(Mumbainet).
-		WithDeployment(Deployments[Mumbainet].AtProtocol(ProtoV016_2))
-
 	// NairobinetParams defines the blockchain configuration for Mumbai testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
 	NairobinetParams = (&Params{
@@ -126,10 +111,6 @@ func (p *Params) WithChainId(id ChainIdHash) *Params {
 			p.Network = "Mainnet"
 		case Ghostnet:
 			p.Network = "Ghostnet"
-		case Limanet:
-			p.Network = "Limanet"
-		case Mumbainet:
-			p.Network = "Mumbainet"
 		case Nairobinet:
 			p.Network = "Nairobinet"
 		}
