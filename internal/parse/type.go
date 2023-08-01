@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"blockwatch.cc/tzgo/ast"
+	"blockwatch.cc/tzgo/contract/ast"
 	m "blockwatch.cc/tzgo/micheline"
 )
 

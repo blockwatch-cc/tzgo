@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"blockwatch.cc/tzgo/ast"
+	"blockwatch.cc/tzgo/contract/ast"
 	"blockwatch.cc/tzgo/micheline"
 	"github.com/pkg/errors"
 )
