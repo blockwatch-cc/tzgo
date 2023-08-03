@@ -48,3 +48,15 @@ FA2NFTRecord5:
 FA2NFTRequest:
   equals: FA2NFTRecord5
 ```
+
+## AutoGenerate
+
+Autogenerate a contract's go code using go generate. This can be used in a build script. An example here shows how it is used with Hic et Nunc OBJTKs [contract](../../examples/tzgen/main.go)
+
+Example:
+
+```
+package main
+
+//go:generate go run -mod=mod blockwatch.cc/tzgo/cmd/tzgen -address <contract address> -pkg <package name> -name <contract name> -out <output path for generated file>
+```
