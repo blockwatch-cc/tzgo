@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* add TzGen tech preview (a contract interface code generator for Tezos)
 * remove Mumbainet hashes, config and references
 
 ## v1.17.1
