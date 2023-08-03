@@ -65,14 +65,14 @@ func (p *parser) parseStorage() (err error) {
 }
 
 func (p *parser) nameStructs() []*ast.Struct {
-	var structs []*ast.Struct
+	structs := []*ast.Struct{}
 	for i, s := range p.structs {
 		if s.Name == "" {
 			s.Name = fmt.Sprintf("%s_record_%d", p.contract.Name, i)
 		} else {
 			newName := fmt.Sprintf("%s_%s", p.contract.Name, s.Name)
 			if p.structNameExists(newName) {
-				newName = newName + strconv.Itoa(i)
+				newName += strconv.Itoa(i)
 			}
 			s.Name = newName
 		}

@@ -55,7 +55,7 @@ func unmarshalPrimVal(prim micheline.Prim, val reflect.Value) error {
 	if unmarshaler, ok := val.Interface().(micheline.PrimUnmarshaler); ok {
 		return unmarshaler.UnmarshalPrim(prim)
 	} else if unmarshaler, ok = val.Elem().Interface().(micheline.PrimUnmarshaler); ok {
-		return unmarshalPrimVal(prim, val.Elem())
+		return unmarshaler.UnmarshalPrim(prim)
 	}
 
 	// Check scalar and container types

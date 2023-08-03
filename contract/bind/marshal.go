@@ -63,8 +63,7 @@ func MarshalPrim(v any, optimized bool) (micheline.Prim, error) {
 
 	// Container types
 	val := reflect.ValueOf(v)
-	switch val.Kind() {
-	case reflect.Slice:
+	if val.Kind() == reflect.Slice {
 		n := val.Len()
 		prims := make([]micheline.Prim, 0, n)
 		for i := 0; i < n; i++ {
