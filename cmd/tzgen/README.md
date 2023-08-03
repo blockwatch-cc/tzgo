@@ -13,7 +13,7 @@ go install blockwatch.cc/tzgo/cmd/tzgen
 ### From a deployed contract
 
 ```bash
-tzgen -name Hello -pkg contracts -address KT1K3ZqbYq1bCwpSPNX9xBgQd8CaYxRVXd4P -o ./contracts/Hello.go
+tzgen -name Hello -pkg contracts -address KT1K3ZqbYq1bCwpSPNX9xBgQd8CaYxRVXd4P -o ./examples/tzgen/hello.go
 ```
 
 The endpoint is `https://rpc.tzstats.com` by default, but can be overridden with `-endpoint`.
@@ -21,7 +21,7 @@ The endpoint is `https://rpc.tzstats.com` by default, but can be overridden with
 ### From a micheline file
 
 ```bash
-tzgen -name Hello -pkg contracts -src ./Hello.json -o ./contracts/Hello.go
+tzgen -name Hello -pkg contracts -src ./Hello.json -o ./examples/tzgen/hello.go
 ```
 
 ## Renaming structs
