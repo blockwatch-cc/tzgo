@@ -10,7 +10,7 @@ go install blockwatch.cc/tzgo/cmd/tzgen
 
 ## Using TzGen
 
-TzGen is a code generator for smart contract interface bindings that can take the code of your contract (or just the address if it is already deployed) to create interface methods and related types in Go. It's similar to how Protobuf or MsgPack generators work, but instead of a protocol spec it uses the contract's Micheline entrypoint type definitions. When using TzGen you never ever have to worry about details of Micheline or TzGo. TzGen produces all interfaces and types you'll need to call any of your contract's entrypoints, read its storage and bigmap entries.
+When using TzGen you don't have to worry about details of Micheline or TzGo. TzGen produces all interfaces and types you'll need to call any of your contract's entrypoints, read its storage and bigmap entries.
 
 You can run tzgen manually which will write an auto-generated Go source file that you can build together with your project and check in to your repository.
 
