@@ -112,6 +112,26 @@ func {{$rc}} StorageAt(ctx context.Context, block rpc.BlockID) ({{type .Storage}
 	return storage, nil
 }
 
+// StorageFrom decodes micheline prim to contract storage
+func {{$rc}} StorageFrom(prim micheline.Prim) ({{type .Storage}}, error) {
+	var storage {{type .Storage}}
+	{{if eq .Storage.MichelineType "struct" -}}
+		prim = micheline.NewSeq(prim.UnfoldPairRecursive({{$r}}.script.StorageType())...)
+	{{- end}}
+	err := bind.UnmarshalPrim(prim, &storage)
+	if err != nil {
+		return storage, errors.Wrap(err, "failed to unmarshal storage")
+	}
+	{{- if eq .Storage.MichelineType "struct" -}}
+		{{- range .Storage.Fields -}}
+			{{- if eq .Type.MichelineType "big_map"}}
+				storage.{{pascal .Name}}.SetRPC({{$r}}.rpc)
+			{{- end -}}
+		{{- end -}}
+	{{- end}}
+	return storage, nil
+}
+
 // Deploy{{$contract}} deploys a {{$contract}} contract by using client and opts, and {{$contract}}Micheline.
 //
 // Returns the receipt and a handle to the {{$contract}} deployed contract.
