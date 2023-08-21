@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2023 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package micheline
@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
+	"golang.org/x/exp/slices"
 )
 
 type Type struct {
@@ -40,6 +41,7 @@ type Typedef struct {
 	Type     string    `json:"type"`               // opcode or struct | union
 	Optional bool      `json:"optional,omitempty"` // Union only
 	Args     []Typedef `json:"args,omitempty"`
+	Path     []int     `json:"path"` // type tree original path to this element
 }
 
 func (a Typedef) IsValid() bool {
@@ -249,6 +251,16 @@ func (t Typedef) String() string {
 			b.WriteByte(')')
 		}
 	}
+	// if len(t.Path) > 0 {
+	// 	b.WriteString(" [")
+	// 	for i, v := range t.Path {
+	// 		if i > 0 {
+	// 			b.WriteString(", ")
+	// 		}
+	// 		b.WriteString(strconv.Itoa(v))
+	// 	}
+	// 	b.WriteByte(']')
+	// }
 	return b.String()
 }
 
@@ -315,11 +327,11 @@ func (t Type) Right() Type {
 }
 
 func (t Type) Typedef(name string) Typedef {
-	return buildTypedef(name, t.Prim)
+	return buildTypedef(name, t.Prim, []int{})
 }
 
 func (t Type) TypedefPtr(name string) *Typedef {
-	td := buildTypedef(name, t.Prim)
+	td := buildTypedef(name, t.Prim, []int{})
 	return &td
 }
 
@@ -333,11 +345,11 @@ func (t Type) MarshalJSON() ([]byte, error) {
 	if !t.IsValid() {
 		return []byte("{}"), nil
 	}
-	return json.Marshal(buildTypedef("", t.Prim))
+	return json.Marshal(buildTypedef("", t.Prim, []int{}))
 }
 
 func (p Prim) Implements(t Type) bool {
-	td := buildTypedef("", t.Prim)
+	td := buildTypedef("", t.Prim, []int{})
 	return p.ImplementsType(td)
 }
 
@@ -475,7 +487,7 @@ func (p Prim) ImplementsType(t Typedef) bool {
 	return err == nil
 }
 
-func buildTypedef(name string, typ Prim) Typedef {
+func buildTypedef(name string, typ Prim, path []int) Typedef {
 	if typ.HasAnno() {
 		n := typ.GetVarAnnoAny()
 		if n != "" {
@@ -485,54 +497,55 @@ func buildTypedef(name string, typ Prim) Typedef {
 	td := Typedef{
 		Name: name,
 		Type: typ.OpCode.String(),
+		Path: slices.Clone(path),
 	}
 
 	switch typ.OpCode {
 	case T_LIST, T_SET:
 		if len(typ.Args) > 0 {
 			td.Args = []Typedef{
-				buildTypedef(CONST_ITEM, typ.Args[0]),
+				buildTypedef(CONST_ITEM, typ.Args[0], append(path, 0)),
 			}
 		}
 
 	case T_MAP, T_BIG_MAP:
 		td.Args = []Typedef{
-			buildTypedef(CONST_KEY, typ.Args[0]),
-			buildTypedef(CONST_VALUE, typ.Args[1]),
+			buildTypedef(CONST_KEY, typ.Args[0], []int{0}),
+			buildTypedef(CONST_VALUE, typ.Args[1], []int{1}),
 		}
 
 	case T_CONTRACT:
 		td.Args = make([]Typedef, len(typ.Args))
 		for i, v := range typ.Args {
-			td.Args[i] = buildTypedef(strconv.Itoa(i), v)
+			td.Args[i] = buildTypedef(strconv.Itoa(i), v, append(path, i))
 		}
 
 	case T_TICKET:
 		td.Args = []Typedef{
-			buildTypedef(CONST_VALUE, typ.Args[0]),
+			buildTypedef(CONST_VALUE, typ.Args[0], append(path, 0)),
 		}
 
 	case T_LAMBDA:
 		td.Args = make([]Typedef, len(typ.Args))
 		if len(typ.Args) > 0 {
-			td.Args[0] = buildTypedef(CONST_PARAM, typ.Args[0])
+			td.Args[0] = buildTypedef(CONST_PARAM, typ.Args[0], []int{0})
 		}
 		if len(typ.Args) > 1 {
-			td.Args[1] = buildTypedef(CONST_RETURN, typ.Args[1])
+			td.Args[1] = buildTypedef(CONST_RETURN, typ.Args[1], []int{1})
 		}
 
 	case T_PAIR:
-		typs := typ.UnfoldPairRecursive(Type{typ})
+		args := typ.UnfoldTypeRecursive(path)
 		td.Type = TypeStruct
-		td.Args = make([]Typedef, len(typs))
-		for i, v := range typs {
-			td.Args[i] = buildTypedef(strconv.Itoa(i), v)
+		td.Args = make([]Typedef, len(args))
+		for i, v := range args {
+			td.Args[i] = buildTypedef(strconv.Itoa(i), v, v.Path)
 		}
 
 	case T_OPTION:
 		td.Optional = true
 		if len(typ.Args) > 0 {
-			child := buildTypedef(name, typ.Args[0])
+			child := buildTypedef(name, typ.Args[0], append(path, 0))
 			td.Type = child.Type
 			td.Args = child.Args
 		} else {
@@ -543,8 +556,8 @@ func buildTypedef(name string, typ Prim) Typedef {
 		td.Type = TypeUnion
 		td.Args = make([]Typedef, 0)
 		label := CONST_UNION_LEFT
-		for _, v := range typ.Args {
-			child := buildTypedef(label, v)
+		for i, v := range typ.Args {
+			child := buildTypedef(label, v, append(path, i))
 			if child.Type == TypeUnion {
 				td.Args = append(td.Args, child.Args...)
 			} else {
@@ -581,6 +594,7 @@ func buildTypedef(name string, typ Prim) Typedef {
 		return Typedef{
 			Name: name,
 			Type: typ.OpCode.String(),
+			Path: slices.Clone(path),
 		}
 	}
 
@@ -730,4 +744,30 @@ func (p Prim) BuildType() Type {
 		t.OpCode = p.OpCode.TypeCode()
 	}
 	return Type{t}
+}
+
+func (p Prim) CanUnfoldType() bool {
+	if p.IsPair() {
+		return true
+	}
+	if p.IsContainerType() || p.LooksLikeCode() {
+		return false
+	}
+	if p.IsSequence() {
+		return true
+	}
+	return false
+}
+
+func (p Prim) UnfoldTypeRecursive(path []int) []Prim {
+	flat := make([]Prim, 0)
+	for i, v := range p.Args {
+		v.Path = append(slices.Clone(path), i)
+		if !v.WasPacked && v.CanUnfoldType() && !v.HasAnno() {
+			flat = append(flat, v.UnfoldTypeRecursive(v.Path)...)
+		} else {
+			flat = append(flat, v)
+		}
+	}
+	return flat
 }

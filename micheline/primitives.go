@@ -134,6 +134,7 @@ type Prim struct {
 	String    string   // optional data
 	Bytes     []byte   // optional data
 	WasPacked bool     // true when content was unpacked (and no type info is available)
+	Path      []int    // optional path to this prim (use to track type structure)
 }
 
 func (p Prim) IsValid() bool {
