@@ -110,7 +110,10 @@ func foldRightComb(prims ...micheline.Prim) micheline.Prim {
 	}
 }
 
-// MarshalParamsPath marshals the provided params into a folded Prim.
+// MarshalParamsPath marshals the provided params into a Prim tree at specified paths.
+// This function is useful to render any kind of structs (records) into a type-conform
+// prim tree. It requires a list of tree positions in the form of paths. Both paths
+// and params must have the same length.
 func MarshalParamsPath(optimized bool, paths [][]int, params ...any) (micheline.Prim, error) {
 	if len(paths) != len(params) {
 		return micheline.Prim{}, errors.Errorf("invalid paths length")
