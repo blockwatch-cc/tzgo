@@ -7,7 +7,7 @@ type Lambda struct {
 	micheline.Prim
 }
 
-func (l *Lambda) MarshalPrim(_ bool) (micheline.Prim, error) {
+func (l Lambda) MarshalPrim(_ bool) (micheline.Prim, error) {
 	return l.Prim, nil
 }
 
