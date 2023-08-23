@@ -132,6 +132,15 @@ func {{$rc}} StorageFrom(prim micheline.Prim) ({{type .Storage}}, error) {
 	return storage, nil
 }
 
+func {{$contract}}StorageFrom(prim micheline.Prim) (*UsdtTetherStorage, error) {
+    t := {{$contract}}{}
+    err := json.Unmarshal([]byte({{$contract}}Micheline), &t.script)
+    if err != nil {
+        return nil, errors.Wrap(err, "failed to unmarshal contract's script")
+    }
+    return t.StorageFrom(prim)
+}
+
 // Deploy{{$contract}} deploys a {{$contract}} contract by using client and opts, and {{$contract}}Micheline.
 //
 // Returns the receipt and a handle to the {{$contract}} deployed contract.
