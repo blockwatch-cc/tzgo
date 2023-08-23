@@ -15,6 +15,7 @@ type Struct struct {
 	ReturnType    *Struct
 	LeftType      *Struct
 	RightType     *Struct
+	Path          [][]int
 	// If true, the expected prim matching to this struct has a flat structure,
 	// instead of a tree of pairs.
 	Flat bool

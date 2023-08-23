@@ -115,7 +115,7 @@ func (b Bigmap[K, V]) MarshalPrim(optimized bool) (micheline.Prim, error) {
 		if err != nil {
 			return micheline.Prim{}, errors.Wrap(err, "failed to marshal value")
 		}
-		entries = append(entries, micheline.NewCode(micheline.D_ELT, keyPrim, valuePrim))
+		entries = append(entries, micheline.NewMapElem(keyPrim, valuePrim))
 	}
 	return micheline.NewSeq(entries...), nil
 }

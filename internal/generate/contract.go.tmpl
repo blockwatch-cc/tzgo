@@ -139,7 +139,7 @@ func Deploy{{$contract}}(ctx context.Context, opts *rpc.CallOptions, client *rpc
 	var script *micheline.Script
 	err := json.Unmarshal([]byte({{$contract}}Micheline), &script)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to unmarshall contract's script")
+		return nil, nil, errors.Wrap(err, "failed to unmarshal contract's script")
 	}
 
 	prim, err := bind.MarshalPrim(storage, false)
@@ -246,9 +246,12 @@ type {{pascal .Name}} struct {
 	{{- end}}
 }
 
+{{$path := printf "%sPaths" (pascal .Name)}}
+var {{$path}} = {{printf "%#v" .Path }}
+
 // MarshalPrim marshals {{pascal .Name}} into a Prim.
 func {{$rs}} MarshalPrim(optimized bool) (micheline.Prim, error) {
-	return bind.MarshalParams(optimized, {{range .Fields}}{{$r}}.{{pascal .Name}},{{end}})
+	return bind.MarshalParamsPath(optimized, {{$path}}, {{range .Fields}}{{$r}}.{{pascal .Name}},{{end}})
 }
 
 // UnmarshalPrim unmarshals a Prim into a {{pascal .Name}}.
