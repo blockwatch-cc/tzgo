@@ -1491,9 +1491,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 			return io.ErrShortBuffer
 		}
 		anno := buf.Next(size)
-		if len(anno) > 0 {
-			p.Anno = strings.Split(string(anno), " ")
-		}
+		p.Anno = strings.Split(string(anno), " ")
 
 	case PrimBytes:
 		// cross-check content size
