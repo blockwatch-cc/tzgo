@@ -1011,7 +1011,7 @@ func (p Prim) EncodeJSON(buf *bytes.Buffer) {
 		buf.WriteString(`{"prim":"`)
 		buf.WriteString(p.OpCode.String())
 		buf.WriteByte('"')
-		if len(p.Anno) > 0 {
+		if len(p.Anno) > 0 && len(p.Anno[0]) > 0 {
 			buf.WriteString(`,"annots":[`)
 			for i, v := range p.Anno {
 				if i > 0 {
@@ -1491,7 +1491,9 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 			return io.ErrShortBuffer
 		}
 		anno := buf.Next(size)
-		p.Anno = strings.Split(string(anno), " ")
+		if len(anno) > 0 {
+			p.Anno = strings.Split(string(anno), " ")
+		}
 
 	case PrimBytes:
 		// cross-check content size
