@@ -22,6 +22,8 @@ type PrimMarshaler interface {
 	MarshalPrim() (Prim, error)
 }
 
+// FindLabel searches a nested type annotation path. Must be used on a type prim.
+// Path segments are separated by dot (.)
 func (p Prim) FindLabel(label string) (Prim, bool) {
 	idx, ok := p.LabelIndex(label)
 	if !ok {
@@ -31,6 +33,8 @@ func (p Prim) FindLabel(label string) (Prim, bool) {
 	return prim, true
 }
 
+// LabelIndex returns the indexed path to a type annotation label and true
+// if path exists. Path segments are separated by dot (.)
 func (p Prim) LabelIndex(label string) ([]int, bool) {
 	return p.findLabelPath(strings.Split(label, "."), nil)
 }
@@ -71,7 +75,53 @@ next:
 	}
 }
 
+// GetPath returns a nested primitive at path. Path segments are separated by slash (/).
+// Works on both type and value primitive trees.
 func (p Prim) GetPath(path string) (Prim, error) {
+	index, err := p.getIndex(path)
+	if err != nil {
+		return InvalidPrim, err
+	}
+	return p.GetIndex(index)
+}
+
+// SetPath replaces a nested primitive at path with dst.
+// Path segments are separated by slash (/).
+// Works on both type and value primitive trees.
+func (p *Prim) SetPath(path string, dst Prim) error {
+	index, err := p.getIndex(path)
+	if err != nil {
+		return err
+	}
+	return p.SetIndex(index, dst)
+}
+
+// GetPathExt returns a nested primitive at path if the primitive matches
+// the expected opcode. Path segments are separated by slash (/).
+// Works on both type and value primitive trees.
+func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
+	prim, err := p.GetPath(path)
+	if err != nil {
+		return prim, err
+	}
+	if prim.OpCode != typ {
+		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s at path %v", prim.OpCode, path)
+	}
+	return prim, nil
+}
+
+// SetPathExt replaces a nested primitive at path with dst if the primitive matches
+// the expected opcode. Path segments are separated by slash (/).
+// Works on both type and value primitive trees.
+func (p *Prim) SetPathExt(path string, typ OpCode, dst Prim) error {
+	index, err := p.getIndex(path)
+	if err != nil {
+		return err
+	}
+	return p.SetIndexExt(index, typ, dst)
+}
+
+func (p Prim) getIndex(path string) ([]int, error) {
 	index := make([]int, 0)
 	path = strings.TrimPrefix(path, "/")
 	path = strings.TrimSuffix(path, "/")
@@ -84,25 +134,15 @@ func (p Prim) GetPath(path string) (Prim, error) {
 		default:
 			idx, err := strconv.Atoi(v)
 			if err != nil {
-				return InvalidPrim, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
+				return nil, fmt.Errorf("micheline: invalid path component '%v' at pos %d", v, i)
 			}
 			index = append(index, idx)
 		}
 	}
-	return p.GetIndex(index)
+	return index, nil
 }
 
-func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
-	prim, err := p.GetPath(path)
-	if err != nil {
-		return InvalidPrim, err
-	}
-	if prim.OpCode != typ {
-		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s at path %v", prim.OpCode, path)
-	}
-	return prim, nil
-}
-
+// HasIndex returns true when a nested primitive exists at path defined by index.
 func (p Prim) HasIndex(index []int) bool {
 	prim := p
 	for _, v := range index {
@@ -114,6 +154,7 @@ func (p Prim) HasIndex(index []int) bool {
 	return true
 }
 
+// GetIndex returns a nested primitive at path index.
 func (p Prim) GetIndex(index []int) (Prim, error) {
 	prim := p
 	for _, v := range index {
@@ -125,6 +166,21 @@ func (p Prim) GetIndex(index []int) (Prim, error) {
 	return prim, nil
 }
 
+// SetIndex replaces a nested primitive at path index with dst.
+func (p *Prim) SetIndex(index []int, dst Prim) error {
+	prim := p
+	for _, v := range index {
+		if v < 0 || len(prim.Args) <= v {
+			return fmt.Errorf("micheline: index %d out of bounds", v)
+		}
+		prim = &prim.Args[v]
+	}
+	*prim = dst
+	return nil
+}
+
+// GetIndex returns a nested primitive at path index if the primitive matches the
+// expected opcode.
 func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
 	prim, err := p.GetIndex(index)
 	if err != nil {
@@ -134,6 +190,23 @@ func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
 		return InvalidPrim, fmt.Errorf("micheline: unexpected type %s at path %v", prim.OpCode, index)
 	}
 	return prim, nil
+}
+
+// SetIndexExt replaces a nested primitive at path index if the primitive matches the
+// expected opcode.
+func (p *Prim) SetIndexExt(index []int, typ OpCode, dst Prim) error {
+	prim := p
+	for _, v := range index {
+		if v < 0 || len(prim.Args) <= v {
+			return fmt.Errorf("micheline: index %d out of bounds", v)
+		}
+		prim = &prim.Args[v]
+	}
+	if prim.OpCode != typ {
+		return fmt.Errorf("micheline: unexpected type %s at path %v", prim.OpCode, index)
+	}
+	*prim = dst
+	return nil
 }
 
 func (p Prim) Decode(v interface{}) error {
