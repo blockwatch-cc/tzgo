@@ -2,6 +2,9 @@
 
 ## unreleased
 
+* add Micheline path setters
+* skip empty annotations on variadic prims in JSON output
+* extend Micheline typedef with path info
 * add TzGen tech preview (a contract interface code generator for Tezos)
 * remove Mumbainet hashes, config and references
 
