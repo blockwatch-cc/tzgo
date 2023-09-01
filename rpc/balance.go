@@ -26,6 +26,12 @@ type BalanceUpdate struct {
 	// legacy freezer cycle
 	Level_ int64 `json:"level"` // wrongly called level, it's cycle
 	Cycle_ int64 `json:"cycle"` // v4 fix
+
+	// Oxford staking
+	Staker struct {
+		Contract tezos.Address `json:"contract"` // tz1/2/3 accounts (only stake, unstake)
+		Delegate tezos.Address `json:"delegate"` // baker
+	} `json:"staker"`
 }
 
 // Categories
@@ -54,6 +60,7 @@ type BalanceUpdate struct {
 // # Freezer categories
 // - `legacy_deposits`, `legacy_fees`, or `legacy_rewards` represent the accounts of frozen deposits, frozen fees or frozen rewards up to protocol HANGZHOU.
 // - `deposits` represents the account of frozen deposits in subsequent protocols (replacing the legacy container account `legacy_deposits` above).
+// - `unstaked_deposits` represent tez for which unstaking has been requested.
 
 func (b BalanceUpdate) Address() tezos.Address {
 	switch {
@@ -63,6 +70,8 @@ func (b BalanceUpdate) Address() tezos.Address {
 		return b.Delegate
 	case b.Committer.IsValid():
 		return b.Committer
+	case b.Staker.Contract.IsValid():
+		return b.Staker.Contract
 	}
 	return tezos.Address{}
 }

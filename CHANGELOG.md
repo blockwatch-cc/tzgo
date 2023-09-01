@@ -2,6 +2,13 @@
 
 ## unreleased
 
+Oxford changes
+* add adaptive issuance vote to block models
+* extend balance updates with staker info
+* add oxfordnet hashes and setup
+
+Other changes
+* add methods to page through bigmap values
 * add Micheline path setters
 * skip empty annotations on variadic prims in JSON output
 * extend Micheline typedef with path info

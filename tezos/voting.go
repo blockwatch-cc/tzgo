@@ -209,72 +209,72 @@ func ParseBallotTag(t byte) BallotVote {
 	}
 }
 
-// LbVote represents liquidity baking votes in Tezos block headers.
-type LbVote byte
+// FeatureVote represents liquidity baking votes in Tezos block headers.
+type FeatureVote byte
 
 const (
-	LbVoteInvalid LbVote = iota
-	LbVoteOn
-	LbVoteOff
-	LbVotePass
+	FeatureVoteInvalid FeatureVote = iota
+	FeatureVoteOn
+	FeatureVoteOff
+	FeatureVotePass
 )
 
-func (v LbVote) IsValid() bool {
-	return v != LbVoteInvalid
+func (v FeatureVote) IsValid() bool {
+	return v != FeatureVoteInvalid
 }
 
-func (v LbVote) String() string {
+func (v FeatureVote) String() string {
 	switch v {
-	case LbVoteOn:
+	case FeatureVoteOn:
 		return ON
-	case LbVoteOff:
+	case FeatureVoteOff:
 		return OFF
-	case LbVotePass:
+	case FeatureVotePass:
 		return PASS
 	default:
 		return ""
 	}
 }
 
-func (v LbVote) Tag() byte {
+func (v FeatureVote) Tag() byte {
 	switch v {
-	case LbVoteOn:
+	case FeatureVoteOn:
 		return 0
-	case LbVoteOff:
+	case FeatureVoteOff:
 		return 1
-	case LbVotePass:
+	case FeatureVotePass:
 		return 2
 	default:
 		return 255
 	}
 }
 
-func ParseLbVoteTag(t byte) LbVote {
+func ParseFeatureVoteTag(t byte) FeatureVote {
 	switch t {
 	case 0:
-		return LbVoteOn
+		return FeatureVoteOn
 	case 1:
-		return LbVoteOff
+		return FeatureVoteOff
 	case 2:
-		return LbVotePass
+		return FeatureVotePass
 	default:
-		return LbVoteInvalid
+		return FeatureVoteInvalid
 	}
 }
-func (v *LbVote) UnmarshalJSON(data []byte) error {
+func (v *FeatureVote) UnmarshalJSON(data []byte) error {
 	if len(data) == 0 {
 		return nil
 	}
-	var vv LbVote
+	var vv FeatureVote
 	if data[0] == '"' {
 		val := string(data[1 : len(data)-1])
 		switch val {
 		case ON:
-			vv = LbVoteOn
+			vv = FeatureVoteOn
 		case OFF:
-			vv = LbVoteOff
+			vv = FeatureVoteOff
 		case PASS:
-			vv = LbVotePass
+			vv = FeatureVotePass
 		}
 	}
 	if !vv.IsValid() {
@@ -284,15 +284,15 @@ func (v *LbVote) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v LbVote) MarshalText() ([]byte, error) {
+func (v FeatureVote) MarshalText() ([]byte, error) {
 	return []byte(v.String()), nil
 }
 
-func (v *LbVote) UnmarshalBinary(data []byte) error {
+func (v *FeatureVote) UnmarshalBinary(data []byte) error {
 	if len(data) < 1 {
 		return fmt.Errorf("tezos: short lb vote data")
 	}
-	vv := ParseLbVoteTag(data[0])
+	vv := ParseFeatureVoteTag(data[0])
 	if !vv.IsValid() {
 		return fmt.Errorf("tezos: invalid lb vote tag %d", data[0])
 	}
