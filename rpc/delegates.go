@@ -97,3 +97,16 @@ func (c *Client) GetDelegateBalance(ctx context.Context, addr tezos.Address, id 
 	}
 	return strconv.ParseInt(bal, 10, 64)
 }
+
+// GetDelegateKey returns a delegate's current consensus key
+func (c *Client) GetDelegateKey(ctx context.Context, addr tezos.Address, id BlockID) (tezos.Key, error) {
+	u := fmt.Sprintf("chains/main/blocks/%s/context/delegates/%s/consensus_key", id, addr)
+	type ActiveConsensusKey struct {
+		Active struct {
+			Pk tezos.Key `json:"pk"`
+		} `json:"active"`
+	}
+	var key ActiveConsensusKey
+	err := c.Get(ctx, u, &key)
+	return key.Active.Pk, err
+}
