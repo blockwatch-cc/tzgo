@@ -109,3 +109,41 @@ func foldRightComb(prims ...micheline.Prim) micheline.Prim {
 		return foldRightComb(append(prims[:n-2], micheline.NewPair(prims[n-2], prims[n-1]))...)
 	}
 }
+
+// MarshalParamsPath marshals the provided params into a Prim tree at specified paths.
+// This function is useful to render any kind of structs (records) into a type-conform
+// prim tree. It requires a list of tree positions in the form of paths. Both paths
+// and params must have the same length.
+func MarshalParamsPath(optimized bool, paths [][]int, params ...any) (micheline.Prim, error) {
+	if len(paths) != len(params) {
+		return micheline.Prim{}, errors.Errorf("invalid paths length")
+	}
+	root := emptyPair()
+	for i, p := range params {
+		prim, err := MarshalPrim(p, optimized)
+		if err != nil {
+			return micheline.Prim{}, err
+		}
+		insertPrim(&root, prim, paths[i])
+	}
+	return root, nil
+}
+
+// emptyPair builds a valid pair with empty invalid children
+func emptyPair() micheline.Prim {
+	return micheline.NewPair(micheline.Prim{}, micheline.Prim{})
+}
+
+// insertPrim builds a tree of pairs in dest and inserts the src pair at specified path.
+func insertPrim(dst *micheline.Prim, src micheline.Prim, path []int) {
+	if !dst.IsValid() {
+		*dst = emptyPair()
+	}
+
+	if len(path) == 1 {
+		dst.Args[path[0]] = src
+		return
+	}
+
+	insertPrim(&dst.Args[path[0]], src, path[1:])
+}

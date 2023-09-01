@@ -134,6 +134,7 @@ type Prim struct {
 	String    string   // optional data
 	Bytes     []byte   // optional data
 	WasPacked bool     // true when content was unpacked (and no type info is available)
+	Path      []int    // optional path to this prim (use to track type structure)
 }
 
 func (p Prim) IsValid() bool {
@@ -1010,7 +1011,7 @@ func (p Prim) EncodeJSON(buf *bytes.Buffer) {
 		buf.WriteString(`{"prim":"`)
 		buf.WriteString(p.OpCode.String())
 		buf.WriteByte('"')
-		if len(p.Anno) > 0 {
+		if len(p.Anno) > 0 && len(p.Anno[0]) > 0 {
 			buf.WriteString(`,"annots":[`)
 			for i, v := range p.Anno {
 				if i > 0 {

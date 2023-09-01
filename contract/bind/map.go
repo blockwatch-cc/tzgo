@@ -60,12 +60,12 @@ func (m *Map[K, V]) Entries() []MapEntry[K, V] {
 
 func (m Map[K, V]) MarshalPrim(optimized bool) (micheline.Prim, error) {
 	entries := make([]micheline.Prim, 0, len(m.m))
-	for key, value := range m.m {
-		keyPrim, err := MarshalPrim(key, optimized)
+	for _, e := range m.m {
+		keyPrim, err := MarshalPrim(e.Key, optimized)
 		if err != nil {
 			return micheline.Prim{}, errors.Wrap(err, "failed to marshal key")
 		}
-		valuePrim, err := MarshalPrim(value, optimized)
+		valuePrim, err := MarshalPrim(e.Value, optimized)
 		if err != nil {
 			return micheline.Prim{}, errors.Wrap(err, "failed to marshal value")
 		}

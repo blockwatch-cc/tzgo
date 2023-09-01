@@ -156,10 +156,10 @@ func listEntrypoints(e Entrypoints, branch string, node Prim) error {
 		Prim:   &cp,
 	}
 	if node.IsScalarType() || node.IsContainerType() {
-		ep.Typedef = []Typedef{buildTypedef("", node)}
+		ep.Typedef = []Typedef{buildTypedef("", node, []int{})}
 		ep.Typedef[0].Name = ""
 	} else {
-		td := buildTypedef("", node)
+		td := buildTypedef("", node, []int{})
 		switch len(td.Args) {
 		case 0:
 			ep.Typedef = []Typedef{td}

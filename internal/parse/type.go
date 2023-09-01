@@ -100,6 +100,7 @@ func (p *parser) buildTypeStructs(t *m.Typedef) (*ast.Struct, error) {
 
 func (p *parser) buildStruct(t *m.Typedef) (*ast.Struct, error) {
 	fieldTypes := make([]*ast.Struct, 0, len(t.Args))
+	path := make([][]int, 0, len(t.Args))
 	for _, a := range t.Args {
 		typ, err := p.buildTypeStructs(&a)
 		if err != nil {
@@ -110,10 +111,12 @@ func (p *parser) buildStruct(t *m.Typedef) (*ast.Struct, error) {
 			name = "field" + name
 		}
 		fieldTypes = append(fieldTypes, &ast.Struct{Name: name, Type: typ})
+		path = append(path, a.Path)
 	}
 	st := &ast.Struct{
 		MichelineType: "struct",
 		Fields:        fieldTypes,
+		Path:          path,
 	}
 	// Without annotation, structs gets a
 	// @-prefixed auto generated name.
