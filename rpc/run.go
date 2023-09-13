@@ -21,7 +21,7 @@ var (
 	// for reveal
 	DefaultRevealLimits = tezos.Limits{
 		Fee:      1000,
-		GasLimit: 1000,
+		GasLimit: 2000,
 	}
 	// for transfers to tz1/2/3
 	DefaultTransferLimitsEOA = tezos.Limits{
