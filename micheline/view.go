@@ -89,8 +89,8 @@ func (v View) Typedef() Typedef {
 		Name: v.Name,
 		Type: K_VIEW.String(),
 		Args: []Typedef{
-			buildTypedef(CONST_PARAM, v.Param.Prim),
-			buildTypedef(CONST_RETURN, v.Retval.Prim),
+			buildTypedef(CONST_PARAM, v.Param.Prim, []int{}),
+			buildTypedef(CONST_RETURN, v.Retval.Prim, []int{}),
 		},
 	}
 }

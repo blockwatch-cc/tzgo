@@ -2,6 +2,14 @@
 
 ## unreleased
 
+* add Micheline path setters
+* skip empty annotations on variadic prims in JSON output
+* extend Micheline typedef with path info
+* add TzGen tech preview (a contract interface code generator for Tezos)
+* remove Mumbainet hashes, config and references
+
+## v1.17.1
+
 * change gas simulation to `/helpers/scripts/simulate_operation` for better future estimates
 * new `CallOptions.ExtraGasMargin` arg for manual override of the default (100)
 * new `CallOptions.SimulationOffset` arg to control future block offset

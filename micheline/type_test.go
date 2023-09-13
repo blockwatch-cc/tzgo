@@ -21,68 +21,68 @@ var typedefTests = []typedefTest{
 	{
 		Name: "int",
 		Spec: `{"annots": ["%payoutDelay"],"prim": "int"}`,
-		Want: `{"name":"payoutDelay","type":"int"}`,
+		Want: `{"name":"payoutDelay","path":[],"type":"int"}`,
 	},
 	//   nat
 	{
 		Name: "nat",
 		Spec: `{"annots": ["%payoutFrequency"],"prim": "nat"}`,
-		Want: `{"name":"payoutFrequency","type":"nat"}`,
+		Want: `{"name":"payoutFrequency","path":[],"type":"nat"}`,
 	},
 	//   string
 	{
 		Name: "string",
 		Spec: `{"annots": ["%name"],"prim": "string"}`,
-		Want: `{"name":"name","type":"string"}`,
+		Want: `{"name":"name","path":[],"type":"string"}`,
 	},
 	//   bytes
 	{
 		Name: "bytes",
 		Spec: `{"annots": ["%bakerName"],"prim": "bytes"}`,
-		Want: `{"name":"bakerName","type":"bytes"}`,
+		Want: `{"name":"bakerName","path":[],"type":"bytes"}`,
 	},
 	//   mutez
 	{
 		Name: "mutez",
 		Spec: `{"annots": ["%signup_fee"],"prim": "mutez"}`,
-		Want: `{"name":"signup_fee","type":"mutez"}`,
+		Want: `{"name":"signup_fee","path":[],"type":"mutez"}`,
 	},
 	//   bool
 	{
 		Name: "bool",
 		Spec: `{"annots": ["%bakerChargesTransactionFee"],"prim": "bool"}`,
-		Want: `{"name":"bakerChargesTransactionFee","type":"bool"}`,
+		Want: `{"name":"bakerChargesTransactionFee","path":[],"type":"bool"}`,
 	},
 	//   key_hash
 	{
 		Name: "key_hash",
 		Spec: `{"annots": ["%baker"],"prim": "key_hash"}`,
-		Want: `{"name":"baker","type":"key_hash"}`,
+		Want: `{"name":"baker","path":[],"type":"key_hash"}`,
 	},
 	//   timestamp
 	{
 		Name: "timestamp",
 		Spec: `{"annots": ["%last_update"],"prim": "timestamp"}`,
-		Want: `{"name":"last_update","type":"timestamp"}`,
+		Want: `{"name":"last_update","path":[],"type":"timestamp"}`,
 	},
 	//   address
 	{
 		Name: "address",
 		Spec: `{"annots": ["%reporterAccount"],"prim": "address"}`,
-		Want: `{"name":"reporterAccount","type":"address"}`,
+		Want: `{"name":"reporterAccount","path":[],"type":"address"}`,
 	},
 	//   key
 	{
 		Name: "key",
 		Spec: `{"annots": ["%pour_authorizer"],"prim": "key"}`,
-		Want: `{"name":"pour_authorizer","type":"key"}`,
+		Want: `{"name":"pour_authorizer","path":[],"type":"key"}`,
 	},
 	//   unit
 	//   signature
 	{
 		Name: "signature",
 		Spec: `{"args":[{"args":[{"prim":"nat"},{"args":[{"prim":"key"},{"prim":"signature"}],"prim": "pair"}],"prim": "pair"}],"prim": "pair"}`,
-		Want: `{"name":"","type":"struct","args":[{"name":"0","type":"nat"},{"name":"1","type":"key"},{"name":"2","type":"signature"}]}`,
+		Want: `{"name":"","path":[],"type":"struct","args":[{"name":"0","path":[0,0],"type":"nat"},{"name":"1","path":[0,1,0],"type":"key"},{"name":"2","path":[0,1,1],"type":"signature"}]}`,
 	},
 	//   chain_id
 	//   bls12_381_g1
@@ -91,104 +91,104 @@ var typedefTests = []typedefTest{
 	{
 		Name: "bls",
 		Spec: `{"annots":["%g2"],"prim":"bls12_381_g2"}`,
-		Want: `{"name":"g2","type":"bls12_381_g2"}`,
+		Want: `{"name":"g2","path":[],"type":"bls12_381_g2"}`,
 	},
 	//   sapling_state
 	{
 		Name: "sapling_state",
 		Spec: `{"prim":"sapling_state","args":[{"int":"8"}]}`,
-		Want: `{"name":"","type":"sapling_state(8)"}`,
+		Want: `{"name":"","path":[],"type":"sapling_state(8)"}`,
 	},
 	//   sapling_transaction
 	{
 		Name: "sapling_transaction",
 		Spec: `{"prim":"sapling_transaction","args":[{"int":"8"}]}`,
-		Want: `{"name":"","type":"sapling_transaction(8)"}`,
+		Want: `{"name":"","path":[],"type":"sapling_transaction(8)"}`,
 	},
 	//   never
 	{
 		Name: "never",
 		Spec: `{"prim":"never"}`,
-		Want: `{"name":"","type":"never"}`,
+		Want: `{"name":"","path":[],"type":"never"}`,
 	},
 	// set
 	{
 		Name: "set",
 		Spec: `{"annots": ["%admins"],"prim": "set", "args": [{"prim": "key_hash"}]}`,
-		Want: `{"name":"admins","type":"set","args":[{"name":"@item","type":"key_hash"}]}`,
+		Want: `{"name":"admins","path":[],"type":"set","args":[{"name":"@item","path":[0],"type":"key_hash"}]}`,
 	},
 	// map
 	{
 		Name: "map",
 		Spec: `{"annots":["%approvals"],"prim":"map","args":[{"prim":"address"},{"prim":"nat"}]}`,
-		Want: `{"name":"approvals","type":"map","args":[{"name":"@key","type":"address"},{"name":"@value","type":"nat"}]}`,
+		Want: `{"name":"approvals","path":[],"type":"map","args":[{"name":"@key","path":[0],"type":"address"},{"name":"@value","path":[1],"type":"nat"}]}`,
 	},
 	// bigmap with scalar key
 	// bigmap with pair key
 	{
 		Name: "bigmap",
 		Spec: `{"annots": ["%ledger"],"args": [{"args": [{"prim": "address"},{"prim": "nat"}],"prim": "pair"},{"prim": "nat"}],"prim": "big_map"}`,
-		Want: `{"name": "ledger", "type": "big_map", "args":[{"name":"@key","type":"struct","args":[{"name":"0","type":"address"},{"name":"1","type":"nat"}]},{"name":"@value","type":"nat"}]}`,
+		Want: `{"name": "ledger", "path":[], "type": "big_map", "args":[{"name":"@key","path":[0],"type":"struct","args":[{"name":"0","path":[0,0],"type":"address"},{"name":"1","path":[0,1],"type":"nat"}]},{"name":"@value","path":[1],"type":"nat"}]}`,
 	},
 	// contract
 	{
 		Name: "contract",
 		Spec: `{"annots": ["%pour_dest"],"args": [{"prim": "unit"}],"prim": "contract"}`,
-		Want: `{"name":"pour_dest","type":"contract","args":[{"name":"0","type":"unit"}]}`,
+		Want: `{"name":"pour_dest","path":[],"type":"contract","args":[{"name":"0","path":[0],"type":"unit"}]}`,
 	},
 	// lambda, list, operation
 	{
 		Name: "lambda",
 		Spec: `{"args": [{"args": [{"args": [{"prim": "string"},{"prim": "bytes"}],"prim": "pair"},{"args": [{"prim": "bytes"},{"prim": "bytes"}],"prim": "big_map"}],"prim": "pair"},{"args": [{"args": [{"prim": "operation"}],"prim": "list"},{"args": [{"prim": "bytes"},{"prim": "bytes"}],"prim": "big_map"}],"prim": "pair"}],"prim": "lambda"}`,
-		Want: `{"name":"","type":"lambda","args":[{"name":"@param","type":"struct","args":[{"name":"0","type":"string"},{"name":"1","type":"bytes"},{"name":"2","type":"big_map","args":[{"name":"@key","type":"bytes"},{"name":"@value","type":"bytes"}]}]},{"name":"@return","type":"struct","args":[{"name":"0","type":"list","args":[{"name":"@item","type":"operation"}]},{"name":"1","type":"big_map","args":[{"name":"@key","type":"bytes"},{"name":"@value","type":"bytes"}]}]}]}`,
+		Want: `{"name":"","path":[],"type":"lambda","args":[{"name":"@param","path":[0],"type":"struct","args":[{"name":"0","path":[0,0,0],"type":"string"},{"name":"1","path":[0,0,1],"type":"bytes"},{"name":"2","path":[0,1],"type":"big_map","args":[{"name":"@key","path":[0],"type":"bytes"},{"name":"@value","path":[1],"type":"bytes"}]}]},{"name":"@return","path":[1],"type":"struct","args":[{"name":"0","path":[1,0],"type":"list","args":[{"name":"@item","path":[1,0,0],"type":"operation"}]},{"name":"1","path":[1,1],"type":"big_map","args":[{"name":"@key","path":[0],"type":"bytes"},{"name":"@value","path":[1],"type":"bytes"}]}]}]}`,
 	},
 	// ticket
 	{
 		Name: "ticket",
 		Spec: `{"prim": "ticket", "args":[{"prim":"timestamp"}]}`,
-		Want: `{"name":"","type":"ticket","args":[{"name":"@value","type":"timestamp"}]}`,
+		Want: `{"name":"","path":[],"type":"ticket","args":[{"name":"@value","path":[0],"type":"timestamp"}]}`,
 	},
 	// ticket 2
 	{
 		Name: "ticket2",
 		Spec: `{"prim": "ticket", "annots":["%save"], "args":[{"prim":"string"}]}`,
-		Want: `{"name":"save","type":"ticket","args":[{"name":"@value","type":"string"}]}`,
+		Want: `{"name":"save","path":[],"type":"ticket","args":[{"name":"@value","path":[0],"type":"string"}]}`,
 	},
 	// option
 	{
 		Name: "option",
 		Spec: `{"annots":["%reporterAccount"],"prim":"option","args":[{"prim":"address"}]}`,
-		Want: `{"name":"reporterAccount","type":"address","optional":true}`,
+		Want: `{"name":"reporterAccount","path":[],"type":"address","optional":true}`,
 	},
 	// named union type
 	{
 		Name: "named-union",
 		Spec: `{"args":[{"annots":["%do"],"args":[{"prim":"unit"},{"args":[{"prim":"operation"}],"prim":"list"}],"prim":"lambda"},{"annots":["%default"],"prim":"unit"}],"prim":"or"}`,
-		Want: `{"name":"","type":"union","args":[{"name":"do","type":"lambda","args":[{"name":"@param","type":"unit"},{"name":"@return","type":"list","args":[{"name":"@item","type":"operation"}]}]},{"name":"default","type":"unit"}]}`,
+		Want: `{"name":"","path":[],"type":"union","args":[{"name":"do","path":[0],"type":"lambda","args":[{"name":"@param","path":[0],"type":"unit"},{"name":"@return","path":[1],"type":"list","args":[{"name":"@item","path":[1,0],"type":"operation"}]}]},{"name":"default","path":[1],"type":"unit"}]}`,
 	},
 	// anonymous union type
 	{
 		Name: "anon-union",
 		Spec: `{"args":[{"args":[{"prim":"unit"},{"prim":"operation"}],"prim":"lambda"},{"args":[{"prim":"key_hash"}],"prim":"set"}],"prim":"or"}`,
-		Want: `{"name":"","type":"union","args":[{"name":"@or_0","type":"lambda","args":[{"name":"@param","type":"unit"},{"name":"@return","type":"operation"}]},{"name":"@or_1","type":"set","args":[{"name":"@item","type":"key_hash"}]}]}`,
+		Want: `{"name":"","path":[],"type":"union","args":[{"name":"@or_0","path":[0],"type":"lambda","args":[{"name":"@param","path":[0],"type":"unit"},{"name":"@return","path":[1],"type":"operation"}]},{"name":"@or_1","path":[1],"type":"set","args":[{"name":"@item","path":[1,0],"type":"key_hash"}]}]}`,
 	},
 	// nested map
 	{
 		Name: "nested_map",
 		Spec: `{"annots": ["%deck"],"args": [{"prim": "int"},{"args": [{"prim": "int"},{"prim": "int"}],"prim": "map"}],"prim": "map"}`,
-		Want: `{"name":"deck","type":"map","args":[{"name":"@key","type":"int"},{"name":"@value","type":"map","args":[{"name":"@key","type":"int"},{"name":"@value","type":"int"}]}]}`,
+		Want: `{"name":"deck","path":[],"type":"map","args":[{"name":"@key","path":[0],"type":"int"},{"name":"@value","path":[1],"type":"map","args":[{"name":"@key","path":[0],"type":"int"},{"name":"@value","path":[1],"type":"int"}]}]}`,
 	},
 	// nested list (FA2)
 	{
 		Name: "nested_list",
 		Spec: `{"annots": ["%transfer"],"args": [{"args": [{"annots": ["%from_"],"prim": "address"},{"annots": ["%txs"],"args": [{"args": [{"annots": ["%to_"],"prim": "address"},{"args": [{"annots": ["%token_id"],"prim": "nat"},{"annots": ["%amount"],"prim": "nat"}],"prim": "pair"}],"prim": "pair"}],"prim": "list"}],"prim": "pair"}],"prim": "list"}`,
-		Want: `{"name":"transfer","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"from_","type":"address"},{"name":"txs","type":"list","args":[{"name":"@item","type":"struct","args":[{"name":"to_","type":"address"},{"name":"token_id","type":"nat"},{"name":"amount","type":"nat"}]}]}]}]}`,
+		Want: `{"name":"transfer","path":[],"type":"list","args":[{"name":"@item","path":[0],"type":"struct","args":[{"name":"from_","path":[0,0],"type":"address"},{"name":"txs","path":[0,1],"type":"list","args":[{"name":"@item","path":[0,1,0],"type":"struct","args":[{"name":"to_","path":[0,1,0,0],"type":"address"},{"name":"token_id","path":[0,1,0,1,0],"type":"nat"},{"name":"amount","path":[0,1,0,1,1],"type":"nat"}]}]}]}]}`,
 	},
 	// right-hand pair tree
 	{
 		Name: "right_hand_pair_tree",
 		Spec: `{"args":[{"annots":["%tokenPool"],"prim":"nat"},{"args":[{"annots":["%xtzPool"],"prim":"mutez"},{"args":[{"annots":["%lqtTotal"],"prim":"nat"},{"args":[{"annots":["%tokenAddress"],"prim":"address"},{"annots":["%lqtAddress"],"prim":"address"}],"prim":"pair"}],"prim":"pair"}],"prim":"pair"}],"prim":"pair"}`,
-		Want: `{"name":"","type":"struct","args":[{"name":"tokenPool","type":"nat"},{"name":"xtzPool","type":"mutez"},{"name":"lqtTotal","type":"nat"},{"name":"tokenAddress","type":"address"},{"name":"lqtAddress","type":"address"}]}`,
+		Want: `{"name":"","path":[],"type":"struct","args":[{"name":"tokenPool","path":[0],"type":"nat"},{"name":"xtzPool","path":[1,0],"type":"mutez"},{"name":"lqtTotal","path":[1,1,0],"type":"nat"},{"name":"tokenAddress","path":[1,1,1,0],"type":"address"},{"name":"lqtAddress","path":[1,1,1,1],"type":"address"}]}`,
 	},
 }
 

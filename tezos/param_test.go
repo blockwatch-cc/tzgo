@@ -85,9 +85,9 @@ func TestParamsStatic(t *testing.T) {
 
 func TestDefaultParams(t *testing.T) {
 	for n, p := range map[string]*tezos.Params{
-		"main":   tezos.DefaultParams,
-		"ghost":  tezos.GhostnetParams,
-		"mumbai": tezos.MumbainetParams,
+		"main":    tezos.DefaultParams,
+		"ghost":   tezos.GhostnetParams,
+		"nairobi": tezos.NairobinetParams,
 	} {
 		if p.Network == "" {
 			t.Errorf("%s params: Empty network name", n)

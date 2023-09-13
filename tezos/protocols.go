@@ -41,13 +41,9 @@ var (
 	PtMumbai  = ProtoV016_2
 	PtNairobi = ProtoV017
 
-	Mainnet      = MustParseChainIdHash("NetXdQprcVkpaWU")
-	Ghostnet     = MustParseChainIdHash("NetXnHfVqm9iesp")
-	Jakartanet   = MustParseChainIdHash("NetXLH1uAxK7CCh")
-	Kathmandunet = MustParseChainIdHash("NetXi2ZagzEsXbZ")
-	Limanet      = MustParseChainIdHash("NetXizpkH94bocH")
-	Mumbainet    = MustParseChainIdHash("NetXgbcrNtXD2yA")
-	Nairobinet   = MustParseChainIdHash("NetXyuzvDo2Ugzb")
+	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
+	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
+	Nairobinet = MustParseChainIdHash("NetXyuzvDo2Ugzb")
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -104,11 +100,6 @@ var (
 			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256}, // v15
 			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512}, // v16
 			{PtNairobi, 0, 2957313, -1, 625, 3, 8192, 512},     // v17
-		},
-		Mumbainet: {
-			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
-			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
-			{PtMumbai, 2, 2, -1, 0, 3, 8192, 512},      // v16
 		},
 		Nairobinet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
