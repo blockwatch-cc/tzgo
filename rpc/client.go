@@ -54,6 +54,13 @@ type Client struct {
 	MetadataMode MetadataMode
 }
 
+// NewClient returns a new Tezos RPC client as an interface
+// Allows to change client implementations and mock them
+// Recommended to use instead of "NewClient"
+func NewRPCClient(baseURL string, httpClient *http.Client) (RpcClient, error) {
+	return NewClient(baseURL, httpClient)
+}
+
 // NewClient returns a new Tezos RPC client.
 func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 	if httpClient == nil {
@@ -103,6 +110,10 @@ func (c *Client) UseIpfsUrl(uri string) error {
 
 func (c *Client) Client() *http.Client {
 	return c.client
+}
+
+func (c *Client) RpcClient() *Client {
+	return c
 }
 
 func (c *Client) Listen() {

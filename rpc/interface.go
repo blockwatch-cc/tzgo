@@ -18,6 +18,7 @@ type RpcClient interface {
 	Init(ctx context.Context) error
 	UseIpfsUrl(uri string) error
 	Client() *http.Client
+	RpcClient() *Client
 	Listen()
 	Close()
 	ResolveChainConfig(ctx context.Context) error
