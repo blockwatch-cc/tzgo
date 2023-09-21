@@ -6,8 +6,6 @@ package rpc
 import (
 	"context"
 	"fmt"
-
-	"blockwatch.cc/tzgo/tezos"
 )
 
 type IssuanceParameters struct {
@@ -21,7 +19,7 @@ type IssuanceParameters struct {
 }
 
 // GetIssuance returns expected xtz issuance for known future cycles
-func (c *Client) GetIssuance(ctx context.Context, addr tezos.Address, id BlockID) ([]IssuanceParameters, error) {
+func (c *Client) GetIssuance(ctx context.Context, id BlockID) ([]IssuanceParameters, error) {
 	u := fmt.Sprintf("chains/main/blocks/%s/context/issuance/expected_issuance", id)
 	p := make([]IssuanceParameters, 0, 5)
 	if err := c.Get(ctx, u, p); err != nil {
