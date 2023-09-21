@@ -10,19 +10,23 @@ import (
 )
 
 const (
-	PATH_SEPARATOR  = "."
-	DEFAULT         = "default"
-	PRIM            = "prim"
-	INT             = "int"
-	BYTES           = "bytes"
-	STRING          = "string"
-	ROOT            = "root"
-	ANNOTS          = "annots"
-	ARGS            = "args"
-	DO              = "do"
-	SET_DELEGATE    = "set_delegate"
-	REMOVE_DELEGATE = "remove_delegate"
-	DEPOSIT         = "deposit"
+	PATH_SEPARATOR          = "."
+	DEFAULT                 = "default"
+	PRIM                    = "prim"
+	INT                     = "int"
+	BYTES                   = "bytes"
+	STRING                  = "string"
+	ROOT                    = "root"
+	ANNOTS                  = "annots"
+	ARGS                    = "args"
+	DO                      = "do"
+	SET_DELEGATE            = "set_delegate"
+	REMOVE_DELEGATE         = "remove_delegate"
+	DEPOSIT                 = "deposit"
+	STAKE                   = "stake"
+	UNSTAKE                 = "unstake"
+	FINALIZE_UNSTAKE        = "finalize_unstake"
+	SET_DELEGATE_PARAMETERS = "set_delegate_parameters"
 )
 
 func isASCII(s string) bool {
