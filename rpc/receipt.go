@@ -42,7 +42,13 @@ func (r *Receipt) Costs() []tezos.Costs {
 // IsSuccess returns true when all operations in this group have been applied successfully.
 func (r *Receipt) IsSuccess() bool {
 	for _, v := range r.Op.Contents {
-		if v.Result().Status != tezos.OpStatusApplied {
+		switch v.Result().Status {
+		case tezos.OpStatusApplied:
+			return true
+		case tezos.OpStatusInvalid:
+			// only manager ops contain a status field
+			return true
+		default:
 			return false
 		}
 	}
