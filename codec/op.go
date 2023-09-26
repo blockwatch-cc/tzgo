@@ -339,10 +339,7 @@ func (o *Op) Bytes() []byte {
 		_ = v.EncodeBuffer(buf, p)
 	}
 	switch o.Contents[0].Kind() {
-	case tezos.OpTypeEndorsementWithSlot,
-		tezos.OpTypeDoubleBakingEvidence,
-		tezos.OpTypeDoubleEndorsementEvidence,
-		tezos.OpTypeDoublePreendorsementEvidence:
+	case tezos.OpTypeEndorsementWithSlot:
 		// no signature
 	default:
 		if o.Signature.IsValid() {
@@ -443,15 +440,9 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 	}
 	buf.WriteByte(']')
 	sig := o.Signature
-	if len(o.Contents) > 0 {
-		switch o.Contents[0].Kind() {
-		case tezos.OpTypeEndorsementWithSlot,
-			tezos.OpTypeDoubleBakingEvidence,
-			tezos.OpTypeDoubleEndorsementEvidence,
-			tezos.OpTypeDoublePreendorsementEvidence:
-			// no signature
-			sig = tezos.InvalidSignature
-		}
+	if len(o.Contents) > 0 && o.Contents[0].Kind() == tezos.OpTypeEndorsementWithSlot {
+		// no signature
+		sig = tezos.InvalidSignature
 	}
 	if sig.IsValid() {
 		buf.WriteString(`,"signature":`)
