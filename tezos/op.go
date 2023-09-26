@@ -160,6 +160,12 @@ var (
 		OpTypeSmartRollupRecoverBond:          "smart_rollup_recover_bond",
 		OpTypeDalAttestation:                  "dal_attestation",
 		OpTypeDalPublishSlotHeader:            "dal_publish_slot_header",
+
+		// rename: endorsement -> attetstaion
+		// OpTypeDoubleEndorsementEvidence:       "double_attestation_evidence",
+		// OpTypeEndorsement:                     "attestation",
+		// OpTypePreendorsement:                  "preattestation",
+		// OpTypeDoublePreendorsementEvidence:    "double_preattestation_evidence",
 	}
 	opTypeReverseStrings = make(map[string]OpType)
 )
