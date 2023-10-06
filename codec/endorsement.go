@@ -171,7 +171,7 @@ type TenderbakeEndorsement struct {
 	Slot             int16             `json:"slot"`
 	Level            int32             `json:"level"`
 	Round            int32             `json:"round"`
-	BlockPayloadHash tezos.PayloadHash `json:"payload_hash"`
+	BlockPayloadHash tezos.PayloadHash `json:"block_payload_hash"`
 }
 
 func (o TenderbakeEndorsement) Kind() tezos.OpType {
@@ -189,6 +189,8 @@ func (o TenderbakeEndorsement) MarshalJSON() ([]byte, error) {
 	buf.WriteString(strconv.Itoa(int(o.Level)))
 	buf.WriteString(`,"round":`)
 	buf.WriteString(strconv.Itoa(int(o.Round)))
+	buf.WriteString(`,"block_payload_hash":`)
+	buf.WriteString(strconv.Quote(o.BlockPayloadHash.String()))
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }
@@ -281,7 +283,7 @@ type TenderbakePreendorsement struct {
 	Slot             int16             `json:"slot"`
 	Level            int32             `json:"level"`
 	Round            int32             `json:"round"`
-	BlockPayloadHash tezos.PayloadHash `json:"payload_hash"`
+	BlockPayloadHash tezos.PayloadHash `json:"block_payload_hash"`
 }
 
 func (o TenderbakePreendorsement) Kind() tezos.OpType {
@@ -299,6 +301,8 @@ func (o TenderbakePreendorsement) MarshalJSON() ([]byte, error) {
 	buf.WriteString(strconv.Itoa(int(o.Level)))
 	buf.WriteString(`,"round":`)
 	buf.WriteString(strconv.Itoa(int(o.Round)))
+	buf.WriteString(`,"block_payload_hash":`)
+	buf.WriteString(strconv.Quote(o.BlockPayloadHash.String()))
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
 }
