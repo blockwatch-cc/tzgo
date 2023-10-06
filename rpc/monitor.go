@@ -5,6 +5,7 @@ package rpc
 
 import (
 	"context"
+	"encoding/binary"
 	"errors"
 	"io"
 	"time"
@@ -127,6 +128,15 @@ func (h *BlockHeader) LogEntry() *BlockHeaderLogEntry {
 		Context:        h.Context,
 		ProtocolData:   tezos.HexBytes(h.ProtocolData()),
 	}
+}
+
+func (l BlockHeaderLogEntry) Round() int {
+	return int(binary.BigEndian.Uint32(l.ProtocolData[32:]))
+}
+
+func (l BlockHeaderLogEntry) PayloadHash() (h tezos.PayloadHash) {
+	copy(h[:], l.ProtocolData[:])
+	return
 }
 
 func (b *Block) LogEntry() *BlockHeaderLogEntry {
