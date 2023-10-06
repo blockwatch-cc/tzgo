@@ -1,7 +1,11 @@
 # Changelog
 
-## unreleased
+## v1.17.2
 
+* accept non-manager ops as successful
+* decode block monitor protocol data
+* fix endorsement encoding
+* add methods to page through bigmap values
 * add Micheline path setters
 * skip empty annotations on variadic prims in JSON output
 * extend Micheline typedef with path info
