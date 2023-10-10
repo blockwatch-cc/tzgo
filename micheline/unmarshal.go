@@ -111,9 +111,9 @@ func (p Prim) GetPathExt(path string, typ OpCode) (Prim, error) {
 }
 
 // SetPathExt replaces a nested primitive at path with dst if the primitive matches
-// the expected opcode. Path segments are separated by slash (/).
-// Works on both type and value primitive trees.
-func (p *Prim) SetPathExt(path string, typ OpCode, dst Prim) error {
+// the expected type. Path segments are separated by slash (/).
+// Works on best on value primitive trees.
+func (p *Prim) SetPathExt(path string, typ PrimType, dst Prim) error {
 	index, err := p.getIndex(path)
 	if err != nil {
 		return err
@@ -125,6 +125,9 @@ func (p Prim) getIndex(path string) ([]int, error) {
 	index := make([]int, 0)
 	path = strings.TrimPrefix(path, "/")
 	path = strings.TrimSuffix(path, "/")
+	if len(path) == 0 {
+		return nil, nil
+	}
 	for i, v := range strings.Split(path, "/") {
 		switch v {
 		case "L", "l", "0":
@@ -180,7 +183,7 @@ func (p *Prim) SetIndex(index []int, dst Prim) error {
 }
 
 // GetIndex returns a nested primitive at path index if the primitive matches the
-// expected opcode.
+// expected opcode. This only works on type trees. Value trees lack opcode info.
 func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
 	prim, err := p.GetIndex(index)
 	if err != nil {
@@ -193,8 +196,9 @@ func (p Prim) GetIndexExt(index []int, typ OpCode) (Prim, error) {
 }
 
 // SetIndexExt replaces a nested primitive at path index if the primitive matches the
-// expected opcode.
-func (p *Prim) SetIndexExt(index []int, typ OpCode, dst Prim) error {
+// expected primitive type. This function works best with value trees which
+// lack opcode info. Use as extra cross-check when replacing prims.
+func (p *Prim) SetIndexExt(index []int, typ PrimType, dst Prim) error {
 	prim := p
 	for _, v := range index {
 		if v < 0 || len(prim.Args) <= v {
@@ -202,8 +206,8 @@ func (p *Prim) SetIndexExt(index []int, typ OpCode, dst Prim) error {
 		}
 		prim = &prim.Args[v]
 	}
-	if prim.OpCode != typ {
-		return fmt.Errorf("micheline: unexpected type %s at path %v", prim.OpCode, index)
+	if prim.Type != typ {
+		return fmt.Errorf("micheline: unexpected type %s at path %v", prim.Type, index)
 	}
 	*prim = dst
 	return nil
