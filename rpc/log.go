@@ -51,3 +51,21 @@ func logDebug(c func()) {
 		c()
 	}
 }
+
+func logDebugOnly(c func()) {
+	if log.Level() == logpkg.LevelDebug {
+		c()
+	}
+}
+
+func logTrace(c func()) {
+	if log.Level() <= logpkg.LevelTrace {
+		c()
+	}
+}
+
+func logTraceOnly(c func()) {
+	if log.Level() == logpkg.LevelTrace {
+		c()
+	}
+}

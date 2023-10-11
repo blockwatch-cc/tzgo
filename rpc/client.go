@@ -192,10 +192,13 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		req.Header.Add("X-Api-Key", c.ApiKey)
 	}
 
-	log.Debug(newLogClosure(func() string {
+	logDebugOnly(func() {
+		log.Debugf("%s %s %s", req.Method, req.URL, req.Proto)
+	})
+	logTraceOnly(func() {
 		d, _ := httputil.DumpRequest(req, true)
-		return string(d)
-	}))
+		log.Trace(string(d))
+	})
 
 	return req, nil
 }
@@ -258,9 +261,9 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return nil
 	}
 
-	log.Trace(newLogClosure(func() string {
+	logTraceOnly((func() {
 		d, _ := httputil.DumpResponse(resp, true)
-		return string(d)
+		log.Trace(string(d))
 	}))
 
 	statusClass := resp.StatusCode / 100
