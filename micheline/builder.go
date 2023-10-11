@@ -136,6 +136,17 @@ func NewPrim(c OpCode, anno ...string) Prim {
 	return Prim{Type: typ, OpCode: c, Anno: anno}
 }
 
+func NewUnion(path []int, prim Prim) Prim {
+	if len(path) == 0 {
+		return prim
+	}
+	oc := D_LEFT
+	if path[0] == 1 {
+		oc = D_RIGHT
+	}
+	return NewCode(oc, NewUnion(path[1:], prim))
+}
+
 func (p Prim) WithAnno(anno string) Prim {
 	p.Anno = append(p.Anno, anno)
 	return p

@@ -958,18 +958,6 @@ func (p Prim) Value(as OpCode) interface{} {
 	return p
 }
 
-func ParsePrim(s string) (p Prim, err error) {
-	err = p.UnmarshalJSON([]byte(s))
-	return
-}
-
-func MustParsePrim(s string) (p Prim) {
-	if err := p.UnmarshalJSON([]byte(s)); err != nil {
-		panic(err)
-	}
-	return
-}
-
 func (p Prim) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, 4096))
 	p.EncodeJSON(buf)
