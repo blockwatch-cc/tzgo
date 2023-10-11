@@ -76,6 +76,21 @@ func (r *Receipt) Error() error {
 	return nil
 }
 
+// OriginatedContract returns the first contract address deployed by the operation.
+func (r *Receipt) OriginatedContract() (tezos.Address, bool) {
+	if r.IsSuccess() {
+		for _, contents := range r.Op.Contents {
+			if contents.Kind() == tezos.OpTypeOrigination {
+				result := contents.Result()
+				if len(result.OriginatedContracts) > 0 {
+					return result.OriginatedContracts[0], true
+				}
+			}
+		}
+	}
+	return tezos.InvalidAddress, false
+}
+
 // MinLimits returns a list of individual operation costs mapped to limits for use
 // in simulation results. Fee is reset to zero to prevent higher simulation fee from
 // spilling over into real fees paid.
