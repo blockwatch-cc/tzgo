@@ -1490,7 +1490,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 		p.Bytes = buf.Next(size)
 
 	default:
-		return fmt.Errorf("micheline: unknown primitive type 0x%x", tag)
+		return fmt.Errorf("micheline: unknown primitive type 0x%x", byte(tag))
 	}
 	p.Type = tag
 	return nil

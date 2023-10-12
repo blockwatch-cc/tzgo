@@ -107,7 +107,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 	// fmt.Printf("Marshal %T %v => %#v\n", v, v, t)
 	if t.Optional {
 		val := v
-		if t.Name != "" {
+		if t.Name != "" && val != nil {
 			vals, ok := v.(map[string]any)
 			if !ok {
 				return InvalidPrim, fmt.Errorf("invalid option type %T, must be map[string]any", v)
@@ -155,6 +155,14 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		if !ok {
 			return InvalidPrim, fmt.Errorf("invalid type %T for struct %s", v, t.Name)
 		}
+		// for values with nested named structs try if name exists
+		if m, ok := vals[t.Name]; t.Name != "" && ok {
+			fmt.Printf("Unpacking nested struct %s\n", t.Name)
+			vals, ok = m.(map[string]any)
+			if !ok {
+				return InvalidPrim, fmt.Errorf("invalid type %T for nested struct %s", m, t.Name)
+			}
+		}
 		prims := []Prim{}
 		for _, v := range t.Args {
 			p, err := v.marshal(vals[v.Name], optimized, depth+1)
@@ -169,8 +177,12 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			for i, v := range prims {
 				root.Insert(v, t.Args[i].Path[depth:])
 			}
+			// patch root when it contains a comb pair
+			if len(root.Args) > 2 {
+				root.Type = PrimSequence
+				root.OpCode = 0
+			}
 			return root, nil
-			// return NewCombPair(prims...), nil
 		}
 		return NewPair(prims[0], prims[1]), nil
 
@@ -201,7 +213,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		}
 		return NewSeq(prims...), nil
 
-	case "map":
+	case "map", "big_map":
 		vals, ok := v.(map[string]any)
 		if !ok {
 			return InvalidPrim, fmt.Errorf("invalid map type %T, must be map[string]any", v)
@@ -380,6 +392,12 @@ func ParsePrim(typ OpCode, val string, optimized bool) (p Prim, err error) {
 func (p *Prim) Insert(src Prim, path []int) {
 	if !p.IsValid() {
 		*p = NewPair(Prim{}, Prim{})
+	}
+
+	if len(p.Args) <= path[0] {
+		cp := make([]Prim, path[0]+1)
+		copy(cp, p.Args)
+		p.Args = cp
 	}
 
 	if len(path) == 1 {
