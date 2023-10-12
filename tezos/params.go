@@ -143,7 +143,7 @@ func (p *Params) WithProtocol(h ProtocolHash) *Params {
 }
 
 func (p *Params) WithNetwork(n string) *Params {
-	if p.Network == "unknown" {
+	if p.Network == "unknown" || p.Network == "" {
 		p.Network = n
 	}
 	return p
