@@ -52,6 +52,9 @@ type Client struct {
 	// block and operation receipts. Set this mode to `always` if an RPC node prunes
 	// metadata (i.e. you see metadata too large in certain operations)
 	MetadataMode MetadataMode
+	// Close connections. This may help with EOF errors from unexpected
+	// connection close by Tezos RPC.
+	CloseConns bool
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -184,6 +187,7 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	req.Close = c.CloseConns
 
 	req.Header.Add("Content-Type", mediaType)
 	req.Header.Add("Accept", mediaType)
@@ -249,6 +253,9 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 func (c *Client) Do(req *http.Request, v interface{}) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
+		if e, ok := err.(*url.Error); ok {
+			return e.Err
+		}
 		return err
 	}
 

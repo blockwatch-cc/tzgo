@@ -194,10 +194,13 @@ func (r *Result) Wait() {
 	<-r.done
 }
 
-func (r *Result) WaitContext(ctx context.Context) {
+func (r *Result) WaitContext(ctx context.Context) bool {
 	select {
 	case <-ctx.Done():
+		r.err = context.Canceled
+		return false
 	case <-r.done:
+		return true
 	}
 }
 

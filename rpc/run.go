@@ -303,6 +303,15 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 		return nil, err
 	}
 
+	// use custom observer when provided
+	mon := c.BlockObserver
+	if opts.Observer != nil {
+		mon = opts.Observer
+	}
+
+	// ensure block observer is running
+	mon.Listen(c)
+
 	// set source on all ops
 	op.WithSource(key.Address())
 
@@ -358,6 +367,12 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	}
 	op.WithSignature(sig)
 
+	// trace what we'll broadcast
+	logTrace(func() {
+		buf, _ := op.MarshalJSON()
+		log.Tracef("Broadcast: %s", string(buf))
+	})
+
 	// broadcast
 	hash, err := c.Broadcast(ctx, op)
 	if err != nil {
@@ -366,15 +381,6 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 
 	// wait for confirmations
 	res := NewResult(hash).WithTTL(op.TTL).WithConfirmations(opts.Confirmations)
-
-	// use custom observer when provided
-	mon := c.BlockObserver
-	if opts.Observer != nil {
-		mon = opts.Observer
-	}
-
-	// ensure block observer is running
-	mon.Listen(c)
 
 	// wait for confirmations
 	res.Listen(mon)
