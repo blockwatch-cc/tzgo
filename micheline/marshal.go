@@ -110,7 +110,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		if t.Name != "" && val != nil {
 			vals, ok := v.(map[string]any)
 			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid option type %T, must be map[string]any", v)
+				return InvalidPrim, fmt.Errorf("invalid option type %T on field %s, must be map[string]any", v, t.Name)
 			}
 			val, ok = vals[t.Name]
 			if !ok {
@@ -133,7 +133,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		// find the named union element in map
 		vals, ok := v.(map[string]any)
 		if !ok {
-			return InvalidPrim, fmt.Errorf("invalid type %T for union %s", v, t.Name)
+			return InvalidPrim, fmt.Errorf("invalid type %T on union %s", v, t.Name)
 		}
 		var child Typedef
 		for _, n := range t.Args {
@@ -153,14 +153,14 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 	case TypeStruct:
 		vals, ok := v.(map[string]any)
 		if !ok {
-			return InvalidPrim, fmt.Errorf("invalid type %T for struct %s", v, t.Name)
+			return InvalidPrim, fmt.Errorf("invalid type %T on struct %s", v, t.Name)
 		}
 		// for values with nested named structs try if name exists
 		if m, ok := vals[t.Name]; t.Name != "" && ok {
 			fmt.Printf("Unpacking nested struct %s\n", t.Name)
 			vals, ok = m.(map[string]any)
 			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid type %T for nested struct %s", m, t.Name)
+				return InvalidPrim, fmt.Errorf("invalid type %T on nested struct %s", m, t.Name)
 			}
 		}
 		prims := []Prim{}
@@ -177,11 +177,6 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			for i, v := range prims {
 				root.Insert(v, t.Args[i].Path[depth:])
 			}
-			// patch root when it contains a comb pair
-			if len(root.Args) > 2 {
-				root.Type = PrimSequence
-				root.OpCode = 0
-			}
 			return root, nil
 		}
 		return NewPair(prims[0], prims[1]), nil
@@ -192,7 +187,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			// use nested value for named lists
 			vals, ok := v.(map[string]any)
 			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid list/set type %T, must be map[string]any", v)
+				return InvalidPrim, fmt.Errorf("invalid list/set type %T on field %s, must be map[string]any", v, t.Name)
 			}
 			list, ok := vals[t.Name]
 			if !ok {
@@ -200,7 +195,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			}
 			listVals, ok = list.([]any)
 			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid list/set type %T, must be []any", list)
+				return InvalidPrim, fmt.Errorf("invalid list/set type %T on field %s, must be []any", list, t.Name)
 			}
 		}
 		prims := []Prim{}
@@ -216,18 +211,18 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 	case "map", "big_map":
 		vals, ok := v.(map[string]any)
 		if !ok {
-			return InvalidPrim, fmt.Errorf("invalid map type %T, must be map[string]any", v)
+			return InvalidPrim, fmt.Errorf("invalid map type %T on field %s, must be map[string]any", v, t.Name)
 		}
 		// for top-level maps (in entrypoints etc) try if map name is part of value tree
 		if m, ok := vals[t.Name]; ok {
 			vals, ok = m.(map[string]any)
 			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid map type %T, must be map[string]any", m)
+				return InvalidPrim, fmt.Errorf("invalid map type %T on field %s, must be map[string]any", m, t.Name)
 			}
 		}
 		prims := []Prim{}
 		for n, v := range vals {
-			key, err := ParsePrim(t.Left().OpCode(), n, optimized)
+			key, err := ParsePrim(t.Left(), n, optimized)
 			if err != nil {
 				return InvalidPrim, err
 			}
@@ -240,13 +235,13 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		return NewMap(prims...), nil
 
 	case "lambda", "ticket":
-		return InvalidPrim, fmt.Errorf("unsupported type %s", t.Type)
+		return InvalidPrim, fmt.Errorf("unsupported type %s on field %s", t.Type, t.Name)
 
 	default:
 		// scalar
 		oc := t.OpCode()
 		if !oc.IsValid() {
-			return InvalidPrim, fmt.Errorf("invalid type code %s", t.Type)
+			return InvalidPrim, fmt.Errorf("invalid type code %s on field %s", t.Type, t.Name)
 		}
 		if v == nil {
 			if oc == T_UNIT {
@@ -264,7 +259,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			return val.MarshalPrim( /* optimized */ )
 		case string:
 			// parse anything from string (supports config file and API map[string]string)
-			return ParsePrim(oc, val, optimized)
+			return ParsePrim(t, val, optimized)
 		case []byte:
 			return NewBytes(val), nil
 		case bool:
@@ -286,7 +281,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			case T_INT, T_NAT, T_MUTEZ:
 				return NewInt64(int64(val)), nil
 			default:
-				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s", v, t.Type)
+				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s for on field %s", v, t.Type, t.Name)
 			}
 		case int64:
 			switch oc {
@@ -302,7 +297,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			case T_INT, T_NAT, T_MUTEZ:
 				return NewInt64(val), nil
 			default:
-				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s", v, t.Type)
+				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s on field %s", v, t.Type, t.Name)
 			}
 		case time.Time:
 			if optimized {
@@ -327,18 +322,18 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		case tezos.ChainIdHash:
 			return NewString(val.String()), nil
 		default:
-			return InvalidPrim, fmt.Errorf("unsupported type %T for opcode %s", v, t.Type)
+			return InvalidPrim, fmt.Errorf("unsupported type %T for opcode %s on field %s", v, t.Type, t.Name)
 		}
 	}
 }
 
-func ParsePrim(typ OpCode, val string, optimized bool) (p Prim, err error) {
+func ParsePrim(typ Typedef, val string, optimized bool) (p Prim, err error) {
 	p = InvalidPrim
-	if !typ.IsTypeCode() {
+	if !typ.OpCode().IsTypeCode() {
 		err = fmt.Errorf("invalid type code %q", typ)
 		return
 	}
-	switch typ {
+	switch typ.OpCode() {
 	case T_INT, T_NAT, T_MUTEZ:
 		i := big.NewInt(0)
 		err = i.UnmarshalText([]byte(val))
@@ -407,6 +402,21 @@ func ParsePrim(typ OpCode, val string, optimized bool) (p Prim, err error) {
 			err = fmt.Errorf("micheline: invalid value %q for unit type", val)
 		}
 
+	case T_PAIR:
+		// parse comma-separated list into map using type lables from typedef
+		// note: this only supports simple structs which is probably enough
+		// because bigmap keys must be comparable types
+		m := make(map[string]any)
+		for i, v := range strings.Split(val, ",") {
+			// find i-th child in typedef
+			if len(typ.Args) < i-1 {
+				err = fmt.Errorf("micheline: invalid value for bigmap key struct type %s", typ.Name)
+				return
+			}
+			m[typ.Args[i].Name] = v
+		}
+		return typ.marshal(m, optimized, 0)
+
 	default:
 		err = fmt.Errorf("micheline: unsupported big_map key type %s", typ)
 	}
@@ -426,6 +436,9 @@ func (p *Prim) Insert(src Prim, path []int) {
 		cp := make([]Prim, path[0]+1)
 		copy(cp, p.Args)
 		p.Args = cp
+		// convert to sequence
+		p.Type = PrimSequence
+		p.OpCode = 0
 	}
 
 	if len(path) == 1 {
