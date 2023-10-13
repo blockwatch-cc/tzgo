@@ -273,9 +273,37 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			}
 			return NewCode(D_FALSE), nil
 		case int:
-			return NewInt64(int64(val)), nil
+			switch oc {
+			case T_BYTES:
+				return NewBytes([]byte(strconv.FormatInt(int64(val), 10))), nil
+			case T_STRING:
+				return NewString(strconv.FormatInt(int64(val), 10)), nil
+			case T_TIMESTAMP:
+				if optimized {
+					return NewInt64(int64(val)), nil
+				}
+				return NewString(time.Unix(int64(val), 0).UTC().Format(time.RFC3339)), nil
+			case T_INT, T_NAT, T_MUTEZ:
+				return NewInt64(int64(val)), nil
+			default:
+				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s", v, t.Type)
+			}
 		case int64:
-			return NewInt64(val), nil
+			switch oc {
+			case T_BYTES:
+				return NewBytes([]byte(strconv.FormatInt(val, 10))), nil
+			case T_STRING:
+				return NewString(strconv.FormatInt(val, 10)), nil
+			case T_TIMESTAMP:
+				if optimized {
+					return NewInt64(val), nil
+				}
+				return NewString(time.Unix(val, 0).UTC().Format(time.RFC3339)), nil
+			case T_INT, T_NAT, T_MUTEZ:
+				return NewInt64(val), nil
+			default:
+				return InvalidPrim, fmt.Errorf("unsupported type conversion %T to opcode %s", v, t.Type)
+			}
 		case time.Time:
 			if optimized {
 				return NewInt64(val.Unix()), nil
