@@ -4,7 +4,6 @@
 package micheline
 
 import (
-	"bytes"
 	"math/big"
 	"sort"
 
@@ -96,9 +95,7 @@ func NewMapType(k, v Prim, anno ...string) Prim {
 
 func NewMap(elts ...Prim) Prim {
 	sort.Slice(elts, func(i, j int) bool {
-		b1, _ := elts[i].Args[0].MarshalBinary()
-		b2, _ := elts[j].Args[0].MarshalBinary()
-		return bytes.Compare(b1, b2) <= 0
+		return elts[i].Args[0].Compare(elts[j].Args[0]) <= 0
 	})
 	return Prim{Type: PrimSequence, Args: elts}
 }

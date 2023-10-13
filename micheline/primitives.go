@@ -233,6 +233,22 @@ func (p Prim) IsEqualWithAnno(p2 Prim) bool {
 	return IsEqualPrim(p, p2, true)
 }
 
+func (p Prim) Compare(p2 Prim) int {
+	if p.Type != p2.Type {
+		return 0
+	}
+	switch p.Type {
+	case PrimString:
+		return strings.Compare(p.String, p2.String)
+	case PrimBytes:
+		return bytes.Compare(p.Bytes, p2.Bytes)
+	case PrimInt:
+		return p.Int.Cmp(p2.Int)
+	default:
+		return 0
+	}
+}
+
 func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	if p1.OpCode != p2.OpCode {
 		return false
