@@ -20,7 +20,7 @@ import (
 // - disable events/polling when no subscriber exists
 // - handle reorgs (inclusion may switch to a different block hash)
 
-type ObserverCallback func(tezos.BlockHash, int, int, bool) bool
+type ObserverCallback func(tezos.BlockHash, int64, int, int, bool) bool
 
 type observerSubscription struct {
 	id      int
@@ -31,8 +31,8 @@ type observerSubscription struct {
 
 type Observer struct {
 	subs       map[int]*observerSubscription
-	watched    map[[32]byte]int
-	recent     map[[32]byte][2]int
+	watched    map[tezos.OpHash]int
+	recent     map[tezos.OpHash][3]int64
 	seq        int
 	once       sync.Once
 	mu         sync.Mutex
@@ -48,8 +48,8 @@ func NewObserver() *Observer {
 	ctx, cancel := context.WithCancel(context.Background())
 	m := &Observer{
 		subs:     make(map[int]*observerSubscription),
-		watched:  make(map[[32]byte]int),
-		recent:   make(map[[32]byte][2]int),
+		watched:  make(map[tezos.OpHash]int),
+		recent:   make(map[tezos.OpHash][3]int64),
 		minDelay: tezos.DefaultParams.MinimalBlockDelay,
 		ctx:      ctx,
 		cancel:   cancel,
@@ -67,8 +67,8 @@ func (m *Observer) Close() {
 	defer m.mu.Unlock()
 	m.cancel()
 	m.subs = make(map[int]*observerSubscription)
-	m.watched = make(map[[32]byte]int)
-	m.recent = make(map[[32]byte][2]int)
+	m.watched = make(map[tezos.OpHash]int)
+	m.recent = make(map[tezos.OpHash][3]int64)
 }
 
 func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
@@ -85,7 +85,7 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 	log.Debugf("monitor: %03d subscribed %s", seq, oh)
 	if pos, ok := m.recent[oh]; ok {
 		match := m.subs[seq]
-		if remove := match.cb(m.bestHash, pos[0], pos[1], false); remove {
+		if remove := match.cb(m.bestHash, pos[0], int(pos[1]), int(pos[2]), false); remove {
 			delete(m.subs, match.id)
 		}
 	}
@@ -227,7 +227,7 @@ func (m *Observer) listenBlocks() {
 		for _, v := range m.subs {
 			if v.matched {
 				log.Debugf("monitor: signal n-th match for %d %s", v.id, v.oh)
-				if remove := v.cb(headBlock, -1, -1, false); remove {
+				if remove := v.cb(headBlock, -1, -1, -1, false); remove {
 					delete(m.subs, v.id)
 				}
 			}
@@ -248,7 +248,7 @@ func (m *Observer) listenBlocks() {
 		for l, list := range ohs {
 			for n, h := range list {
 				// keep as recent
-				m.recent[h] = [2]int{l, n}
+				m.recent[h] = [3]int64{headHeight, int64(l), int64(n)}
 
 				// match op hash against subs
 				id, ok := m.watched[h]
@@ -271,7 +271,7 @@ func (m *Observer) listenBlocks() {
 				log.Debugf("monitor: matched %d %s", match.id, match.oh)
 
 				// callback
-				if remove := match.cb(headBlock, l, n, false); remove {
+				if remove := match.cb(headBlock, headHeight, l, n, false); remove {
 					delete(m.subs, match.id)
 				} else {
 					match.matched = true
