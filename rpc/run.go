@@ -338,7 +338,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	}
 
 	// log info about tx costs
-	logDebug(func() {
+	c.logDebug(func() {
 		costs := sim.Costs()
 		for i, v := range op.Contents {
 			verb := "used"
@@ -346,7 +346,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 				verb = "forced"
 			}
 			limits := v.Limits()
-			log.Debugf("OP#%03d: %s gas_used(sim)=%d storage_used(sim)=%d storage_burn(sim)=%d alloc_burn(sim)=%d fee(%s)=%d gas_limit(%s)=%d storage_limit(%s)=%d ",
+			c.Log.Debugf("OP#%03d: %s gas_used(sim)=%d storage_used(sim)=%d storage_burn(sim)=%d alloc_burn(sim)=%d fee(%s)=%d gas_limit(%s)=%d storage_limit(%s)=%d ",
 				i, v.Kind(), costs[i].GasUsed, costs[i].StorageUsed, costs[i].StorageBurn, costs[i].AllocationBurn,
 				verb, limits.Fee, verb, limits.GasLimit, verb, limits.StorageLimit,
 			)
@@ -368,9 +368,9 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	op.WithSignature(sig)
 
 	// trace what we'll broadcast
-	logTrace(func() {
+	c.logTrace(func() {
 		buf, _ := op.MarshalJSON()
-		log.Tracef("Broadcast: %s", string(buf))
+		c.Log.Tracef("Broadcast: %s", string(buf))
 	})
 
 	// broadcast

@@ -289,7 +289,7 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, id BlockID, cycle in
 				return nil, err
 			}
 		} else {
-			log.Warnf("No snapshot for cycle %d", cycle)
+			c.Log.Warnf("No snapshot for cycle %d", cycle)
 		}
 	} else {
 		// pre-Ithaca we can at most look PRESERVED_CYCLES into the future since

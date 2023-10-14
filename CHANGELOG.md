@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* dedicated logger instance per client
 * block observer multiple subscriptions for the same op hash
 * block observer support block subscriptions (use zero op hash)
 * new Micheline prim marshaler (type + Go map[string]any -> prim tree)

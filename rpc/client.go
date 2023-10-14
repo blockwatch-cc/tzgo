@@ -17,6 +17,7 @@ import (
 
 	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/tezos"
+	"github.com/echa/log"
 )
 
 const (
@@ -55,6 +56,8 @@ type Client struct {
 	// Close connections. This may help with EOF errors from unexpected
 	// connection close by Tezos RPC.
 	CloseConns bool
+	// Log is the logger implementation used by this client
+	Log log.Logger
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -87,6 +90,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
 		MetadataMode:    MetadataModeAlways,
+		Log:             logger,
 	}
 	return c, nil
 }
@@ -196,12 +200,12 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		req.Header.Add("X-Api-Key", c.ApiKey)
 	}
 
-	logDebugOnly(func() {
-		log.Debugf("%s %s %s", req.Method, req.URL, req.Proto)
+	c.logDebugOnly(func() {
+		c.Log.Debugf("%s %s %s", req.Method, req.URL, req.Proto)
 	})
-	logTraceOnly(func() {
+	c.logTraceOnly(func() {
 		d, _ := httputil.DumpRequest(req, true)
-		log.Trace(string(d))
+		c.Log.Trace(string(d))
 	})
 
 	return req, nil
@@ -268,9 +272,9 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return nil
 	}
 
-	logTraceOnly((func() {
+	c.logTraceOnly((func() {
 		d, _ := httputil.DumpResponse(resp, true)
-		log.Trace(string(d))
+		c.Log.Trace(string(d))
 	}))
 
 	statusClass := resp.StatusCode / 100
@@ -281,7 +285,7 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return c.handleResponse(resp, v)
 	}
 
-	return handleError(resp)
+	return c.handleError(resp)
 }
 
 // DoAsync retrieves values from the API and sends responses using the provided monitor.
@@ -310,14 +314,14 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) error {
 			return nil
 		}
 	} else {
-		return handleError(resp)
+		return c.handleError(resp)
 	}
 	io.Copy(io.Discard, resp.Body)
 	resp.Body.Close()
 	return nil
 }
 
-func handleError(resp *http.Response) error {
+func (c *Client) handleError(resp *http.Response) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -341,7 +345,7 @@ func handleError(resp *http.Response) error {
 	}
 
 	if len(errs) == 0 {
-		log.Errorf("rpc: error decoding RPC error response: %v", err)
+		c.Log.Errorf("rpc: error decoding RPC error response: %v", err)
 		return &httpErr
 	}
 

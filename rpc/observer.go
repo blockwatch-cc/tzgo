@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"blockwatch.cc/tzgo/tezos"
+	"github.com/echa/log"
 )
 
 // WIP: interface may change
@@ -81,12 +82,12 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 	}
 	if pos, ok := m.recent[oh]; ok {
 		match := m.subs[seq]
-		log.Debugf("monitor: %03d direct match %s", seq, oh)
+		m.c.Log.Debugf("monitor: %03d direct match %s", seq, oh)
 		if remove := match.cb(m.bestHash, pos[0], int(pos[1]), int(pos[2]), false); remove {
 			delete(m.subs, match.id)
 		}
 	}
-	log.Debugf("monitor: %03d subscribed %s", seq, oh)
+	m.c.Log.Debugf("monitor: %03d subscribed %s", seq, oh)
 	m.watched[oh] = append(m.watched[oh], seq)
 	return seq
 }

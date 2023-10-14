@@ -132,16 +132,12 @@ func (r OperationResult) TicketUpdates() []TicketUpdate {
 func (r OperationResult) BigmapEvents() micheline.BigmapEvents {
 	if r.LazyStorageDiff != nil {
 		res := make(micheline.LazyEvents, 0)
-		if err := json.Unmarshal(r.LazyStorageDiff, &res); err != nil {
-			log.Debugf("rpc: lazy decode: %v", err)
-		}
+		_ = json.Unmarshal(r.LazyStorageDiff, &res)
 		return res.BigmapEvents()
 	}
 	if r.BigmapDiff != nil {
 		res := make(micheline.BigmapEvents, 0)
-		if err := json.Unmarshal(r.BigmapDiff, &res); err != nil {
-			log.Debugf("rpc: bigmap decode: %v", err)
-		}
+		_ = json.Unmarshal(r.BigmapDiff, &res)
 		return res
 	}
 	return nil
