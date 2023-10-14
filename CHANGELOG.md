@@ -1,5 +1,11 @@
 # Changelog
 
+## unreleased
+
+* block observer multiple subscriptions for the same op hash
+* block observer support block subscriptions (use zero op hash)
+* new Micheline prim marshaler (type + Go map[string]any -> prim tree)
+
 ## v1.17.2
 
 * accept non-manager ops as successful

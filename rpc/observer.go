@@ -14,8 +14,6 @@ import (
 // WIP: interface may change
 //
 // TODO:
-// - support multiple subscriptions (funcs) for the same op hash
-// - support block subscriptions (to connect a BlockObserver for full blocks + reorgs)
 // - support AdressObserver with address subscription filter
 // - disable events/polling when no subscriber exists
 // - handle reorgs (inclusion may switch to a different block hash)
@@ -31,7 +29,7 @@ type observerSubscription struct {
 
 type Observer struct {
 	subs       map[int]*observerSubscription
-	watched    map[tezos.OpHash]int
+	watched    map[tezos.OpHash][]int
 	recent     map[tezos.OpHash][3]int64
 	seq        int
 	once       sync.Once
@@ -48,7 +46,7 @@ func NewObserver() *Observer {
 	ctx, cancel := context.WithCancel(context.Background())
 	m := &Observer{
 		subs:     make(map[int]*observerSubscription),
-		watched:  make(map[tezos.OpHash]int),
+		watched:  make(map[tezos.OpHash][]int),
 		recent:   make(map[tezos.OpHash][3]int64),
 		minDelay: tezos.DefaultParams.MinimalBlockDelay,
 		ctx:      ctx,
@@ -67,7 +65,7 @@ func (m *Observer) Close() {
 	defer m.mu.Unlock()
 	m.cancel()
 	m.subs = make(map[int]*observerSubscription)
-	m.watched = make(map[tezos.OpHash]int)
+	m.watched = make(map[tezos.OpHash][]int)
 	m.recent = make(map[tezos.OpHash][3]int64)
 }
 
@@ -81,14 +79,15 @@ func (m *Observer) Subscribe(oh tezos.OpHash, cb ObserverCallback) int {
 		cb: cb,
 		oh: oh,
 	}
-	m.watched[oh] = seq
-	log.Debugf("monitor: %03d subscribed %s", seq, oh)
 	if pos, ok := m.recent[oh]; ok {
 		match := m.subs[seq]
+		log.Debugf("monitor: %03d direct match %s", seq, oh)
 		if remove := match.cb(m.bestHash, pos[0], int(pos[1]), int(pos[2]), false); remove {
 			delete(m.subs, match.id)
 		}
 	}
+	log.Debugf("monitor: %03d subscribed %s", seq, oh)
+	m.watched[oh] = append(m.watched[oh], seq)
 	return seq
 }
 
@@ -97,9 +96,24 @@ func (m *Observer) Unsubscribe(id int) {
 	defer m.mu.Unlock()
 	req, ok := m.subs[id]
 	if ok {
-		delete(m.watched, req.oh)
+		m.removeWatcher(req.oh, id)
 		delete(m.subs, id)
 		log.Debugf("monitor: %03d unsubscribed %s", id, req.oh)
+	}
+}
+
+func (m *Observer) removeWatcher(oh tezos.OpHash, id int) {
+	n := 0
+	for _, v := range m.watched[oh] {
+		if v != id {
+			m.watched[oh][n] = v
+			n++
+		}
+	}
+	if n == 0 {
+		delete(m.watched, oh)
+	} else {
+		m.watched[oh] = m.watched[oh][:n]
 	}
 }
 
@@ -186,7 +200,7 @@ func (m *Observer) listenBlocks() {
 			headBlock = head.Hash.Clone()
 			headHeight = head.Level
 		} else {
-			// poll mode: check every 30sec
+			// poll mode: check every n sec
 			head, err := m.c.GetTipHeader(m.ctx)
 			if err != nil {
 				// wait 5 sec, but also return on close
@@ -222,28 +236,53 @@ func (m *Observer) listenBlocks() {
 
 		// TODO: check for reorg and gaps
 
-		// callback for all previous matches
+		// handle block watchers
 		m.mu.Lock()
+		for _, id := range m.watched[tezos.ZeroOpHash] {
+			sub, ok := m.subs[id]
+			if !ok {
+				m.removeWatcher(tezos.ZeroOpHash, id)
+				continue
+			}
+			if remove := sub.cb(headBlock, headHeight, -1, -1, false); remove {
+				delete(m.subs, id)
+				m.removeWatcher(tezos.ZeroOpHash, id)
+			}
+		}
+
+		// callback for all previous matches who have not yet unregistered (i.e. waiting for
+		// additional confirmations)
 		for _, v := range m.subs {
 			if v.matched {
 				log.Debugf("monitor: signal n-th match for %d %s", v.id, v.oh)
 				if remove := v.cb(headBlock, -1, -1, -1, false); remove {
 					delete(m.subs, v.id)
+					m.removeWatcher(v.oh, v.id)
 				}
 			}
-		}
-		m.mu.Unlock()
-
-		// pull block ops and fan-out matches
-		ohs, err := m.c.GetBlockOperationHashes(m.ctx, headBlock)
-		if err != nil {
-			log.Warnf("monitor: cannot fetch block ops: %v", err)
-			continue
 		}
 		// clear recent op hashes
 		for n := range m.recent {
 			delete(m.recent, n)
 		}
+
+		numSubs := len(m.subs)
+		m.mu.Unlock()
+
+		// pull block ops when subs exist
+		var (
+			ohs [][]tezos.OpHash
+			err error
+		)
+		if numSubs > 0 {
+			ohs, err = m.c.GetBlockOperationHashes(m.ctx, headBlock)
+			if err != nil {
+				log.Warnf("monitor: cannot fetch block ops: %v", err)
+				continue
+			}
+		}
+
+		// fan-out matches
 		m.mu.Lock()
 		for l, list := range ohs {
 			for n, h := range list {
@@ -251,30 +290,35 @@ func (m *Observer) listenBlocks() {
 				m.recent[h] = [3]int64{headHeight, int64(l), int64(n)}
 
 				// match op hash against subs
-				id, ok := m.watched[h]
-				if !ok {
-					log.Debugf("monitor: --- !! %s", h)
-					continue
-				}
-				match, ok := m.subs[id]
+				ids, ok := m.watched[h]
 				if !ok {
 					log.Debugf("monitor: --- !! %s", h)
 					continue
 				}
 
-				// cross check hash to guard against hash collisions
-				if !match.oh.Equal(h) {
-					log.Debugf("monitor: %03d != %s", id, h)
-					continue
+				// handle all subscriptions for this op hash
+				var removed []*observerSubscription
+				for _, id := range ids {
+					sub, ok := m.subs[id]
+					if !ok {
+						log.Debugf("monitor: --- !! %s", h)
+						continue
+					}
+
+					log.Debugf("monitor: matched %d %s", sub.id, sub.oh)
+
+					// callback
+					if remove := sub.cb(headBlock, headHeight, l, n, false); remove {
+						delete(m.subs, sub.id)
+						removed = append(removed, sub)
+					} else {
+						sub.matched = true
+					}
 				}
 
-				log.Debugf("monitor: matched %d %s", match.id, match.oh)
-
-				// callback
-				if remove := match.cb(headBlock, headHeight, l, n, false); remove {
-					delete(m.subs, match.id)
-				} else {
-					match.matched = true
+				// remove deleted subs from watch list
+				for _, sub := range removed {
+					m.removeWatcher(sub.oh, sub.id)
 				}
 			}
 		}
