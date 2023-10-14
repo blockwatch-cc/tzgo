@@ -150,14 +150,16 @@ func (p *Params) WithNetwork(n string) *Params {
 }
 
 func (p *Params) WithDeployment(d Deployment) *Params {
-	p.WithProtocol(d.Protocol)
-	p.StartOffset = d.StartOffset
-	p.StartHeight = d.StartHeight
-	p.EndHeight = d.EndHeight
-	p.StartCycle = d.StartCycle
-	p.PreservedCycles = d.PreservedCycles
-	p.BlocksPerCycle = d.BlocksPerCycle
-	p.BlocksPerSnapshot = d.BlocksPerSnapshot
+	if d.Protocol.IsValid() {
+		p.WithProtocol(d.Protocol)
+		p.StartOffset = d.StartOffset
+		p.StartHeight = d.StartHeight
+		p.EndHeight = d.EndHeight
+		p.StartCycle = d.StartCycle
+		p.PreservedCycles = d.PreservedCycles
+		p.BlocksPerCycle = d.BlocksPerCycle
+		p.BlocksPerSnapshot = d.BlocksPerSnapshot
+	}
 	return p
 }
 
