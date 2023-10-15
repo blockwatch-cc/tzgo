@@ -974,6 +974,14 @@ func (p Prim) Value(as OpCode) interface{} {
 	return p
 }
 
+func (p Prim) MarshalYAML() (any, error) {
+	buf, err := p.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return string(buf), nil
+}
+
 func (p Prim) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, 4096))
 	p.EncodeJSON(buf)
