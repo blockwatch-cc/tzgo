@@ -1,0 +1,25 @@
+version: alpha
+
+accounts:
+  - name: tether_admin
+    id: 1
+
+pipelines:
+  tether-deploy:
+  - task: deploy
+    alias: tether_token
+    script:
+      url: https://rpc.tzstats.com/chains/main/blocks/2469331/operations/3/18#contents.0.script
+      storage:
+        patch:
+        - path: 0/0/0/0/0
+          type: address
+          value: $tether_admin
+          optimized: false
+
+  - task: call
+    source: $tether_admin
+    destination: $tether_token
+    params:
+      entrypoint: add_token
+      url: https://rpc.tzstats.com/chains/main/blocks/2491995/operations/3/11#contents.0.metadata.internal_operation_results.0.parameters.value

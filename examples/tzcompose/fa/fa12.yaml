@@ -1,0 +1,116 @@
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+  - name: account-2
+    id: 2
+
+pipelines:
+  fa-12-deploy:
+  - task: deploy
+    alias: nyc-ledger
+    script:
+      code:
+        file: fa12_code.json
+      storage:
+        args:
+          administrator: $base
+          balances: {}
+          paused: false
+          totalSupply: 0
+          metadata:
+            "": ipfs://QmRukXXDAGV3zHsuadHinADaxSP17xWbnZVX6fD9RRobcM
+          token_metadata:
+            "0":
+              "0": 0
+              "1":
+                decimals: 6
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin
+                symbol: NYC
+
+  fa12-mint:
+  - task: call
+    destination: $nyc-ledger
+    params:
+      entrypoint: mint
+      args:
+        address: $account-1
+        value: 100_000_001
+
+  fa12-burn:
+  - task: call
+    destination: $nyc-ledger
+    params:
+      entrypoint: burn
+      args:
+        address: $account-1
+        value: 1
+
+  fund-accounts:
+  - task: transfer
+    destination: $account-1
+    amount: 100_000_000
+  - task: transfer
+    destination: $account-2
+    amount: 100_000_000
+
+  fa12-transfer-call:
+  - task: call
+    source: $account-1
+    destination: $nyc-ledger
+    params:
+      entrypoint: transfer
+      args:
+        from: $account-1
+        to: $account-2
+        value: 1_000_000
+
+  fa12-transfer:
+  - task: token_transfer
+    source: $account-1
+    destination: $nyc-ledger
+    args:
+      standard: fa12
+      from: $account-1
+      to: $account-2
+      amount: 1_000_000
+
+  fa12-approve-call:
+  - task: call
+    source: $account-1
+    destination: $nyc-ledger
+    params:
+      entrypoint: approve
+      args:
+        address: $account-1
+        spender: $account-2
+        value: 1_000_000
+
+  fa12-transfer-approved:
+  - task: token_transfer
+    source: $account-2
+    destination: $nyc-ledger
+    args:
+      standard: fa12
+      from: $account-1
+      to: $account-2
+      amount: 1_000_000
+
+  fa12-batch-transfer:
+  - task: token_transfer
+    source: $account-1
+    destination: $nyc-ledger
+    args:
+      standard: fa12
+      from: $account-1
+      receivers:
+      - to: $account-1
+        amount: 1
+      - to: $account-1
+        amount: 1
+      - to: $account-2
+        amount: 1
+      - to: $account-2
+        amount: 1

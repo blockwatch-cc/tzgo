@@ -1,0 +1,57 @@
+version: alpha
+
+accounts:
+  - name: baker-1
+    id: 1
+  - name: staker-1
+    id: 2
+
+pipelines:
+  double-endorse-test-1:
+  - task: transfer
+    destination: $baker-1
+    amount: 1_000_000_000_000 # in mutez = 1 million tez
+  - task: transfer
+    destination: $staker-1
+    amount: 1_000_000_000 # 1 thousand tez
+  - task: register_baker
+    source: $baker-1
+  - task: stake
+    source: $baker-1
+    amount: 500_000_000_000
+  - task: delegate
+    source: $staker-1
+    destination: $baker-1
+  - task: stake
+    source: $staker-1
+    amount: 500_000_000
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  - task: wait
+    for: cycle
+    value: +1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  - task: wait
+    for: cycle
+    value: +1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  - task: double_endorse
+    source: $baker-1
+  - task: double_endorse
+    source: $baker-1
+  - task: double_endorse
+    source: $baker-1

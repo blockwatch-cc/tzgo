@@ -1,0 +1,266 @@
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+  - name: account-2
+    id: 2
+
+pipelines:
+  fa2-deploy:
+  - task: deploy
+    alias: fa2-nft-ledger
+    script:
+      code:
+        file: fa2_nft.json
+      storage:
+        args:
+          ledger:
+            "0": $account-1
+            "1": $account-1
+            "2": $account-1
+            "3": $account-1
+            "4": $account-1
+          operators: {}
+          token_ids:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          metadata:
+            "": ipfs://QmRukXXDAGV3zHsuadHinADaxSP17xWbnZVX6fD9RRobcM
+          token_metadata:
+            "0":
+              token_id: 0
+              token_info:
+                decimals: 0
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin \#1
+                symbol: NYC-1
+            "1":
+              token_id: 1
+              token_info:
+                decimals: 0
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin \#2
+                symbol: NYC-2
+            "2":
+              token_id: 2
+              token_info:
+                decimals: 0
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin \#3
+                symbol: NYC-3
+            "3":
+              token_id: 3
+              token_info:
+                decimals: 0
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin \#4
+                symbol: NYC-4
+            "4":
+              token_id: 4
+              token_info:
+                decimals: 0
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin \#15
+                symbol: NYC-5
+
+  - task: deploy
+    alias: fa2-single-ledger
+    script:
+      code:
+        file: fa2_single_asset.json
+      storage:
+        args:
+          ledger:
+            $account-1: 21_000_000_000_000
+          operators: {}
+          owners:
+            - $account-1
+          metadata:
+            "": ipfs://QmRukXXDAGV3zHsuadHinADaxSP17xWbnZVX6fD9RRobcM
+          token_metadata:
+            "0":
+              token_id: 0
+              token_info:
+                decimals: 6
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin
+                symbol: NYC
+
+  - task: deploy
+    alias: fa2-multi-ledger
+    script:
+      code:
+        file: fa2_multi_asset.json
+      storage:
+        args:
+          ledger:
+            $account-1,0: 21_000_000_000_000
+          operators: {}
+          owner_token_ids:
+            - "0": $account-1
+              "1": 0
+          token_ids:
+            - 0
+          metadata:
+            "": ipfs://QmRukXXDAGV3zHsuadHinADaxSP17xWbnZVX6fD9RRobcM
+          token_metadata:
+            "0":
+              token_id: 0
+              token_info:
+                decimals: 6
+                icon: ipfs://Qmf8cHKCSruEQkguzyahGfAQjEDzm5kZLhYNJuyt1uyVqL
+                name: New York Coin
+                symbol: NYC
+
+  fa2-operators:
+  - task: call
+    source: $account-1
+    destination: $fa2-nft-ledger
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $account-2
+          token_id: 0
+  - task: call
+    source: $account-1
+    destination: $fa2-single-ledger
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $account-2
+          token_id: 0
+  - task: call
+    source: $account-1
+    destination: $fa2-multi-ledger
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $account-2
+          token_id: 0
+
+  fa2-transfer:
+  - task: call
+    source: $account-1
+    destination: $fa2-nft-ledger
+    params:
+      entrypoint: transfer
+      args:
+        - from_: $account-1
+          txs:
+          - to_: $account-2
+            token_id: 0
+            amount: 1
+  - task: call
+    source: $account-1
+    destination: $fa2-single-ledger
+    params:
+      entrypoint: transfer
+      args:
+        - from_: $account-1
+          txs:
+          - to_: $account-2
+            token_id: 0
+            amount: 1
+  - task: call
+    source: $account-1
+    destination: $fa2-multi-ledger
+    params:
+      entrypoint: transfer
+      args:
+        - from_: $account-1
+          txs:
+          - to_: $account-2
+            token_id: 0
+            amount: 1
+
+  fa2-transfer-task:
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-nft-ledger
+    args:
+      from: $account-1
+      to: $account-2
+      standard: fa2
+      token_id: 1
+      amount: 1
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-single-ledger
+    args:
+      from: $account-1
+      to: $account-2
+      standard: fa2
+      token_id: 0
+      amount: 1
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-multi-ledger
+    args:
+      from: $account-1
+      to: $account-2
+      standard: fa2
+      token_id: 0
+      amount: 1
+
+  fa2-batch-transfer:
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-nft-ledger
+    args:
+      standard: fa2
+      from: $account-1
+      receivers:
+      - to: $account-2
+        amount: 1
+        token_id: 2
+      - to: $account-2
+        amount: 1
+        token_id: 3
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-single-ledger
+    args:
+      standard: fa2
+      from: $account-1
+      receivers:
+      - to: $account-1
+        amount: 1
+        token_id: 0
+      - to: $account-1
+        amount: 1
+        token_id: 0
+      - to: $account-2
+        amount: 1
+        token_id: 0
+      - to: $account-2
+        amount: 1
+        token_id: 0
+  - task: token_transfer
+    source: $account-1
+    destination: $fa2-multi-ledger
+    args:
+      standard: fa2
+      from: $account-1
+      receivers:
+      - to: $account-1
+        amount: 1
+        token_id: 0
+      - to: $account-1
+        amount: 1
+        token_id: 0
+      - to: $account-2
+        amount: 1
+        token_id: 0
+      - to: $account-2
+        amount: 1
+        token_id: 0

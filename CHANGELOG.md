@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* add tzcompose alpha release
 * dedicated logger instance per client
 * block observer multiple subscriptions for the same op hash
 * block observer support block subscriptions (use zero op hash)

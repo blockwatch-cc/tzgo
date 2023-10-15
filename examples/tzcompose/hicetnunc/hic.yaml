@@ -1,0 +1,110 @@
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+
+pipelines:
+  hic-dao-token:
+    - task: deploy
+      alias: hic-dao-token
+      script:
+        file: hic-dao.json
+        storage:
+          args:
+            administrator: $base
+            all_tokens: 0
+            ledger: {}
+            metadata:
+              "": ipfs://Qmdao8MKmAjkyssQQDLmQRthiXhX1TG4QndZV1kNwoB1SR
+            operators: {}
+            paused: false
+            token_metadata:
+              "0":
+                token_id: 0
+                token_info:
+                  "": 050100000035697066733a2f2f516d535673667748386573375572326571746f3968567063643264665741536d45614e7854507063796d754a7a67
+
+  hic-ledger:
+    - task: deploy
+      alias: hic-ledger
+      script:
+        code:
+          file: hic-ledger.json#code
+        storage:
+          args:
+            administrator: $base
+            all_tokens: 0
+            ledger: {}
+            metadata:
+              "": ipfs://QmSBc8QuynU7bArUGtjwCRhZUbJyZQArrczKnqM7hZPtfV
+            operators: {}
+            paused: false
+            token_metadata: {}
+
+  hic-market:
+    - task: deploy
+      alias: hic-market
+      script:
+        code:
+          file: hic-market.json
+        storage:
+          args:
+            curate: $base
+            genesis: $now
+            hdao: $hic-dao-token
+            locked: false
+            manager: $base
+            metadata:
+              "": ipfs://QmeipiJCBddE8eHQQHSHFdLPbMtNKxPCMFeeVjsM57q86o
+            royalties: {}
+            size: 0
+            swap_id: 0
+            swaps: {}
+            objkt: $hic-ledger
+            objkt_id: 0
+            xtz_per_objkt: 0
+    - task: call
+      destination: $hic-ledger
+      params:
+        entrypoint: set_administrator
+        args:
+          "": $hic-market
+
+  teia-market:
+    - task: deploy
+      alias: teia-market
+      script:
+        code:
+          file: teia-code.json
+        storage:
+          file: teia-storage.json
+          patch:
+          - key: manager
+            type: address
+            value: $base
+            optimized: false
+          - key: fee_recipient
+            type: address
+            value: $base
+            optimized: false
+          - path: 0/0/0/0/0
+            type: address
+            value: $hic-ledger
+            optimized: false
+
+  hic-mint:
+  - task: transfer
+    destination: $account-1
+    amount: 100_000_000
+  - task: call
+    destination: $hic-market
+    source: $account-1
+    params:
+      entrypoint: mint_OBJKT
+      args:
+        address: $account-1
+        amount: 1
+        metadata: ipfs://QmeaqRBUiw4cJiNKEcW2noc7egLd5GgBqLcHHqUhauJAHN
+        royalties: 150
+
