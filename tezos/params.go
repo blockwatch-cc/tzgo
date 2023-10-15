@@ -150,7 +150,7 @@ func (p *Params) WithNetwork(n string) *Params {
 }
 
 func (p *Params) WithDeployment(d Deployment) *Params {
-	if d.Protocol.IsValid() {
+	if d.BlocksPerCycle > 0 {
 		p.WithProtocol(d.Protocol)
 		p.StartOffset = d.StartOffset
 		p.StartHeight = d.StartHeight
