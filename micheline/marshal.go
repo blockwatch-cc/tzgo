@@ -182,6 +182,9 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		return NewPair(prims[0], prims[1]), nil
 
 	case "list", "set":
+		if v == nil {
+			return NewSeq(), nil
+		}
 		listVals, ok := v.([]any)
 		if !ok {
 			// use nested value for named lists
@@ -209,15 +212,20 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		return NewSeq(prims...), nil
 
 	case "map", "big_map":
+		if v == nil {
+			return NewMap(), nil
+		}
 		vals, ok := v.(map[string]any)
 		if !ok {
 			return InvalidPrim, fmt.Errorf("invalid map type %T on field %s, must be map[string]any", v, t.Name)
 		}
 		// for top-level maps (in entrypoints etc) try if map name is part of value tree
-		if m, ok := vals[t.Name]; ok {
-			vals, ok = m.(map[string]any)
-			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid map type %T on field %s, must be map[string]any", m, t.Name)
+		if depth == 0 {
+			if m, ok := vals[t.Name]; ok {
+				vals, ok = m.(map[string]any)
+				if !ok {
+					return InvalidPrim, fmt.Errorf("invalid map type %T on field %s, must be map[string]any", m, t.Name)
+				}
 			}
 		}
 		prims := []Prim{}
@@ -234,8 +242,19 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		}
 		return NewMap(prims...), nil
 
-	case "lambda", "ticket":
-		return InvalidPrim, fmt.Errorf("unsupported type %s on field %s", t.Type, t.Name)
+	case "lambda":
+		switch val := v.(type) {
+		case string:
+			var p Prim
+			err := p.UnmarshalJSON([]byte(val))
+			return p, err
+		case PrimMarshaler:
+			return val.MarshalPrim()
+		case Prim:
+			return val, nil
+		default:
+			return InvalidPrim, fmt.Errorf("unsupported type %T for lambda on field %s", v, t.Name)
+		}
 
 	default:
 		// scalar
@@ -321,7 +340,9 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			return NewString(val.String()), nil
 		case tezos.ChainIdHash:
 			return NewString(val.String()), nil
+
 		default:
+			// TODO
 			return InvalidPrim, fmt.Errorf("unsupported type %T for opcode %s on field %s", v, t.Type, t.Name)
 		}
 	}
