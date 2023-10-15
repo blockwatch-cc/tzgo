@@ -138,7 +138,7 @@ func fetchOps(ctx Context, cfg CloneConfig) ([]Op, error) {
 	case CloneModeBinary:
 		err = encodeBinary(ops)
 	case CloneModeUrl:
-		err = encodeUrl(ops, ctx.url)
+		encodeUrl(ops, ctx.url)
 	}
 	if err != nil {
 		return nil, err
@@ -234,7 +234,7 @@ func encodeBinary(ops []Op) error {
 	return nil
 }
 
-func encodeUrl(ops []Op, host string) error {
+func encodeUrl(ops []Op, host string) {
 	for i, op := range ops {
 		switch op.Type {
 		case "origination":
@@ -277,7 +277,6 @@ func encodeUrl(ops []Op, host string) error {
 			}
 		}
 	}
-	return nil
 }
 
 func encodeArgs(ops []Op) error {

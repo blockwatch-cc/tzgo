@@ -60,7 +60,7 @@ func (c *PipelineCache) Load(hash uint64, reset bool) error {
 		if err != nil {
 			return fmt.Errorf("parsing cache file %016x: %v", hash, err)
 		}
-		c.last = int(num)
+		c.last = num
 	}
 	return nil
 }

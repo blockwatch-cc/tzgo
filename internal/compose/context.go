@@ -210,7 +210,7 @@ func (c *Context) ResolveInt64(val any) (i int64, err error) {
 	case int:
 		i = int64(v)
 	case int64:
-		i = int64(v)
+		i = v
 	case uint:
 		i = int64(v)
 	case uint64:
@@ -232,7 +232,7 @@ func (c *Context) ResolveZ(val any) (z tezos.Z, err error) {
 	case int:
 		z = tezos.NewZ(int64(v))
 	case int64:
-		z = tezos.NewZ(int64(v))
+		z = tezos.NewZ(v)
 	case uint:
 		z = tezos.NewZ(int64(v))
 	case uint64:
