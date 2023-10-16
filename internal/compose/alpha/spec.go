@@ -43,7 +43,7 @@ func (s Spec) Validate(ctx compose.Context) error {
 
 type Account struct {
 	Name string `yaml:"name"`
-	Id   int    `yaml:"id,omitempty"`
+	Id   uint   `yaml:"id,omitempty"`
 }
 
 type Pipeline struct {
@@ -98,26 +98,6 @@ func (l PipelineList) MarshalYAML() (any, error) {
 	return node, nil
 }
 
-// func (l Pipeline) MarshalYAML() (any, error) {
-// 	// manualy create a named map node
-// 	node := &yaml.Node{
-// 		Kind: yaml.MappingNode,
-// 		Tag:  "!!map",
-// 		Content: []*yaml.Node{
-// 			{
-// 				Kind:  yaml.ScalarNode,
-// 				Tag:   "!!str",
-// 				Value: l.Name,
-// 			},
-// 			{},
-// 		},
-// 	}
-// 	if err := node.Content[1].Encode(l.Tasks); err != nil {
-// 		return nil, err
-// 	}
-// 	return node, nil
-// }
-
 func (p Pipeline) Hash64() uint64 {
 	h := fnv.New64()
 	enc := json.NewEncoder(h)
@@ -166,7 +146,7 @@ func (t Task) Validate(ctx compose.Context) error {
 			return fmt.Errorf("params: %v", err)
 		}
 	}
-	if t.Alias != "" {
+	if _, ok := ctx.Variables[t.Alias]; !ok && t.Alias != "" {
 		ctx.AddVariable(t.Alias, tezos.ZeroAddress.String())
 	}
 	if t.Script != nil {
@@ -185,8 +165,8 @@ func (t Task) Validate(ctx compose.Context) error {
 			if v.Contents != nil {
 				return fmt.Errorf("nested contents not allowed")
 			}
-			if v.Source != "" {
-				return fmt.Errorf("source not allowed in batch contents")
+			if v.Source != "" && v.Source != t.Source {
+				return fmt.Errorf("switching source is not allowed in batch contents")
 			}
 			if err := v.Validate(ctx); err != nil {
 				return fmt.Errorf("contents: %v", err)

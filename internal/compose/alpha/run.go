@@ -21,7 +21,7 @@ func (e *Engine) Run(ctx compose.Context, fname string) error {
 	}
 	ctx.WithPath(filepath.Dir(fname))
 	for _, a := range spec.Accounts {
-		if _, err := ctx.MakeAccount(a.Id, a.Name); err != nil {
+		if _, err := ctx.MakeAccount(int(a.Id), a.Name); err != nil {
 			return err
 		}
 	}
@@ -99,7 +99,7 @@ func (e *Engine) Validate(ctx compose.Context, fname string) error {
 	}
 	ctx.WithPath(filepath.Dir(fname))
 	for _, a := range spec.Accounts {
-		if _, err := ctx.MakeAccount(a.Id, a.Name); err != nil {
+		if _, err := ctx.MakeAccount(int(a.Id), a.Name); err != nil {
 			return err
 		}
 	}
@@ -119,8 +119,14 @@ func (e *Engine) Validate(ctx compose.Context, fname string) error {
 			if err := t.Validate(ctx, task); err != nil {
 				return fmt.Errorf("%s[%d] (%s): %v", p.Name, i, task.Type, err)
 			}
-			if task.Alias != "" {
-				ctx.AddVariable(task.Alias, ctx.BaseAccount.Address.String())
+			if task.Type == "deploy" && task.Alias != "" {
+				script, err := ParseScript(ctx, task)
+				if err != nil {
+					return fmt.Errorf("parse script: %v", err)
+				}
+				acc, _ := ctx.MakeAccount(-2, task.Alias)
+				ctx.AddVariable(task.Alias, acc.Address.String())
+				ctx.Contracts[acc.Address] = script
 			}
 		}
 	}

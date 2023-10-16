@@ -48,6 +48,7 @@ func (e *Engine) Clone(ctx compose.Context, ops []compose.Op, cfg compose.CloneC
 			spec.Pipelines[0].Tasks = append(spec.Pipelines[0].Tasks, Task{
 				Type:   "deploy",
 				Alias:  cfg.Name,
+				Source: op.Sender,
 				Amount: uint64(op.Amount * 1_000_000),
 				Script: s,
 			})
@@ -73,6 +74,7 @@ func (e *Engine) Clone(ctx compose.Context, ops []compose.Op, cfg compose.CloneC
 			}
 			spec.Pipelines[0].Tasks = append(spec.Pipelines[0].Tasks, Task{
 				Type:        typ,
+				Source:      op.Sender,
 				Destination: "$" + cfg.Name,
 				Amount:      uint64(op.Amount * 1_000_000),
 				Params:      p,

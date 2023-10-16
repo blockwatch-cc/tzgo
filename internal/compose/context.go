@@ -124,6 +124,8 @@ func (c *Context) Init() (err error) {
 		return
 	}
 	c.Log.Infof("Using base account %s", c.BaseAccount.Address)
+	c.AddVariable("zero", tezos.ZeroAddress.String())
+	c.AddVariable("burn", tezos.BurnAddress.String())
 	c.client, err = rpc.NewClient(c.url, nil)
 	if err != nil {
 		return

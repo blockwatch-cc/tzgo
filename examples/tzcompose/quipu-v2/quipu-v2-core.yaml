@@ -1,0 +1,446 @@
+# Quipuswap v2
+# https://github.com/madfish-solutions/quipuswap-core-v
+#
+# Mainnet
+# core     KT1J8Hr3BP8bpbfmgGpRPoC9nAMSYtStZG43
+# auction  KT1M8tp17Y2GWsYrZDBRXqdRNawgwyFDzmp4
+# proxy    KT1LyF39wwaEWhwC8KyeC46SWtvmVi31iMd1
+# registry KT1F8oyjko98F1L4323zbtBZiREZDcSQPJDi
+#
+# Error Codes
+# https://github.com/madfish-solutions/quipuswap-core-v2/blob/684f17d42293034764fd2ff70ce1075b912406da/contracts/partial/errors.ligo#L10
+#
+# DexCore
+# 100: err_unknown_func
+# 101: err_func_set
+# 102: err_high_func_index
+# 103: err_cant_unpack_lambda
+# 104: err_wrong_pair_order
+# 105: err_zero_a_in
+# 106: err_zero_b_in
+# 107: err_pair_listed
+# 108: err_pair_not_listed
+# 109: err_no_liquidity
+# 110: err_no_shares_expected
+# 111: err_low_token_a_in
+# 112: err_low_token_b_in
+# 113: err_bucket_404
+# 114: err_insufficient_liquidity
+# 115: err_dust_out
+# 116: err_high_min_out
+# 117: err_empty_route
+# 118: err_zero_in
+# 119: err_wrong_route
+# 120: err_wrong_tez_amount
+# 121: err_bucket_pour_out_entrypoint_404
+# 122: err_bucket_pour_over_entrypoint_404
+# 123: err_bucket_ban_baker_entrypoint_404
+# 124: err_bucket_vote_entrypoint_404
+# 125: err_bucket_is_banned_baker_view_404
+# 126: err_flash_swaps_proxy_default_entrypoint_404
+# 127: err_bucket_get_tez_balance_view_404
+# 128: err_flash_swap_callback_404
+# 129: err_wrong_flash_swap_returns
+# 130: err_can_not_refer_yourself
+# 131: err_bucket_withdraw_rewards_entrypoint_404
+# 133: err_bucket_get_user_candidate_view_404
+# 134: err_launch_callback_404
+# 135: err_auction_receive_fee_entrypoint_404
+# 136: err_reentrancy
+# 137: err_close_entrypoint_404
+# 138: err_not_entered
+# 140: err_can_not_perform_voting
+# 141: err_wrong_reserves_state
+# 142: err_no_pair_id
+# 143: err_action_outdated
+# 144: err_bucket_claim_entrypoint_404
+# 145: err_cant_claim_tez_fees_by_this_ep
+#
+# Bucket
+# 200: err_baker_registry_validate_entrypoint_404
+# 201: err_dex_core_get_collecting_period_view_404
+# 202: err_dex_core_get_baker_rate_view_404
+# 203: err_nothing_to_claim
+#
+# Auction
+# 300: err_unknown_func
+# 301: err_cant_unpack_lambda
+# 302: err_high_func_index
+# 303: err_func_set
+# 304: err_auction_not_found
+# 305: err_whitelisted_token
+# 306: err_not_whitelisted_token
+# 307: err_insufficient_balance
+# 308: err_low_bid
+# 309: err_auction_finished
+# 310: err_auction_not_finished
+# 311: err_wrong_auction_duration
+# 312: err_auctioned_amount_too_low
+# 313: err_wrong_auction_extension
+# 314: err_wrong_extension_trigger
+#
+# AuctionMock
+# 500: err_unknown_token
+#
+# Common
+# 400: err_not_admin
+# 401: err_not_pending_admin
+# 402: err_not_manager
+# 403: err_not_dex_core
+# 404: err_fa12_transfer_entrypoint_404
+# 405: err_fa2_transfer_entrypoint_404
+# 406: err_not_a_nat
+# 407: err_wrong_token_type
+# 408: err_div_by_zero
+# 409: err_contract_404
+# 410: err_bucket_fill_entrypoint_404
+# 411: err_pending_admin_is_none
+# 412: err_non_payable_entrypoint
+# 413: err_rate_too_high
+
+
+version: alpha
+
+# Deploys and sets up all contracts around the Quipuswap V2 DEX
+# and loads entrypoint implementations (lambdas) into dex core.
+pipelines:
+
+  quipu_baker_registry:
+  - task: deploy
+    alias: quipu_baker_registry
+    script:
+      code:
+        file: baker_registry.json#michelson
+      storage:
+        args:
+          "": {}
+
+  quipu_dex_core:
+  - task: deploy
+    alias: quipu_dex_core
+    script:
+      code:
+        file: dex_core.json#michelson
+      storage:
+        args:
+          storage:
+            dex_core_lambdas: null
+            metadata:
+              "": tezos-storage:core
+              core: '{"name":"QuipuSwap Exchange 2.0","version":"v1.0.0","description":"Decentralized exchange for the Tezos based-assets featured with flash loans and price oracle.","authors":["Madfish.Solutions <https://www.madfish.solutions>"],"source":{"tools":["Ligo","Flextesa"]},"homepage":"https://quipuswap.com","interfaces":["TZIP-016"],"errors":[{"error":{"string":"400"},"expansion":{"string":"Sender is not Admin."},"languages":["en"]},{"error":{"string":"401"},"expansion":{"string":"Sender is not Pending Admin."},"languages":["en"]},{"error":{"string":"402"},"expansion":{"string":"Sender is not Manager."},"languages":["en"]},{"error":{"string":"403"},"expansion":{"string":"Sender is not Dex Core"},"languages":["en"]},{"error":{"string":"404"},"expansion":{"string":"FA12: Transfer entrypoint not found."},"languages":["en"]},{"error":{"string":"405"},"expansion":{"string":"FA2: Transfer entrypoint not found."},"languages":["en"]},{"error":{"string":"406"},"expansion":{"string":"Value its not nat type."},"languages":["en"]},{"error":{"string":"407"},"expansion":{"string":"Wrong token type"},"languages":["en"]},{"error":{"string":"408"},"expansion":{"string":"Division by zero."},"languages":["en"]},{"error":{"string":"409"},"expansion":{"string":"Implict account not found."},"languages":["en"]},{"error":{"string":"410"},"expansion":{"string":"Bucket: Fill entrypoint not found."},"languages":["en"]},{"error":{"string":"411"},"expansion":{"string":"Pending admin is None."},"languages":["en"]},{"error":{"string":"412"},"expansion":{"string":"Non payable entrypoint."},"languages":["en"]},{"error":{"string":"413"},"expansion":{"string":"Rate too high."},"languages":["en"]},{"error":{"string":"100"},"expansion":{"string":"Lambda function that tried to call has not been set yet."},"languages":["en"]},{"error":{"string":"101"},"expansion":{"string":"Lambda function that tried to set has already been set."},"languages":["en"]},{"error":{"string":"102"},"expansion":{"string":"The Index of the lambda function you tried to set is greater than methods max index"},"languages":["en"]},{"error":{"string":"103"},"expansion":{"string":"Contract can''t unpack lambda function to corresponding type (broken lambda bytes)."},"languages":["en"]},{"error":{"string":"104"},"expansion":{"string":"Incorrect order of tokens in a pair."},"languages":["en"]},{"error":{"string":"105"},"expansion":{"string":"When creating a new pool, the initial amount of token A is 0."},"languages":["en"]},{"error":{"string":"106"},"expansion":{"string":"When creating a new pool, the initial amount of token B is 0."},"languages":["en"]},{"error":{"string":"107"},"expansion":{"string":"Pool already exists."},"languages":["en"]},{"error":{"string":"108"},"expansion":{"string":"Pair doesn''t exists"},"languages":["en"]},{"error":{"string":"109"},"expansion":{"string":"No liquidity in the pool"},"languages":["en"]},{"error":{"string":"110"},"expansion":{"string":"The amount of shares transferred is 0."},"languages":["en"]},{"error":{"string":"111"},"expansion":{"string":"Insufficient amount of token A."},"languages":["en"]},{"error":{"string":"112"},"expansion":{"string":"Insufficient amount of token B."},"languages":["en"]},{"error":{"string":"113"},"expansion":{"string":"Bucket address is None."},"languages":["en"]},null,{"error":{"string":"114"},"expansion":{"string":"Insufficient liquidity."},"languages":["en"]},{"error":{"string":"115"},"expansion":{"string":"The requested minimum amount of token A or B after the divest is 0."},"languages":["en"]},null,{"error":{"string":"116"},"expansion":{"string":"The requested minimum amount of token A or B too high."},"languages":["en"]},{"error":{"string":"117"},"expansion":{"string":"Empty route."},"languages":["en"]},null,{"error":{"string":"118"},"expansion":{"string":"Swapped amount is 0."},"languages":["en"]},{"error":{"string":"119"},"expansion":{"string":"Wrong swap route."},"languages":["en"]},null,{"error":{"string":"120"},"expansion":{"string":"The amount of XTZ transferred in the parameter and sent to the contract are mismatched."},"languages":["en"]},{"error":{"string":"121"},"expansion":{"string":"Bucket: Pour_out entrypoint not found."},"languages":["en"]},null,{"error":{"string":"122"},"expansion":{"string":"Bucket: Pour_over entrypoint not found."},"languages":["en"]},{"error":{"string":"123"},"expansion":{"string":"Bucket: Ban_baker entrypoint not found."},"languages":["en"]},{"error":{"string":"124"},"expansion":{"string":"Bucket: Vote entrypoint not found."},"languages":["en"]},{"error":{"string":"125"},"expansion":{"string":"Bucket: Is_banned_baker view method not found."},"languages":["en"]},{"error":{"string":"126"},"expansion":{"string":"Flash_swaps_proxy: Defualt entrypoint not found."},"languages":["en"]},{"error":{"string":"127"},"expansion":{"string":"Bucket: Get_tez_balance view method not found."},"languages":["en"]},{"error":{"string":"128"},"expansion":{"string":"DEX: Flash_swap_callback entrypoint not found."},"languages":["en"]},{"error":{"string":"129"},"expansion":{"string":"Wrong flash_swap returns."},"languages":["en"]},{"error":{"string":"130"},"expansion":{"string":"You can''t list yourself as a referrer."},"languages":["en"]},{"error":{"string":"131"},"expansion":{"string":"Bucket: Withdraw_rewards entrypoint not found."},"languages":["en"]},{"error":{"string":"133"},"expansion":{"string":"Bucket: Get_user_candidate view method not found."},"languages":["en"]},{"error":{"string":"134"},"expansion":{"string":"DEX: Launch_callback entrypoint not found."},"languages":["en"]},{"error":{"string":"135"},"expansion":{"string":"Auction: Receive_fee entrypoint not found."},"languages":["en"]},{"error":{"string":"136"},"expansion":{"string":"Reentrancy."},"languages":["en"]},{"error":{"string":"137"},"expansion":{"string":"DEX: Close entrypoint not found."},"languages":["en"]},{"error":{"string":"138"},"expansion":{"string":"Not entered."},"languages":["en"]},{"error":{"string":"140"},"expansion":{"string":"Voter balance is 0."},"languages":["en"]},{"error":{"string":"141"},"expansion":{"string":"Wrong reserves state."},"languages":["en"]},{"error":{"string":"142"},"expansion":{"string":"Pair ID is None."},"languages":["en"]},{"error":{"string":"143"},"expansion":{"string":"Action is outdated."},"languages":["en"]},{"error":{"string":"144"},"expansion":{"string":"Bucket: Claim_baker_fund entrypoint not found."},"languages":["en"]},{"error":{"string":"145"},"expansion":{"string":"Can''t claim interface fee on Tez."},"languages":["en"]}],"views":[{"name":"GetCounter","pure":true,"implementations":[{"michelsonStorageView":{"returnType":{"prim":"nat"},"code":[{"prim":"CAR"},{"prim":"GET","args":[{"int":"37"}]}]}}]},{"name":"GetDefaultExpiry","pure":true,"implementations":[{"michelsonStorageView":{"returnType":{"prim":"nat"},"code":[{"prim":"CAR"},{"prim":"GET","args":[{"int":"39"}]}]}}]}]}'
+            accounts: null
+            admin: $base
+            auction: $zero
+            auction_fee: null
+            auction_tez_fee: null
+            baker_rate_f: "500000000000000000"
+            baker_registry: $quipu_baker_registry
+            collecting_period: "60480"
+            default_expiry: "31564512"
+            entered: false
+            fees:
+              auction_fee: "750000000000000"
+              interface_fee: "500000000000000"
+              swap_fee: "2250000000000000"
+              withdraw_fee_reward: "0"
+            flash_swaps_proxy: $zero
+            interface_fee: null
+            interface_tez_fee: null
+            ledger: null
+            managers:
+              - $base
+            pairs: null
+            pending_admin: null
+            permits: null
+            permits_counter: "0"
+            token_metadata: null
+            token_to_id: null
+            tokens: null
+            tokens_count: "0"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 0
+          func_bytes: "@dex_core_lambdas.json#0"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 1
+          func_bytes: "@dex_core_lambdas.json#1"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 2
+          func_bytes: "@dex_core_lambdas.json#2"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 3
+          func_bytes: "@dex_core_lambdas.json#3"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 4
+          func_bytes: "@dex_core_lambdas.json#4"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 5
+          func_bytes: "@dex_core_lambdas.json#5"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 6
+          func_bytes: "@dex_core_lambdas.json#6"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 7
+          func_bytes: "@dex_core_lambdas.json#7"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 8
+          func_bytes: "@dex_core_lambdas.json#8"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 9
+          func_bytes: "@dex_core_lambdas.json#9"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 10
+          func_bytes: "@dex_core_lambdas.json#10"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 11
+          func_bytes: "@dex_core_lambdas.json#11"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 12
+          func_bytes: "@dex_core_lambdas.json#12"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 13
+          func_bytes: "@dex_core_lambdas.json#13"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 14
+          func_bytes: "@dex_core_lambdas.json#14"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 15
+          func_bytes: "@dex_core_lambdas.json#15"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 16
+          func_bytes: "@dex_core_lambdas.json#16"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 17
+          func_bytes: "@dex_core_lambdas.json#17"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 18
+          func_bytes: "@dex_core_lambdas.json#18"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 19
+          func_bytes: "@dex_core_lambdas.json#19"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 20
+          func_bytes: "@dex_core_lambdas.json#20"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 21
+          func_bytes: "@dex_core_lambdas.json#21"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 22
+          func_bytes: "@dex_core_lambdas.json#22"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 23
+          func_bytes: "@dex_core_lambdas.json#23"
+
+  - task: batch
+    source: $base
+    contents:
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 24
+          func_bytes: "@dex_core_lambdas.json#24"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 25
+          func_bytes: "@dex_core_lambdas.json#25"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 26
+          func_bytes: "@dex_core_lambdas.json#26"
+
+    - task: call
+      destination: $quipu_dex_core
+      params:
+        entrypoint: setup_func
+        args:
+          idx: 27
+          func_bytes: "@dex_core_lambdas.json#27"
+
+
+  quipu_flash_swaps_proxy:
+  - task: deploy
+    alias: quipu_flash_swaps_proxy
+    script:
+      code:
+        file: flash_swaps_proxy.json#michelson
+      storage:
+        args:
+          "": tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU
+
+
+  - task: call
+    destination: $quipu_dex_core
+    params:
+      entrypoint: set_flash_swaps_proxy
+      args:
+        "": $quipu_flash_swaps_proxy
+
+
+  quipu_auction:
+  - task: deploy
+    alias: quipu_auction
+    script:
+      code:
+        file: auction_mock.json#michelson
+      storage:
+        args:
+          owner: $base
+          pending_owner: null
+          dex: $quipu_dex_core
+          fees: {}
+
+  - task: call
+    destination: $quipu_dex_core
+    params:
+      entrypoint: set_auction
+      args:
+        "": $quipu_auction
+
+

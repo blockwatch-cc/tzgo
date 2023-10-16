@@ -40,12 +40,14 @@ func (t *BatchTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *rpc
 	opts := rpc.DefaultOptions
 	opts.Signer = signer.NewFromKey(t.Key)
 	op := codec.NewOp().WithSource(t.Source)
-	for i, task := range task.Contents {
-		childTask, err := alpha.NewTask(task.Type)
+	for i, ct := range task.Contents {
+		// use common source
+		ct.Source = task.Source
+		childTask, err := alpha.NewTask(ct.Type)
 		if err != nil {
 			return nil, nil, fmt.Errorf("batch[%d]: %v", i, err)
 		}
-		childOp, _, err := childTask.Build(ctx, task)
+		childOp, _, err := childTask.Build(ctx, ct)
 		if err != nil {
 			return nil, nil, fmt.Errorf("batch[%d]: %v", i, err)
 		}

@@ -75,6 +75,7 @@ type Op struct {
 	OpC        int               `json:"op_c"`
 	OpI        int               `json:"op_i"`
 	IsInternal bool              `json:"is_internal"`
+	Sender     string            `json:"sender"`
 	Receiver   string            `json:"receiver"`
 	Amount     float64           `json:"volume"`
 	Script     *micheline.Script `json:"script"`
@@ -95,11 +96,11 @@ func Clone(ctx Context, version string, cfg CloneConfig) error {
 	if !HasVersion(version) {
 		return ErrInvalidVersion
 	}
+	if !cfg.Contract.IsContract() {
+		return fmt.Errorf("invalid contract address")
+	}
 	if cfg.Name == "" {
 		cfg.Name = cfg.Contract.String()
-	}
-	if err := ctx.Init(); err != nil {
-		return err
 	}
 	ops, err := fetchOps(ctx, cfg)
 	if err != nil {
@@ -285,11 +286,8 @@ func encodeArgs(ops []Op) error {
 		switch op.Type {
 		case "origination":
 			script = op.Script
-			val := micheline.NewValue(script.StorageType(), script.Storage)
-			val, err := val.UnpackAll()
-			if err != nil {
-				return err
-			}
+			val := micheline.NewValue(script.StorageType(), script.Storage).
+				UnpackAllAsciiStrings()
 			res, err := val.Map()
 			if err != nil {
 				return err
@@ -305,11 +303,8 @@ func encodeArgs(ops []Op) error {
 			if !ok {
 				return fmt.Errorf("missing entrypoint %s", op.Params.Entrypoint)
 			}
-			val := micheline.NewValue(ep.Type(), op.Params.Prim)
-			val, err = val.UnpackAll()
-			if err != nil {
-				return err
-			}
+			val := micheline.NewValue(ep.Type(), op.Params.Prim).
+				UnpackAllAsciiStrings()
 			res, err := val.Map()
 			if err != nil {
 				return err

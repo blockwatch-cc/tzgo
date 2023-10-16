@@ -85,14 +85,15 @@ func (t *TokenApproveTask) parse(ctx compose.Context, task alpha.Task) (err erro
 	if t.Spender, err = ctx.ResolveAddress(task.Args["spender"]); err != nil {
 		return errors.Wrap(err, "spender")
 	}
-	if t.Amount, err = ctx.ResolveZ(task.Args["amount"]); err != nil {
-		return errors.Wrap(err, "amount")
-	}
 	// only required for fa2
 	switch t.Standard {
 	case "fa2", "":
 		if t.TokenId, err = ctx.ResolveZ(task.Args["token_id"]); err != nil {
 			return errors.Wrap(err, "token_id")
+		}
+	default:
+		if t.Amount, err = ctx.ResolveZ(task.Args["amount"]); err != nil {
+			return errors.Wrap(err, "amount")
 		}
 	}
 	return

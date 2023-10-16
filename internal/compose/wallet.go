@@ -20,7 +20,7 @@ func (c *Context) MakeAccount(id int, alias string) (Account, error) {
 			return acc, nil
 		}
 	}
-	if id == 0 {
+	if id < 0 {
 		id = c.MaxId + 1
 	}
 	sk, err := deriveChildKey(c.BaseAccount.PrivateKey, id)
@@ -32,6 +32,7 @@ func (c *Context) MakeAccount(id int, alias string) (Account, error) {
 		Address:    sk.Address(),
 		PrivateKey: sk,
 	}
+	c.Log.Debugf("Creating account %d %s %s", id, acc.Address, alias)
 	c.AddVariable(alias, acc.Address.String())
 	c.AddAccount(acc)
 	c.MaxId = acc.Id
