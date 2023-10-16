@@ -3,6 +3,8 @@ version: alpha
 accounts:
   - name: account-1
     id: 1
+  - name: collector
+    id: 2
 
 pipelines:
   hic-dao-token:
@@ -96,7 +98,7 @@ pipelines:
   hic-mint:
   - task: transfer
     destination: $account-1
-    amount: 100_000_000
+    amount: 10_000_000
   - task: call
     destination: $hic-market
     source: $account-1
@@ -104,7 +106,43 @@ pipelines:
       entrypoint: mint_OBJKT
       args:
         address: $account-1
-        amount: 1
-        metadata: ipfs://QmeaqRBUiw4cJiNKEcW2noc7egLd5GgBqLcHHqUhauJAHN
+        amount: 3
+        metadata: ipfs://QmUYE6Dyq4nGEneLkrpEtyTLiwew5Jaw1c4YKVBXBg9qYM
         royalties: 150
 
+  teia-list:
+  - task: call
+    destination: $hic-ledger
+    source: $account-1
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $teia-market
+          token_id: 0
+  - task: call
+    destination: $teia-market
+    source: $account-1
+    params:
+      entrypoint: swap
+      args:
+         fa2: $hic-ledger
+         objkt_id: 0
+         objkt_amount: 1
+         xtz_per_objkt: 1000000
+         royalties: 250
+         creator: $account-1
+
+  teia-collect:
+  - task: transfer
+    destination: $collector
+    amount: 10_000_000
+  - task: call
+    destination: $teia-market
+    source: $collector
+    amount: 1_000_000
+    params:
+      entrypoint: collect
+      args:
+        "": 0
