@@ -1,3 +1,15 @@
+# Hic et Nunc NFT ledger and marketplace
+# https://github.com/hicetnunc2000/objkt-swap
+#
+# Teia NFT marketplace
+# https://github.com/teia-community/teia-smart-contracts
+#
+# Mainnet
+# hic ledger          KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton
+# hic market legacy   KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9
+# teia market         KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w
+
+
 version: alpha
 
 accounts:
@@ -6,6 +18,8 @@ accounts:
   - name: collector
     id: 2
 
+# Deploys and sets up Hic et Nunc ledger, Hic legacy marketplace, and Teia marketplace, 
+# mints an OBJKT (NFT) on the Hic ledger, lists it on Teia, and lets a collector buy it.
 pipelines:
   hic-dao-token:
     - task: deploy
