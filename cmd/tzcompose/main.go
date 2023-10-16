@@ -132,7 +132,7 @@ func parseFlags() error {
 	}
 
 	switch cmd {
-	case "validate", "simulate", "run", "clone", "version":
+	case "validate", "simulate", "run", "clone", "version", "[cmd]":
 		// ok
 	default:
 		return errNoCmd
@@ -170,7 +170,7 @@ func filterFlags(set *flag.FlagSet, args []string) []string {
 	for _, v := range args {
 		if strings.HasPrefix(v, "-") {
 			f := set.Lookup(v[1:])
-			if f == nil {
+			if f == nil && v != "-h" {
 				maybeCopyNext = false
 				continue
 			}
