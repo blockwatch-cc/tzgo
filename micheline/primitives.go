@@ -768,6 +768,32 @@ func (p Prim) UnpackAll() (Prim, error) {
 	return pp, nil
 }
 
+// UnpackAsciiString converts ASCII strings inside byte prims.
+func (p Prim) UnpackAsciiString() Prim {
+	if p.Bytes != nil {
+		if s := string(p.Bytes); isASCII(s) {
+			return Prim{
+				Type:   PrimString,
+				String: s,
+			}
+		}
+	}
+	return p
+}
+
+// UnpackAllAsciiStrings recursively converts all ASCII strings inside byte prims.
+func (p Prim) UnpackAllAsciiStrings() Prim {
+	if len(p.Args) == 0 {
+		return p.UnpackAsciiString()
+	}
+	up := p
+	up.Args = make([]Prim, len(p.Args))
+	for i, v := range p.Args {
+		up.Args[i] = v.UnpackAllAsciiStrings()
+	}
+	return up
+}
+
 // Returns a typed/decoded value from an encoded primitive.
 func (p Prim) Value(as OpCode) interface{} {
 	var warn bool

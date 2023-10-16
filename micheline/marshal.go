@@ -109,12 +109,11 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 		val := v
 		if t.Name != "" && val != nil {
 			vals, ok := v.(map[string]any)
-			if !ok {
-				return InvalidPrim, fmt.Errorf("invalid option type %T on field %s, must be map[string]any", v, t.Name)
-			}
-			val, ok = vals[t.Name]
-			if !ok {
-				return InvalidPrim, fmt.Errorf("missing arg %s", t.Name)
+			if ok {
+				val, ok = vals[t.Name]
+				if !ok {
+					return InvalidPrim, fmt.Errorf("missing arg %s", t.Name)
+				}
 			}
 		}
 		if val != nil {
@@ -148,7 +147,7 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			return InvalidPrim, err
 		}
 		// produce OR tree for child's path
-		return NewUnion(child.Path[1:], p), nil
+		return NewUnion(child.Path[depth:], p), nil
 
 	case TypeStruct:
 		vals, ok := v.(map[string]any)
@@ -390,7 +389,15 @@ func ParsePrim(typ Typedef, val string, optimized bool) (p Prim, err error) {
 		} else {
 			p = NewString(tm.Format(time.RFC3339))
 		}
-	case T_KEY_HASH, T_ADDRESS:
+	case T_KEY_HASH:
+		var addr tezos.Address
+		addr, err = tezos.ParseAddress(val)
+		if optimized {
+			p = NewKeyHash(addr)
+		} else {
+			p = NewString(addr.String())
+		}
+	case T_ADDRESS:
 		var addr tezos.Address
 		addr, err = tezos.ParseAddress(val)
 		if optimized {

@@ -58,6 +58,10 @@ func NewNat(i *big.Int) Prim {
 	return Prim{Type: PrimInt, Int: i}
 }
 
+func NewKeyHash(a tezos.Address) Prim {
+	return NewBytes(a.Encode())
+}
+
 func NewAddress(a tezos.Address) Prim {
 	return NewBytes(a.EncodePadded())
 }
