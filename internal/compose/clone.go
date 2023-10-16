@@ -286,6 +286,10 @@ func encodeArgs(ops []Op) error {
 		case "origination":
 			script = op.Script
 			val := micheline.NewValue(script.StorageType(), script.Storage)
+			val, err := val.UnpackAll()
+			if err != nil {
+				return err
+			}
 			res, err := val.Map()
 			if err != nil {
 				return err
@@ -302,6 +306,10 @@ func encodeArgs(ops []Op) error {
 				return fmt.Errorf("missing entrypoint %s", op.Params.Entrypoint)
 			}
 			val := micheline.NewValue(ep.Type(), op.Params.Prim)
+			val, err = val.UnpackAll()
+			if err != nil {
+				return err
+			}
 			res, err := val.Map()
 			if err != nil {
 				return err
