@@ -58,10 +58,10 @@ func (t *TokenRevokeTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op
 			Encode()
 	}
 
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
 	op := codec.NewOp().WithContents(xfer)
-	return op, &opts, nil
+	return op, opts, nil
 }
 
 func (t *TokenRevokeTask) Validate(ctx compose.Context, task alpha.Task) error {

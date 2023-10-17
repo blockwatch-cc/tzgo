@@ -72,6 +72,11 @@ var DefaultOptions = CallOptions{
 	SimulationOffset: 5, // use pessimistic value to prevent gas exhausted errors (node's default is 3)
 }
 
+func NewCallOptions() *CallOptions {
+	o := DefaultOptions
+	return &o
+}
+
 type RunOperationRequest struct {
 	Operation *codec.Op         `json:"operation"`
 	ChainId   tezos.ChainIdHash `json:"chain_id"`

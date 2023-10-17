@@ -9,6 +9,7 @@ import (
 	"blockwatch.cc/tzgo/internal/compose/alpha"
 	"blockwatch.cc/tzgo/rpc"
 	"blockwatch.cc/tzgo/signer"
+	"blockwatch.cc/tzgo/tezos"
 
 	"github.com/pkg/errors"
 )
@@ -35,10 +36,14 @@ func (t *UndelegateTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op,
 	if err := t.parse(ctx, task); err != nil {
 		return nil, nil, errors.Wrap(err, "parse")
 	}
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
-	op := codec.NewOp().WithSource(t.Source).WithUndelegation()
-	return op, &opts, nil
+	opts.IgnoreLimits = true
+	op := codec.NewOp().
+		WithSource(t.Source).
+		WithUndelegation().
+		WithLimits([]tezos.Limits{rpc.DefaultDelegationLimitsEOA}, 0)
+	return op, opts, nil
 }
 
 func (t *UndelegateTask) Validate(ctx compose.Context, task alpha.Task) error {

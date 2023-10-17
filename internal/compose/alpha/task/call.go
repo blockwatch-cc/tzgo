@@ -40,7 +40,7 @@ func (t *CallTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *rpc.
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "params")
 	}
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
 	op := codec.NewOp().
 		WithSource(t.Source).
@@ -48,7 +48,7 @@ func (t *CallTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *rpc.
 			Entrypoint: task.Params.Entrypoint,
 			Value:      *params,
 		}, int64(task.Amount))
-	return op, &opts, nil
+	return op, opts, nil
 }
 
 func (t *CallTask) Validate(ctx compose.Context, task alpha.Task) error {

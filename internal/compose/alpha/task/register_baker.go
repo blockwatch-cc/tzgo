@@ -36,14 +36,14 @@ func (t *RegisterBakerTask) Build(ctx compose.Context, task alpha.Task) (*codec.
 	if err := t.parse(ctx, task); err != nil {
 		return nil, nil, errors.Wrap(err, "parse")
 	}
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
 	opts.IgnoreLimits = true
 	op := codec.NewOp().
 		WithSource(t.Source).
 		WithRegisterBaker().
 		WithLimits([]tezos.Limits{rpc.DefaultBakerRegistrationLimits}, 0)
-	return op, &opts, nil
+	return op, opts, nil
 }
 
 func (t *RegisterBakerTask) Validate(ctx compose.Context, task alpha.Task) error {

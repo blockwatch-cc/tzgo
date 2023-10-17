@@ -36,10 +36,10 @@ func (t *TransferTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *
 	if err := t.parse(ctx, task); err != nil {
 		return nil, nil, errors.Wrap(err, "parse")
 	}
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
 	op := codec.NewOp().WithSource(t.Source).WithTransfer(t.Destination, t.Amount)
-	return op, &opts, nil
+	return op, opts, nil
 }
 
 func (t *TransferTask) Validate(ctx compose.Context, task alpha.Task) error {

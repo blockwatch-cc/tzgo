@@ -68,10 +68,10 @@ func (t *TokenTransferTask) Build(ctx compose.Context, task alpha.Task) (*codec.
 			Encode()
 	}
 
-	opts := rpc.DefaultOptions
+	opts := rpc.NewCallOptions()
 	opts.Signer = signer.NewFromKey(t.Key)
 	op := codec.NewOp().WithContents(xfer)
-	return op, &opts, nil
+	return op, opts, nil
 }
 
 func (t *TokenTransferTask) Validate(ctx compose.Context, task alpha.Task) error {

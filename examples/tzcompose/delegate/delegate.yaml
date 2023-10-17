@@ -19,3 +19,5 @@ pipelines:
   - task: delegate
     source: $delegator-1
     destination: $baker-1
+  - task: undelegate
+    source: $delegator-1
