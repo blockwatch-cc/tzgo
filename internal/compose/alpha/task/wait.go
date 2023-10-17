@@ -12,7 +12,6 @@ import (
 	"blockwatch.cc/tzgo/internal/compose"
 	"blockwatch.cc/tzgo/internal/compose/alpha"
 	"blockwatch.cc/tzgo/rpc"
-	"blockwatch.cc/tzgo/tezos"
 
 	"github.com/pkg/errors"
 )
@@ -44,7 +43,7 @@ func (t *WaitTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *rpc.
 	}
 
 	done := make(chan struct{})
-	id, err := ctx.SubscribeBlocks(func(_ tezos.BlockHash, height int64, _ int, _ int, _ bool) bool {
+	id, err := ctx.SubscribeBlocks(func(_ *rpc.BlockHeaderLogEntry, height int64, _ int, _ int, _ bool) bool {
 		isDone := false
 		var val int64
 		p := ctx.Params()

@@ -5,9 +5,11 @@ package compose
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"blockwatch.cc/tzgo/codec"
 	"blockwatch.cc/tzgo/micheline"
@@ -19,7 +21,6 @@ import (
 type Engine interface {
 	Clone(Context, []Op, CloneConfig) ([]byte, error)
 	Validate(Context, string) error
-	Simulate(Context, string) error
 	Run(Context, string) error
 }
 
@@ -65,6 +66,9 @@ func (c *Context) WithLogger(l log.Logger) *Context {
 }
 
 func (c *Context) WithUrl(u string) *Context {
+	if !strings.HasPrefix(u, "http") {
+		u = "http://" + u
+	}
 	c.url = u
 	return c
 }
@@ -324,6 +328,10 @@ func (c *Context) Params() *tezos.Params {
 	return c.client.Params
 }
 
+func (c *Context) HeadBlock() *rpc.BlockHeaderLogEntry {
+	return c.client.BlockObserver.Head()
+}
+
 func (c *Context) SwitchLogger(tag, lvl string) {
 	if c.savedLoggers[0] == nil {
 		c.savedLoggers[0] = c.Log
@@ -340,4 +348,39 @@ func (c *Context) RestoreLogger() {
 	}
 	c.savedLoggers[0] = nil
 	c.savedLoggers[1] = nil
+}
+
+func (c *Context) WaitNumBlocks(n int) error {
+	if n == 0 {
+		return nil
+	}
+	done := make(chan struct{})
+	_, err := c.SubscribeBlocks(func(_ *rpc.BlockHeaderLogEntry, _ int64, _ int, _ int, _ bool) bool {
+		n--
+		if n <= 0 {
+			close(done)
+			return true
+		}
+		return false
+	})
+	if err != nil {
+		return err
+	}
+	select {
+	case <-done:
+		return nil
+	case <-c.Done():
+		return c.Err()
+	}
+}
+
+func (c Context) Fetch(u string, v any) error {
+	if !strings.HasPrefix(u, "http") {
+		u = c.url + u
+	}
+	raw, err := Fetch[json.RawMessage](c, u)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(*raw, v)
 }

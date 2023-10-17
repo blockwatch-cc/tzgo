@@ -132,7 +132,3 @@ func (e *Engine) Validate(ctx compose.Context, fname string) error {
 	}
 	return nil
 }
-
-func (e *Engine) Simulate(ctx compose.Context, fname string) error {
-	return fmt.Errorf("TODO")
-}
