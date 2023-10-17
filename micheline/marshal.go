@@ -324,7 +324,14 @@ func (t Typedef) marshal(v any, optimized bool, depth int) (Prim, error) {
 			return NewString(val.UTC().Format(time.RFC3339)), nil
 		case tezos.Address:
 			if optimized {
-				return NewAddress(val), nil
+				switch oc {
+				case T_KEY_HASH:
+					return NewKeyHash(val), nil
+				case T_ADDRESS:
+					return NewAddress(val), nil
+				default:
+					return InvalidPrim, fmt.Errorf("unsupported type conversion from %T to opcode %s on field %s", v, t.Type, t.Name)
+				}
 			}
 			return NewString(val.String()), nil
 		case tezos.Key:

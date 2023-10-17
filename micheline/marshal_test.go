@@ -111,7 +111,7 @@ var marshalTests = []marshalTest{
 		Spec:      `{"annots": ["%baker"],"prim": "key_hash"}`,
 		Value:     map[string]any{"baker": "tz1eZUHkQDC1bBEbvrrUxkbWEagdZJXQyszc"},
 		Optimized: true,
-		Want:      `{"bytes":"0000cf8dad6c9cd30672987242a8c2a94fc72816d8cf"}`,
+		Want:      `{"bytes":"00cf8dad6c9cd30672987242a8c2a94fc72816d8cf"}`,
 	},
 	{
 		Name:      "key_hash_addr_opt",
@@ -125,7 +125,7 @@ var marshalTests = []marshalTest{
 		Spec:      `{"annots": ["%baker"],"prim": "key_hash"}`,
 		Value:     map[string]any{"baker": tezos.MustParseAddress("tz1eZUHkQDC1bBEbvrrUxkbWEagdZJXQyszc")},
 		Optimized: true,
-		Want:      `{"bytes":"0000cf8dad6c9cd30672987242a8c2a94fc72816d8cf"}`,
+		Want:      `{"bytes":"00cf8dad6c9cd30672987242a8c2a94fc72816d8cf"}`,
 	},
 	//   address
 	{
