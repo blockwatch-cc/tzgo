@@ -115,7 +115,7 @@ export TZCOMPOSE_BASE_KEY=`docker exec tezos_sandbox flextesa key-of-name alice 
 
 All other wallet keys are deterministically derived from this `base` key using BIP32. Child keys are identified by their numeric id. You can assign alias names to them in the `accounts` section of a compose file. All child accounts use Ed25519 keys (tz1 addresses).
 
-> TzCompse does not allow you to specify wallet keys in configuration files. This is a deliberate design choice to prevent accidental leakage of key material into code repositories.
+> TzCompose does not allow you to specify wallet keys in configuration files. This is a deliberate design choice to prevent accidental leakage of key material into code repositories.
 
 Keep in mind that when you reuse the same child ids in different compose files, these accounts may have state and history from executing other compose files. Usually this is not a problem, but it may be in certain test scenarios when the account is already a baker or is expected to be empty.
 
@@ -152,7 +152,7 @@ Here we clone the Tether contract and 2 transactions following its origination w
 
 ```sh
 # clone Tether FA2 contract from mainnet
-tzcompse clone -contract KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o -name tether -n 2
+tzcompose clone -contract KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o -name tether -n 2
 ```
 
 Then open `tzcompose.yaml` and edit its admin accounts. For brevity we show relevant lines only, the original file is longer:
@@ -175,7 +175,7 @@ pipelines:
 
 ### Micheline Arguments
 
-Initial storage and contract call parameters must be Micheline encoded, but its a pain to read and write this format. TzCompose allows you to either use pre-encoded files, binary blobs or YAML key/value arguments.
+Initial storage and contract call parameters must be Micheline encoded, but it's a pain to read and write this format. TzCompose allows you to either use pre-encoded files, binary blobs or YAML key/value arguments.
 
 When using arguments keep in mind that all fields are required, even if their value is empty or default. If args are too complex and you have to work with pre-encoded data you can still use [patch](#patching-micheline) for replacing contents as described below.
 
