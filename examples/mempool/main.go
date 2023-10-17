@@ -2,7 +2,6 @@
 // Author: alex@blockwatch.cc
 
 // Mempool examples
-//
 package main
 
 import (
@@ -29,7 +28,7 @@ var (
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node URL")
+	flags.StringVar(&node, "node", "https://rpc.tzpro.io", "Tezos node URL")
 	flags.Int64Var(&ttl, "ttl", 120, "Operation TTL")
 }
 

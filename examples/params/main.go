@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	// "strconv"
 
 	"blockwatch.cc/tzgo/rpc"
 	"blockwatch.cc/tzgo/tezos"
@@ -25,7 +24,7 @@ var (
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "node url")
+	flags.StringVar(&node, "node", "https://rpc.tzpro.io", "node url")
 	flags.StringVar(&proto, "proto", "", "simulate with protocol")
 	flags.StringVar(&net, "net", "", "simulate with network")
 }

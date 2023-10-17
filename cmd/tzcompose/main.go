@@ -60,7 +60,7 @@ func init() {
 
 	cloneflags.Usage = func() {}
 	cloneflags.StringVar(&indexUrl, "index", "https://api.tzpro.io", "Tezos indexer url")
-	cloneflags.StringVar(&rpcUrl, "rpc", "https://rpc.tzstats.com", "Tezos node RPC url")
+	cloneflags.StringVar(&rpcUrl, "rpc", "https://rpc.tzpro.io", "Tezos node RPC url")
 	cloneflags.StringVar(&version, "version", "alpha", "compose engine version")
 	cloneflags.Var(&addr, "contract", "address of the contract to clone")
 	cloneflags.Var(&mode, "mode", "output mode for cloned micheline data (file, json, bin, url)")

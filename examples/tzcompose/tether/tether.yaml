@@ -42,7 +42,7 @@ pipelines:
     destination: $tether_token
     params:
       entrypoint: add_token
-      url: https://rpc.tzstats.com/chains/main/blocks/2491995/operations/3/11#contents.0.metadata.internal_operation_results.0.parameters.value
+      url: https://rpc.tzpro.io/chains/main/blocks/2491995/operations/3/11#contents.0.metadata.internal_operation_results.0.parameters.value
 
   - task: call
     source: $tether_admin
