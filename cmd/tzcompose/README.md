@@ -47,6 +47,12 @@ TzCompose can execute configurations from a single file `-f file.yaml`, a single
 - `run`: execute compose file(s) sending signed transactions to a blockchain node
 - `version`: print version and exit
 
+TzCompose relies on the Tezos Node RPC and (for clone) on the TzIndex API. Both are publicly available via https://tzpro.io with a free subscription. Export your API key as
+
+```sh
+export TZCOMPOSE_API_KEY=<your-api-key>
+```
+
 ### Available Tasks
 
 - [batch](#batch) - send multiple transactions as single operation
@@ -101,11 +107,26 @@ TzCompose also stores pipeline state and can resume execution from where it stop
 
 TzCompose requires a single funded `base` account to sign and send transactions. Configure the base account by exporting its private key as `TZCOMPOSE_BASE_KEY` environment variable.
 
+On Flextes sandbox extract the private key with
+
+```sh
+export TZCOMPOSE_BASE_KEY=`docker exec tezos_sandbox flextesa key-of-name alice | cut -f4 -d, | cut -f2 -d:`
+```
+
 All other wallet keys are deterministically derived from this `base` key using BIP32. Child keys are identified by their numeric id. You can assign alias names to them in the `accounts` section of a compose file. All child accounts use Ed25519 keys (tz1 addresses).
 
 > TzCompse does not allow you to specify wallet keys in configuration files. This is a deliberate design choice to prevent accidental leakage of key material into code repositories.
 
 Keep in mind that when you reuse the same child ids in different compose files, these accounts may have state and history from executing other compose files. Usually this is not a problem, but it may be in certain test scenarios when the account is already a baker or is expected to be empty.
+
+### Variables
+
+TzCompose lets you define variables for common strings and addresses. You can use variables as source, destination and in task arguments. TzCompose defines a few default variables
+
+* `$base` - base account address
+* `$now` - current wall clock time in UTC (you can also add durations like `$now+5m`)
+* `$zero` - tz1 zero address (binary all zeros)
+* `$burn` - tz1 burn address
 
 ### Cloning Contracts
 
