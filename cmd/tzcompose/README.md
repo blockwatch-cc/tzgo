@@ -59,6 +59,7 @@ export TZCOMPOSE_API_KEY=<your-api-key>
 - [call](#call) - send smart contract call
 - [delegate](#delegate) - delegate to baker
 - [deploy](#deploy) - create smart contract
+- [double_endorse](#double-endorse) - force a double endorsement slash
 - [register_baker](#register-baker) - register as baker
 - [token_approve](#token-approve) - approve token spender
 - [token_revoke](#token-revoke) - revoke token spender
@@ -418,6 +419,19 @@ script:
     url:
     value:
     patch:
+```
+
+### Double Endorse
+
+Produces a fake double-endorsement which slashes the baker in `destination` and awards denuncation rewards to `source`. Both source and destination must be registered as bakers and private keys for both bakers must be available (both keys are used for signing). The slashed baker must have endorsements rights and this task waits until a block with such rights is baked.
+
+To successfully execute this task you way want to fund and register a fresh baker and then wait a few cycles for rights to activate. Note that on sandboxes the $alice key is not the sandbox baker. To lookup the actual baker key, docker exec into the sandbox and search for the `secret_keys` file in the Tezos client dir.
+
+```yaml
+# Spec
+task: double_endorse
+source: $var      # <- this baker sends the denunciation op
+destination: $var # <- this baker is slashed
 ```
 
 ### Register Baker
