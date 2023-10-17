@@ -188,7 +188,7 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		Contents:  o.Contents,
 		Signature: tezos.ZeroSignature,
 		TTL:       o.TTL,
-		Params:    o.Params,
+		Params:    c.Params,
 	}
 
 	if opts == nil {
@@ -317,8 +317,8 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	// ensure block observer is running
 	mon.Listen(c)
 
-	// set source on all ops
-	op.WithSource(key.Address())
+	// set source and params on all ops
+	op.WithSource(key.Address()).WithParams(c.Params)
 
 	// auto-complete op with branch/ttl, source counter, reveal
 	err = c.Complete(ctx, op, key)
