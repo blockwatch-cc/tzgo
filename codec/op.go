@@ -338,7 +338,10 @@ func (o *Op) Bytes() []byte {
 	for _, v := range o.Contents {
 		_ = v.EncodeBuffer(buf, p)
 	}
-	if o.Contents[0].Kind() != tezos.OpTypeEndorsementWithSlot {
+	switch o.Contents[0].Kind() {
+	case tezos.OpTypeEndorsementWithSlot:
+		// no signature
+	default:
 		if o.Signature.IsValid() {
 			buf.Write(o.Signature.Data) // raw, without type (!)
 		}
@@ -414,6 +417,14 @@ func (o *Op) Sign(key tezos.PrivateKey) error {
 	}
 	o.Signature = sig
 	return nil
+}
+
+// Hash calculates the operation hash. For the hash to be correct, the operation
+// must contain a valid signature.
+func (o *Op) Hash() (h tezos.OpHash) {
+	d := tezos.Digest(o.Bytes())
+	copy(h[:], d[:])
+	return
 }
 
 // MarshalJSON conditionally marshals the JSON format of the operation with checks

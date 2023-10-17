@@ -32,7 +32,7 @@ func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "Be verbose")
 	flags.BoolVar(&debug, "d", false, "Enable debug mode")
-	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node url")
+	flags.StringVar(&node, "node", "https://rpc.tzpro.io", "Tezos node url")
 }
 
 func main() {

@@ -27,7 +27,7 @@ var (
 func init() {
 	flags.Usage = func() {}
 	flags.BoolVar(&verbose, "v", false, "be verbose")
-	flags.StringVar(&node, "node", "https://rpc.tzstats.com", "Tezos node URL")
+	flags.StringVar(&node, "node", "https://rpc.tzpro.io", "Tezos node URL")
 }
 
 func main() {

@@ -11,7 +11,7 @@ Usage: fa12 [args] <block> <pos>
 
 Arguments
   -node string
-      Tezos node URL (default "https://rpc.tzstats.com")
+      Tezos node URL (default "https://rpc.tzpro.io")
   -v  be verbose
 ```
 

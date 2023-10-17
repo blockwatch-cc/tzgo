@@ -1,0 +1,110 @@
+# Examples displaying the use of different tzcompose features.
+# Not expected to make sense or run successfully!
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+  - name: account-2
+    id: 2
+  - name: account-3
+    id: 3
+
+variables:
+  tether-token: KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o
+  hic-ledger: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton
+
+pipelines:
+  marshal-fa2-operators:
+  - task: call
+    destination: $tether-token
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $hic-ledger
+          token_id: 0
+
+  marshal-fa2-transfer:
+  - task: call
+    destination: $hic-ledger
+    params:
+      entrypoint: transfer
+      args:
+        - from_: $account-1
+          txs:
+          - to_: $account-2
+            token_id: 1000
+            amount: 1
+
+  fa2-transfer-task:
+  - task: token_transfer
+    destination: $hic-ledger
+    args:
+      from: $account-1
+      to: $account-2
+      standard: fa2
+      token_id: 1000
+      amount: 1
+
+  fa2-transfer-batch-task:
+  - task: token_transfer
+    destination: $hic-ledger
+    args:
+      standard: fa2
+      from: $account-1
+      receivers:
+      - token_id: 1000
+        to: $account-2
+        amount: 1
+      - token_id: 1000
+        to: $account-3
+        amount: 1
+
+  marshal-tether-mint:
+  - task: call
+    destination: $tether-token
+    params:
+      entrypoint: mint
+      args:
+      - owner: $account-1
+        token_id: 1
+        token_amount: 1_000_000_000
+
+  marshal-tether-add-token:
+  - task: call
+    destination: $tether-token
+    params:
+      entrypoint: add_token
+      args:
+        token_id: 1
+        token_info:
+          '': ipfs://Qmb94zFKazBKxuYk4QyTWmgiVP3zXLkGjNDDTq3DShEs8E
+
+  marshal-hic-mint:
+  - task: call
+    destination: $hic-ledger
+    params:
+      entrypoint: mint
+      args:
+        address: $account-1
+        amount: 1
+        token_id: 1
+        token_info:
+          '': ipfs://QmeaqRBUiw4cJiNKEcW2noc7egLd5GgBqLcHHqUhauJAHN
+
+  wait-tasks:
+  - task: wait
+    for: cycle
+    value: +1
+  - task: wait
+    for: block
+    value: +10
+  - task: wait
+    for: time
+    value: $now+1m
+  - task: wait
+    for: time
+    value: +1m
+

@@ -1,0 +1,30 @@
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+  - name: account-2
+    id: 2
+
+pipelines:
+  transfer-test:
+  - task: transfer
+    destination: $account-1
+    amount: 10_000_000
+  - task: transfer
+    destination: $account-2
+    amount: 10_000_000
+  - task: transfer
+    source: $account-1
+    destination: $account-2
+    amount: 1_000_000
+
+  batch-transfer-test:
+  - task: batch
+    contents:
+    - task: transfer
+      destination: $account-1
+      amount: 10_000_000
+    - task: transfer
+      destination: $account-2
+      amount: 10_000_000

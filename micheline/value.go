@@ -86,6 +86,14 @@ func (v Value) UnpackAll() (Value, error) {
 	return vv, nil
 }
 
+func (v Value) UnpackAllAsciiStrings() Value {
+	return Value{
+		Type:   v.Type.Clone(),
+		Value:  v.Value.UnpackAllAsciiStrings(),
+		Render: v.Render,
+	}
+}
+
 func (e *Value) FixType() {
 	labels := e.Type.Anno
 	e.Type = e.Value.BuildType()

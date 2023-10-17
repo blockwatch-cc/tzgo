@@ -118,6 +118,7 @@ type BlockHeaderLogEntry struct {
 
 func (h *BlockHeader) LogEntry() *BlockHeaderLogEntry {
 	return &BlockHeaderLogEntry{
+		Hash:           h.Hash,
 		Level:          h.Level,
 		Proto:          h.Proto,
 		Predecessor:    h.Predecessor,

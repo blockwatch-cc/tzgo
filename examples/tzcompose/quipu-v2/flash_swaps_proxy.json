@@ -1,0 +1,162 @@
+{
+  "contractName": "flash_swaps_proxy",
+  "michelson": [
+    {
+      "prim": "parameter",
+      "args": [
+        {
+          "prim": "lambda",
+          "args": [
+            {
+              "prim": "unit"
+            },
+            {
+              "prim": "list",
+              "args": [
+                {
+                  "prim": "operation"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "prim": "storage",
+      "args": [
+        {
+          "prim": "address"
+        }
+      ]
+    },
+    {
+      "prim": "code",
+      "args": [
+        [
+          {
+            "prim": "UNPAIR"
+          },
+          {
+            "prim": "PUSH",
+            "args": [
+              {
+                "prim": "string"
+              },
+              {
+                "string": "403"
+              }
+            ]
+          },
+          {
+            "prim": "DUP",
+            "args": [
+              {
+                "int": "3"
+              }
+            ]
+          },
+          {
+            "prim": "SENDER"
+          },
+          {
+            "prim": "COMPARE"
+          },
+          {
+            "prim": "EQ"
+          },
+          {
+            "prim": "IF",
+            "args": [
+              [
+                {
+                  "prim": "DROP"
+                }
+              ],
+              [
+                {
+                  "prim": "FAILWITH"
+                }
+              ]
+            ]
+          },
+          {
+            "prim": "PUSH",
+            "args": [
+              {
+                "prim": "string"
+              },
+              {
+                "string": "412"
+              }
+            ]
+          },
+          {
+            "prim": "PUSH",
+            "args": [
+              {
+                "prim": "mutez"
+              },
+              {
+                "int": "0"
+              }
+            ]
+          },
+          {
+            "prim": "AMOUNT"
+          },
+          {
+            "prim": "COMPARE"
+          },
+          {
+            "prim": "EQ"
+          },
+          {
+            "prim": "IF",
+            "args": [
+              [
+                {
+                  "prim": "DROP"
+                }
+              ],
+              [
+                {
+                  "prim": "FAILWITH"
+                }
+              ]
+            ]
+          },
+          {
+            "prim": "SWAP"
+          },
+          {
+            "prim": "UNIT"
+          },
+          {
+            "prim": "DIG",
+            "args": [
+              {
+                "int": "2"
+              }
+            ]
+          },
+          {
+            "prim": "SWAP"
+          },
+          {
+            "prim": "EXEC"
+          },
+          {
+            "prim": "PAIR"
+          }
+        ]
+      ]
+    }
+  ],
+  "networks": {},
+  "compiler": {
+    "name": "ligo",
+    "version": "0.45.0"
+  },
+  "networkType": "tezos"
+}

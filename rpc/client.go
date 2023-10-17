@@ -17,6 +17,7 @@ import (
 
 	"blockwatch.cc/tzgo/signer"
 	"blockwatch.cc/tzgo/tezos"
+	"github.com/echa/log"
 )
 
 const (
@@ -52,6 +53,11 @@ type Client struct {
 	// block and operation receipts. Set this mode to `always` if an RPC node prunes
 	// metadata (i.e. you see metadata too large in certain operations)
 	MetadataMode MetadataMode
+	// Close connections. This may help with EOF errors from unexpected
+	// connection close by Tezos RPC.
+	CloseConns bool
+	// Log is the logger implementation used by this client
+	Log log.Logger
 }
 
 // NewClient returns a new Tezos RPC client.
@@ -84,6 +90,7 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 		BlockObserver:   NewObserver(),
 		MempoolObserver: NewObserver(),
 		MetadataMode:    MetadataModeAlways,
+		Log:             logger,
 	}
 	return c, nil
 }
@@ -184,6 +191,7 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	req.Close = c.CloseConns
 
 	req.Header.Add("Content-Type", mediaType)
 	req.Header.Add("Accept", mediaType)
@@ -192,10 +200,13 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		req.Header.Add("X-Api-Key", c.ApiKey)
 	}
 
-	log.Debug(newLogClosure(func() string {
+	c.logDebugOnly(func() {
+		c.Log.Debugf("%s %s %s", req.Method, req.URL, req.Proto)
+	})
+	c.logTraceOnly(func() {
 		d, _ := httputil.DumpRequest(req, true)
-		return string(d)
-	}))
+		c.Log.Trace(string(d))
+	})
 
 	return req, nil
 }
@@ -246,6 +257,9 @@ func (c *Client) handleResponseMonitor(ctx context.Context, resp *http.Response,
 func (c *Client) Do(req *http.Request, v interface{}) error {
 	resp, err := c.client.Do(req)
 	if err != nil {
+		if e, ok := err.(*url.Error); ok {
+			return e.Err
+		}
 		return err
 	}
 
@@ -258,9 +272,9 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return nil
 	}
 
-	log.Trace(newLogClosure(func() string {
+	c.logTraceOnly((func() {
 		d, _ := httputil.DumpResponse(resp, true)
-		return string(d)
+		c.Log.Trace(string(d))
 	}))
 
 	statusClass := resp.StatusCode / 100
@@ -271,7 +285,7 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return c.handleResponse(resp, v)
 	}
 
-	return handleError(resp)
+	return c.handleError(resp)
 }
 
 // DoAsync retrieves values from the API and sends responses using the provided monitor.
@@ -300,14 +314,14 @@ func (c *Client) DoAsync(req *http.Request, mon Monitor) error {
 			return nil
 		}
 	} else {
-		return handleError(resp)
+		return c.handleError(resp)
 	}
 	io.Copy(io.Discard, resp.Body)
 	resp.Body.Close()
 	return nil
 }
 
-func handleError(resp *http.Response) error {
+func (c *Client) handleError(resp *http.Response) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -331,7 +345,7 @@ func handleError(resp *http.Response) error {
 	}
 
 	if len(errs) == 0 {
-		log.Errorf("rpc: error decoding RPC error response: %v", err)
+		c.Log.Errorf("rpc: error decoding RPC error response: %v", err)
 		return &httpErr
 	}
 

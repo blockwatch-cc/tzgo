@@ -1,0 +1,23 @@
+version: alpha
+
+accounts:
+  - name: baker-1
+    id: 1
+  - name: delegator-1
+    id: 2
+
+pipelines:
+  delegation-test:
+  - task: transfer
+    destination: $baker-1
+    amount: 6000_000_000
+  - task: register_baker
+    source: $baker-1
+  - task: transfer
+    destination: $delegator-1
+    amount: 1_000_000
+  - task: delegate
+    source: $delegator-1
+    destination: $baker-1
+  - task: undelegate
+    source: $delegator-1

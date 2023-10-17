@@ -1,0 +1,162 @@
+# Hic et Nunc NFT ledger and marketplace
+# https://github.com/hicetnunc2000/objkt-swap
+#
+# Teia NFT marketplace
+# https://github.com/teia-community/teia-smart-contracts
+#
+# Mainnet
+# hic ledger          KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton
+# hic market legacy   KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9
+# teia market         KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w
+
+
+version: alpha
+
+accounts:
+  - name: account-1
+    id: 1
+  - name: collector
+    id: 2
+
+# Deploys and sets up Hic et Nunc ledger, Hic legacy marketplace, and Teia marketplace, 
+# mints an OBJKT (NFT) on the Hic ledger, lists it on Teia, and lets a collector buy it.
+pipelines:
+  hic-dao-token:
+    - task: deploy
+      alias: hic-dao-token
+      script:
+        file: hic-dao.json
+        storage:
+          args:
+            administrator: $base
+            all_tokens: 0
+            ledger: {}
+            metadata:
+              "": ipfs://Qmdao8MKmAjkyssQQDLmQRthiXhX1TG4QndZV1kNwoB1SR
+            operators: {}
+            paused: false
+            token_metadata:
+              "0":
+                token_id: 0
+                token_info:
+                  "": 050100000035697066733a2f2f516d535673667748386573375572326571746f3968567063643264665741536d45614e7854507063796d754a7a67
+
+  hic-ledger:
+    - task: deploy
+      alias: hic-ledger
+      script:
+        code:
+          file: hic-ledger.json#code
+        storage:
+          args:
+            administrator: $base
+            all_tokens: 0
+            ledger: {}
+            metadata:
+              "": ipfs://QmSBc8QuynU7bArUGtjwCRhZUbJyZQArrczKnqM7hZPtfV
+            operators: {}
+            paused: false
+            token_metadata: {}
+
+  hic-market:
+    - task: deploy
+      alias: hic-market
+      script:
+        code:
+          file: hic-market.json
+        storage:
+          args:
+            curate: $base
+            genesis: $now
+            hdao: $hic-dao-token
+            locked: false
+            manager: $base
+            metadata:
+              "": ipfs://QmeipiJCBddE8eHQQHSHFdLPbMtNKxPCMFeeVjsM57q86o
+            royalties: {}
+            size: 0
+            swap_id: 0
+            swaps: {}
+            objkt: $hic-ledger
+            objkt_id: 0
+            xtz_per_objkt: 0
+    - task: call
+      destination: $hic-ledger
+      params:
+        entrypoint: set_administrator
+        args:
+          "": $hic-market
+
+  teia-market:
+    - task: deploy
+      alias: teia-market
+      script:
+        code:
+          file: teia-code.json
+        storage:
+          file: teia-storage.json
+          patch:
+          - key: manager
+            type: address
+            value: $base
+            optimized: false
+          - key: fee_recipient
+            type: address
+            value: $base
+            optimized: false
+          - path: 0/0/0/0/0
+            type: address
+            value: $hic-ledger
+            optimized: false
+
+  hic-mint:
+  - task: transfer
+    destination: $account-1
+    amount: 10_000_000
+  - task: call
+    destination: $hic-market
+    source: $account-1
+    params:
+      entrypoint: mint_OBJKT
+      args:
+        address: $account-1
+        amount: 3
+        metadata: ipfs://QmUYE6Dyq4nGEneLkrpEtyTLiwew5Jaw1c4YKVBXBg9qYM
+        royalties: 150
+
+  teia-list:
+  - task: call
+    destination: $hic-ledger
+    source: $account-1
+    params:
+      entrypoint: update_operators
+      args:
+      - add_operator:
+          owner: $account-1
+          operator: $teia-market
+          token_id: 0
+  - task: call
+    destination: $teia-market
+    source: $account-1
+    params:
+      entrypoint: swap
+      args:
+         fa2: $hic-ledger
+         objkt_id: 0
+         objkt_amount: 1
+         xtz_per_objkt: 1000000
+         royalties: 250
+         creator: $account-1
+
+  teia-collect:
+  - task: transfer
+    destination: $collector
+    amount: 10_000_000
+  - task: call
+    destination: $teia-market
+    source: $collector
+    amount: 1_000_000
+    params:
+      entrypoint: collect
+      args:
+        "": 0

@@ -23,7 +23,7 @@ Flags
   -key string
       private key
   -node string
-      Tezos node URL (default "https://rpc.ithaca.tzstats.com")
+      Tezos node URL (default "https://rpc.tzpro.io")
   -v  be verbose
 
 Transaction Commands

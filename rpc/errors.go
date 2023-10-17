@@ -45,7 +45,7 @@ type GenericError struct {
 func (e GenericError) Error() string {
 	var reason string
 	if e.With.IsValid() {
-		reason = e.With.String
+		reason = e.With.Dump()
 	}
 	return fmt.Sprintf("tezos: kind=%s, id=%s, reason=%s", e.Kind, e.ID, reason)
 }

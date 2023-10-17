@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.17.3
+
+* cmd: add tzcompose alpha release
+* rpc: dedicated logger instance per client
+* rpc observer: return full BlockHeaderLogEntry in callback
+* rpc observer: multiple subscriptions for the same op hash
+* rpc observer: support block subscriptions (use zero op hash)
+* micheline: new prim marshaler (type + Go map[string]any -> prim tree)
+* micheline: new builder helpers for key hash, union, sorted map elements
+* micheline: new prim compare, unpack ascii strings, yaml marshaler
+* tezos: fix for sandbox deployments
+
 ## v1.17.2
 
 * accept non-manager ops as successful
