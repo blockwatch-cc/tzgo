@@ -207,16 +207,16 @@ func (r *Result) WaitContext(ctx context.Context) bool {
 	}
 }
 
-func (r *Result) callback(block tezos.BlockHash, height int64, list, pos int, force bool) bool {
+func (r *Result) callback(block *BlockHeaderLogEntry, height int64, list, pos int, force bool) bool {
 	if force {
-		r.block = block.Clone()
+		r.block = block.Hash
 		r.height = height
 		r.list = list
 		r.pos = pos
 		return false
 	}
 	if !r.block.IsValid() {
-		r.block = block.Clone()
+		r.block = block.Hash
 		r.height = height
 		r.list = list
 		r.pos = pos
