@@ -47,7 +47,6 @@ func run() error {
 	if flags.NArg() < 1 {
 		return fmt.Errorf("Address required")
 	}
-
 	if flags.NArg() == 2 {
 		return blinded()
 	}

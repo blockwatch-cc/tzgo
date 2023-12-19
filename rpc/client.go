@@ -73,9 +73,9 @@ func NewClient(baseURL string, httpClient *http.Client) (*Client, error) {
 		return nil, err
 	}
 	q := u.Query()
-	key := q.Get("X-Api-Key")
+	key := q.Get("api_key")
 	if key != "" {
-		q.Del("X-Api-Key")
+		q.Del("api_key")
 		u.RawQuery = q.Encode()
 	} else {
 		key = os.Getenv("TZGO_API_KEY")
