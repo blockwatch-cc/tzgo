@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.17.4
+
+* rpc: fix reading API key from config URL
+* micheline: accept new opcodes as valid
+
 ## v1.17.3
 
 * cmd: add tzcompose alpha release
