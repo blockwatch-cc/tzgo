@@ -83,7 +83,7 @@ func (s *AddressSet) Clear() {
 }
 
 func (s *AddressSet) Contains(addr Address) bool {
-	if s == nil {
+	if s == nil || len(s.set) == 0 {
 		return false
 	}
 	a, ok := s.set[hash.Hash64(addr[:])]
