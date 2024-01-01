@@ -209,8 +209,10 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 			if val.OpCode == D_RIGHT {
 				branch = p.Args[1]
 			}
-			for n, v := range DetectBigmaps(branch, val.Args[0]) {
-				named[uniqueName(n)] = v
+			if len(val.Args) > 0 {
+				for n, v := range DetectBigmaps(branch, val.Args[0]) {
+					named[uniqueName(n)] = v
+				}
 			}
 			return PrimSkip
 
