@@ -4,12 +4,12 @@
 //nolint:unused,deadcode
 package rpc
 
-import logpkg "github.com/echa/log"
+import "github.com/echa/log"
 
 // log is a logger that is initialized with no output filters.  This
 // means the package will not perform any logging by default until the caller
 // requests it.
-var log logpkg.Logger = logpkg.Log
+var logger log.Logger = log.Log
 
 // The default amount of logging is none.
 func init() {
@@ -19,14 +19,14 @@ func init() {
 // DisableLog disables all library log output.  Logging output is disabled
 // by default until either UseLogger or SetLogWriter are called.
 func DisableLog() {
-	log = logpkg.Disabled
+	logger = log.Disabled
 }
 
 // UseLogger uses a specified Logger to output package logging info.
 // This should be used in preference to SetLogWriter if the caller is also
 // using logpkg.
-func UseLogger(logger logpkg.Logger) {
-	log = logger
+func UseLogger(l log.Logger) {
+	logger = l
 }
 
 // LogClosure is a closure that can be printed with %v to be used to
@@ -46,8 +46,26 @@ func newLogClosure(c func() string) logClosure {
 	return logClosure(c)
 }
 
-func logDebug(c func()) {
-	if log.Level() <= logpkg.LevelDebug {
-		c()
+func (c *Client) logDebug(fn func()) {
+	if c.Log.Level() <= log.LevelDebug {
+		fn()
+	}
+}
+
+func (c *Client) logDebugOnly(fn func()) {
+	if c.Log.Level() == log.LevelDebug {
+		fn()
+	}
+}
+
+func (c *Client) logTrace(fn func()) {
+	if c.Log.Level() <= log.LevelTrace {
+		fn()
+	}
+}
+
+func (c *Client) logTraceOnly(fn func()) {
+	if c.Log.Level() == log.LevelTrace {
+		fn()
 	}
 }

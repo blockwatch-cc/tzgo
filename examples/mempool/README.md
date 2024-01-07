@@ -14,7 +14,7 @@ Commands
 
 Arguments
   -node string
-      Tezos node URL (default "https://rpc.tzstats.com")
+      Tezos node URL (default "https://rpc.tzpro.io")
   -ttl int
       Operation TTL (default 120)
   -v  be verbose

@@ -17,10 +17,11 @@ var (
 )
 
 type Receipt struct {
-	Block tezos.BlockHash
-	List  int
-	Pos   int
-	Op    *Operation
+	Block  tezos.BlockHash
+	Height int64
+	List   int
+	Pos    int
+	Op     *Operation
 }
 
 // TotalCosts returns the sum of costs across all batched and internal operations.
@@ -76,6 +77,21 @@ func (r *Receipt) Error() error {
 	return nil
 }
 
+// OriginatedContract returns the first contract address deployed by the operation.
+func (r *Receipt) OriginatedContract() (tezos.Address, bool) {
+	if r.IsSuccess() {
+		for _, contents := range r.Op.Contents {
+			if contents.Kind() == tezos.OpTypeOrigination {
+				result := contents.Result()
+				if len(result.OriginatedContracts) > 0 {
+					return result.OriginatedContracts[0], true
+				}
+			}
+		}
+	}
+	return tezos.InvalidAddress, false
+}
+
 // MinLimits returns a list of individual operation costs mapped to limits for use
 // in simulation results. Fee is reset to zero to prevent higher simulation fee from
 // spilling over into real fees paid.
@@ -92,6 +108,7 @@ func (r *Receipt) MinLimits() []tezos.Limits {
 type Result struct {
 	oh     tezos.OpHash    // the operation hash to watch
 	block  tezos.BlockHash // the block hash where op was included
+	height int64           // block height
 	list   int             // the list where op was included
 	pos    int             // the list position where op was included
 	err    error           // saves any error
@@ -161,9 +178,10 @@ func (r *Result) GetReceipt(ctx context.Context) (*Receipt, error) {
 		return nil, r.err
 	}
 	rec := &Receipt{
-		Block: r.block,
-		Pos:   r.pos,
-		List:  r.list,
+		Block:  r.block,
+		Height: r.height,
+		Pos:    r.pos,
+		List:   r.list,
 	}
 	if r.obs != nil {
 		op, err := r.obs.c.GetBlockOperation(ctx, r.block, r.list, r.pos)
@@ -179,22 +197,27 @@ func (r *Result) Wait() {
 	<-r.done
 }
 
-func (r *Result) WaitContext(ctx context.Context) {
+func (r *Result) WaitContext(ctx context.Context) bool {
 	select {
 	case <-ctx.Done():
+		r.err = context.Canceled
+		return false
 	case <-r.done:
+		return true
 	}
 }
 
-func (r *Result) callback(block tezos.BlockHash, list, pos int, force bool) bool {
+func (r *Result) callback(block *BlockHeaderLogEntry, height int64, list, pos int, force bool) bool {
 	if force {
-		r.block = block.Clone()
+		r.block = block.Hash
+		r.height = height
 		r.list = list
 		r.pos = pos
 		return false
 	}
 	if !r.block.IsValid() {
-		r.block = block.Clone()
+		r.block = block.Hash
+		r.height = height
 		r.list = list
 		r.pos = pos
 	}

@@ -191,8 +191,29 @@ func DetectBigmaps(typ, storage Prim) map[string]int64 {
 			stack.Push(val)
 			return nil
 
-		case T_OR, T_LIST, T_SET, T_LAMBDA:
-			// edge case: unsupported, needs different type walk algo
+		case T_LAMBDA:
+			// unsupported
+			return PrimSkip
+
+		case T_LIST, T_SET:
+			for i, p := range val.Args {
+				for n, v := range DetectBigmaps(typ.Args[0], p) {
+					n = n + "_" + strconv.Itoa(i)
+					named[uniqueName(n)] = v
+				}
+			}
+			return PrimSkip
+
+		case T_OR:
+			branch := p.Args[0]
+			if val.OpCode == D_RIGHT {
+				branch = p.Args[1]
+			}
+			if len(val.Args) > 0 {
+				for n, v := range DetectBigmaps(branch, val.Args[0]) {
+					named[uniqueName(n)] = v
+				}
+			}
 			return PrimSkip
 
 		case T_OPTION:

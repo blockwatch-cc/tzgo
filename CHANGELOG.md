@@ -1,13 +1,32 @@
 # Changelog
 
-## unreleased
-
 Oxford changes
 * add adaptive issuance vote to block models
 * extend balance updates with staker info
 * add oxfordnet hashes and setup
 
-Other changes
+## v1.17.4
+
+* rpc: fix reading API key from config URL
+* micheline: accept new opcodes as valid
+
+## v1.17.3
+
+* cmd: add tzcompose alpha release
+* rpc: dedicated logger instance per client
+* rpc observer: return full BlockHeaderLogEntry in callback
+* rpc observer: multiple subscriptions for the same op hash
+* rpc observer: support block subscriptions (use zero op hash)
+* micheline: new prim marshaler (type + Go map[string]any -> prim tree)
+* micheline: new builder helpers for key hash, union, sorted map elements
+* micheline: new prim compare, unpack ascii strings, yaml marshaler
+* tezos: fix for sandbox deployments
+
+## v1.17.2
+
+* accept non-manager ops as successful
+* decode block monitor protocol data
+* fix endorsement encoding
 * add methods to page through bigmap values
 * add Micheline path setters
 * skip empty annotations on variadic prims in JSON output

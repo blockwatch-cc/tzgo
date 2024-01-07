@@ -201,7 +201,7 @@ const (
 )
 
 func (op OpCode) IsValid() bool {
-	return op <= H_CONSTANT
+	return op <= I_NAT
 }
 
 var (

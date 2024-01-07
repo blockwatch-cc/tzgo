@@ -235,7 +235,7 @@ func (c *Client) ListBigmapKeys(ctx context.Context, bigmap int64, id BlockID) (
 	return hashes, nil
 }
 
-// ListBigmapKeys returns all keys in the bigmap at block id. This call may be very SLOW for
+// ListActiveBigmapKeys returns all keys in the bigmap at block id. This call may be very SLOW for
 // large bigmaps and there is no means to limit the result. Use of this method is discouraged.
 // Instead, call the ListActiveBigmapValuesExt method below. In case you require the pre-image of
 // bigmap keys consider calling an indexer API instead.

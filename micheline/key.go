@@ -334,7 +334,7 @@ func (k Key) Bytes() []byte {
 		p.Int = z.Big()
 	case T_ADDRESS:
 		p.Type = PrimBytes
-		p.Bytes = k.AddrKey.EncodePadded()
+		p.Bytes = k.AddrKey.EncodePadded() // 22 byte padded version
 	case T_KEY_HASH:
 		p.Type = PrimBytes
 		p.Bytes = k.AddrKey.Encode() // 21 byte version for implicit accounts

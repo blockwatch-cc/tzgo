@@ -5,6 +5,7 @@ package micheline
 
 import (
 	"math/big"
+	"sort"
 
 	"blockwatch.cc/tzgo/tezos"
 )
@@ -61,6 +62,10 @@ func NewNat(i *big.Int) Prim {
 	return Prim{Type: PrimInt, Int: i}
 }
 
+func NewKeyHash(a tezos.Address) Prim {
+	return NewBytes(a.Encode())
+}
+
 func NewAddress(a tezos.Address) Prim {
 	return NewBytes(a.EncodePadded())
 }
@@ -97,6 +102,9 @@ func NewMapType(k, v Prim, anno ...string) Prim {
 }
 
 func NewMap(elts ...Prim) Prim {
+	sort.Slice(elts, func(i, j int) bool {
+		return elts[i].Args[0].Compare(elts[j].Args[0]) <= 0
+	})
 	return Prim{Type: PrimSequence, Args: elts}
 }
 
@@ -138,6 +146,17 @@ func NewPrim(c OpCode, anno ...string) Prim {
 		typ = PrimNullaryAnno
 	}
 	return Prim{Type: typ, OpCode: c, Anno: anno}
+}
+
+func NewUnion(path []int, prim Prim) Prim {
+	if len(path) == 0 {
+		return prim
+	}
+	oc := D_LEFT
+	if path[0] == 1 {
+		oc = D_RIGHT
+	}
+	return NewCode(oc, NewUnion(path[1:], prim))
 }
 
 func (p Prim) WithAnno(anno string) Prim {

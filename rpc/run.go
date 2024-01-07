@@ -72,6 +72,11 @@ var DefaultOptions = CallOptions{
 	SimulationOffset: 5, // use pessimistic value to prevent gas exhausted errors (node's default is 3)
 }
 
+func NewCallOptions() *CallOptions {
+	o := DefaultOptions
+	return &o
+}
+
 type RunOperationRequest struct {
 	Operation *codec.Op         `json:"operation"`
 	ChainId   tezos.ChainIdHash `json:"chain_id"`
@@ -183,7 +188,7 @@ func (c *Client) Simulate(ctx context.Context, o *codec.Op, opts *CallOptions) (
 		Contents:  o.Contents,
 		Signature: tezos.ZeroSignature,
 		TTL:       o.TTL,
-		Params:    o.Params,
+		Params:    c.Params,
 	}
 
 	if opts == nil {
@@ -303,8 +308,17 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 		return nil, err
 	}
 
-	// set source on all ops
-	op.WithSource(key.Address())
+	// use custom observer when provided
+	mon := c.BlockObserver
+	if opts.Observer != nil {
+		mon = opts.Observer
+	}
+
+	// ensure block observer is running
+	mon.Listen(c)
+
+	// set source and params on all ops
+	op.WithSource(key.Address()).WithParams(c.Params)
 
 	// auto-complete op with branch/ttl, source counter, reveal
 	err = c.Complete(ctx, op, key)
@@ -329,7 +343,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	}
 
 	// log info about tx costs
-	logDebug(func() {
+	c.logDebug(func() {
 		costs := sim.Costs()
 		for i, v := range op.Contents {
 			verb := "used"
@@ -337,7 +351,7 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 				verb = "forced"
 			}
 			limits := v.Limits()
-			log.Debugf("OP#%03d: %s gas_used(sim)=%d storage_used(sim)=%d storage_burn(sim)=%d alloc_burn(sim)=%d fee(%s)=%d gas_limit(%s)=%d storage_limit(%s)=%d ",
+			c.Log.Debugf("OP#%03d: %s gas_used(sim)=%d storage_used(sim)=%d storage_burn(sim)=%d alloc_burn(sim)=%d fee(%s)=%d gas_limit(%s)=%d storage_limit(%s)=%d ",
 				i, v.Kind(), costs[i].GasUsed, costs[i].StorageUsed, costs[i].StorageBurn, costs[i].AllocationBurn,
 				verb, limits.Fee, verb, limits.GasLimit, verb, limits.StorageLimit,
 			)
@@ -358,6 +372,12 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 	}
 	op.WithSignature(sig)
 
+	// trace what we'll broadcast
+	c.logTrace(func() {
+		buf, _ := op.MarshalJSON()
+		c.Log.Tracef("Broadcast: %s", string(buf))
+	})
+
 	// broadcast
 	hash, err := c.Broadcast(ctx, op)
 	if err != nil {
@@ -366,15 +386,6 @@ func (c *Client) Send(ctx context.Context, op *codec.Op, opts *CallOptions) (*Re
 
 	// wait for confirmations
 	res := NewResult(hash).WithTTL(op.TTL).WithConfirmations(opts.Confirmations)
-
-	// use custom observer when provided
-	mon := c.BlockObserver
-	if opts.Observer != nil {
-		mon = opts.Observer
-	}
-
-	// ensure block observer is running
-	mon.Listen(c)
 
 	// wait for confirmations
 	res.Listen(mon)

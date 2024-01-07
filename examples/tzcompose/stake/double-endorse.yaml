@@ -1,0 +1,79 @@
+version: alpha
+
+accounts:
+  - name: baker-1
+    id: 101
+  - name: staker-1
+    id: 102
+
+pipelines:
+  double-endorse-test-1:
+  # fund baker and staker
+  - task: transfer
+    destination: $baker-1
+    amount: 20_001_000_000
+  - task: transfer
+    destination: $staker-1
+    amount: 1_000_000_000
+  # reveal the baker
+  - task: transfer
+    source: $baker-1
+    destination: $staker-1
+    amount: 1_000_000
+  # register and stake the baker
+  - task: register_baker
+    source: $baker-1
+  - task: stake
+    source: $baker-1
+    amount: 10_000_000_000
+  # setup staker delegation and stake
+  - task: delegate
+    source: $staker-1
+    destination: $baker-1
+  - task: stake
+    source: $staker-1
+    amount: 500_000_000
+  # unstake wave 1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  # unstake wave 2
+  - task: wait
+    for: cycle
+    value: +1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  # unstake wave 3
+  - task: wait
+    for: cycle
+    value: +1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  # unstake wave 4
+  - task: wait
+    for: cycle
+    value: +1
+  - task: unstake
+    source: $baker-1
+    amount: 1000_000_000
+  - task: unstake
+    source: $staker-1
+    amount: 100_000_000
+  # slash the baker
+  - task: double_endorse
+    destination: $baker-1
+  - task: double_endorse
+    destination: $baker-1
+  - task: double_endorse
+    destination: $baker-1

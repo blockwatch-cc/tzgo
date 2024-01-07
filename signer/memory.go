@@ -11,7 +11,7 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-var ErrAddressMismatch = errors.New("address mismatch")
+var ErrAddressMismatch = errors.New("signer: address mismatch")
 
 type MemorySigner struct {
 	key tezos.PrivateKey

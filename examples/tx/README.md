@@ -11,7 +11,7 @@ Usage: tx [args] <cmd> [sub-args]
 
 Arguments
   -node string
-      Tezos node URL (default "https://rpc.ithaca.tzstats.com")
+      Tezos node URL (default "https://rpc.tzpro.io")
   -v  be verbose
 
 Commands

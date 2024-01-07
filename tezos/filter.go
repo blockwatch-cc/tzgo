@@ -43,6 +43,9 @@ func (s *AddressFilter) Remove(addr Address) {
 }
 
 func (s AddressFilter) Contains(addr Address) bool {
+	if len(s.set) == 0 {
+		return false
+	}
 	_, ok := s.set[s.hash(addr)]
 	return ok
 }

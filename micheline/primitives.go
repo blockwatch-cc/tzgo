@@ -233,6 +233,22 @@ func (p Prim) IsEqualWithAnno(p2 Prim) bool {
 	return IsEqualPrim(p, p2, true)
 }
 
+func (p Prim) Compare(p2 Prim) int {
+	if p.Type != p2.Type {
+		return 0
+	}
+	switch p.Type {
+	case PrimString:
+		return strings.Compare(p.String, p2.String)
+	case PrimBytes:
+		return bytes.Compare(p.Bytes, p2.Bytes)
+	case PrimInt:
+		return p.Int.Cmp(p2.Int)
+	default:
+		return 0
+	}
+}
+
 func IsEqualPrim(p1, p2 Prim, withAnno bool) bool {
 	if p1.OpCode != p2.OpCode {
 		return false
@@ -752,6 +768,32 @@ func (p Prim) UnpackAll() (Prim, error) {
 	return pp, nil
 }
 
+// UnpackAsciiString converts ASCII strings inside byte prims.
+func (p Prim) UnpackAsciiString() Prim {
+	if p.Bytes != nil {
+		if s := string(p.Bytes); isASCII(s) {
+			return Prim{
+				Type:   PrimString,
+				String: s,
+			}
+		}
+	}
+	return p
+}
+
+// UnpackAllAsciiStrings recursively converts all ASCII strings inside byte prims.
+func (p Prim) UnpackAllAsciiStrings() Prim {
+	if len(p.Args) == 0 {
+		return p.UnpackAsciiString()
+	}
+	up := p
+	up.Args = make([]Prim, len(p.Args))
+	for i, v := range p.Args {
+		up.Args[i] = v.UnpackAllAsciiStrings()
+	}
+	return up
+}
+
 // Returns a typed/decoded value from an encoded primitive.
 func (p Prim) Value(as OpCode) interface{} {
 	var warn bool
@@ -958,16 +1000,12 @@ func (p Prim) Value(as OpCode) interface{} {
 	return p
 }
 
-func ParsePrim(s string) (p Prim, err error) {
-	err = p.UnmarshalJSON([]byte(s))
-	return
-}
-
-func MustParsePrim(s string) (p Prim) {
-	if err := p.UnmarshalJSON([]byte(s)); err != nil {
-		panic(err)
+func (p Prim) MarshalYAML() (any, error) {
+	buf, err := p.MarshalJSON()
+	if err != nil {
+		return nil, err
 	}
-	return
+	return string(buf), nil
 }
 
 func (p Prim) MarshalJSON() ([]byte, error) {
@@ -1502,7 +1540,7 @@ func (p *Prim) DecodeBuffer(buf *bytes.Buffer) error {
 		p.Bytes = buf.Next(size)
 
 	default:
-		return fmt.Errorf("micheline: unknown primitive type 0x%x", tag)
+		return fmt.Errorf("micheline: unknown primitive type 0x%x", byte(tag))
 	}
 	p.Type = tag
 	return nil

@@ -176,6 +176,18 @@ func (t Typedef) Right() Typedef {
 	return Typedef{}
 }
 
+func (t Typedef) OpCode() OpCode {
+	switch t.Type {
+	case TypeStruct:
+		return T_PAIR
+	case TypeUnion:
+		return T_OR
+	default:
+		oc, _ := ParseOpCode(t.Type)
+		return oc
+	}
+}
+
 func (t Typedef) String() string {
 	var b strings.Builder
 	if t.Name != "" {

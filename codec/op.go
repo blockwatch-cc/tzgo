@@ -500,6 +500,14 @@ func (o *Op) Sign(key tezos.PrivateKey) error {
 	return nil
 }
 
+// Hash calculates the operation hash. For the hash to be correct, the operation
+// must contain a valid signature.
+func (o *Op) Hash() (h tezos.OpHash) {
+	d := tezos.Digest(o.Bytes())
+	copy(h[:], d[:])
+	return
+}
+
 // MarshalJSON conditionally marshals the JSON format of the operation with checks
 // for required fields. Omits signature for unsigned ops so that the encoding is
 // compatible with remote forging.
