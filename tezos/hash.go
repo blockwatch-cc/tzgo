@@ -371,7 +371,7 @@ func (h OpHash) MarshalBinary() ([]byte, error) {
 
 func (h *OpHash) UnmarshalBinary(buf []byte) error {
 	if l := len(buf); l > 0 && l != HashTypeOperation.Len {
-		return fmt.Errorf("tezosshortor operation hash")
+		return fmt.Errorf("tezos: short operation hash")
 	}
 	copy(h[:], buf)
 	return nil
