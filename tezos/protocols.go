@@ -24,7 +24,7 @@ var (
 	ProtoV015      = MustParseProtocolHash("PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW")
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
 	ProtoV017      = MustParseProtocolHash("PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf")
-	ProtoV018      = MustParseProtocolHash("ProxfordSW2S7fvchT1Zgj2avb5UES194neRyYVXoaDGvF9egt8")
+	ProtoV018      = MustParseProtocolHash("ProxfordYmVfjWnRcgjWH36fW6PArwqykTFzotUxRs6gmTcZDuH")
 
 	// aliases
 	PtAthens  = ProtoV004
@@ -46,7 +46,7 @@ var (
 	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Nairobinet = MustParseChainIdHash("NetXyuzvDo2Ugzb")
-	Oxfordnet  = MustParseChainIdHash("NetXH6zDyMzRsUy")
+	Oxfordnet  = MustParseChainIdHash("NetXxWsskGahzQB")
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -93,7 +93,7 @@ var (
 			{PtLimaPt, 0, 2981889, 3268608, 558, 5, 8192, 512},    // v15
 			{PtMumbai, 0, 3268609, 3760128, 593, 5, 16384, 1024},  // v16
 			{PtNairobi, 0, 3760129, -1, 623, 5, 16384, 1024},      // v17
-			// {Proxford, 0, 3760129, -1, 623, 5, 16384, 1024},      // v18
+			{Proxford, 0, 5070849, -1, 703, 5, 16384, 1024},       // v18
 		},
 		Ghostnet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},           // 0
