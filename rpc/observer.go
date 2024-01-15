@@ -240,7 +240,7 @@ func (m *Observer) listenBlocks() {
 				m.removeWatcher(tezos.ZeroOpHash, id)
 				continue
 			}
-			if remove := sub.cb(head, -1, -1, -1, false); remove {
+			if remove := sub.cb(head, head.Level, -1, -1, false); remove {
 				delete(m.subs, id)
 				m.removeWatcher(tezos.ZeroOpHash, id)
 			}
@@ -251,7 +251,7 @@ func (m *Observer) listenBlocks() {
 		for _, v := range m.subs {
 			if v.matched {
 				m.c.Log.Debugf("monitor: signal n-th match for %d %s", v.id, v.oh)
-				if remove := v.cb(head, -1, -1, -1, false); remove {
+				if remove := v.cb(head, head.Level, -1, -1, false); remove {
 					delete(m.subs, v.id)
 					m.removeWatcher(v.oh, v.id)
 				}
