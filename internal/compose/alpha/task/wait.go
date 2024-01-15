@@ -43,7 +43,7 @@ func (t *WaitTask) Build(ctx compose.Context, task alpha.Task) (*codec.Op, *rpc.
 	}
 
 	done := make(chan struct{})
-	id, err := ctx.SubscribeBlocks(func(_ *rpc.BlockHeaderLogEntry, height int64, _ int, _ int, _ bool) bool {
+	id, err := ctx.SubscribeBlocks(func(h *rpc.BlockHeaderLogEntry, height int64, _ int, _ int, _ bool) bool {
 		isDone := false
 		var val int64
 		p := ctx.Params()

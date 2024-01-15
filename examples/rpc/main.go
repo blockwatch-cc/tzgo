@@ -77,10 +77,12 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	log.Infof("Using RPC %s", node)
 	c, err := rpc.NewClient(node, nil)
 	if err != nil {
 		return err
 	}
+	c.Log = log.Log
 
 	switch flags.Arg(0) {
 	case "block":
@@ -329,12 +331,20 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 
 	// parse ops
 	oplist := make([]tezos.OpType, 0)
+	eplist := make([]string, 0)
 	for _, op := range strings.Split(ops, ",") {
-		ot := tezos.ParseOpType(op)
-		if !ot.IsValid() {
-			return fmt.Errorf("invalid operation type '%s'", op)
+		if strings.HasPrefix(op, "ep:") {
+			eplist = append(eplist, strings.TrimPrefix(op, "ep:"))
+		} else {
+			ot := tezos.ParseOpType(op)
+			if !ot.IsValid() {
+				return fmt.Errorf("invalid operation type '%s'", op)
+			}
+			oplist = append(oplist, ot)
 		}
-		oplist = append(oplist, ot)
+	}
+	if len(eplist) > 0 {
+		oplist = append(oplist, tezos.OpTypeTransaction)
 	}
 
 	// fetching blocks forward
@@ -342,19 +352,22 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	opcount := make(map[tezos.OpType]int)
+	epcount := make(map[string]int)
+	plog := log.NewProgressLogger(log.Log).SetEvent("block")
 	for {
 		b, err := c.GetBlockHeight(ctx, height)
 		if err != nil {
 			return fmt.Errorf("Block %d failed: %w", height, err)
 		}
 
-		if b.GetLevel()%1000 == 0 {
-			fmt.Printf("Scanning blockchain at level %d\n", b.GetLevel())
-		}
+		plog.Log(1, fmt.Sprintf("height %d", height))
 
-		// clear map
+		// clear maps
 		for n := range opcount {
 			delete(opcount, n)
+		}
+		for n := range epcount {
+			delete(epcount, n)
 		}
 
 		// count operations and details
@@ -368,10 +381,13 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 						opcount[kind] = 1
 					}
 					if kind == tezos.OpTypeTransaction {
-						top := op.(*rpc.Transaction)
-						for _, vvv := range top.Metadata.InternalResults {
+						tx := op.(*rpc.Transaction)
+						if tx.Parameters != nil {
+							epcount[tx.Parameters.Entrypoint]++
+						}
+						for _, vvv := range tx.Metadata.InternalResults {
 							kind = vvv.Kind
-							opcount[kind] = opcount[kind] + 1
+							opcount[kind]++
 						}
 					}
 				}
@@ -379,16 +395,37 @@ func searchOps(ctx context.Context, c *rpc.Client, ops string, start int64) erro
 		}
 		for _, op := range oplist {
 			if n, ok := opcount[op]; ok {
-				fmt.Printf("%s level=%d contains %d %s(s)\n", b.Hash, b.GetLevel(), n, op)
-				// output relevant ops
-				if !verbose {
-					continue
-				}
-				for _, v := range b.Operations {
-					for _, vv := range v {
-						for _, o := range vv.Contents {
-							if op == o.Kind() {
-								enc.Encode(o)
+				if len(eplist) > 0 {
+					for _, ep := range eplist {
+						if n, ok := epcount[ep]; ok {
+							fmt.Printf("%s level=%d contains %d %s(s)\n", b.Hash, b.GetLevel(), n, ep)
+						}
+						// output relevant ops
+						if !verbose {
+							continue
+						}
+						for _, v := range b.Operations {
+							for _, vv := range v {
+								for _, o := range vv.Contents {
+									if op == o.Kind() && o.(*rpc.Transaction).Parameters != nil && o.(*rpc.Transaction).Parameters.Entrypoint == ep {
+										enc.Encode(o)
+									}
+								}
+							}
+						}
+					}
+				} else {
+					fmt.Printf("%s level=%d contains %d %s(s)\n", b.Hash, b.GetLevel(), n, op)
+					// output relevant ops
+					if !verbose {
+						continue
+					}
+					for _, v := range b.Operations {
+						for _, vv := range v {
+							for _, o := range vv.Contents {
+								if op == o.Kind() {
+									enc.Encode(o)
+								}
 							}
 						}
 					}

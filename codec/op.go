@@ -98,7 +98,8 @@ func (o *Op) WithContentsFront(op Operation) *Op {
 	return o
 }
 
-// WithSource sets the source for all manager operations to addr.
+// WithSource sets the source for all manager operations to addr. It is required
+// before calling other WithXXX functions.
 func (o *Op) WithSource(addr tezos.Address) *Op {
 	for _, v := range o.Contents {
 		v.WithSource(addr)
@@ -108,6 +109,7 @@ func (o *Op) WithSource(addr tezos.Address) *Op {
 }
 
 // WithTransfer adds a simple value transfer transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithTransfer(to tezos.Address, amount int64) *Op {
 	o.Contents = append(o.Contents, &Transaction{
 		Manager: Manager{
@@ -121,6 +123,7 @@ func (o *Op) WithTransfer(to tezos.Address, amount int64) *Op {
 }
 
 // WithCall adds a contract call transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithCall(to tezos.Address, params micheline.Parameters) *Op {
 	o.Contents = append(o.Contents, &Transaction{
 		Manager: Manager{
@@ -134,6 +137,7 @@ func (o *Op) WithCall(to tezos.Address, params micheline.Parameters) *Op {
 }
 
 // WithCallExt adds a contract call with value transfer transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithCallExt(to tezos.Address, params micheline.Parameters, amount int64) *Op {
 	o.Contents = append(o.Contents, &Transaction{
 		Manager: Manager{
@@ -148,6 +152,7 @@ func (o *Op) WithCallExt(to tezos.Address, params micheline.Parameters, amount i
 }
 
 // WithOrigination adds a contract origination transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithOrigination(script micheline.Script) *Op {
 	o.Contents = append(o.Contents, &Origination{
 		Manager: Manager{
@@ -161,6 +166,7 @@ func (o *Op) WithOrigination(script micheline.Script) *Op {
 
 // WithOriginationExt adds a contract origination transaction with optional delegation to
 // baker and an optional value transfer to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithOriginationExt(script micheline.Script, baker tezos.Address, amount int64) *Op {
 	o.Contents = append(o.Contents, &Origination{
 		Manager: Manager{
@@ -175,6 +181,7 @@ func (o *Op) WithOriginationExt(script micheline.Script, baker tezos.Address, am
 }
 
 // WithDelegation adds a delegation transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithDelegation(to tezos.Address) *Op {
 	o.Contents = append(o.Contents, &Delegation{
 		Manager: Manager{
@@ -188,6 +195,7 @@ func (o *Op) WithDelegation(to tezos.Address) *Op {
 
 // WithUndelegation adds a delegation transaction that resets the callers baker to null
 // to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithUndelegation() *Op {
 	o.Contents = append(o.Contents, &Delegation{
 		Manager: Manager{
@@ -200,6 +208,7 @@ func (o *Op) WithUndelegation() *Op {
 
 // WithRegisterBaker adds a delegation transaction that registers the caller
 // as baker to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithRegisterBaker() *Op {
 	o.Contents = append(o.Contents, &Delegation{
 		Manager: Manager{
@@ -211,7 +220,81 @@ func (o *Op) WithRegisterBaker() *Op {
 	return o
 }
 
+// WithSetBakerParams adds a set_delegate_parameters call where target is
+// source. The caller must be a registered baker.
+// Source must be defined via WithSource() before calling this function.
+func (o *Op) WithSetBakerParams(edge, limit int64) *Op {
+	return o.WithCall(
+		o.Source,
+		micheline.Parameters{
+			Entrypoint: micheline.SET_DELEGATE_PARAMETERS,
+			Value: micheline.NewCombPair(
+				micheline.NewInt64(edge),
+				micheline.NewInt64(limit),
+				micheline.Unit,
+			),
+		},
+	)
+}
+
+// WithStake sends a stake pseudo call to source to lock tokens for staking.
+// The caller must delegate to a baker and this baker is implictly chosen to
+// stake with.
+// Source must be defined via WithSource() before calling this function.
+func (o *Op) WithStake(amount int64) *Op {
+	return o.WithCallExt(
+		o.Source,
+		micheline.Parameters{
+			Entrypoint: micheline.STAKE,
+			Value:      micheline.Unit,
+		},
+		amount,
+	)
+}
+
+// WithUnstake sends an unstake pseudo call to source which creates an
+// unstake request for amount tokens.
+// Source must be defined via WithSource() before calling this function.
+func (o *Op) WithUnstake(amount int64) *Op {
+	return o.WithCallExt(
+		o.Source,
+		micheline.Parameters{
+			Entrypoint: micheline.UNSTAKE,
+			Value:      micheline.Unit,
+		},
+		amount,
+	)
+}
+
+// WithUnstakeAll sends an unstake pseudo call to source which creates an
+// unstake request for all currently staked tokens.
+// Source must be defined via WithSource() before calling this function.
+func (o *Op) WithUnstakeAll(amount int64) *Op {
+	return o.WithCallExt(
+		o.Source,
+		micheline.Parameters{
+			Entrypoint: micheline.UNSTAKE,
+			Value:      micheline.Unit,
+		},
+		9223372036854775807,
+	)
+}
+
+// WithFinalizeUnstake sends a finalize_unstake pseudo call to source which
+// moves all unfrozen unstaked tokens back to spendable balance.
+// Source must be defined via WithSource() before calling this function.
+func (o *Op) WithFinalizeUnstake() *Op {
+	return o.WithCall(
+		o.Source,
+		micheline.Parameters{
+			Entrypoint: micheline.FINALIZE_UNSTAKE,
+			Value:      micheline.Unit,
+		},
+	)
+}
+
 // WithRegisterConstant adds a global constant registration transaction to the contents list.
+// Source must be defined via WithSource() before calling this function.
 func (o *Op) WithRegisterConstant(value micheline.Prim) *Op {
 	o.Contents = append(o.Contents, &RegisterGlobalConstant{
 		Manager: Manager{
@@ -449,6 +532,7 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 	buf.WriteByte(']')
 	sig := o.Signature
 	if len(o.Contents) > 0 && o.Contents[0].Kind() == tezos.OpTypeEndorsementWithSlot {
+		// no signature
 		sig = tezos.InvalidSignature
 	}
 	if sig.IsValid() {

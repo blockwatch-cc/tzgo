@@ -135,6 +135,7 @@ type Task struct {
 	WaitMode    WaitMode       `yaml:"for,omitempty"`      // wait only
 	Value       string         `yaml:"value,omitempty"`    // wait only
 	Log         string         `yaml:"log,omitempty"`      // log level override
+	OnError     ErrorMode      `yaml:"on_error,omitempty"` // how to handle errors: fail|warn|ignore
 }
 
 func (t Task) Validate(ctx compose.Context) error {
@@ -178,6 +179,32 @@ func (t Task) Validate(ctx compose.Context) error {
 	return nil
 }
 
+type ErrorMode byte
+
+const (
+	ErrorModeFail ErrorMode = iota
+	ErrorModeWarn
+	ErrorModeIgnore
+)
+
+func (m *ErrorMode) UnmarshalYAML(node *yaml.Node) error {
+	return m.UnmarshalText([]byte(node.Value))
+}
+
+func (m *ErrorMode) UnmarshalText(buf []byte) error {
+	switch string(buf) {
+	case "fail":
+		*m = ErrorModeFail
+	case "warn":
+		*m = ErrorModeWarn
+	case "ignore":
+		*m = ErrorModeIgnore
+	default:
+		return fmt.Errorf("invalid error mode %q", string(buf))
+	}
+	return nil
+}
+
 type WaitMode byte
 
 const (
@@ -202,7 +229,7 @@ func (m *WaitMode) UnmarshalText(buf []byte) error {
 	case "":
 		*m = WaitModeInvalid
 	default:
-		return fmt.Errorf("invalid wait mode")
+		return fmt.Errorf("invalid wait mode %q", string(buf))
 	}
 	return nil
 }

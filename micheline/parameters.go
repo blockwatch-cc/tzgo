@@ -142,6 +142,14 @@ func (p Parameters) EncodeBuffer(buf *bytes.Buffer) error {
 		buf.WriteByte(4)
 	case DEPOSIT:
 		buf.WriteByte(5)
+	case STAKE:
+		buf.WriteByte(6)
+	case UNSTAKE:
+		buf.WriteByte(7)
+	case FINALIZE_UNSTAKE:
+		buf.WriteByte(8)
+	case SET_DELEGATE_PARAMETERS:
+		buf.WriteByte(9)
 	default:
 		buf.WriteByte(255)
 		buf.WriteByte(byte(len(p.Entrypoint)))
@@ -201,6 +209,14 @@ func (p *Parameters) DecodeBuffer(buf *bytes.Buffer) error {
 		p.Entrypoint = REMOVE_DELEGATE
 	case 5:
 		p.Entrypoint = DEPOSIT
+	case 6:
+		p.Entrypoint = STAKE
+	case 7:
+		p.Entrypoint = UNSTAKE
+	case 8:
+		p.Entrypoint = FINALIZE_UNSTAKE
+	case 9:
+		p.Entrypoint = SET_DELEGATE_PARAMETERS
 	default:
 		sz := buf.Next(1)
 		if len(sz) == 0 || buf.Len() < int(sz[0]) {

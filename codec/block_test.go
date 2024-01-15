@@ -12,8 +12,12 @@ import (
 
 func TestBlock(t *testing.T) {
 	type testcase struct {
-		data tezos.HexBytes
-		head BlockHeader
+		data  tezos.HexBytes
+		head  BlockHeader
+		chain tezos.ChainIdHash
+		hash  tezos.BlockHash
+		key   tezos.PrivateKey
+		sig   tezos.Signature
 	}
 
 	var cases = []testcase{
@@ -38,7 +42,8 @@ func TestBlock(t *testing.T) {
 				PayloadHash:      tezos.MustParsePayloadHash("vh2nZrxixzv4ZjAJn7PRj79GumUMAJzxuEYMjo496TYSaWhXYjZM"),
 				PayloadRound:     1,
 				ProofOfWorkNonce: asHex("df2ea592260c0100"),
-				LbToggleVote:     tezos.LbVoteOn,
+				LbVote:           tezos.FeatureVoteOn,
+				AiVote:           tezos.FeatureVoteOn,
 			},
 		},
 		{
@@ -59,7 +64,8 @@ func TestBlock(t *testing.T) {
 				PayloadRound:     0,
 				ProofOfWorkNonce: asHex("101895ca00000000"),
 				SeedNonceHash:    tezos.MustParseNonceHash("nceUFoeQDgkJCmzdMWh19ZjBYqQD3N9fe6bXQ1ZsUKKvMn7iun5Z3"),
-				LbToggleVote:     tezos.LbVoteOn,
+				LbVote:           tezos.FeatureVoteOn,
+				AiVote:           tezos.FeatureVoteOn,
 			},
 		},
 		{
@@ -82,8 +88,38 @@ func TestBlock(t *testing.T) {
 				PayloadHash:      tezos.MustParsePayloadHash("vh2UJ9qvkLHcFbiotR462Ni84QU7xJ83fNwspoo9kq7spoNeSMkH"),
 				PayloadRound:     0,
 				ProofOfWorkNonce: asHex("a8e1dd3c00000000"),
-				LbToggleVote:     tezos.LbVoteOn,
+				LbVote:           tezos.FeatureVoteOn,
+				AiVote:           tezos.FeatureVoteOn,
 			},
+		},
+		{
+			data:  asHex("0000004c013ce881bd760605e86f07bfd8b462eae0f25151ac056978a9abb392e17cba833f0000000065a3e6f304ebbfbd7dd321a66af71edbb7ae270e4f84d4c50f56a412c53f9efdaaefa11516000000210000000102000000040000004c0000000000000004ffffffff0000000400000000081a1078f1729b2ac0da78480aade344e5f5ccfdcd2035bc59563c1ff80897d05677d1d20902581194154052443de6d0b3c5ffffd62bb8e771e2c1ec62217a25000000007769d51b04000000ff650c5a8c733f89717032992c43ac7f3e121a8dd141184353b5e8c76f25706ea90a"),
+			chain: tezos.MustParseChainIdHash("NetXdQprcVkpaWU"),
+			head: BlockHeader{
+				Level:          76,
+				Proto:          1,
+				Predecessor:    tezos.MustParseBlockHash("BLB79vHaoWiyzYjc68zXWCQFB2snCY28reHR3w6bpvKwZqkZDTE"),
+				Timestamp:      asTime("2024-01-14T13:51:47Z"),
+				ValidationPass: 4,
+				OperationsHash: tezos.MustParseOpListListHash("LLob7XuR6DGQ2jQPurB7AgBGNFi19WukXyuHd1ncjyXGF13qaAZFc"),
+				Fitness: []tezos.HexBytes{
+					asHex("02"),
+					asHex("0000004c"),
+					asHex(""),
+					asHex("ffffffff"),
+					asHex("00000000"),
+				},
+				Context:          tezos.MustParseContextHash("CoUhsoi3yZqpNGCW1pgu4f7eX2kzbkgKdoekLCny4WtGYyUiH96s"),
+				PayloadHash:      tezos.MustParsePayloadHash("vh2LCpkG49XP71LxG7kVc1ob1erR3FnD3jfHjGJa8caN2N7Jn9nx"),
+				PayloadRound:     0,
+				ProofOfWorkNonce: asHex("7769d51b04000000"),
+				SeedNonceHash:    tezos.MustParseNonceHash("nceUzTAhmkcBo1CsZhgPKmt9daAaEWcHspXeeHQqSikEMG7dryrMR"),
+				LbVote:           tezos.FeatureVotePass,
+				AiVote:           tezos.FeatureVotePass,
+			},
+			hash: tezos.MustParseBlockHash("BKsWjip13q21S4cRDmrPG85pYJePST41BrFFrRskWoPCecd88fJ"),
+			key:  tezos.MustParsePrivateKey("edsk2uqQB9AY4FvioK2YMdfmyMrer5R8mGFyuaLLFfSRo8EoyNdht3"),
+			sig:  tezos.MustParseSignature("sigqKNyR7Xuo8TzuMSKA5HaL9XRVmozGM1brMm2ekUSpj14HCTE9zPszEvE6Vy1WEFHhpc4m1wsff4MGkXJQcNmhbALJa7bt"),
 		},
 	}
 
@@ -119,6 +155,27 @@ func TestBlock(t *testing.T) {
 			t.Errorf("Case %d: encode failed:\n    have: %s\n    want: %s\n", i,
 				tezos.HexBytes(buf), c.data,
 			)
+		}
+
+		// check sig
+		if c.sig.IsValid() && c.key.IsValid() {
+			if err := bh.WithChainId(c.chain).Sign(c.key); err != nil {
+				t.Errorf("Case %d: JSON marshal failed: %v", i, err)
+			}
+			if !bh.Signature.Equal(c.sig) {
+				t.Errorf("Case %d: signature mismatch:\n    have: %s\n    want: %s\n", i,
+					bh.Signature, c.sig,
+				)
+			}
+
+			// check hash (needs a valid signature)
+			if c.hash.IsValid() {
+				if bh.WithChainId(c.chain).Hash() != c.hash {
+					t.Errorf("Case %d: hash failed:\n    have: %s\n    want: %s\n", i,
+						bh.Hash(), c.hash,
+					)
+				}
+			}
 		}
 	}
 }

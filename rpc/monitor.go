@@ -140,6 +140,11 @@ func (l BlockHeaderLogEntry) PayloadHash() (h tezos.PayloadHash) {
 	return
 }
 
+func (l BlockHeaderLogEntry) Pow() (h tezos.HexBytes) {
+	h.UnmarshalBinary(l.ProtocolData[36:44])
+	return
+}
+
 func (b *Block) LogEntry() *BlockHeaderLogEntry {
 	e := b.Header.LogEntry()
 	e.Hash = b.Hash

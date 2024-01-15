@@ -35,6 +35,7 @@ var (
 	PtLimaPt       = tezos.PtLimaPt
 	PtMumbai       = tezos.PtMumbai
 	PtNairobi      = tezos.PtNairobi
+	Proxford       = tezos.Proxford
 
 	Mainnet     = tezos.Mainnet
 	NewParams   = tezos.NewParams
@@ -88,6 +89,7 @@ func TestDefaultParams(t *testing.T) {
 		"main":    tezos.DefaultParams,
 		"ghost":   tezos.GhostnetParams,
 		"nairobi": tezos.NairobinetParams,
+		"oxford":  tezos.OxfordnetParams,
 	} {
 		if p.Network == "" {
 			t.Errorf("%s params: Empty network name", n)
@@ -772,56 +774,3 @@ var paramBlocks = []BlockMetadata{
 		},
 	},
 }
-
-// var (
-//     startParams = Constants{
-//         PreservedCycles:        5,
-//         BlocksPerCycle:         4096,
-//         BlocksPerCommitment:    32,
-//         BlocksPerStakeSnapshot: 256,
-//         BlocksPerVotingPeriod:  32768,
-//     }
-//     edoParams = Constants{
-//         PreservedCycles:        5,
-//         BlocksPerCycle:         4096,
-//         BlocksPerCommitment:    32,
-//         BlocksPerStakeSnapshot: 256,
-//         BlocksPerVotingPeriod:  20478, // !!
-//     }
-//     granadaParams = Constants{
-//         PreservedCycles:        5,
-//         BlocksPerCycle:         8192,  // !!
-//         BlocksPerCommitment:    64,    // !!
-//         BlocksPerStakeSnapshot: 512,   // !!
-//         BlocksPerVotingPeriod:  40956, // !!
-//     }
-//     mumbaiParams = Constants{
-//         PreservedCycles:        5,
-//         BlocksPerCycle:         16384, // !!
-//         BlocksPerCommitment:    128,   // !!
-//         BlocksPerStakeSnapshot: 1024,  // !!
-//         BlocksPerVotingPeriod:  81912, // !!
-//     }
-
-//     protoConstants = map[tezos.ProtocolHash]Constants{
-//         ProtoGenesis:   startParams,
-//         ProtoBootstrap: startParams,
-//         ProtoV001:      startParams,
-//         ProtoV002:      startParams,
-//         ProtoV003:      startParams,
-//         PtAthens:       startParams,
-//         PsBabyM1:       startParams,
-//         PsCARTHA:       startParams,
-//         PsDELPH1:       startParams,
-//         PtEdo2Zk:       edoParams,
-//         PsFLoren:       edoParams,
-//         PtGRANAD:       granadaParams,
-//         PtHangz2:       granadaParams,
-//         Psithaca:       granadaParams,
-//         PtJakart:       granadaParams,
-//         PtKathma:       granadaParams,
-//         PtLimaPt:       granadaParams,
-//         PtMumbai:       mumbaiParams,
-//         PtNairobi:      mumbaiParams,
-//     }
-// )

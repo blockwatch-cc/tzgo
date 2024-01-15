@@ -26,7 +26,8 @@ type BlockHeader struct {
 	PayloadRound     int                  `json:"payload_round"`
 	ProofOfWorkNonce tezos.HexBytes       `json:"proof_of_work_nonce"`
 	SeedNonceHash    tezos.NonceHash      `json:"seed_nonce_hash"`
-	LbToggleVote     tezos.LbVote         `json:"liquidity_baking_toggle_vote"`
+	LbVote           tezos.FeatureVote    `json:"liquidity_baking_toggle_vote"`
+	AiVote           tezos.FeatureVote    `json:"adaptive_issuance_vote"`
 	Signature        tezos.Signature      `json:"signature"`
 	ChainId          *tezos.ChainIdHash   `json:"-"` // remote signer use only
 }
@@ -45,6 +46,7 @@ func (h BlockHeader) Bytes() []byte {
 func (h BlockHeader) WatermarkedBytes() []byte {
 	buf := bytes.NewBuffer(nil)
 	buf.WriteByte(TenderbakeBlockWatermark)
+	buf.Write(h.ChainId.Bytes())
 	_ = h.EncodeBuffer(buf)
 	return buf.Bytes()
 }
@@ -54,6 +56,14 @@ func (h BlockHeader) WatermarkedBytes() []byte {
 func (h BlockHeader) Digest() []byte {
 	d := tezos.Digest(h.WatermarkedBytes())
 	return d[:]
+}
+
+// Hash calculates the block hash. For the hash to be correct, the block
+// must contain a valid signature.
+func (h *BlockHeader) Hash() (s tezos.BlockHash) {
+	d := tezos.Digest(h.Bytes())
+	copy(s[:], d[:])
+	return
 }
 
 // Sign signs the block header using a private key and generates a generic signature.
@@ -114,7 +124,7 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`],"context":`)
 	buf.WriteString(strconv.Quote(h.Context.String()))
 	buf.WriteString(`,"payload_hash":`)
-	buf.WriteString(h.PayloadHash.String())
+	buf.WriteString(strconv.Quote(h.PayloadHash.String()))
 	buf.WriteString(`,"payload_round":`)
 	buf.WriteString(strconv.Itoa(h.PayloadRound))
 	buf.WriteString(`,"proof_of_work_nonce":`)
@@ -124,7 +134,9 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 		buf.WriteString(strconv.Quote(h.SeedNonceHash.String()))
 	}
 	buf.WriteString(`,"liquidity_baking_toggle_vote":`)
-	buf.WriteString(strconv.Quote(h.LbToggleVote.String()))
+	buf.WriteString(strconv.Quote(h.LbVote.String()))
+	buf.WriteString(`,"adaptive_issuance_vote":`)
+	buf.WriteString(strconv.Quote(h.AiVote.String()))
 	if h.Signature.IsValid() {
 		buf.WriteString(`,"signature":`)
 		buf.WriteString(strconv.Quote(h.Signature.String()))
@@ -134,9 +146,6 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 }
 
 func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
-	if h.ChainId != nil {
-		buf.Write(h.ChainId.Bytes())
-	}
 	binary.Write(buf, enc, h.Level)
 	buf.WriteByte(h.Proto)
 	buf.Write(h.Predecessor.Bytes())
@@ -162,7 +171,8 @@ func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	buf.WriteByte(h.LbToggleVote.Tag())
+	// BROKEN: merging multiple vote flags is undocumented
+	buf.WriteByte(h.LbVote.Tag() | (h.AiVote.Tag() << 2))
 	if h.Signature.IsValid() {
 		buf.Write(h.Signature.Data) // raw, no tag!
 	}
@@ -234,8 +244,15 @@ func (h *BlockHeader) DecodeBuffer(buf *bytes.Buffer) (err error) {
 			return
 		}
 	}
-	if err = h.LbToggleVote.UnmarshalBinary(buf.Next(1)); err != nil {
-		return
+	// BROKEN: merging multiple vote flags is undocumented
+	b := buf.Next(1)
+	if len(b) > 0 {
+		if err = h.LbVote.UnmarshalBinary([]byte{b[0] & 3}); err != nil {
+			return
+		}
+		if err = h.AiVote.UnmarshalBinary([]byte{(b[0] >> 2) & 3}); err != nil {
+			return
+		}
 	}
 	// conditionally read signature
 	if buf.Len() > 0 {

@@ -85,6 +85,9 @@ type OperationMetadata struct {
 
 	// some rollup ops only, FIXME: is this correct here or is this field in result?
 	Level int64 `json:"level"`
+
+	// v18 slashing ops may block a baker
+	ForbiddenDelegate tezos.Address `json:"forbidden_delegate"` // v18+
 }
 
 // Address returns the delegate address for endorsements.

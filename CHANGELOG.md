@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.18.0
+
+* Oxford protocol support
+* rpc: add adaptive issuance vote to block models
+* rpc: extend balance updates with staker info
+* rpc: add issuance rpc
+* tezos: add oxfordnet hashes and setup
+* codec: add staking operation codecs
+* codec: fix block encoding
+* codec: support block signing and block hash calculation
+
 ## v1.17.4
 
 * rpc: fix reading API key from config URL

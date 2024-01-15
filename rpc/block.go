@@ -124,7 +124,8 @@ type BlockHeader struct {
 	Signature                 tezos.Signature      `json:"signature"`
 	Content                   *BlockContent        `json:"content,omitempty"`
 	LiquidityBakingEscapeVote bool                 `json:"liquidity_baking_escape_vote"`
-	LiquidityBakingToggleVote tezos.LbVote         `json:"liquidity_baking_toggle_vote"`
+	LiquidityBakingToggleVote tezos.FeatureVote    `json:"liquidity_baking_toggle_vote"`
+	AdaptiveIssuanceVote      tezos.FeatureVote    `json:"adaptive_issuance_vote"`
 
 	// only present when header is fetched explicitly
 	Hash     tezos.BlockHash    `json:"hash"`
@@ -132,20 +133,25 @@ type BlockHeader struct {
 	ChainId  tezos.ChainIdHash  `json:"chain_id"`
 }
 
-func (h BlockHeader) LbVote() tezos.LbVote {
+func (h BlockHeader) LbVote() tezos.FeatureVote {
 	if h.LiquidityBakingToggleVote.IsValid() {
 		return h.LiquidityBakingToggleVote
 	}
+	// sic! bool flag has opposite meaning
 	if h.LiquidityBakingEscapeVote {
-		return tezos.LbVoteOn
+		return tezos.FeatureVoteOff
 	}
-	return tezos.LbVoteOff
+	return tezos.FeatureVoteOn
+}
+
+func (h BlockHeader) AiVote() tezos.FeatureVote {
+	return h.AdaptiveIssuanceVote
 }
 
 // ProtocolData exports protocol-specific extra header fields as binary encoded data.
 // Used to produce compliant block monitor data streams.
 //
-// tezos-codec describe 015-PtLimaPt.block_header.protocol_data binary schema
+// octez-codec describe 018-Proxford.block_header.protocol_data binary schema
 // +---------------------------------------+----------+-------------------------------------+
 // | Name                                  | Size     | Contents                            |
 // +=======================================+==========+=====================================+
@@ -159,7 +165,7 @@ func (h BlockHeader) LbVote() tezos.LbVote {
 // +---------------------------------------+----------+-------------------------------------+
 // | seed_nonce_hash                       | 32 bytes | bytes                               |
 // +---------------------------------------+----------+-------------------------------------+
-// | liquidity_baking_toggle_vote          | 1 byte   | signed 8-bit integer                |
+// | per_block_votes                       | 1 byte   | signed 8-bit integer                |
 // +---------------------------------------+----------+-------------------------------------+
 // | signature                             | 64 bytes | bytes                               |
 // +---------------------------------------+----------+-------------------------------------+
@@ -175,7 +181,8 @@ func (h BlockHeader) ProtocolData() []byte {
 	} else {
 		buf.WriteByte(0x0)
 	}
-	buf.WriteByte(h.LiquidityBakingToggleVote.Tag())
+	// broken, how to merge multiple flags is undocumented
+	buf.WriteByte(h.LbVote().Tag() | (h.AiVote().Tag() << 2))
 	if h.Signature.IsValid() {
 		buf.Write(h.Signature.Data) // raw, no tag!
 	}

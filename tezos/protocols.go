@@ -24,6 +24,7 @@ var (
 	ProtoV015      = MustParseProtocolHash("PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW")
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
 	ProtoV017      = MustParseProtocolHash("PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf")
+	ProtoV018      = MustParseProtocolHash("ProxfordYmVfjWnRcgjWH36fW6PArwqykTFzotUxRs6gmTcZDuH")
 
 	// aliases
 	PtAthens  = ProtoV004
@@ -40,10 +41,12 @@ var (
 	PtLimaPt  = ProtoV015
 	PtMumbai  = ProtoV016_2
 	PtNairobi = ProtoV017
+	Proxford  = ProtoV018
 
 	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Nairobinet = MustParseChainIdHash("NetXyuzvDo2Ugzb")
+	Oxfordnet  = MustParseChainIdHash("NetXxWsskGahzQB")
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -65,7 +68,8 @@ var (
 		ProtoV015:      15,
 		ProtoV016_2:    16,
 		ProtoV017:      17,
-		ProtoAlpha:     18,
+		ProtoV018:      18,
+		ProtoAlpha:     19,
 	}
 
 	Deployments = map[ChainIdHash]ProtocolHistory{
@@ -89,6 +93,7 @@ var (
 			{PtLimaPt, 0, 2981889, 3268608, 558, 5, 8192, 512},    // v15
 			{PtMumbai, 0, 3268609, 3760128, 593, 5, 16384, 1024},  // v16
 			{PtNairobi, 0, 3760129, -1, 623, 5, 16384, 1024},      // v17
+			{Proxford, 0, 5070849, -1, 703, 5, 16384, 1024},       // v18
 		},
 		Ghostnet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},           // 0
@@ -100,12 +105,19 @@ var (
 			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256}, // v15
 			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512}, // v16
 			{PtNairobi, 0, 2957313, -1, 625, 3, 8192, 512},     // v17
+			// {Proxford, 0, 2957313, -1, 625, 3, 8192, 512},     // v18
 		},
 		Nairobinet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
 			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
 			{PtMumbai, 2, 2, 16384, 0, 3, 8192, 512},   // v16
 			{PtNairobi, 0, 16385, -1, 2, 3, 8192, 512}, // v17
+		},
+		Oxfordnet: {
+			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
+			{PtNairobi, 2, 2, 16384, 0, 3, 8192, 512},  // v17
+			{Proxford, 0, 16385, -1, 2, 3, 8192, 512},  // v18
 		},
 	}
 )

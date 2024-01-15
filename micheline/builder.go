@@ -10,6 +10,10 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
+var (
+	Unit = NewCode(D_UNIT)
+)
+
 func NewCode(c OpCode, args ...Prim) Prim {
 	var typ PrimType
 	switch len(args) {

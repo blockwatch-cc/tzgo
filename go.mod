@@ -12,9 +12,9 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tidwall/gjson v1.17.0
 	github.com/tyler-smith/go-bip32 v1.0.0
-	golang.org/x/crypto v0.17.0
-	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
-	golang.org/x/term v0.15.0
+	golang.org/x/crypto v0.18.0
+	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3
+	golang.org/x/term v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -27,7 +27,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	gopkg.in/bson.v2 v2.0.0-20171018101713-d8c8987b8862 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect

@@ -153,7 +153,7 @@ func (c *Context) AddVariable(key, val string) {
 }
 
 func (c *Context) AddAccount(acc Account) {
-	c.Log.Debugf("Add account %d=%s", acc.Id, acc.Address)
+	c.Log.Debugf("Add account %d=%s key=%s", acc.Id, acc.Address, acc.PrivateKey)
 	c.Accounts[acc.Address] = acc
 }
 

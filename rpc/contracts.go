@@ -4,8 +4,11 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"blockwatch.cc/tzgo/micheline"
 	"blockwatch.cc/tzgo/tezos"
@@ -34,10 +37,54 @@ type Contracts []tezos.Address
 
 // Contracts holds info about a Tezos account
 type ContractInfo struct {
-	Balance  int64         `json:"balance,string"`
-	Delegate tezos.Address `json:"delegate"`
-	Counter  int64         `json:"counter,string"`
-	Manager  string        `json:"manager"`
+	Balance        int64         `json:"balance,string"`
+	Delegate       tezos.Address `json:"delegate"`
+	Counter        int64         `json:"counter,string"`
+	Manager        string        `json:"manager"`
+	FrozenDeposits struct {
+		InitialAmount int64 `json:"initial_amount,string"`
+		ActualAmount  int64 `json:"actual_amount,string"`
+	} `json:"frozen_deposits"`
+	FrozenDepositsPseudotokens int64 `json:"frozen_deposits_pseudotokens,string"`
+	MissedAttestations         struct {
+		RemainingSlots int64 `json:"remaining_slots"`
+		MissedLevels   int64 `json:"missed_levels"`
+	} `json:"missed_attestations"`
+	StakingParameters struct {
+		// TODO
+	} `json:"staking_parameters"`
+	UnstakeRequests struct {
+		Delegate tezos.Address `json:"delegate"`
+		Requests []struct {
+			Cycle           int64 `json:"cycle"`
+			RequestedAmount int64 `json:"requested_amount,string"`
+		} `json:"requests"`
+	} `json:"unstake_requests"`
+	UnstakedFrozenDeposits []UnstakedDeposit `json:"unstaked_frozen_deposits"`
+}
+
+type UnstakedDeposit struct {
+	Cycle         int64 `json:"cycle"`
+	InitialAmount int64 `json:"initial_amount,string"`
+	ActualAmount  int64 `json:"actual_amount,string"`
+}
+
+// [[44,{"initial_amount":"1007000000","actual_amount":"1007000000"}]]
+func (u *UnstakedDeposit) UnmarshalJSON(buf []byte) error {
+	if len(buf) == 0 {
+		return nil
+	}
+	s, data, ok := bytes.Cut(buf[1:len(buf)-1], []byte{','})
+	if !ok || buf[0] != '[' || buf[len(buf)-1] != ']' {
+		return fmt.Errorf("UnstakedDeposit: invalid format")
+	}
+	num, err := strconv.ParseInt(string(s), 10, 64)
+	if err != nil {
+		return err
+	}
+	u.Cycle = num
+	type alias *UnstakedDeposit
+	return json.Unmarshal(data, alias(u))
 }
 
 func (i ContractInfo) IsRevealed() bool {
