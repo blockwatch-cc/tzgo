@@ -21,8 +21,10 @@ func (e *Engine) Run(ctx compose.Context, fname string) error {
 	}
 	ctx.WithPath(filepath.Dir(fname))
 	for _, a := range spec.Accounts {
-		if _, err := ctx.MakeAccount(int(a.Id), a.Name); err != nil {
+		if acc, err := ctx.MakeAccount(int(a.Id), a.Name); err != nil {
 			return err
+		} else {
+			ctx.Log.Infof("Account %s %s", a.Name, acc.Address)
 		}
 	}
 	for n, v := range spec.Variables {
@@ -67,13 +69,19 @@ func (e *Engine) Run(ctx compose.Context, fname string) error {
 			}
 
 			// send
+			opts.Confirmations = 0
 			rcpt, err := ctx.Send(op, opts)
 			if err != nil {
-				return fmt.Errorf("%s[%d] (%s): %v", p.Name, i, task.Type, err)
+				switch task.OnError {
+				case ErrorModeFail:
+					return fmt.Errorf("%s[%d] (%s): %v", p.Name, i, task.Type, err)
+				case ErrorModeWarn:
+					ctx.Log.Warnf("%s[%d] (%s): %v", p.Name, i, task.Type, err)
+				}
+			} else {
+				// log receipt
+				ctx.Log.Infof("%s SUCCESS block=%d hash=%s", t.Type(), rcpt.Height, rcpt.Op.Hash)
 			}
-
-			// log receipt
-			ctx.Log.Infof("%s SUCCESS block=%d hash=%s", t.Type(), rcpt.Height, rcpt.Op.Hash)
 
 			// handle receipt
 			if task.Alias != "" {
