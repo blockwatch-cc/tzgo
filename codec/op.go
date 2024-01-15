@@ -256,12 +256,13 @@ func (o *Op) WithStake(amount int64) *Op {
 // unstake request for amount tokens.
 // Source must be defined via WithSource() before calling this function.
 func (o *Op) WithUnstake(amount int64) *Op {
-	return o.WithCall(
+	return o.WithCallExt(
 		o.Source,
 		micheline.Parameters{
 			Entrypoint: micheline.UNSTAKE,
-			Value:      micheline.NewInt64(amount),
+			Value:      micheline.Unit,
 		},
+		amount,
 	)
 }
 
@@ -269,19 +270,20 @@ func (o *Op) WithUnstake(amount int64) *Op {
 // unstake request for all currently staked tokens.
 // Source must be defined via WithSource() before calling this function.
 func (o *Op) WithUnstakeAll(amount int64) *Op {
-	return o.WithCall(
+	return o.WithCallExt(
 		o.Source,
 		micheline.Parameters{
 			Entrypoint: micheline.UNSTAKE,
-			Value:      micheline.NewInt64(9223372036854775807),
+			Value:      micheline.Unit,
 		},
+		9223372036854775807,
 	)
 }
 
-// FinalizeUnstake sends a finalize_unstake pseudo call to source which
+// WithFinalizeUnstake sends a finalize_unstake pseudo call to source which
 // moves all unfrozen unstaked tokens back to spendable balance.
 // Source must be defined via WithSource() before calling this function.
-func (o *Op) FinalizeUnstake() *Op {
+func (o *Op) WithFinalizeUnstake() *Op {
 	return o.WithCall(
 		o.Source,
 		micheline.Parameters{
