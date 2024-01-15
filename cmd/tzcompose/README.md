@@ -60,6 +60,7 @@ export TZCOMPOSE_API_KEY=<your-api-key>
 - [delegate](#delegate) - delegate to baker
 - [deploy](#deploy) - create smart contract
 - [double_endorse](#double-endorse) - force a double endorsement slash
+- [double_bake](#double-bake) - force a double bake slash
 - [register_baker](#register-baker) - register as baker
 - [token_approve](#token-approve) - approve token spender
 - [token_revoke](#token-revoke) - revoke token spender
@@ -67,6 +68,9 @@ export TZCOMPOSE_API_KEY=<your-api-key>
 - [transfer](#transfer) - send tez transfer(s)
 - [undelegate](#undelegate) - remove delegation from baker
 - [wait](#wait) - wait for condition
+- [stake](#stake) - Oxford stake
+- [unstake](#unstake) - Oxford unstake
+- [finalize_unstake](#finalize_stake) - Oxford finalize unstake
 
 ### Configuration
 
@@ -333,6 +337,15 @@ In case you only have storage or parameters in files or binary blobs you may wan
         optimized: false
 ```
 
+### Error Handling
+
+Per default, tzcompose will stop executing all pipelines when the first error occurs. This may be a configuration, network communication or transaction state error. Sometimes it is useful to skip non-critical expected errors such as re-activating an already active baker. Since tzcompose does not know what is critical to your pipeline and what not, you can use the `on-error` argument to specify how an error is handled.
+
+```yaml
+- task: transfer
+  on-error: ignore # allowed values: ignore, warn, fail
+```
+
 ## Task Reference
 
 Tasks define a single action which typically emits an on-chain transaction. The transaction will be signed by the account specified in the `source` field. If source is empty it defaults to `$base`. Most tasks also define a `destination` which is either target of a call or receiver of a transfer or other activity.
@@ -423,14 +436,25 @@ script:
 
 ### Double Endorse
 
-Produces a fake double-endorsement which slashes the baker in `destination` and awards denuncation rewards to `source`. Both source and destination must be registered as bakers and private keys for both bakers must be available (both keys are used for signing). The slashed baker must have endorsements rights and this task waits until a block with such rights is baked.
+Produces a fake double-endorsement which slashes the baker in `destination` and awards denunciation rewards to the baker who includes this operation. The destination must be registered as baker and a private key must be available for signing. The slashed baker must have endorsements rights and this task waits until a block with such rights is baked.
 
-To successfully execute this task you way want to fund and register a fresh baker and then wait a few cycles for rights to activate. Note that on sandboxes the $alice key is not the sandbox baker. To lookup the actual baker key, docker exec into the sandbox and search for the `secret_keys` file in the Tezos client dir.
+To successfully execute this task you need to sufficiently fund and register the baker and then wait a few cycles for rights to activate. Note that on sandboxes the $alice key is not the sandbox baker. To lookup the actual baker key, docker exec into the sandbox and search for the `secret_keys` file in the Tezos client dir.
 
 ```yaml
 # Spec
 task: double_endorse
-source: $var      # <- this baker sends the denunciation op
+destination: $var # <- this baker is slashed
+```
+
+### Double Bake
+
+Produces a fake double-bake which slashes the baker in `destination` and awards denunciation rewards to the baker who includes this operation. The destination must be registered as baker and a private key must be available for signing. The slashed baker must have at least one round zero baking rights. The task waits until a block with such right is baked and then sends a double baking evidence with two fake (random) payload hashes.
+
+To successfully execute this task you need to sufficiently fund and register the baker and then wait a few cycles for rights to activate. Note that on sandboxes the $alice key is not the sandbox baker. To lookup the actual baker key, docker exec into the sandbox and search for the `secret_keys` file in the Tezos client dir.
+
+```yaml
+# Spec
+task: double_bake
 destination: $var # <- this baker is slashed
 ```
 
@@ -565,4 +589,36 @@ pipelines:
   - task: transfer
     destination: $account-2
     amount: 10_000_000
+```
+
+### Stake
+
+Lets the `source` stake `amount` with its current baker. Source must be delegated and staking must be enabled in the protocol for this to succeed. This operation takes no destination because the operation is sent to source.
+
+```yaml
+# Spec
+task: stake
+source: $var
+amount: number
+```
+
+### Unstake
+
+Lets the `source` request unstake of `amount` from the current baker. Source must be staking for this to succeed. This operation takes no destination because the operation is sent to source.
+
+```yaml
+# Spec
+task: unstake
+source: $var
+amount: number
+```
+
+### Finalize Unstake
+
+Lets `source` request to pay out unstaked unfrozen funds back to spendable balance. This operation takes no amount and no destination. All available funds are sent.
+
+```yaml
+# Spec
+task: finalize_unstake
+source: $var
 ```
