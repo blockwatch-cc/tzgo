@@ -46,6 +46,7 @@ func (h BlockHeader) Bytes() []byte {
 func (h BlockHeader) WatermarkedBytes() []byte {
 	buf := bytes.NewBuffer(nil)
 	buf.WriteByte(TenderbakeBlockWatermark)
+	buf.Write(h.ChainId.Bytes())
 	_ = h.EncodeBuffer(buf)
 	return buf.Bytes()
 }
@@ -55,6 +56,14 @@ func (h BlockHeader) WatermarkedBytes() []byte {
 func (h BlockHeader) Digest() []byte {
 	d := tezos.Digest(h.WatermarkedBytes())
 	return d[:]
+}
+
+// Hash calculates the block hash. For the hash to be correct, the block
+// must contain a valid signature.
+func (h *BlockHeader) Hash() (s tezos.BlockHash) {
+	d := tezos.Digest(h.Bytes())
+	copy(s[:], d[:])
+	return
 }
 
 // Sign signs the block header using a private key and generates a generic signature.
@@ -115,7 +124,7 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`],"context":`)
 	buf.WriteString(strconv.Quote(h.Context.String()))
 	buf.WriteString(`,"payload_hash":`)
-	buf.WriteString(h.PayloadHash.String())
+	buf.WriteString(strconv.Quote(h.PayloadHash.String()))
 	buf.WriteString(`,"payload_round":`)
 	buf.WriteString(strconv.Itoa(h.PayloadRound))
 	buf.WriteString(`,"proof_of_work_nonce":`)
@@ -137,9 +146,6 @@ func (h BlockHeader) MarshalJSON() ([]byte, error) {
 }
 
 func (h *BlockHeader) EncodeBuffer(buf *bytes.Buffer) error {
-	if h.ChainId != nil {
-		buf.Write(h.ChainId.Bytes())
-	}
 	binary.Write(buf, enc, h.Level)
 	buf.WriteByte(h.Proto)
 	buf.Write(h.Predecessor.Bytes())
