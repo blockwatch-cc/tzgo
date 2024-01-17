@@ -42,9 +42,11 @@ func run() error {
 	}
 
 	genesis := Genesis{
-		Timestamp: ts.Format(time.RFC3339),
-		Block:     block,
-		Protocol:  proto,
+		Genesis: GenesisInfo{
+			Timestamp: ts.Format(time.RFC3339),
+			Block:     block,
+			Protocol:  proto,
+		},
 		Params: GenesisParams{
 			Values: GenesisValues{
 				Key: key,
@@ -59,12 +61,16 @@ func run() error {
 }
 
 type Genesis struct {
-	Timestamp        string             `json:"timestamp"`
-	Block            tezos.BlockHash    `json:"block"`
-	Protocol         tezos.ProtocolHash `json:"protocol"`
-	Params           GenesisParams      `json:"genesis_parameters"`
-	ChainName        string             `json:"chain_name"`
-	SandboxChainName string             `json:"sandboxed_chain_name"`
+	Genesis          GenesisInfo   `json:"genesis"`
+	Params           GenesisParams `json:"genesis_parameters"`
+	ChainName        string        `json:"chain_name"`
+	SandboxChainName string        `json:"sandboxed_chain_name"`
+}
+
+type GenesisInfo struct {
+	Timestamp string             `json:"timestamp"`
+	Block     tezos.BlockHash    `json:"block"`
+	Protocol  tezos.ProtocolHash `json:"protocol"`
 }
 
 type GenesisParams struct {

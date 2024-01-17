@@ -3,7 +3,6 @@ module blockwatch.cc/tzgo
 go 1.18
 
 require (
-	blockwatch.cc/tzpro-go v0.17.5
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0
 	github.com/echa/bson v0.0.0-20220430141917-c0fbdf7f8b79
 	github.com/echa/log v1.2.4
@@ -23,9 +22,8 @@ require (
 	github.com/FactomProject/basen v0.0.0-20150613233007-fe3947df716e // indirect
 	github.com/FactomProject/btcutilecc v0.0.0-20130527213604-d3a63a5752ec // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/echa/code v1.0.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
