@@ -10,6 +10,8 @@
 * codec: add staking operation codecs
 * codec: fix block encoding
 * codec: support block signing and block hash calculation
+* tzcompose: add oxford staking tasks
+* tzcompose: add double bake task
 
 ## v1.17.4
 
