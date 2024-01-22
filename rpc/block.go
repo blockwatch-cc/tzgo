@@ -264,6 +264,9 @@ func (m *BlockMetadata) GetLevel() int64 {
 	if m.LevelInfo != nil {
 		return m.LevelInfo.Level
 	}
+	if m.Level == nil {
+		return 0
+	}
 	return m.Level.Level
 }
 
