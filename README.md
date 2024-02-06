@@ -34,8 +34,8 @@ TzGo contains a full set of features to read, monitor, decode, translate, analyz
 - a **Contract library** `tzgo/contract` for smart contract calls and tokens
 - a **Signer library** `tzgo/signer` to sign transactions local or remote
 - helpers like an efficient base58 en/decoder, hash maps, etc
-- a **Code generator** [TzGen](tree/master/cmd/tzgen) to produce pure Go clients for smart contract interfaces
-- an **Automation Tool** [TzCompose](tree/master/cmd/tzcompose) to setup test cases and deploy complex contract ecosystems
+- a **Code generator** [TzGen](https://github.com/blockwatch-cc/tzgo/tree/master/cmd/tzgen) to produce pure Go clients for smart contract interfaces
+- an **Automation Tool** [TzCompose](https://github.com/blockwatch-cc/tzgo/tree/master/cmd/tzcompose) to setup test cases and deploy complex contract ecosystems
 
 ### TzGo Compatibility
 
