@@ -41,8 +41,8 @@ type BallotSummary struct {
 
 // Proposal holds information about a vote listing
 type Proposal struct {
-	Proposal tezos.ProtocolHash
-	Upvotes  int64
+	Proposal tezos.ProtocolHash `json:"proposal"`
+	Upvotes  int64              `json:"upvotes,string"`
 }
 
 func (p *Proposal) UnmarshalJSON(data []byte) error {
