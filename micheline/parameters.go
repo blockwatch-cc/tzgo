@@ -17,13 +17,13 @@ type Parameters struct {
 	Value      Prim   `json:"value"`
 }
 
-func (p Parameters) MarshalJSON() ([]byte, error) {
-	if p.Entrypoint == "" || (p.Entrypoint == DEFAULT && p.Value.OpCode == D_UNIT) {
-		return json.Marshal(p.Value)
-	}
-	type alias Parameters
-	return json.Marshal(alias(p))
-}
+// func (p Parameters) MarshalJSON() ([]byte, error) {
+// 	if p.Entrypoint == "" || (p.Entrypoint == DEFAULT && p.Value.OpCode == D_UNIT) {
+// 		return json.Marshal(p.Value)
+// 	}
+// 	type alias Parameters
+// 	return json.Marshal(alias(p))
+// }
 
 func (p Parameters) MapEntrypoint(typ Type) (Entrypoint, Prim, error) {
 	var ep Entrypoint
