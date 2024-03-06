@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 // Michelson type spec
@@ -1192,62 +1192,32 @@ func (p *Prim) UnmarshalJSON(data []byte) error {
 	if len(data) == 0 {
 		return nil
 	}
-	switch data[0] {
-	case '[':
-		var m []interface{}
-		if err := json.Unmarshal(data, &m); err != nil {
-			return err
-		}
-		return p.UnpackSequence(m)
-	case '{':
-		var m map[string]interface{}
-		if err := json.Unmarshal(data, &m); err != nil {
-			return err
-		}
-		return p.UnpackJSON(m)
+	var val any
+	if err := json.Unmarshal(data, &val); err != nil {
+		return err
+	}
+	switch v := val.(type) {
+	case []any:
+		return p.UnpackSequence(v)
+	case map[string]any:
+		return p.UnpackPrimitive(v)
 	default:
-		var m interface{}
-		if err := json.Unmarshal(data, &m); err != nil {
-			return err
-		}
-		return p.UnpackScalar(m)
+		return nil
 	}
 }
 
-func (p *Prim) UnpackJSON(val interface{}) error {
+func (p *Prim) UnpackJSON(val any) error {
 	switch t := val.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		return p.UnpackPrimitive(t)
-	case []interface{}:
+	case []any:
 		return p.UnpackSequence(t)
 	default:
 		return fmt.Errorf("micheline: unexpected json type %T", val)
 	}
 }
 
-func (p *Prim) UnpackScalar(val interface{}) error {
-	switch v := val.(type) {
-	case json.Number:
-		i := big.NewInt(0)
-		i.SetString(v.String(), 0)
-		p.Int = i
-		p.Type = PrimInt
-	default:
-		oc, err := ParseOpCode(val.(string))
-		if err == nil {
-			p.OpCode = oc
-			p.Type = PrimNullary
-		} else {
-			// fallback (should not happen)
-			p.OpCode = T_STRING
-			p.String = val.(string)
-			p.Type = PrimString
-		}
-	}
-	return nil
-}
-
-func (p *Prim) UnpackSequence(val []interface{}) error {
+func (p *Prim) UnpackSequence(val []any) error {
 	p.Type = PrimSequence
 	p.Args = make([]Prim, len(val))
 	for i, v := range val {
@@ -1258,7 +1228,7 @@ func (p *Prim) UnpackSequence(val []interface{}) error {
 	return nil
 }
 
-func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
+func (p *Prim) UnpackPrimitive(val map[string]any) error {
 	for n, v := range val {
 		switch n {
 		case PRIM:
@@ -1300,7 +1270,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 			p.Bytes = b
 			p.Type = PrimBytes
 		case ANNOTS:
-			slist, ok := v.([]interface{})
+			slist, ok := v.([]any)
 			if !ok {
 				return fmt.Errorf("micheline: invalid annots value type %T %v", v, v)
 			}
@@ -1317,7 +1287,7 @@ func (p *Prim) UnpackPrimitive(val map[string]interface{}) error {
 
 	// process args separately and detect type based on number of args
 	if a, ok := val[ARGS]; ok {
-		args, ok := a.([]interface{})
+		args, ok := a.([]any)
 		if !ok {
 			return fmt.Errorf("micheline: invalid args value type %T %v", a, a)
 		}
