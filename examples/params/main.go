@@ -87,6 +87,10 @@ func run() error {
 	fmt.Printf("Using protocol %s on %s\n", tezos.Short(p.Protocol.String())[:8], p.Network)
 
 	fmt.Println("Height .............................. ", block.GetLevel())
+	fmt.Println("Cycle ............................... ", block.GetCycle())
+	fmt.Println("--------------------------------------------- ")
+	fmt.Println("Cycle (calc)......................... ", p.CycleFromHeight(block.GetLevel()))
+	fmt.Println("Snap (calc).......................... ", p.SnapshotBlock(524, 1))
 	fmt.Println("Protocol ............................ ", p.Protocol)
 	fmt.Println("Network ............................. ", p.Network)
 	fmt.Println("Version ............................. ", p.Version)
