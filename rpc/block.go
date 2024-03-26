@@ -258,6 +258,9 @@ type BlockMetadata struct {
 	// v015+
 	ProposerConsensusKey tezos.Address `json:"proposer_consensus_key"`
 	BakerConsensusKey    tezos.Address `json:"baker_consensus_key"`
+
+	// v019+
+	DalAttestation tezos.Z `json:"dal_attestation"`
 }
 
 func (m *BlockMetadata) GetLevel() int64 {

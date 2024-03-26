@@ -120,6 +120,9 @@ type OperationResult struct {
 
 	// v016 smart rollup
 	SmartRollupResult
+
+	// v019 DAL
+	DalResult
 }
 
 // Always use this helper to retrieve Ticket updates. This is because due to
@@ -306,7 +309,9 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		case tezos.OpTypeDoubleBakingEvidence:
 			op = &DoubleBaking{}
 		case tezos.OpTypeDoubleEndorsementEvidence,
-			tezos.OpTypeDoublePreendorsementEvidence:
+			tezos.OpTypeDoublePreendorsementEvidence,
+			tezos.OpTypeDoubleAttestationEvidence,
+			tezos.OpTypeDoublePreattestationEvidence:
 			op = &DoubleEndorsement{}
 		case tezos.OpTypeSeedNonceRevelation:
 			op = &SeedNonce{}
@@ -316,7 +321,10 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 		// consensus operations
 		case tezos.OpTypeEndorsement,
 			tezos.OpTypeEndorsementWithSlot,
-			tezos.OpTypePreendorsement:
+			tezos.OpTypePreendorsement,
+			tezos.OpTypeAttestation,
+			tezos.OpTypeAttestationWithDal,
+			tezos.OpTypePreattestation:
 			op = &Endorsement{}
 
 		// amendment operations
@@ -374,10 +382,8 @@ func (e *OperationList) UnmarshalJSON(data []byte) error {
 			op = &SmartRollupExecuteOutboxMessage{}
 		case tezos.OpTypeSmartRollupRecoverBond:
 			op = &SmartRollupRecoverBond{}
-		case tezos.OpTypeDalAttestation:
-			op = &DalAttestation{}
-		case tezos.OpTypeDalPublishSlotHeader:
-			op = &DalPublishSlotHeader{}
+		case tezos.OpTypeDalPublishCommitment:
+			op = &DalPublishCommitment{}
 
 		default:
 			return fmt.Errorf("rpc: unsupported op %q", string(data[start:end]))

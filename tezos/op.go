@@ -89,7 +89,7 @@ const (
 	OpTypeRegisterConstant                       // 14 v011
 	OpTypePreendorsement                         // 15 v012
 	OpTypeDoublePreendorsementEvidence           // 16 v012
-	OpTypeSetDepositsLimit                       // 17 v012
+	OpTypeSetDepositsLimit                       // 17 v012 DEPRECATED in v019 (AI)
 	OpTypeTxRollupOrigination                    // 18 v013 DEPRECATED in v016
 	OpTypeTxRollupSubmitBatch                    // 19 v013 DEPRECATED in v016
 	OpTypeTxRollupCommit                         // 20 v013 DEPRECATED in v016
@@ -112,8 +112,12 @@ const (
 	OpTypeSmartRollupTimeout                     // 37 v016
 	OpTypeSmartRollupExecuteOutboxMessage        // 38 v016
 	OpTypeSmartRollupRecoverBond                 // 39 v016
-	OpTypeDalAttestation                         // 40 v016+?
-	OpTypeDalPublishSlotHeader                   // 41 v016+?
+	OpTypeDalPublishCommitment                   // 40 v019
+	OpTypeAttestation                            // 41 v019 ??
+	OpTypeAttestationWithDal                     // 45 v019 ??
+	OpTypePreattestation                         // 42 v019
+	OpTypeDoublePreattestationEvidence           // 43 v019
+	OpTypeDoubleAttestationEvidence              // 44 v019
 )
 
 var (
@@ -158,14 +162,12 @@ var (
 		OpTypeSmartRollupTimeout:              "smart_rollup_timeout",
 		OpTypeSmartRollupExecuteOutboxMessage: "smart_rollup_execute_outbox_message",
 		OpTypeSmartRollupRecoverBond:          "smart_rollup_recover_bond",
-		OpTypeDalAttestation:                  "dal_attestation",
-		OpTypeDalPublishSlotHeader:            "dal_publish_slot_header",
-
-		// rename: endorsement -> attetstaion
-		// OpTypeDoubleEndorsementEvidence:       "double_attestation_evidence",
-		// OpTypeEndorsement:                     "attestation",
-		// OpTypePreendorsement:                  "preattestation",
-		// OpTypeDoublePreendorsementEvidence:    "double_preattestation_evidence",
+		OpTypeDalPublishCommitment:            "dal_publish_commitment",
+		OpTypeAttestation:                     "attestation",
+		OpTypeAttestationWithDal:              "attestation_with_dal",
+		OpTypePreattestation:                  "preattestation",
+		OpTypeDoublePreattestationEvidence:    "double_preattestation_evidence",
+		OpTypeDoubleAttestationEvidence:       "double_attestation_evidence",
 	}
 	opTypeReverseStrings = make(map[string]OpType)
 )
@@ -253,6 +255,7 @@ var (
 		OpTypeRegisterConstant:                111, // v011
 		OpTypePreendorsement:                  20,  // v012
 		OpTypeEndorsement:                     21,  // v012
+		OpTypeAttestationWithDal:              23,  // v019
 		OpTypeDoublePreendorsementEvidence:    7,   // v012
 		OpTypeSetDepositsLimit:                112, // v012
 		OpTypeTxRollupOrigination:             150, // v013
@@ -276,8 +279,48 @@ var (
 		OpTypeSmartRollupTimeout:              205, // v016
 		OpTypeSmartRollupExecuteOutboxMessage: 206, // v016
 		OpTypeSmartRollupRecoverBond:          207, // v016
-		OpTypeDalPublishSlotHeader:            230, // v016+
-		OpTypeDalAttestation:                  22,  // v016+
+	}
+	// Paris v019 and up
+	opTagV3 = map[OpType]byte{
+		OpTypeSeedNonceRevelation:             1,
+		OpTypeDoubleAttestationEvidence:       2, // v019
+		OpTypeDoubleBakingEvidence:            3,
+		OpTypeActivateAccount:                 4,
+		OpTypeProposals:                       5,
+		OpTypeBallot:                          6,
+		OpTypeReveal:                          107, // v005
+		OpTypeTransaction:                     108, // v005
+		OpTypeOrigination:                     109, // v005
+		OpTypeDelegation:                      110, // v005
+		OpTypeFailingNoop:                     17,  // v009
+		OpTypeRegisterConstant:                111, // v011
+		OpTypePreattestation:                  20,  // v019
+		OpTypeAttestation:                     21,  // v019
+		OpTypeAttestationWithDal:              23,  // v019
+		OpTypeDoublePreattestationEvidence:    7,   // v019
+		OpTypeSetDepositsLimit:                112, // v012
+		OpTypeTxRollupOrigination:             150, // v013
+		OpTypeTxRollupSubmitBatch:             151, // v013
+		OpTypeTxRollupCommit:                  152, // v013
+		OpTypeTxRollupReturnBond:              153, // v013
+		OpTypeTxRollupFinalizeCommitment:      154, // v013
+		OpTypeTxRollupRemoveCommitment:        155, // v013
+		OpTypeTxRollupRejection:               156, // v013
+		OpTypeTxRollupDispatchTickets:         157, // v013
+		OpTypeTransferTicket:                  158, // v013
+		OpTypeVdfRevelation:                   8,   // v014
+		OpTypeIncreasePaidStorage:             113, // v014
+		OpTypeDrainDelegate:                   9,   // v015
+		OpTypeUpdateConsensusKey:              114, // v015
+		OpTypeSmartRollupOriginate:            200, // v016
+		OpTypeSmartRollupAddMessages:          201, // v016
+		OpTypeSmartRollupCement:               202, // v016
+		OpTypeSmartRollupPublish:              203, // v016
+		OpTypeSmartRollupRefute:               204, // v016
+		OpTypeSmartRollupTimeout:              205, // v016
+		OpTypeSmartRollupExecuteOutboxMessage: 206, // v016
+		OpTypeSmartRollupRecoverBond:          207, // v016
+		OpTypeDalPublishCommitment:            230, // v019 FIXME: is this correct?
 	}
 )
 
@@ -371,8 +414,44 @@ var (
 		205: 26 + 62,                  // OpTypeSmartRollupTimeout // v016
 		206: 26 + 56,                  // OpTypeSmartRollupExecuteOutboxMessage // v016
 		207: 26 + 41,                  // OpTypeSmartRollupRecoverBond // v016
-		230: 26 + 101,                 // OpTypeDalPublishSlotHeader // v016+
-		22:  1 + 21 + 1 + 4,           // OpTypeDalAttestation  // v016+
+
+		// FIXME:
+		230: 26 + 101, // OpTypeDalPublishCommitment // v019
+		23:  43 + 1,   // OpTypeAttestationWithDal // v019 (assuming smallest slot number)
+	}
+	// Paris v019 and up
+	opMinSizeV3 = map[byte]int{
+		1:   37,                       // OpTypeSeedNonceRevelation
+		2:   9 + 2*(32+43+64),         // OpTypeDoubleAttestationEvidence
+		3:   9 + 2*237,                // OpTypeDoubleBakingEvidence (w/o seed_nonce_hash, min fitness size)
+		4:   41,                       // OpTypeActivateAccount
+		5:   30,                       // OpTypeProposals
+		6:   59,                       // OpTypeBallot
+		107: 26 + 32,                  // OpTypeReveal // v005 (assuming shortest pk)
+		108: 50,                       // OpTypeTransaction // v005
+		109: 28,                       // OpTypeOrigination // v005
+		110: 27,                       // OpTypeDelegation // v005
+		17:  5,                        // OpTypeFailingNoop  // v009
+		111: 30,                       // OpTypeRegisterConstant // v011
+		7:   9 + 2*(32+43+64),         // OpTypeDoublePreattestationEvidence // v019
+		20:  43,                       // OpTypePreattestation // v019
+		21:  43,                       // OpTypeAttestation // v019
+		23:  43 + 1,                   // OpTypeAttestationWithDal // v019 (assuming smallest slot number)
+		112: 27,                       // OpTypeSetDepositsLimit // v012
+		8:   201,                      // OpTypeVdfRevelation // v014
+		113: 27 + 22,                  // OpTypeIncreasePaidStorage // v014
+		9:   1 + 3*21,                 // OpTypeDrainDelegate // v015
+		114: 26 + 32,                  // OpTypeUpdateConsensusKey // v015
+		158: 26 + 8 + 22 + 1 + 22 + 4, // OpTypeTransferTicket // v013
+		200: 26 + 13,                  // OpTypeSmartRollupOriginate // v016
+		201: 26 + 4,                   // OpTypeSmartRollupAddMessages // v016
+		202: 26 + 52,                  // OpTypeSmartRollupCement // v016
+		203: 26 + 96,                  // OpTypeSmartRollupPublish // v016
+		204: 26 + 41,                  // OpTypeSmartRollupRefute // v016
+		205: 26 + 62,                  // OpTypeSmartRollupTimeout // v016
+		206: 26 + 56,                  // OpTypeSmartRollupExecuteOutboxMessage // v016
+		207: 26 + 41,                  // OpTypeSmartRollupRecoverBond // v016
+		230: 26 + 101,                 // OpTypeDalPublishCommitment // v019
 	}
 )
 
@@ -382,18 +461,21 @@ func (t OpType) MinSizeVersion(ver int) int {
 		return opMinSizeV0[t.TagVersion(ver)]
 	case 1:
 		return opMinSizeV1[t.TagVersion(ver)]
-	default:
+	case 2:
 		return opMinSizeV2[t.TagVersion(ver)]
+	default:
+		return opMinSizeV3[t.TagVersion(ver)]
 	}
 }
 
 func (t OpType) MinSize() int {
-	return opMinSizeV2[t.Tag()]
+	return opMinSizeV3[t.Tag()]
 }
 
 func (t OpType) ListId() int {
 	switch t {
-	case OpTypeEndorsement, OpTypeEndorsementWithSlot, OpTypePreendorsement:
+	case OpTypeEndorsement, OpTypeEndorsementWithSlot, OpTypePreendorsement,
+		OpTypeAttestation, OpTypePreattestation, OpTypeAttestationWithDal:
 		return 0
 	case OpTypeProposals, OpTypeBallot:
 		return 1
@@ -404,7 +486,8 @@ func (t OpType) ListId() int {
 		OpTypeDoublePreendorsementEvidence,
 		OpTypeVdfRevelation,
 		OpTypeDrainDelegate,
-		OpTypeDalAttestation:
+		OpTypeDoubleAttestationEvidence,
+		OpTypeDoublePreattestationEvidence:
 		return 2
 	case OpTypeTransaction, // generic user operations
 		OpTypeOrigination,
@@ -430,7 +513,7 @@ func (t OpType) ListId() int {
 		OpTypeSmartRollupTimeout,
 		OpTypeSmartRollupExecuteOutboxMessage,
 		OpTypeSmartRollupRecoverBond,
-		OpTypeDalPublishSlotHeader:
+		OpTypeDalPublishCommitment:
 		return 3
 	default:
 		return -1 // invalid
@@ -440,11 +523,11 @@ func (t OpType) ListId() int {
 func ParseOpTag(t byte) OpType {
 	switch t {
 	case 0:
-		return OpTypeEndorsement
+		return OpTypeAttestation
 	case 1:
 		return OpTypeSeedNonceRevelation
 	case 2:
-		return OpTypeDoubleEndorsementEvidence
+		return OpTypeDoubleAttestationEvidence
 	case 3:
 		return OpTypeDoubleBakingEvidence
 	case 4:
@@ -454,7 +537,7 @@ func ParseOpTag(t byte) OpType {
 	case 6:
 		return OpTypeBallot
 	case 7:
-		return OpTypeDoublePreendorsementEvidence
+		return OpTypeDoublePreattestationEvidence
 	case 8:
 		return OpTypeVdfRevelation
 	case 9:
@@ -464,11 +547,11 @@ func ParseOpTag(t byte) OpType {
 	case 17:
 		return OpTypeFailingNoop
 	case 20:
-		return OpTypePreendorsement
+		return OpTypePreattestation
 	case 21:
 		return OpTypeEndorsement
-	case 22:
-		return OpTypeDalAttestation
+	case 23:
+		return OpTypeAttestationWithDal
 	case 107:
 		return OpTypeReveal
 	case 108:
@@ -520,7 +603,7 @@ func ParseOpTag(t byte) OpType {
 	case 207:
 		return OpTypeSmartRollupRecoverBond
 	case 230:
-		return OpTypeDalPublishSlotHeader
+		return OpTypeDalPublishCommitment
 	default:
 		return OpTypeInvalid
 	}
@@ -533,6 +616,8 @@ func ParseOpTagVersion(t byte, ver int) OpType {
 		tags = opTagV1
 	case 2:
 		tags = opTagV2
+	case 3:
+		tags = opTagV3
 	}
 	for typ, tag := range tags {
 		if tag == t {

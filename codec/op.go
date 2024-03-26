@@ -634,10 +634,8 @@ func DecodeOp(data []byte) (*Op, error) {
 			op = new(SmartRollupExecuteOutboxMessage)
 		case tezos.OpTypeSmartRollupRecoverBond:
 			op = new(SmartRollupRecoverBond)
-		case tezos.OpTypeDalAttestation:
-			op = new(DalAttestation)
-		case tezos.OpTypeDalPublishSlotHeader:
-			op = new(DalPublishSlotHeader)
+		case tezos.OpTypeDalPublishCommitment:
+			op = new(DalPublishCommitment)
 
 		default:
 			// stop if rest looks like a signature

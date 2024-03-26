@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -38,6 +38,15 @@ type Delegate struct {
 	// v015+
 	ActiveConsensusKey   tezos.Address `json:"active_consensus_key"`
 	PendingConsensusKeys []CycleKey    `json:"pending_consensus_keys"`
+
+	// v019+
+	MinDelegated struct {
+		Amount int64     `json:"amount,string"`
+		Level  LevelInfo `json:"level"`
+	} `json:"min_delegated_in_current_cycle"`
+	PendingDenunciations bool  `json:"pending_denunciations"`
+	TotalDelegatedStake  int64 `json:"total_delegated_stakem,string"`
+	StakingDenominator   int64 `json:"staking_denominator,string"`
 }
 
 type CycleKey struct {

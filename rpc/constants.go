@@ -35,6 +35,9 @@ type Constants struct {
 	// New in v12
 	MaxOperationsTimeToLive int64 `json:"max_operations_time_to_live"`
 	BlocksPerStakeSnapshot  int64 `json:"blocks_per_stake_snapshot"`
+
+	// New in v19
+	ConsensusRightsDelay int64 `json:"consensus_rights_delay"`
 }
 
 // GetConstants returns chain configuration constants at block id
@@ -86,7 +89,7 @@ func (c *Client) GetParams(ctx context.Context, id BlockID) (*tezos.Params, erro
 func (c Constants) MapToChainParams() *tezos.Params {
 	p := &tezos.Params{
 		BlocksPerCycle:               c.BlocksPerCycle,
-		PreservedCycles:              c.PreservedCycles,
+		ConsensusRightsDelay:         c.ConsensusRightsDelay,
 		BlocksPerSnapshot:            c.BlocksPerRollSnapshot + c.BlocksPerStakeSnapshot,
 		OriginationSize:              c.OriginationSize + c.OriginationBurn,
 		CostPerByte:                  c.CostPerByte,
@@ -96,6 +99,11 @@ func (c Constants) MapToChainParams() *tezos.Params {
 		MaxOperationDataLength:       c.MaxOperationDataLength,
 		MaxOperationsTTL:             c.MaxOperationsTimeToLive,
 		MinimalBlockDelay:            time.Duration(c.MinimalBlockDelay) * time.Second,
+	}
+
+	// backport preserved cycles
+	if p.ConsensusRightsDelay == 0 {
+		p.ConsensusRightsDelay = c.PreservedCycles
 	}
 
 	// default for old protocols

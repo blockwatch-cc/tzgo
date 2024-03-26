@@ -65,7 +65,6 @@ func (r *TxRollup) Target() tezos.Address {
 
 type TxRollupBatch struct {
 	Content tezos.HexBytes `json:"content"`
-	// BurnLimit int64          `json:"burn_limit,string,omitempty"`
 }
 
 type TxRollupCommit struct {

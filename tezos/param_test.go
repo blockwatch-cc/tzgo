@@ -115,7 +115,7 @@ func TestDefaultParams(t *testing.T) {
 		if p.BlocksPerCycle == 0 {
 			t.Errorf("%s params: zero BlocksPerCycle", n)
 		}
-		if p.PreservedCycles == 0 {
+		if p.ConsensusRightsDelay == 0 {
 			t.Errorf("%s params: zero PreservedCycles", n)
 		}
 		if p.BlocksPerSnapshot == 0 {

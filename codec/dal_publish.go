@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Blockwatch Data Inc.
+// Copyright (c) 2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package codec
@@ -11,8 +11,8 @@ import (
 	"blockwatch.cc/tzgo/tezos"
 )
 
-// DalPublishSlotHeader represents "Dal_publish_slot_header" operation
-type DalPublishSlotHeader struct {
+// DalPublishCommitment represents "Dal_publish_commitment" operation
+type DalPublishCommitment struct {
 	Manager
 	Level      int32          `json:"level"`
 	Index      byte           `json:"index"`
@@ -20,11 +20,11 @@ type DalPublishSlotHeader struct {
 	Proof      tezos.HexBytes `json:"commitment_proof"`
 }
 
-func (o DalPublishSlotHeader) Kind() tezos.OpType {
-	return tezos.OpTypeDalPublishSlotHeader
+func (o DalPublishCommitment) Kind() tezos.OpType {
+	return tezos.OpTypeDalPublishCommitment
 }
 
-func (o DalPublishSlotHeader) MarshalJSON() ([]byte, error) {
+func (o DalPublishCommitment) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	buf.WriteByte('{')
 	buf.WriteString(`"kind":`)
@@ -44,7 +44,7 @@ func (o DalPublishSlotHeader) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (o DalPublishSlotHeader) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
+func (o DalPublishCommitment) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) error {
 	buf.WriteByte(o.Kind().TagVersion(p.OperationTagsVersion))
 	o.Manager.EncodeBuffer(buf, p)
 	binary.Write(buf, enc, o.Level)
@@ -54,7 +54,7 @@ func (o DalPublishSlotHeader) EncodeBuffer(buf *bytes.Buffer, p *tezos.Params) e
 	return nil
 }
 
-func (o *DalPublishSlotHeader) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
+func (o *DalPublishCommitment) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) (err error) {
 	if err = ensureTagAndSize(buf, o.Kind(), p.OperationTagsVersion); err != nil {
 		return
 	}
@@ -76,12 +76,12 @@ func (o *DalPublishSlotHeader) DecodeBuffer(buf *bytes.Buffer, p *tezos.Params) 
 	return
 }
 
-func (o DalPublishSlotHeader) MarshalBinary() ([]byte, error) {
+func (o DalPublishCommitment) MarshalBinary() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	err := o.EncodeBuffer(buf, tezos.DefaultParams)
 	return buf.Bytes(), err
 }
 
-func (o *DalPublishSlotHeader) UnmarshalBinary(data []byte) error {
+func (o *DalPublishCommitment) UnmarshalBinary(data []byte) error {
 	return o.DecodeBuffer(bytes.NewBuffer(data), tezos.DefaultParams)
 }

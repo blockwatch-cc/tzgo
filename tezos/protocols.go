@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Blockwatch Data Inc.
+// Copyright (c) 2020-2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package tezos
@@ -25,6 +25,7 @@ var (
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
 	ProtoV017      = MustParseProtocolHash("PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf")
 	ProtoV018      = MustParseProtocolHash("ProxfordYmVfjWnRcgjWH36fW6PArwqykTFzotUxRs6gmTcZDuH")
+	ProtoV019      = MustParseProtocolHash("") // TODO
 
 	// aliases
 	PtAthens  = ProtoV004
@@ -42,11 +43,13 @@ var (
 	PtMumbai  = ProtoV016_2
 	PtNairobi = ProtoV017
 	Proxford  = ProtoV018
+	PtParisA  = ProtoV019
 
 	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Nairobinet = MustParseChainIdHash("NetXyuzvDo2Ugzb")
 	Oxfordnet  = MustParseChainIdHash("NetXxWsskGahzQB")
+	Parisnet   = MustParseChainIdHash("") // TODO
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -69,7 +72,8 @@ var (
 		ProtoV016_2:    16,
 		ProtoV017:      17,
 		ProtoV018:      18,
-		ProtoAlpha:     19,
+		ProtoV019:      19,
+		ProtoAlpha:     20,
 	}
 
 	Deployments = map[ChainIdHash]ProtocolHistory{
@@ -92,20 +96,22 @@ var (
 			{PtKathma, 0, 2736129, 2981888, 528, 5, 8192, 512},    // v14
 			{PtLimaPt, 0, 2981889, 3268608, 558, 5, 8192, 512},    // v15
 			{PtMumbai, 0, 3268609, 3760128, 593, 5, 16384, 1024},  // v16
-			{PtNairobi, 0, 3760129, -1, 623, 5, 16384, 1024},      // v17
+			{PtNairobi, 0, 3760129, 5070848, 623, 5, 16384, 1024}, // v17
 			{Proxford, 0, 5070849, -1, 703, 5, 16384, 1024},       // v18
+			// {PtParisA, 0, ??, -1, ??, 5, 24576, 24576},       // v19
 		},
 		Ghostnet: {
-			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},           // 0
-			{ProtoBootstrap, 0, 1, 1, 0, 3, 4096, 256},         // 0
-			{PtHangz2, 2, 2, 8191, 0, 3, 4096, 256},            // v11
-			{Psithaca, 0, 8192, 765952, 2, 3, 4096, 256},       // v12
-			{PtJakart, 0, 765953, 1191936, 187, 3, 4096, 256},  // v13
-			{PtKathma, 0, 1191937, 1654784, 291, 3, 4096, 256}, // v14
-			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256}, // v15
-			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512}, // v16
-			{PtNairobi, 0, 2957313, -1, 625, 3, 8192, 512},     // v17
-			// {Proxford, 0, 2957313, -1, 625, 3, 8192, 512},     // v18
+			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},            // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 4096, 256},          // 0
+			{PtHangz2, 2, 2, 8191, 0, 3, 4096, 256},             // v11
+			{Psithaca, 0, 8192, 765952, 2, 3, 4096, 256},        // v12
+			{PtJakart, 0, 765953, 1191936, 187, 3, 4096, 256},   // v13
+			{PtKathma, 0, 1191937, 1654784, 291, 3, 4096, 256},  // v14
+			{PtLimaPt, 0, 1654785, 2162688, 404, 3, 4096, 256},  // v15
+			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512},  // v16
+			{PtNairobi, 0, 2957313, 5316608, 625, 3, 8192, 512}, // v17
+			{Proxford, 0, 5316609, -1, 913, 3, 8192, 512},       // v18
+			// {PtParisA, 0, 5316609, -1, 913, 3, 8192, 8192},       // v19
 		},
 		Nairobinet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
@@ -119,18 +125,24 @@ var (
 			{PtNairobi, 2, 2, 16384, 0, 3, 8192, 512},  // v17
 			{Proxford, 0, 16385, -1, 2, 3, 8192, 512},  // v18
 		},
+		Parisnet: {
+			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
+			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
+			{Proxford, 2, 2, 16384, 0, 3, 8192, 512},   // v18
+			{PtParisA, 0, 16385, -1, 2, 3, 8192, 8192}, // v19
+		},
 	}
 )
 
 type Deployment struct {
-	Protocol          ProtocolHash
-	StartOffset       int64
-	StartHeight       int64
-	EndHeight         int64
-	StartCycle        int64
-	PreservedCycles   int64
-	BlocksPerCycle    int64
-	BlocksPerSnapshot int64
+	Protocol             ProtocolHash
+	StartOffset          int64
+	StartHeight          int64
+	EndHeight            int64
+	StartCycle           int64
+	ConsensusRightsDelay int64
+	BlocksPerCycle       int64
+	BlocksPerSnapshot    int64
 }
 
 type ProtocolHistory []Deployment

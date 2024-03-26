@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Blockwatch Data Inc.
+// Copyright (c) 2020-2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -29,12 +29,13 @@ func (r BakingRight) Address() tezos.Address {
 
 // EndorsingRight holds information about the right to endorse a specific Tezos block.
 type EndorsingRight struct {
-	Delegate       tezos.Address `json:"delegate"`
-	Level          int64         `json:"level"`
-	EstimatedTime  time.Time     `json:"estimated_time"`
-	Slots          []int         `json:"slots,omitempty"` // until v011
-	FirstSlot      int           `json:"first_slot"`      // v012+
-	EndorsingPower int           `json:"endorsing_power"` // v012+
+	Delegate         tezos.Address `json:"delegate"`
+	Level            int64         `json:"level"`
+	EstimatedTime    time.Time     `json:"estimated_time"`
+	Slots            []int         `json:"slots,omitempty"`   // until v011
+	FirstSlot        int           `json:"first_slot"`        // v012+
+	EndorsingPower   int           `json:"endorsing_power"`   // v012+
+	AttestationPower int           `json:"attestation_power"` // v019+
 }
 
 func (r EndorsingRight) Address() tezos.Address {
@@ -180,10 +181,30 @@ func (c *Client) ListEndorsingRights(ctx context.Context, id BlockID) ([]Endorsi
 	if err != nil {
 		return nil, err
 	}
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true", id)
 	rights := make([]EndorsingRight, 0)
 	// Note: future cycles are seen from current protocol (!)
-	if p.Version >= 12 {
+	switch {
+	case p.Version >= 19:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/attestation_rights?all=true", id)
+		type V19Rights struct {
+			Level         int64            `json:"level"`
+			Delegates     []EndorsingRight `json:"delegates"`
+			EstimatedTime time.Time        `json:"estimated_time"`
+		}
+		v19rights := make([]V19Rights, 0, 1)
+		if err := c.Get(ctx, u, &v19rights); err != nil {
+			return nil, err
+		}
+		for _, v := range v19rights {
+			for _, r := range v.Delegates {
+				r.Level = v.Level
+				r.EstimatedTime = v.EstimatedTime
+				rights = append(rights, r)
+			}
+		}
+
+	case p.Version >= 12:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true", id)
 		type V12Rights struct {
 			Level         int64            `json:"level"`
 			Delegates     []EndorsingRight `json:"delegates"`
@@ -201,7 +222,8 @@ func (c *Client) ListEndorsingRights(ctx context.Context, id BlockID) ([]Endorsi
 			}
 		}
 
-	} else {
+	default:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true", id)
 		if err := c.Get(ctx, u, &rights); err != nil {
 			return nil, err
 		}
@@ -217,10 +239,29 @@ func (c *Client) ListEndorsingRightsCycle(ctx context.Context, id BlockID, cycle
 	if err != nil {
 		return nil, err
 	}
-	u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
 	rights := make([]EndorsingRight, 0)
 	// Note: future cycles are seen from current protocol (!)
-	if p.Version >= 12 {
+	switch {
+	case p.Version >= 19:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/attestation_rights?all=true&cycle=%d", id, cycle)
+		type V19Rights struct {
+			Level         int64            `json:"level"`
+			Delegates     []EndorsingRight `json:"delegates"`
+			EstimatedTime time.Time        `json:"estimated_time"`
+		}
+		v19rights := make([]V19Rights, 0, 8192)
+		if err := c.Get(ctx, u, &v19rights); err != nil {
+			return nil, err
+		}
+		for _, v := range v19rights {
+			for _, r := range v.Delegates {
+				r.Level = v.Level
+				r.EstimatedTime = v.EstimatedTime
+				rights = append(rights, r)
+			}
+		}
+	case p.Version >= 12:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
 		type V12Rights struct {
 			Level         int64            `json:"level"`
 			Delegates     []EndorsingRight `json:"delegates"`
@@ -237,7 +278,8 @@ func (c *Client) ListEndorsingRightsCycle(ctx context.Context, id BlockID, cycle
 				rights = append(rights, r)
 			}
 		}
-	} else {
+	default:
+		u := fmt.Sprintf("chains/main/blocks/%s/helpers/endorsing_rights?all=true&cycle=%d", id, cycle)
 		if err := c.Get(ctx, u, &rights); err != nil {
 			return nil, err
 		}
@@ -279,11 +321,17 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, id BlockID, cycle in
 		return nil, err
 	}
 	idx := &SnapshotIndex{}
-	if p.Version >= 12 {
+	switch {
+	case p.Version >= 19:
+		// no more snapshots
+		idx.Cycle = cycle
+		idx.Base = p.SnapshotBaseCycle(cycle)
+		idx.Index = 15
+	case p.Version >= 12:
 		idx.Cycle = cycle
 		idx.Base = p.SnapshotBaseCycle(cycle)
 		idx.Index = -1
-		if cycle >= p.PreservedCycles+1 {
+		if cycle >= p.ConsensusRightsDelay+1 {
 			u := fmt.Sprintf("chains/main/blocks/%s/context/selected_snapshot?cycle=%d", id, cycle)
 			if err := c.Get(ctx, u, &idx.Index); err != nil {
 				return nil, err
@@ -291,7 +339,7 @@ func (c *Client) GetSnapshotIndexCycle(ctx context.Context, id BlockID, cycle in
 		} else {
 			c.Log.Warnf("No snapshot for cycle %d", cycle)
 		}
-	} else {
+	default:
 		// pre-Ithaca we can at most look PRESERVED_CYCLES into the future since
 		// the snapshot happened 2 cycles back from the block we're looking from.
 		var info RollSnapshotInfo

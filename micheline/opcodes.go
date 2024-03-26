@@ -198,6 +198,9 @@ const (
 	// v016 additions
 	I_BYTES // 9B
 	I_NAT   // 9C
+
+	// v19 additions
+	D_TICKET
 )
 
 func (op OpCode) IsValid() bool {
@@ -363,6 +366,7 @@ var (
 		I_TICKET:                "TICKET",
 		I_BYTES:                 "BYTES",
 		I_NAT:                   "NAT",
+		D_TICKET:                "Ticket",
 	}
 	stringToOp map[string]OpCode
 )
@@ -463,6 +467,8 @@ func (op OpCode) TypeCode() OpCode {
 		return T_MAP // may also be T_BIG_MAP
 	case D_LAMBDA_REC:
 		return T_LAMBDA
+	case D_TICKET:
+		return T_TICKET
 	default:
 		return T_LAMBDA
 	}
