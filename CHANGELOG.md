@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.18.4
+
+* 2dc9fa0 | rpc: add missing balance update fields
+
+## v1.18.3
+
+* 291607c | Simplify micheline json decoder
+* 586f1bc | Add json tags to proposal model
+* 2205ca9 | Fix links to dev tools
+* b82e574 | rpc: handle empty block metadata level
+
+## v1.18.2
+
+* 82d9374 | Fix genesis info struct
+
+## v1.18.1 (broken)
+
+* 56291ca | Add genesis block helper
+
 ## v1.18.0
 
 * Oxford protocol support
