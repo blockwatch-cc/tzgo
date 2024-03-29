@@ -6,6 +6,7 @@ TzGo's main focus is on **correctness**, **stability**, and **compliance** with 
 
 Current Tezos protocol support in TzGo
 
+- Paris v019
 - Oxford v018
 - Nairobi v017
 - Mumbai v016
