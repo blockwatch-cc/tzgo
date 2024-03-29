@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Blockwatch Data Inc.
+// Copyright (c) 2020-2024 Blockwatch Data Inc.
 // Author: alex@blockwatch.cc
 
 package rpc
@@ -25,13 +25,20 @@ type BalanceUpdate struct {
 
 	// legacy freezer cycle
 	Level_ int64 `json:"level"` // wrongly called level, it's cycle
-	Cycle_ int64 `json:"cycle"` // v4 fix
+	Cycle_ int64 `json:"cycle"` // v4 fix, also used in Oxford for unstake
+
+	// smart rollup
+	BondId struct {
+		SmartRollup tezos.Address `json:"smart_rollup"`
+	} `json:"bond_id"`
 
 	// Oxford staking
 	Staker struct {
 		Contract tezos.Address `json:"contract"` // tz1/2/3 accounts (only stake, unstake)
 		Delegate tezos.Address `json:"delegate"` // baker
+		Baker    tezos.Address `json:"baker"`    // baker
 	} `json:"staker"`
+	DelayedOp tezos.OpHash `json:"delayed_operation_hash"`
 }
 
 // Categories
@@ -72,8 +79,20 @@ func (b BalanceUpdate) Address() tezos.Address {
 		return b.Committer
 	case b.Staker.Contract.IsValid():
 		return b.Staker.Contract
+	case b.Staker.Delegate.IsValid():
+		return b.Staker.Delegate
+	case b.Staker.Baker.IsValid():
+		return b.Staker.Baker
 	}
 	return tezos.Address{}
+}
+
+func (b BalanceUpdate) IsSharedStake() bool {
+	return b.Staker.Contract.IsValid() && b.Staker.Delegate.IsValid()
+}
+
+func (b BalanceUpdate) IsBakerStake() bool {
+	return b.Staker.Contract.IsValid() && (b.Staker.Delegate.IsValid() || b.Staker.Baker.IsValid())
 }
 
 func (b BalanceUpdate) Amount() int64 {
