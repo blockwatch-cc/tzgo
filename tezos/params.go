@@ -73,7 +73,7 @@ var (
 	// ParisnetParams defines the blockchain configuration for Oxford testnet.
 	// To produce compliant transactions, use these defaults in op.WithParams().
 	ParisnetParams = (&Params{
-		MinimalBlockDelay:            8 * time.Second, // ??
+		MinimalBlockDelay:            5 * time.Second,
 		CostPerByte:                  250,
 		OriginationSize:              257,
 		HardGasLimitPerOperation:     1040000,

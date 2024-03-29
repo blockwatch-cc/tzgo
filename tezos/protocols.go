@@ -25,7 +25,7 @@ var (
 	ProtoV016_2    = MustParseProtocolHash("PtMumbai2TmsJHNGRkD8v8YDbtao7BLUC3wjASn1inAKLFCjaH1")
 	ProtoV017      = MustParseProtocolHash("PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf")
 	ProtoV018      = MustParseProtocolHash("ProxfordYmVfjWnRcgjWH36fW6PArwqykTFzotUxRs6gmTcZDuH")
-	ProtoV019      = MustParseProtocolHash("") // TODO
+	ProtoV019      = MustParseProtocolHash("PtParisBQscdCm6Cfow6ndeU6wKJyA3aV1j4D3gQBQMsTQyJCrz")
 
 	// aliases
 	PtAthens  = ProtoV004
@@ -43,13 +43,13 @@ var (
 	PtMumbai  = ProtoV016_2
 	PtNairobi = ProtoV017
 	Proxford  = ProtoV018
-	PtParisA  = ProtoV019
+	PtParisB  = ProtoV019
 
 	Mainnet    = MustParseChainIdHash("NetXdQprcVkpaWU")
 	Ghostnet   = MustParseChainIdHash("NetXnHfVqm9iesp")
 	Nairobinet = MustParseChainIdHash("NetXyuzvDo2Ugzb")
 	Oxfordnet  = MustParseChainIdHash("NetXxWsskGahzQB")
-	Parisnet   = MustParseChainIdHash("") // TODO
+	Parisnet   = MustParseChainIdHash("NetXdQprcVkpaWU") // TODO
 
 	Versions = map[ProtocolHash]int{
 		ProtoGenesis:   0,
@@ -98,7 +98,7 @@ var (
 			{PtMumbai, 0, 3268609, 3760128, 593, 5, 16384, 1024},  // v16
 			{PtNairobi, 0, 3760129, 5070848, 623, 5, 16384, 1024}, // v17
 			{Proxford, 0, 5070849, -1, 703, 5, 16384, 1024},       // v18
-			// {PtParisA, 0, ??, -1, ??, 5, 24576, 24576},       // v19
+			// {PtParisB, 0, ??, -1, ??, 5, 24576, 24576},       // v19
 		},
 		Ghostnet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 4096, 256},            // 0
@@ -111,7 +111,7 @@ var (
 			{PtMumbai, 0, 2162689, 2957312, 528, 3, 8192, 512},  // v16
 			{PtNairobi, 0, 2957313, 5316608, 625, 3, 8192, 512}, // v17
 			{Proxford, 0, 5316609, -1, 913, 3, 8192, 512},       // v18
-			// {PtParisA, 0, 5316609, -1, 913, 3, 8192, 8192},       // v19
+			// {PtParisB, 0, 5316609, -1, 913, 3, 8192, 8192},       // v19
 		},
 		Nairobinet: {
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
@@ -129,7 +129,7 @@ var (
 			{ProtoGenesis, 0, 0, 0, 0, 3, 8192, 512},   // 0
 			{ProtoBootstrap, 0, 1, 1, 0, 3, 8192, 512}, // 0
 			{Proxford, 2, 2, 16384, 0, 3, 8192, 512},   // v18
-			{PtParisA, 0, 16385, -1, 2, 3, 8192, 8192}, // v19
+			{PtParisB, 0, 16385, -1, 2, 3, 8192, 8192}, // v19
 		},
 	}
 )
